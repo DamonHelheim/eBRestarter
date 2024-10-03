@@ -1,0 +1,439 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Resources\Images\Icons\Intersection\eB Restarter.ico</ApplicationIcon>
+    <SignAssembly>False</SignAssembly>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+
+  <ItemGroup>
+    <Compile Remove="Images\**" />
+    <EmbeddedResource Remove="Images\**" />
+    <None Remove="Images\**" />
+    <Page Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\AutoLogOn\Step 1.JPG" />
+    <None Remove="Resources\Images\AutoLogOn\Step 2.JPG" />
+    <None Remove="Resources\Images\AutoLogOn\Step 3.JPG" />
+    <None Remove="Resources\Images\AutoLogOn\Step 4.JPG" />
+    <None Remove="Resources\Images\Icons\DarkTheme\add_document_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\algolia_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\arrows-rotate_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\calendar-days_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\calendar_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\circle-plus_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\circle_with_globe_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\clock-rotate-left_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\clock_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\data-cleaning_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\download_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_arrows-rotate_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_circle-plus_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_clock-rotate-left_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_flatscreen_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_gears_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_globe_2_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_globe_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_list-ul_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_servicestack_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\fa_whmcs_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\flatscreen_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\gears_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\globe_2_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\globe_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\ip-address_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\list-ul_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\maintenance_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\network-interface-card_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\note_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\send-data-dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\send_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\servicestack_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\status_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\User_2_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\user_3_light_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\user_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\whmcs_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\windows_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\windows_white.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\workstation_dark_theme.png" />
+    <None Remove="Resources\Images\Icons\DarkTheme\workstation_white.png" />
+    <None Remove="Resources\Images\Icons\Intersection\api.png" />
+    <None Remove="Resources\Images\Icons\Intersection\approval.png" />
+    <None Remove="Resources\Images\Icons\Intersection\chrome.png" />
+    <None Remove="Resources\Images\Icons\Intersection\deactivate.png" />
+    <None Remove="Resources\Images\Icons\Intersection\eB Restarter.ico" />
+    <None Remove="Resources\Images\Icons\Intersection\edge.png" />
+    <None Remove="Resources\Images\Icons\Intersection\fa_chrome.png" />
+    <None Remove="Resources\Images\Icons\Intersection\fa_edge.png" />
+    <None Remove="Resources\Images\Icons\Intersection\fa_firefox.png" />
+    <None Remove="Resources\Images\Icons\Intersection\fa_keyaccess.png" />
+    <None Remove="Resources\Images\Icons\Intersection\file.png" />
+    <None Remove="Resources\Images\Icons\Intersection\file_information.png" />
+    <None Remove="Resources\Images\Icons\Intersection\firefox.png" />
+    <None Remove="Resources\Images\Icons\Intersection\globe-grid.png" />
+    <None Remove="Resources\Images\Icons\Intersection\key.png" />
+    <None Remove="Resources\Images\Icons\Intersection\keyaccess.png" />
+    <None Remove="Resources\Images\Icons\Intersection\play.png" />
+    <None Remove="Resources\Images\Icons\Intersection\plus.png" />
+    <None Remove="Resources\Images\Icons\Intersection\plus_2.png" />
+    <None Remove="Resources\Images\Icons\Intersection\stop.png" />
+    <None Remove="Resources\Images\Icons\Intersection\tasks.png" />
+    <None Remove="Resources\Images\Icons\Intersection\timer.png" />
+    <None Remove="Resources\Images\Icons\Intersection\user.png" />
+    <None Remove="Resources\Images\Icons\Intersection\wrong_document.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\add_document_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\arrows-rotate_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\arrows-rotate_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\calendar-days.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\calendar_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\circle-plus_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\circle_with_globe_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\clock-rotate-left_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\clock_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\data-cleaning_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\download_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_circle-plus_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_clock-rotate-left_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_gears_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_gears_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_globe_2_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_globe_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_list-ul_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_list-ul_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_servicestack_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\fa_whmcs_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\flatscreen_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\flatscreen_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\gears_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\gears_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\globe_2_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\globe_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\ip-address_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\list-ul_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\list-ul_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\maintenance_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\network-interface-card_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\note_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\send-data-light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\servicestack_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\servicestack_light_theme_2.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\status_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\user_2_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\user_3_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\user_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\whmcs_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\windows_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\windows_white.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\workstation_light_theme.png" />
+    <None Remove="Resources\Images\Icons\LightTheme\workstation_white.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\AutoLogOn\Step 1.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\AutoLogOn\Step 2.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\AutoLogOn\Step 3.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\AutoLogOn\Step 4.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Resources\Images\Icons\DarkTheme\add_document_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\calendar_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\clock_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\data-cleaning_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_arrows-rotate_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_circle-plus_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_clock-rotate-left_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_flatscreen_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_gears_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_globe_2_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_list-ul_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_servicestack_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\fa_whmcs_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\download_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\ip-address_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\maintenance_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\network-interface-card_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\note_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\send-data-dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\status_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\User_2_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\user_3_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\user_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\circle_with_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\windows_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\DarkTheme\workstation_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\api.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\approval.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\deactivate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\eB Restarter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\fa_chrome.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\fa_edge.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\fa_firefox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\fa_keyaccess.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\file.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\file_information.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\globe-grid.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\key.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\play.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\plus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\tasks.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\timer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\user.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\wrong_document.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\add_document_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\calendar_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\circle_with_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\clock_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\data-cleaning_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\download_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_circle-plus_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_clock-rotate-left_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_gears_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_gears_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_globe_2_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_list-ul_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_list-ul_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_servicestack_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\fa_whmcs_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\ip-address_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\maintenance_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\network-interface-card_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\note_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\send-data-light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\servicestack_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\status_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\user_2_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\user_3_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\user_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\windows_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\LightTheme\workstation_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
+    <PackageReference Include="MahApps.Metro" Version="3.0.0-alpha0492" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="5.0.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.3.24172.9" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eBRestarter.Model\eBRestarter.Model.csproj" />
+    <ProjectReference Include="..\eBRestarter.ViewModel\eBRestarter.ViewModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Pages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImportAPIFile.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

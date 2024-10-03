@@ -1,0 +1,182 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"          
+             d:DesignHeight="550"
+             Width="Auto">
+
+    <UserControl.DataContext>
+        <VM:PointsOutputViewModel/>
+    </UserControl.DataContext>
+
+    <DockPanel     x:Name               ="DP_MainWindows_Top"
+                   Background           ="{DynamicResource MenuBackgroundColor_2}"               
+                   Height               ="Auto"  
+                   Width                ="Auto"
+                   ClipToBounds         ="True"
+                   SnapsToDevicePixels  ="True"
+                   Margin               ="0,0,0,0">
+
+
+        <StackPanel     DockPanel.Dock  ="Top"
+                        Background      ="{DynamicResource MenuBackgroundColor_3}"
+                        Orientation     ="Horizontal"
+                        Margin          ="0,0,0,0"
+                        Height          ="30"
+                        Width           ="auto">
+
+            <Image     x:Name                           ="im_MainWindowIconTitle"
+                       Margin                           ="10,-7,0,0"
+                       RenderOptions.BitmapScalingMode  ="HighQuality"
+                       Source                           ="{DynamicResource DashbordIcon}"
+                       Height                           ="25"
+                       Width                            ="35" 
+                       Canvas.Left                      ="12"
+                       Canvas.Top                       ="9"
+                       />
+
+            <TextBlock     x:Name            ="tbl_MainWindowTitle"
+                           Foreground        ="{DynamicResource FontColor_1}"
+                           Canvas.Left       ="59"
+                           TextWrapping      ="Wrap"
+                           Text              ="Dashboard"
+                           Canvas.Top        ="10"
+                           VerticalAlignment ="Center"
+                           FontSize          ="20"
+                           Margin            ="10,-5,0,0"
+                           FontWeight        ="Bold"/>
+        </StackPanel>
+
+        <ScrollViewer HorizontalScrollBarVisibility ="Auto"
+                      VerticalScrollBarVisibility  ="Auto">
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width     ="70*"
+                                      MaxWidth  ="1200"/>
+
+                    <ColumnDefinition Width     ="30*" />
+
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="65*"/>
+                        <RowDefinition Height="25*"/>
+
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Vertical">
+                        
+                        <TextBlock Grid.Row             ="0"
+                                   Text                 ="{Binding ChartTitle}"
+                                   Foreground           ="{DynamicResource FontColor_1}"
+                                   TextAlignment        ="Center"
+                                   VerticalAlignment    ="Bottom"
+                                   FontSize             ="14"
+                                   FontWeight           ="Bold"/>
+
+
+
+
+                        <TextBlock x:Name               ="tblNextTimeOfEarningsRefresh"
+                                   Grid.Row             ="0"
+                                   Foreground           ="{DynamicResource FontColor_1}"
+                                   Margin               ="0,3,0,0"
+                                   Text                 ="{Binding ClockNextEarningsRefresh}"
+                                   FontSize             ="16"
+                                   HorizontalAlignment  ="Center" 
+                                   VerticalAlignment    ="Center">
+                            
+                        </TextBlock>
+                        
+                    </StackPanel>
+                    
+                    
+                    <local:UC_PointsOutput Grid.Row ="1"
+                                           Margin   ="10,10,10,10"/>
+
+                    <StackPanel Orientation ="Horizontal"
+                                Grid.Row    ="2">
+
+                        <local:UC_EarningsAmount HeaderTitleEarnings    ="{Binding CurrentDay}"
+                                                 HeaderImageEarnings    ="{DynamicResource ClockIcon}"
+                                                 EarningsAmount         ="{Binding EarningsThisDaySum}"
+                                                 Grid.Row               ="2"
+                                                 Margin                 ="23,10,10,10"
+                                                 Width                  ="Auto"
+                                                 Height                 ="111"/>
+
+                        <local:UC_EarningsAmount HeaderTitleEarnings    ="{Binding CurrentMonth}"
+                                                 HeaderImageEarnings    ="{DynamicResource CalendarIcon}"                                         
+                                                 EarningsAmount         ="{Binding EarningsThisMonthSum}"
+                                                 Grid.Row               ="2"
+                                                 Margin                 ="10, 10,10,10"
+                                                 Width="Auto"
+                                                 Height="111"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+                <StackPanel Grid.Column="1">
+                  
+                    <local:UC_IPInformation   Margin="0,10,0,0"
+                                              Height="190"
+                                              Width="280">
+
+                    </local:UC_IPInformation>
+
+                    <local:UC_Networktraffic Margin ="0,10,0,0"
+                                             Height ="228"
+                                             Width  ="280">
+
+                    </local:UC_Networktraffic>
+                    
+                    <!--Content         ="{Binding EVisitorAPIActivatedInfo}"-->
+                    <Button x:Name          ="BtnGoToeVisitorAPI"
+                            Style           ="{DynamicResource ButtonStyle}"
+                            Click           ="BtnGoToeVisitorAPI_Click"                                             
+                            FontSize        ="16"
+                            Margin          ="0,12,0,0"
+                            Height          ="55"
+                            Width           ="276"
+                    >
+                        
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Width="Auto"
+                                    Margin="-5,0,0,0">
+
+                            <MD:PackIcon Kind="Settings"
+                                         Height="20"
+                                         Width="25"/>
+
+                            <TextBlock Text="Zu API Optionen"
+                                       Margin="0,0,0,0"
+                                       Width="Auto"/>
+
+                        </StackPanel>
+                        
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
+
+    </DockPanel>
+
+</UserControl>

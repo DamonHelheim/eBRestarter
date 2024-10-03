@@ -1,0 +1,322 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <BitmapImage x:Key="UserIcon"           UriSource="\Resources\Images\Icons\LightTheme\user_light_theme.png"/>
+    <BitmapImage x:Key="ClockRotateIcon"    UriSource="\Resources\Images\Icons\LightTheme\fa_clock-rotate-left_light_theme.png"/>
+    <BitmapImage x:Key="GearIcon"           UriSource="\Resources\Images\Icons\LightTheme\fa_whmcs_light_theme.png"/>
+    <BitmapImage x:Key="GearIcon_2"         UriSource="\Resources\Images\Icons\LightTheme\fa_gears_light_theme_2.png"/>
+    <BitmapImage x:Key="CirclePlusIcon"     UriSource="\Resources\Images\Icons\LightTheme\fa_circle-plus_light_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon"          UriSource="\Resources\Images\Icons\LightTheme\fa_globe_light_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon2"         UriSource="\Resources\Images\Icons\LightTheme\circle_with_globe_light_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon3"         UriSource="\Resources\Images\Icons\LightTheme\fa_globe_2_light_theme.png"/>
+    <BitmapImage x:Key="DashbordIcon"       UriSource="\Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme_2.png"/>
+    <BitmapImage x:Key="AppIcon"            UriSource="\Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme.png"/>
+    <BitmapImage x:Key="OptionIcon"         UriSource="\Resources\Images\Icons\LightTheme\fa_list-ul_light_theme_2.png"/>
+    <BitmapImage x:Key="InfocenterIcon"     UriSource="\Resources\Images\Icons\LightTheme\fa_servicestack_light_theme_2.png"/>
+    <BitmapImage x:Key="DownloadIcon"       UriSource="\Resources\Images\Icons\LightTheme\download_light_theme.png"/>
+    <BitmapImage x:Key="NetworkCardIcon"    UriSource="\Resources\Images\Icons\LightTheme\network-interface-card_light_theme.png"/>
+    <BitmapImage x:Key="AddFileIcon"        UriSource="\Resources\Images\Icons\LightTheme\note_light_theme.png"/>
+    <BitmapImage x:Key="AddFileIcon_2"      UriSource="\Resources\Images\Icons\LightTheme\add_document_light_theme.png"/>
+    <BitmapImage x:Key="CleaningBrushIcon"  UriSource="\Resources\Images\Icons\LightTheme\data-cleaning_light_theme.png"/>
+    <BitmapImage x:Key="SendDataIcon"       UriSource="\Resources\Images\Icons\LightTheme\send-data-light_theme.png"/>
+    <BitmapImage x:Key="StatusIcon"         UriSource="\Resources\Images\Icons\LightTheme\status_light_theme.png"/>
+    <BitmapImage x:Key="UserIcon2"          UriSource="\Resources\Images\Icons\LightTheme\User_2_light_theme.png"/>
+
+    <BitmapImage x:Key="CalendarIcon"          UriSource="\Resources\Images\Icons\LightTheme\calendar_light_theme.png"/>
+    <BitmapImage x:Key="ClockIcon"             UriSource="\Resources\Images\Icons\LightTheme\clock_light_theme.png"/>
+    <BitmapImage x:Key="IPAddressIcon"             UriSource="\Resources\Images\Icons\LightTheme\ip-address_light_theme.png"/>
+
+    <BitmapImage x:Key="WindowsIcon"             UriSource="\Resources\Images\Icons\LightTheme\windows_light_theme.png"/>
+    <BitmapImage x:Key="WorkstationIcon"             UriSource="\Resources\Images\Icons\LightTheme\workstation_light_theme.png"/>
+    <BitmapImage x:Key="MaintenanceIcon"             UriSource="\Resources\Images\Icons\LightTheme\maintenance_light_theme.png"/>
+
+    <BitmapImage x:Key="AppIconMainMenuIcon"            UriSource="\Resources\Images\Icons\LightTheme\fa_arrows-rotate_light_theme.png"/>
+    <BitmapImage x:Key="DashbordIconMainMenuIcon"       UriSource="\Resources\Images\Icons\LightTheme\fa_flatscreen_light_theme.png"/>
+    <BitmapImage x:Key="GearIconMainMenuIcon"           UriSource="\Resources\Images\Icons\LightTheme\fa_gears_light_theme.png"/>
+    <BitmapImage x:Key="OptionMainIconMainMenuIcon"     UriSource="\Resources\Images\Icons\LightTheme\fa_list-ul_light_theme.png"/>
+    <BitmapImage x:Key="InfocenterMainMenuIcon"         UriSource="\Resources\Images\Icons\LightTheme\servicestack_light_theme.png"/>
+
+    <SolidColorBrush x:Key="AddeVisitorAddOnHeader" Color="#FF0762A8"/>
+
+    <!--SolidColorBrush-->
+    <SolidColorBrush x:Key="AppColorBlue"      Color="#FF0B4F80"/>
+    <SolidColorBrush x:Key="AppColorCyanHover" Color="#FF89F0F3"/>
+    <SolidColorBrush x:Key="HeaderColor_2" Color="#e3e1e1"/>
+
+    <!--Color-->
+    <Color x:Key="AppCyanColor">#FF038F9E</Color>
+    <Color x:Key="AppCyanHoverColor">#FF89F0F3</Color>
+    <Color x:Key="AppWhiteColor">#FFFDFDFD</Color>
+
+    <SolidColorBrush x:Key = "FontColor_1" Color = "Black"/>
+    <SolidColorBrush x:Key = "FontColor_2" Color = "White"/>
+    <SolidColorBrush x:Key = "FontColor_3" Color = "White"/>
+    <SolidColorBrush x:Key = "FontColor_4" Color = "White"/>
+
+    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "#DCDCDC"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor_2" Color = "White"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor_3" Color = "White"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_1" Color = "White"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_2" Color = "#DCDCDC"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#DCDCDC"/>
+
+    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#757575"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#38C6FC"/>
+
+    <SolidColorBrush x:Key = "MenuHeaderBackgroundColor" Color = "White"/>
+    <SolidColorBrush x:Key = "ButtonBackgroundColor" Color = "#D4D4D4"/>
+    <SolidColorBrush x:Key = "TextBoxBackgroundColor" Color = "White"/>
+    <SolidColorBrush x:Key = "TextBoxBottumBorderBrushBackgroundColor" Color = "Black"/>
+    
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOff" Color="Transparent" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOffPointerOver" Color="Transparent" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOffPressed" Color="#666666" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.StrokeOff" Color="#333333" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.StrokeOffPointerOver" Color="Black" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOff" Color="#333333" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOffPointerOver" Color="Black" />
+    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOnPressed" Color="Black" />
+
+
+    <SolidColorBrush x:Key="MaterialDesignCheckBoxOff" Color="Black"/>
+
+    <Style TargetType="StackPanel" x:Key="StackPanelColorStandardThemeSideMenu">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop   Color="#FF6197FF" Offset="1"/>
+                    <GradientStop    Color="#FF0B4F80"  Offset="0"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type TabItem}" x:Key="TabItemStyle">
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Label x:Name="TabItemHeaderLabel" Foreground="Gray" Content="{Binding}" />
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}" Value="True">
+                            <Setter TargetName="TabItemHeaderLabel" Property="Foreground" Value="#00BCD4"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}" Value="false">
+                            <Setter TargetName="TabItemHeaderLabel" Property="Foreground" Value="Black"/>
+
+                        </DataTrigger>
+
+                    </DataTemplate.Triggers>
+
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Border x:Name="Chrome" BorderBrush="#00BCD4" Background="Transparent">
+
+                        <ContentPresenter ContentSource="Header"
+                                                          Margin="0,0,0,0"
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Selector.IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderThickness" Value="0,0,0,2" />
+                        </Trigger>
+                        <Trigger Property="Selector.IsSelected" Value="False">
+                            <Setter TargetName="Chrome" Property="BorderThickness" Value="0,0,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MainMenuButtons" TargetType="Button" BasedOn="{StaticResource MaterialDesignPaperButton}">
+
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--Button-->
+    <Style x:Key="ButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#D4D4D4"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#BEBEBE"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <Style x:Key="ButtonBlue" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#1598C9"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#1eb1e8"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <Style x:Key="ButtonSupport" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#1598C9"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#1eb1e8"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--DownloadButton-->
+    <Style x:Key="DownloadBrowserToggleButtonRed" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#BA224D"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#9e2044"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--Start timer toggle button-->
+    <Style x:Key="StartTimerButtonMainMenuGreen" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#FF51E898"/>
+        <Setter Property="Foreground" Value="#DD000000"/>
+        <Setter Property="BorderBrush" Value="#FF68FFC1"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+    </Style>
+
+
+    <Style x:Key="StartTimerButtonMainMenuRed" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#B34849"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#B34849"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+    </Style>
+
+    <!--Choose Browser Button-->
+    <Style x:Key="ChooseBrowserButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#38b5b3"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#2cd4b2"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--DownloadButton Browser-->
+    <Style x:Key="DownloadBrowserToggleButton" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignFlatDarkBgButton}">
+
+        <Setter Property="Background" Value="#0681ba"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#0f83d1"/>
+            </Trigger>
+
+        </Style.Triggers>
+
+    </Style>
+
+    <!--<SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#757575"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#38C6FC"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#3A485C"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_6" Color = "#045B93"/>-->
+
+    <!--<SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#757575"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#38C6FC"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#3A485C"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_6" Color = "#045B93"/>-->
+
+</ResourceDictionary>

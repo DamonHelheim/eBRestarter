@@ -1,0 +1,117 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.AbouteBRestarter"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:eBRestarter.Views.Windows"
+                xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+                mc:Ignorable="d"
+                Height="800"
+                Width="580"
+                ResizeMode="NoResize"
+                WindowStartupLocation="CenterScreen"
+                WindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+                Background="{DynamicResource MenuBackgroundColor_2}">
+
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        
+
+    <StackPanel>
+
+        <TextBlock Text             ="Version"
+                   TextAlignment    ="Center"
+                   FontSize         ="16"
+                   FontWeight       ="Bold"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        
+        <TextBlock x:Name           ="tb_version_info"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        
+        <TextBlock/>
+
+            <TextBlock Text             ="Credits"
+                       TextAlignment    ="Center"
+                       FontSize         ="16"
+                       FontWeight       ="Bold"
+                       Foreground       ="{DynamicResource FontColor_1}"
+                       Margin="0,10,0,10"/>
+
+            <TextBlock Text             ="Projectmanagement"
+                       TextAlignment    ="Center"
+                       FontSize         ="16"
+                       FontWeight       ="Bold"
+                       Foreground       ="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text             ="Jumperbillijumper"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+        
+        <TextBlock Text             ="Damon Helheim"
+                   TextAlignment   ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        <TextBlock/>
+
+        <TextBlock Text             ="Frontend development"
+                   TextAlignment    ="Center"
+                   FontSize         ="16"
+                   FontWeight       ="Bold"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        
+        <TextBlock Text             ="Damon Helheim"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        
+        <TextBlock/>
+        
+        <TextBlock Text             ="Backend development"
+                   TextAlignment    ="Center"
+                   FontSize         ="16"
+                   FontWeight       ="Bold"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text             ="Damon Helheim"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+        <TextBlock/>
+        
+        <TextBlock Text             ="Quality assurance"
+                   TextAlignment    ="Center"
+                   FontSize         ="16"
+                   FontWeight       ="Bold"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text             ="Jumperbillijumper"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+
+        <TextBlock Text             ="Damon Helheim"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text             ="touchedthecode"
+                   TextAlignment    ="Center"
+                   Foreground       ="{DynamicResource FontColor_1}"/>
+
+        
+        
+            <TextBlock Text             ="Icons"
+                       TextAlignment    ="Center"
+                       Margin           ="10"
+                       FontSize         ="16"
+                       FontWeight       ="Bold"
+                       Foreground       ="{DynamicResource FontColor_1}"/>
+
+            <StackPanel x:Name="SP_Icon_Container" Margin="0,10,0,0"/>
+
+        </StackPanel>
+
+    </ScrollViewer>
+
+</MW:MetroWindow>

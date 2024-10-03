@@ -1,0 +1,157 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.ActivateAPIAccess"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:eBRestarter.Views.Windows"
+                xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+                xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+                d:DataContext="{d:DesignInstance Type=VM:ActivateAPIAccessViewModel}"
+                mc:Ignorable="d"
+                Title=""
+                WindowStartupLocation="CenterScreen"
+                SaveWindowPosition="False"                       
+                WindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+                Background="{DynamicResource MenuBackgroundColor_2}"
+                ResizeMode="NoResize"
+                Height="450"
+                Width="560"
+                Closed="MetroWindow_Closed">
+    
+    <StackPanel x:Name      ="SP_Enter_api_access_background"                
+                Orientation ="Vertical">
+
+        <StackPanel x:Name      ="SP_head_api_access"
+                    Background  ="{DynamicResource HeaderColor_2}"
+                    Orientation ="Horizontal"
+                    Height      ="62">
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="\Resources\Images\Icons\Intersection\fa_keyaccess.png"
+                   Margin                           ="20, 0, 0, 0"
+                   Height                           ="45"
+                   Width                            ="45"/>
+
+            <TextBlock x:Name       ="tbl_enter_access_data_here"
+                       Foreground   ="{DynamicResource FontColor_1}"
+                       Margin       ="15, 0, 0, 0"
+                       Text         ="Eingabe der API Zugangsdaten für eBesucher"
+                       Height       ="24"
+                       FontSize     ="18"/>
+        </StackPanel>
+
+        <TextBlock x:Name               ="tbl_username_api_access"
+                   Foreground           ="{DynamicResource FontColor_1}"
+                   HorizontalAlignment  ="Left"
+                   Margin               ="20,20,0,0"
+                   Text                 ="Nutzername:"
+                   FontSize             ="18"
+                   Width                ="115"/>
+
+        <TextBox x:Name                 ="tb_UserName" 
+                 Foreground             ="{DynamicResource FontColor_1}"
+                 Margin                 ="20,10,0,0"
+                 Canvas.Left            ="11" 
+                 TextWrapping           ="Wrap" 
+                 Text                   ="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                 Canvas.Top             ="72" 
+                 Width                  ="510"
+                 Height                 ="30"
+                 FontSize               ="22"
+                 FontWeight             ="Medium"
+                 FontFamily             ="Segoe UI"                           
+                 CaretBrush             ="LightGray"
+                 BorderBrush            ="DarkGray"
+                 BorderThickness        ="0,0,0,2"
+                 Padding                ="40,0,0,0"
+                 HorizontalAlignment    ="Left">
+
+            <TextBox.Background>
+
+                <ImageBrush RenderOptions.BitmapScalingMode ="HighQuality"
+                            ImageSource                     ="\Resources\Images\Icons\Intersection\user.png"  
+                            Stretch                         ="Uniform" 
+                            AlignmentX                      ="Left"/>
+
+            </TextBox.Background>
+
+        </TextBox>
+
+        <!-- Error message for the user name -->
+
+        <TextBlock x:Name               ="tbl_api_key"
+                   Foreground           ="{DynamicResource FontColor_1}"
+                   HorizontalAlignment  ="Left"
+                   Margin               ="20,25,0,0"
+                   Text                 ="API Schlüssel:"
+                   FontSize             ="18"/>
+
+        <TextBox x:Name              ="tb_APIKey"
+                 Foreground          ="{DynamicResource FontColor_1}"
+                 Margin              ="20,10,0,10"
+                 Canvas.Left         ="246" 
+                 TextWrapping        ="Wrap" 
+                 Text                ="{Binding Apikey, UpdateSourceTrigger=PropertyChanged}"  
+                 Canvas.Top          ="72" 
+                 Width               ="514"
+                 Height              ="30"
+                 FontSize            ="22"
+                 FontWeight          ="Medium"
+                 FontFamily          ="Segoe UI"                           
+                 CaretBrush          ="LightGray"
+                 BorderBrush         ="DarkGray"
+                 BorderThickness     ="0,0,0,2"
+                 Padding             ="40,0,0,0" 
+                 HorizontalAlignment ="Left">
+
+            <TextBox.Background>
+                
+                <ImageBrush RenderOptions.BitmapScalingMode ="HighQuality"
+                            ImageSource                     ="\Resources\Images\Icons\Intersection\key.png"
+                            Stretch                         ="Uniform"
+                            AlignmentX                      ="Left"/>
+
+            </TextBox.Background>
+
+        </TextBox>
+
+        <!-- Error message for the user name -->
+
+        <Button x:Name              ="BtnActivateAPIData"
+                Style               ="{DynamicResource ButtonBlue}"
+                Command             ="{Binding SubmitCommand}"
+                Margin              ="20,30,0,0"
+                FontSize            ="18"
+                Content             ="Aktivieren"
+                Width               ="515"
+                Height              ="42"
+                HorizontalAlignment ="Left"
+                Canvas.Top          ="114"
+                Canvas.Left         ="10"
+         />
+        
+        <!--Foreground                  ="{DynamicResource FontColor_1}"-->
+        <TextBlock  x:Name              ="tbl_CheckCredentialsInfo"
+                    Foreground          ="{Binding ForegroundColorAccessSuccess}"
+                    Margin              ="10,15,0,0"
+                    TextWrapping        ="Wrap"
+                    HorizontalAlignment ="Center"
+                    Text                ="{Binding RegistrationSuccessfulInfo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"                 
+                    FontSize            ="18"
+                    Visibility          ="{Binding VisibillityText}"/>
+
+        <MW:MetroProgressBar     x:Name              ="pbCheckAPIData"
+                                 Margin              ="10,20,0,0"
+                                 IsIndeterminate     ="True"
+                                 HorizontalAlignment ="Center"
+                                 Height              ="28"
+                                 Width               ="490"
+                                 Foreground          ="#FF31B28C"
+                                 Visibility          ="{Binding VisibillityProgressBar}"/>
+
+    </StackPanel>
+    
+</MW:MetroWindow>

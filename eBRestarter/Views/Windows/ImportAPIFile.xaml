@@ -1,0 +1,162 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.ImportAPIFile"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:eBRestarter.Views.Windows"
+                xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+                xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+                d:DataContext="{d:DesignInstance Type=VM:ActivateAPIAccessViewModel}"
+                mc:Ignorable="d"
+                Title=""
+                WindowStartupLocation="CenterScreen"
+                SaveWindowPosition="False"
+                WindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+                Background="{DynamicResource MenuBackgroundColor_2}"
+                ResizeMode="NoResize"
+                Height="564"
+                Width="560"
+                Closed="MetroWindow_Closed">
+
+    <StackPanel x:Name      ="SP_Import_api_access_background"
+                Orientation ="Vertical">
+
+        <StackPanel x:Name      ="SP_Head_api_access_import_file"                   
+                    Orientation ="Horizontal"
+                    Height      ="62">
+
+            <Image  RenderOptions.BitmapScalingMode ="HighQuality"
+                    Margin                          ="20, 0, 0, 0"
+                    Source                          ="{DynamicResource AddFileIcon_2}"
+                    Height                          ="40"
+                    Width                           ="40"/>
+
+            <TextBlock x:Name       ="tbl_import_api_access"
+                       Foreground   ="{DynamicResource FontColor_1}"
+                       Margin       ="15, 0, 0, 0"
+                       Text         ="API Zugang aus Datei importieren"
+                       Height       ="25"
+                       FontSize     ="18"/>
+
+        </StackPanel>
+
+        <Button x:Name              ="BtnImportLicenseData"
+                Style               ="{DynamicResource ButtonBlue}"
+                Margin              ="20,20,0,0"
+                FontSize            ="16"
+                Content             ="Durchsuchen"
+                Width               ="516"
+                Height              ="42"
+                HorizontalAlignment ="Left"
+                Click               ="BtnImportLicenseData_Click"/>
+
+        <TextBlock x:Name               ="tbl_api_import_or"
+                   Foreground           ="{DynamicResource FontColor_1}"
+                   Margin               ="20,15,0,0"
+                   Text                 ="oder"
+                   HorizontalAlignment  ="Left"
+                   TextAlignment        ="Center"
+                   FontSize             ="16"
+                   Width                ="513"
+                   FontWeight           ="Bold"/>
+
+        <Border HorizontalAlignment ="Left"
+                Margin              ="20,15,0,0"
+                CornerRadius        ="2"
+                BorderBrush         ="#dce0e0"
+                BorderThickness     ="2"
+                Width               ="515">
+
+            <StackPanel x:Name              ="FileDropStackPanel"
+                        Orientation         ="Vertical"
+                        HorizontalAlignment ="Left"
+                        AllowDrop           ="True"
+                        Height              ="125"
+                        Width               ="515"
+                        Drop                ="FileDropStackPanel_Drop">
+
+                <TextBlock x:Name   ="tbl_Picture"
+                           FontSize ="16"
+                           Width    ="515"
+                           Height   ="63">
+                    
+                    <Image x:Name                           ="im_dataFile"
+                           RenderOptions.BitmapScalingMode  ="HighQuality"
+                           Source                           ="{DynamicResource AddFileIcon}"
+                           Margin                           ="230, 10, 0, 0"
+                           HorizontalAlignment              ="Center"                         
+                           Height                           ="49"
+                           Width                            ="46"/>
+                    
+                </TextBlock>
+
+                <TextBlock x:Name               ="tbl_FileName"
+                           Foreground           ="{DynamicResource FontColor_1}"
+                           Padding              ="0, 20, 0, 0"
+                           HorizontalAlignment  ="Center"
+                           TextAlignment        ="Center"
+                           Text                 ="Ziehe die Datei einfach per Drag und Drop in dieses Feld hier."
+                           FontSize             ="16"
+                           Width                ="515"
+                           Height               ="62"/>
+
+            </StackPanel>
+
+        </Border>
+        
+        <TextBlock x:Name               ="tbl_data_path_api_file"
+                   Foreground           ="{DynamicResource FontColor_1}"
+                   HorizontalAlignment  ="Left"
+                   Margin               ="20,15,0,0"
+                   Text                 ="Dateipfad der API Datei"
+                   Width                ="504"
+                   FontSize             ="16"/>
+
+        <TextBox x:Name              ="tb_filePath"
+                 Foreground          ="{DynamicResource FontColor_1}"
+                 BorderBrush         ="{DynamicResource FontColor_1}"
+                 IsReadOnly          ="true"
+                 Text                ="{Binding FilePathImport, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                 FontSize            ="16"
+                 HorizontalAlignment ="Left"
+                 Margin              ="20,15,0,0"
+                 Width               ="515"
+                 Height              ="30"/>
+
+        <Button x:Name              ="BtnAPIFileImport"
+                Style               ="{DynamicResource ButtonStyle}"
+                Command             ="{Binding CanSubmitImportCommand}"
+                CommandParameter    ="{Binding ElementName=tb_filePath, Path=Text}"
+                Margin              ="20,15,0,0"
+                FontSize            ="18"
+                Content             ="Importieren"
+                Width               ="515"
+                Height              ="42"
+                HorizontalAlignment ="Left"
+                Canvas.Top          ="114"
+                Canvas.Left         ="10"/>
+
+        <TextBlock x:Name               ="tbl_CheckCredentialsInfo"
+                   Foreground           ="{Binding ForegroundColorAccessSuccess}"
+                   Margin               ="10,15,0,0"
+                   HorizontalAlignment  ="Center"
+                   Text                 ="{Binding RegistrationSuccessfulInfo}"
+                   TextWrapping         ="Wrap"
+                   FontSize             ="18"
+                   Visibility           ="{Binding VisibillityText}"/>
+
+        <MW:MetroProgressBar x:Name              ="pbCheckAPIData"
+                             Margin              ="20,20,0,0"
+                             IsIndeterminate     ="True"
+                             HorizontalAlignment ="Left"
+                             Height              ="5"
+                             Width               ="500"
+                             Visibility          ="{Binding VisibillityProgressBar}"
+                             Foreground          ="#FF0C8DB3"/>
+
+    </StackPanel>
+    
+</MW:MetroWindow>

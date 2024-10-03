@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_MainSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             xmlns:uc="clr-namespace:eBRestarter.Views.UserControls"
+             mc:Ignorable="d" 
+             Height="Auto"
+             Width="Auto">
+
+    <DockPanel x:Name="DPMainProperties">
+        
+        <StackPanel     DockPanel.Dock  ="Top"
+                        Background      ="{DynamicResource MenuBackgroundColor_3}"
+                        Orientation     ="Horizontal"                 
+                        Margin          ="0 0 0 0"
+                        Height          ="35"
+                        Width           ="auto">
+
+            <Image x:Name                           ="im_MainWindowIconTitle"
+                   RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="{DynamicResource GearIcon_2}"
+                   Height                           ="30"
+                   Width                            ="41" 
+                   Canvas.Left                      ="12"
+                   Canvas.Top                       ="9"
+                   Margin                           ="10 0 0 5"/>
+
+            <TextBlock x:Name            ="tbl_MainWindowTitle"
+                       Foreground        ="{DynamicResource FontColor_1}"
+                       Canvas.Left       ="59"
+                       TextWrapping      ="Wrap"
+                       Text              ="Einstellungen"
+                       Canvas.Top        ="10"
+                       VerticalAlignment ="Center"
+                       FontSize          ="20"
+                       Margin            ="10,-5,0,0"
+                       FontWeight        ="Bold"/>
+
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+            <WrapPanel DockPanel.Dock       ="Left"
+                       HorizontalAlignment  ="Left">
+
+                <uc:UC_eVisitorUsername            Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                <uc:UC_RestartAndRuntimeOptions    Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                <uc:UC_AutomatedTasks              Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                <uc:UC_AdditionalOptions           Width="320" Height="220" Margin ="25, 20, 0, 0"/>
+
+            </WrapPanel>
+
+        </ScrollViewer>
+
+        <ScrollViewer VerticalScrollBarVisibility   ="Auto"
+                      HorizontalScrollBarVisibility ="Auto"
+                      Width="320">
+
+            <StackPanel DockPanel.Dock="Right">
+
+                <uc:UC_InstalledBrowsers Width="265" Height="Auto" Margin ="20, 20, 20, 0" />
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </DockPanel>
+
+</UserControl>

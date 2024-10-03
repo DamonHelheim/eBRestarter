@@ -1,0 +1,138 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_Networktraffic"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             mc:Ignorable="d"
+             Width="280"
+             Height="137"
+             x:Name="UC_Networktraffics">
+
+    <Border x:Name          ="border_networktraffic_background"
+            BorderThickness ="1"
+            Background      ="{DynamicResource DashletBackgroundColor_2}"
+            CornerRadius    ="2"
+            Padding         ="0">
+    
+    <StackPanel>
+
+        <StackPanel Margin="0,0,0,0"
+                    Height="46"
+                    Orientation="Horizontal">
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="/Resources/Images/Icons/Intersection/globe-grid.png"
+                   x:Name                           ="im_Networktitle_Icon"
+                   Height                           ="32"
+                   Width                            ="32"
+                   HorizontalAlignment              ="Center"
+                   VerticalAlignment                ="Center"
+                   Margin="5,0,0,0"/>
+
+            <TextBlock x:Name            ="tbl_Networktraffic_title"
+                       Foreground        ="{DynamicResource FontColor_1}"
+                       Canvas.Left       ="48"
+                       TextWrapping      ="Wrap"
+                       Text              ="Netzwerktraffic"
+                       FontSize          ="20"
+                       VerticalAlignment ="Center"
+                       Margin="5,0,0,0"/>
+
+            <!--Height                ="{Binding ElementName=UC_Networktraffics, Path=ActualHeight}"-->
+
+        </StackPanel>
+
+        <Grid 
+                    Height                ="180"
+                    Width                 ="280"
+                    HorizontalAlignment   ="Center">
+
+            <ScrollViewer VerticalScrollBarVisibility   ="Auto"
+                          HorizontalScrollBarVisibility ="Auto"
+                          Margin="10,0,0,0">
+
+                <ItemsControl Name="icNetworkCardsList">
+
+                    <ItemsControl.ItemTemplate>
+
+                        <DataTemplate>
+
+                            <Grid Margin="0,0,0,5">
+
+                                <Grid.RowDefinitions>
+
+                                    <RowDefinition Height="33*"/>
+                                    <RowDefinition Height="33*"/>
+                                    <RowDefinition Height="33*"/>
+
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row    ="0"
+                                            Orientation ="Horizontal">
+
+                                    <Image  Source                          ="{DynamicResource NetworkCardIcon}"
+                                            RenderOptions.BitmapScalingMode ="HighQuality"
+                                            Width                           ="23"
+                                            Height                          ="23"
+                                            Margin                          ="5,0,0,0"/>
+
+                                    <TextBlock  Name        ="tbl_AdapterName"
+                                                Foreground  ="{DynamicResource FontColor_1}"
+                                                Text        ="{Binding AdapterName}"                                              
+                                                Margin      ="5,0,0,0"
+                                                FontSize    ="15"/>
+
+                                </StackPanel>
+
+                                <StackPanel Grid.Row    ="1"
+                                            Orientation ="Horizontal">
+
+                                    <Image  Source                          ="{DynamicResource DownloadIcon}"
+                                            RenderOptions.BitmapScalingMode ="HighQuality"
+                                            Width                           ="23"
+                                            Height                          ="23"
+                                            Margin                          ="5,0,0,0"/>
+
+                                    <TextBlock x:Name       ="tbl_ReceivedData"
+                                               Foreground   ="{DynamicResource FontColor_1}"
+                                               Text         ="{Binding ReceivedData}"
+                                               Margin       ="5,0,0,0"
+                                               FontSize     ="15"/>
+                                    
+                                </StackPanel>
+
+                                <StackPanel Grid.Row        ="2"
+                                            Orientation     ="Horizontal">
+
+                                    <Image  Source                          ="{DynamicResource SendDataIcon}"
+                                            RenderOptions.BitmapScalingMode ="HighQuality"
+                                            Width                           ="23"
+                                            Height                          ="23"
+                                            Margin                          ="5,0,0,0"/>
+
+                                    <TextBlock x:Name       ="tbl_SendData"
+                                               Foreground   ="{DynamicResource FontColor_1}"
+                                               Text         ="{Binding SendData}"
+                                               Margin       ="5,0,0,0"
+                                               FontSize     ="15"/>
+
+                                </StackPanel>
+
+                            </Grid>
+
+                        </DataTemplate>
+
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
+            </ScrollViewer>
+
+        </Grid>
+
+    </StackPanel>
+        
+    </Border>
+    
+</UserControl>

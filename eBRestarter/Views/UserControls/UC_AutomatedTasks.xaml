@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_AutomatedTasks"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+             xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=VM:AutomatedTasksViewModel}"
+             d:DesignHeight="220"
+             d:DesignWidth="320">
+
+    <Border x:Name          ="Border_Automated_Task"
+            Background      ="{DynamicResource DashletBackgroundColor_1}"
+            BorderThickness ="1"
+            CornerRadius    ="2"
+            Padding         ="0">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="auto"/>
+
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row    ="0"
+                        Orientation ="Horizontal">
+
+                <Image x:Name                           ="image_automated_task"
+                       RenderOptions.BitmapScalingMode  ="HighQuality"
+                       Source                           ="{DynamicResource GearIcon}"
+                       Margin                           ="10, 10, 0, 0"
+                       Height                           ="40"
+                       Width                            ="40"/>
+
+                <TextBlock x:Name       ="tbl_Automated_Task"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10, 10, 0, 0"
+                           TextWrapping ="Wrap"
+                           Text         ="Automatisierte Aufgaben"
+                           Width        ="212"
+                           FontSize     ="18"
+                           Height       ="26"/>
+
+            </StackPanel>
+
+            <StackPanel Grid.Row    ="1"
+                        Orientation ="Vertical">
+
+                <StackPanel Orientation ="Horizontal"
+                            Height      ="36">
+
+                    <MW:ToggleSwitch x:Name          ="TSStartBrowserWithProgrammStart"
+                                     Foreground      ="{DynamicResource FontColor_1}"
+                                     IsOn            ="{Binding TSStartBrowserWithProgrammStartIsOn}"
+                                     Margin          ="10 0 0 0"
+                                     OffContent      ="Mit Programmstart, Restarter starten"
+                                     OnContent       ="Mit Programmstart, Restarter starten"
+                                     BorderBrush     ="{DynamicResource FontColor_1}"
+                                     Cursor          ="Hand"
+                                     Width           ="304"
+                                     Toggled         ="TSStartBrowserWithProgrammStart_Toggled">
+
+                    </MW:ToggleSwitch>
+
+                </StackPanel>
+
+                <StackPanel Orientation ="Horizontal">
+
+                    <MW:ToggleSwitch x:Name          ="TSCheckBrowserIsAlive"
+                                     Foreground      ="{DynamicResource FontColor_1}"
+                                     IsOn            ="{Binding TSCheckBrowserIsAliveIsOn}"
+                                     Cursor          ="Hand"
+                                     Margin          ="10 0 0 0" 
+                                     OffContent      ="Prüfe, ob Browser geschlossen wurde"
+                                     OnContent       ="Prüfe, ob Browser geschlossen wurde"
+                                     Toggled         ="TSCheckBrowserIsAlive_Toggled"
+                    />
+
+                </StackPanel>
+
+                <TextBlock x:Name       ="tbl_info_startup_boost_edge"
+                           FontSize     ="12"
+                           Margin       ="0,6,0,0"
+                           Width        ="286"
+                           Foreground   ="#FF008CD5"
+                           Text         ="Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)"
+                           TextWrapping ="Wrap"
+                           Cursor="Hand"
+                           MouseLeftButtonUp="Tbl_info_startup_boost_edge_MouseLeftButtonUp" Height="40"/>
+
+                <ComboBox x:Name            ="ComboboxDeleteBrowserCache"
+                          BorderBrush       ="{DynamicResource TextBoxBottumBorderBrushBackgroundColor}"                          
+                          Foreground        ="{DynamicResource FontColor_1}"
+                          Cursor            ="Hand"
+                          Margin            ="0, 10, 0, 0"
+                          FontSize          ="16"
+                          IsReadOnly        ="True"
+                          Width             ="294"
+                          Height            ="30"
+                          SelectedIndex     ="{Binding ComboboxSelectedIndex}"                       
+                          ItemsSource       ="{Binding ListComboBoxDeleteBrowserCache}"
+                          SelectionChanged  ="ComboboxDeleteBrowserCache_SelectionChanged">
+
+                </ComboBox>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>
