@@ -1,0 +1,248 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.AutomaticUserLogInGuidlineWindows"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:eBRestarter.Views.Windows"
+        xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+        d:DataContext="{d:DesignInstance Type=VM:AutomaticUserLogInGuidlineViewModel}"
+        mc:Ignorable="d"
+        Height="650"
+        Width="720"
+        BorderThickness="0"
+        SaveWindowPosition="False"       
+        WindowTitleBrush="{DynamicResource AppColorBlue}"
+        NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+        NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+        Background="{DynamicResource MenuBackgroundColor}"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        FontFamily="{StaticResource MaterialDesignFont}"
+        WindowState="Normal">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type CheckBox}"
+                BasedOn="{StaticResource MahApps.Styles.CheckBox}">
+            <Style.Resources>
+                <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource AccentColor}" />
+                <SolidColorBrush x:Key="Content" Color="{DynamicResource AppCyanHoverColor}"/>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+    
+    <ScrollViewer>
+
+            <StackPanel x:Name      ="stackpanel_automatic_user_login_guid_line_background">
+                
+            <StackPanel x:Name          ="stackpanel_step_one"                   
+                        Margin          ="10,10,10,0"
+                        Orientation     ="Vertical"
+                        Height          ="75">
+
+                <TextBlock  x:Name          ="tbl_step_one"
+                            Foreground      ="{DynamicResource FontColor_1}"
+                            Margin          ="10,10,0,0"
+                            TextWrapping    ="Wrap"
+                            Text            ="1. Schritt"
+                            FontSize        ="16"
+                            FontWeight      ="Bold"/>
+
+                <StackPanel Orientation="Horizontal" Margin            ="0,10,0,0">
+                    
+                    <CheckBox x:Name            ="cbxPossibilityUserAutologonGuideForWindows"
+                              Style             ="{StaticResource MahApps.Styles.CheckBox}"
+                              Command           ="{Binding ExcecuteActivateAutoLoginCommand}"
+                              CommandParameter  ="{Binding ElementName=cbxPossibilityUserAutologonGuideForWindows, Path=IsChecked}"
+                              Margin            ="10,0,0,0"
+                              FontSize          ="16"
+                              Cursor            ="Hand"
+                              MW:CheckBoxHelper.CheckGlyphForegroundChecked="Green">
+                        
+
+                    </CheckBox>
+                    
+                    <TextBlock  Foreground      ="{DynamicResource FontColor_1}"
+                                Text            ="Möglichkeit der automatischen Nutzeranmeldung bei Windows aktivieren"
+                                FontSize        ="16" Height="20"/>
+                </StackPanel>
+                
+                
+
+            </StackPanel>
+
+            <StackPanel x:Name      ="stackpanel_step_two"            
+                        Margin      ="10,10,10,0"
+                        Orientation ="Vertical"
+                        Height      ="107" Cursor="">
+
+                <TextBlock  x:Name          ="tbl_step_two"
+                            Foreground      ="{DynamicResource FontColor_1}"
+                            Margin          ="10,10,10,0"
+                            TextWrapping    ="Wrap"
+                            Text            ="2. Schritt: Menüpunkt Windows Benutzerkonten aufrufen"
+                            FontSize        ="16"
+                            FontWeight      ="Bold"/>
+            
+                <Button x:Name      ="btnAutologonGuideWindowsUserAccount"
+                        Command     ="{Binding ExcecuteUserLoginWindowCommand}" CommandParameter="{Binding ElementName=cbxPossibilityUserAutologonGuideForWindows, Path=IsChecked}"
+                        Style       ="{DynamicResource ButtonBlue}"
+                        Margin      ="10,10,10,0"
+                        Content     ="Zu den Windows Benutzerkonten"
+                        Height      ="56"
+                        FontSize    ="16"
+                />
+                
+            </StackPanel>
+
+            <StackPanel x:Name      ="stackpanel_step_three"                        
+                        Margin      ="10,10,10,0"
+                        Orientation ="Vertical"
+                        Height      ="175">
+
+                <TextBlock x:Name       ="tbl_step_three"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10,10,10,0"
+                           TextWrapping ="Wrap"
+                           Text         ="3. Schritt: jetzt der Anleitung, um die automatische Nutzeranmeldung zu aktivieren"
+                           FontSize     ="16"
+                           FontWeight   ="Bold"/>
+
+                <TextBlock x:Name       ="tbl_note_for_windows_11_users"
+                           Foreground   ="#c92a2a"
+                           Margin       ="10,10,10,0"
+                           TextWrapping ="Wrap"
+                           Text         ="Hinweis für Windows 11 Nutzer"
+                           FontSize     ="16"
+                           FontWeight   ="Bold"/>
+
+                <TextBox x:Name              ="tb_note_guide_for_windows_11_users"
+                         Foreground          ="#c92a2a"
+                         HorizontalAlignment ="Left"                        
+                         IsReadOnly          ="true"
+                         TextAlignment       ="Justify"
+                         TextWrapping        ="Wrap"
+                         Text                ="Nutzt du Windows 11 mit einem Microsoftkonto statt einem lokalen Nutzerkonto, dann musst du bei der automatischen Benutzeranmeldung das Kennwort deines Microsoftkontos eingeben, damit die automatische Anmeldung unter Windows 11 in Verbindung mit einem Microsoftkonto funktioniert."
+                         Margin              ="10,10,10,0"
+                         FontSize            ="16"
+                         Height              ="92"
+                         Width               ="647"/>
+
+            </StackPanel>
+
+            <StackPanel x:Name      ="stackpanel_step_four_and_five"                
+                        Margin      ="10,10,10,0"
+                        Orientation ="Vertical"
+                        Height      ="410">
+
+                <Grid Height="410">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+
+                        <TextBlock  x:Name          ="tbl_step_four"
+                                    Foreground      ="{DynamicResource FontColor_1}"
+                                    Margin          ="10,10,10,0"
+                                    Text            ="4. Schritt"
+                                    FontSize        ="16"
+                                    FontWeight      ="Bold"/>
+
+                        <Image HorizontalAlignment  ="Left"
+                               Source               ="\Resources\Images\AutoLogOn\Step 1.jpg"
+                               Margin               ="10,10,10,0"
+                               Height               ="350"
+                               Width                ="285"/>
+
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+
+                        <TextBlock x:Name       ="tbl_step_five"
+                                   Foreground   ="{DynamicResource FontColor_1}"
+                                   Margin       ="10,10,10,0"
+                                   Text         ="5. Schritt"
+                                   FontSize     ="16"
+                                   FontWeight   ="Bold"/>
+
+                        <Image HorizontalAlignment  ="Left"
+                               Source               ="\Resources\Images\AutoLogOn\Step 2.jpg"
+                               Margin               ="10,10,10,0"
+                               Height               ="350"
+                               Width                ="285"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </StackPanel>
+
+            <StackPanel x:Name      ="stackpanel_step_six_and_seven"                   
+                        Margin      ="10,10,10,0"
+                        Orientation ="Vertical"
+                        Height      ="410">
+
+                <Grid Height="410">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+
+                        <TextBlock x:Name           ="tbl_step_six"
+                                   Foreground       ="{DynamicResource FontColor_1}"
+                                   Margin           ="10,10,10,0"
+                                   Text             ="6. Schritt"
+                                   FontSize         ="16"
+                                   FontWeight       ="Bold"/>
+
+                        <Image HorizontalAlignment  ="Left"
+                               Source               ="\Resources\Images\AutoLogOn\Step 3.jpg"
+                               Margin               ="10,10,10,0"
+                               Height               ="350"
+                               Width                ="285"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+
+                        <TextBlock  x:Name          ="tbl_step_seven"
+                                    Foreground      ="{DynamicResource FontColor_1}"
+                                    Margin          ="10,10,10,0"
+                                    Text            ="7. Schritt"
+                                    FontSize        ="16"
+                                    FontWeight      ="Bold"/>
+
+                        <Image HorizontalAlignment  ="Left"
+                               Source               ="\Resources\Images\AutoLogOn\Step 4.jpg"
+                               Margin               ="10,10,10,0"
+                               Height               ="350"
+                               Width                ="285"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </StackPanel>
+
+            <TextBox x:Name         ="tb_note_activate_password_entry"
+                     Foreground     ="{DynamicResource FontColor_1}"
+                     Margin         ="10,10,10,10"
+                     Height         ="92"
+                     IsReadOnly     ="true"
+                     TextAlignment  ="Justify"
+                     Text           ="Möchtest du die Kennworteingabe wieder aktivieren, dann setze wieder ein Häkchen bei 'Benutzer müssen Benutzernamen und Kennwort eingeben'. Klicke anschließend auf den Button 'Übernehmen' und dann klicke auf den Button 'OK' und die automatische Benutzeranmeldung ist wieder deaktiviert."
+                     TextWrapping   ="Wrap"
+                     FontSize       ="16">
+
+            </TextBox>
+
+        </StackPanel>
+
+    </ScrollViewer>
+
+</MW:MetroWindow>

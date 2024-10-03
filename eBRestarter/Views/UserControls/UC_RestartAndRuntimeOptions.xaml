@@ -1,0 +1,244 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_RestartAndRuntimeOptions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"      
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=VM:RestartAndRuntimeOptionsViewModel}"
+             d:DesignHeight="220"
+             d:DesignWidth="320">
+
+    <UserControl.Resources>
+        <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border  BorderThickness="1" BorderBrush="Gainsboro" Background="Gainsboro" Height="5"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="#218cde"  BorderThickness="1" BorderBrush="#218cde" Height="5"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Height="20" Width="20" Fill="#086bcf"></Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="Slider"  TargetType="Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Track Grid.Row="1" x:Name="PART_Track"   >
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumb}"  />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="Horizontal_Slider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="MinHeight" Value="21" />
+                    <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Template" Value="{StaticResource Slider}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Border x:Name          ="Border_Restart_and_Runtime_Options"
+            Background      ="{DynamicResource DashletBackgroundColor_1}"
+            BorderThickness ="1"
+            CornerRadius    ="2">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="auto"/>
+
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row    ="0"
+                        Orientation ="Horizontal">
+
+                <Image x:Name                           ="image_restart_and_runtime_options"
+                       RenderOptions.BitmapScalingMode  ="HighQuality"
+                       Source                           ="{DynamicResource ClockRotateIcon}"
+                       Margin                           ="10,5,0,0"
+                       Height                           ="30"
+                       Width                            ="35"
+                />
+
+                <TextBlock x:Name       ="tbl_Restart_and_Runtime_Option"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10,5,0,0"
+                           Text         ="Neustart- und Laufzeitoptionen"
+                           FontSize     ="18"
+                           Height       ="26"
+                />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row    ="1"
+                        Orientation ="Vertical">
+
+                <TextBlock x:Name       ="Tbl_waiting_time_until_the_browser_starts"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10,10,0,0"
+                           Text         ="Wartezeit bis der Browser wieder startet"
+                           FontSize     ="16"
+                />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row            ="2"
+                        Orientation         ="Horizontal">
+
+                <Slider Name                ="SliderBrowserWaitingTimeToStart"
+                        Style               ="{StaticResource Horizontal_Slider}"
+                        Minimum             ="{Binding Browser_waiting_time_min}"
+                        Maximum             ="{Binding Browser_waiting_time_max}"
+                        Value               ="{Binding SliderBrowserWaitingTimeToStartValue}"
+                        Margin              ="10,5,15,0"                     
+                        IsSnapToTickEnabled ="true"
+                        Cursor              ="Hand"
+                        Canvas.Left         ="10"
+                        Canvas.Top          ="101"
+                        Width               ="220"                                            
+                        Height              ="22" 
+                        Foreground          ="#FF0FA7E0"
+                        BorderBrush         ="#FFFBFBFB"
+                        ValueChanged        ="SliderBrowserWaitingTimeToStart_ValueChanged"                  
+                />
+
+
+                <TextBox x:Name             ="TxtB_Browser_Waiting_Time_To_Start"
+                         Foreground         ="{DynamicResource FontColor_1}"
+                         BorderBrush        ="{DynamicResource FontColor_1}"                       
+                         TextWrapping       ="Wrap"
+                         PreviewTextInput   ="NumberValidationTextBox"
+                         KeyDown            ="TxtB_Browser_Waiting_Time_To_Start_KeyDown"
+                         LostFocus          ="TxtB_Browser_Waiting_Time_To_Start_LostFocus"
+                         Text               ="{Binding Value, ElementName=SliderBrowserWaitingTimeToStart, Mode=TwoWay, UpdateSourceTrigger=Explicit}"                         
+                         FontSize           ="16"
+                         Width              ="32"
+                         Height             ="28"
+                />
+
+                <TextBlock x:Name       ="tbl_restart_and_runtime_options_s"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Text         ="s"                         
+                           FontSize     ="18"
+                           Height       ="25"
+                />
+
+            </StackPanel>
+
+
+            <StackPanel Grid.Row    ="3"
+                        Orientation ="Horizontal">
+
+                <TextBlock x:Name       ="Tbl_set_your_browser_runtime"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10,5,0,0"
+                           Text         ="Bestimme hier deine Browserlaufzeit"
+                           FontSize     ="16"
+                           Height       ="23"
+                />
+
+            </StackPanel>
+
+
+            <StackPanel Grid.Row    ="4"
+                        Orientation ="Horizontal">
+
+                <Slider  Margin                 ="10,5,15,0"
+                         x:Name                 ="SliderBrowserRuntime"
+                         Style                  ="{StaticResource Horizontal_Slider}"
+                         Minimum                ="{Binding Browser_waiting_runtime_min}"
+                         Maximum                ="{Binding Browser_waiting_runtime_max}"
+                         Value                  ="{Binding SliderBrowserRuntimeValue}"
+                         IsSnapToTickEnabled    ="true"
+                         Cursor                 ="Hand"
+                         Canvas.Left            ="10"
+                         Canvas.Top             ="166"
+                         Width                  ="220"
+                         Foreground             ="#FF00D4BC"
+                         ValueChanged           ="SliderBrowserRuntime_ValueChanged"
+                />
+
+                <TextBox x:Name                 ="Txt_Browser_Runtime"
+                         Foreground             ="{DynamicResource FontColor_1}"
+                         BorderBrush            ="{DynamicResource FontColor_1}"
+                         PreviewTextInput       ="NumberValidationTextBox"
+                         KeyDown                ="Txt_Browser_Runtime_KeyDown"                      
+                         LostFocus              ="TxtB_Browser_Runtime_LostFocus"
+                         TextWrapping           ="Wrap"                       
+                         Text                   ="{Binding ElementName=SliderBrowserRuntime, Path=Value, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                         Canvas.Top             ="163"
+                         FontSize               ="16"
+                         Width                  ="32"
+                />
+
+                <TextBlock x:Name              ="Tbl_restart_and_runtime_options_h"
+                           Foreground          ="{DynamicResource FontColor_1}"
+                           Text                ="h"
+                           Margin              ="0,2,0,0"
+                           Grid.Row            ="2"
+                           TextWrapping        ="Wrap"
+                           VerticalAlignment   ="Top"
+                           FontSize            ="18"
+                           Height              ="20"
+                />
+
+            </StackPanel>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

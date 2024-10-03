@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_Informations"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"            
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+             xmlns:eBRestarter.Model="clr-namespace:eBRestarter.Model.Models;assembly=eBRestarter.Model"           
+             mc:Ignorable="d"
+             Height="158"
+             Width="Auto">
+
+    <Grid>
+        
+        <Border         Name                        ="uc_information_backgroundcolor"                      
+                        CornerRadius                ="5"
+                        BorderThickness             ="0"                     
+                        Width                       ="Auto"
+                        Height                      ="140"
+                        Margin                      ="0"
+                        Background                  ="{Binding BackGroundColor}">
+
+            <StackPanel Orientation         ="Vertical"
+                        Width               ="Auto"
+                        Height              ="140">
+
+                <StackPanel     Height          ="40"
+                                Orientation     ="Horizontal">
+
+                    <Image      RenderOptions.BitmapScalingMode ="HighQuality"
+                                Name                            ="uc_information_header_image"
+                                Source                          ="{Binding HeaderImage}"                               
+                                Margin                          ="10,0,0,0"
+                                Height                          ="{Binding ImageSizeHeight}"
+                                Width                           ="{Binding ImageSizeWidth}"/>
+
+                    <TextBlock  Name         ="uc_information_title"
+                                Text         ="{Binding HeaderTitle}"
+                                Foreground   ="{Binding Title_Foreground}"
+                                Margin       ="10,0,0,0"
+                                Height       ="22"
+                                FontSize     ="16"/>
+
+                </StackPanel>
+
+                <TextBlock         Name             ="tbl_cpu_name"
+                                   Text             ="{Binding InformationRow_1}" 
+                                   Foreground       ="{Binding InformationRow_Foreground}"
+                                   FontSize         ="16"
+                                   Margin           ="15,7,0,0"
+                                   TextWrapping     ="Wrap"/>
+
+                <TextBlock         Name             ="tbl_gpu_name"
+                                   Text             ="{Binding InformationRow_2}"
+                                   Foreground       ="{Binding InformationRow_Foreground}"
+                                   FontSize         ="16"
+                                   Margin           ="15,10,0,0"/>
+
+                <TextBlock         Name             ="tbl_installed_RAM"
+                                   Text             ="{Binding InformationRow_3}"
+                                   Foreground       ="{Binding InformationRow_Foreground}"
+                                   FontSize         ="16"
+                                   Margin           ="15,10,0,15"/>
+
+            </StackPanel>
+            
+        </Border>
+        
+    </Grid>
+    
+</UserControl>

@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_EarningsAmount"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="130"
+             d:DesignWidth="340">
+    
+    <Border x:Name              ="border_sum_points_todday"
+            BorderThickness     ="1"
+            Background          ="{DynamicResource DashletBackgroundColor_2}"
+            CornerRadius        ="2"
+            Padding             ="0"           
+            VerticalAlignment   ="Top">
+
+        <StackPanel Height="130"
+                    Width="340">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="30*"/>
+                    <RowDefinition Height="70*"/>
+
+                </Grid.RowDefinitions>
+
+            </Grid>
+
+            <StackPanel Grid.Row    ="0"
+                        Orientation ="Horizontal">
+
+                <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                       x:Name                           ="headerImage"
+                       Source                           ="{Binding HeaderImageEarnings}"
+                       Margin                           ="10,10,0,0"
+                       Height                           ="35"
+                       Width                            ="35"/>
+                
+                <TextBlock  x:Name       ="tbl_sum_points_daily"
+                            Foreground   ="{DynamicResource FontColor_1}"
+                            Margin       ="10,5,0,0"
+                            TextWrapping ="Wrap"
+                            Text         ="{Binding HeaderTitleEarnings}"
+                            FontSize     ="22"
+                            FontWeight   ="Normal"
+                            Height       ="30"/>
+
+            </StackPanel>
+
+            <StackPanel Grid.Row    ="1"
+                        Orientation ="Horizontal">
+
+                <TextBlock x:Name       ="tbl_EarningsDay"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Margin       ="10,20,0,0"
+                           Text         ="{Binding EarningsAmount}"
+                           FontSize     ="24"
+                           FontWeight   ="Light"/>
+
+            </StackPanel>
+
+        </StackPanel>
+
+    </Border>
+    
+</UserControl>

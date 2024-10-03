@@ -1,0 +1,145 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_InfocenterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls" 
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+             xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=VM:InfocenterViewModel}"
+             d:DesignWidth="1030"
+             Height="Auto"
+             Name="Infocenter">
+
+    <DockPanel      x:Name              ="DP_MainWindows_Top"
+                    Background          ="{DynamicResource MenuBackgroundColor_2}"                 
+                    Width               ="auto"
+                    Height              ="auto"                  
+                    SnapsToDevicePixels ="True">
+
+
+        <StackPanel     DockPanel.Dock  ="Top"
+                        Background      ="{DynamicResource MenuBackgroundColor_3}"
+                        Orientation     ="Horizontal"
+                        Margin          ="0,0,0,0"
+                        Height          ="30"
+                        Width           ="auto">
+
+            <Image     x:Name                           ="im_MainWindowIconTitle"
+                       RenderOptions.BitmapScalingMode  = "HighQuality"
+                       Source                           ="{DynamicResource InfocenterIcon}"
+                       Margin                           ="10,-7,0,0"
+                       Height                           ="30"
+                       Width                            ="30" 
+                       Canvas.Left                      ="12"
+                       Canvas.Top                       ="9"/>
+
+            <TextBlock x:Name            ="tbl_MainWindowTitle"
+                       Foreground        ="{DynamicResource FontColor_1}"
+                       Canvas.Left       ="59"
+                       TextWrapping      ="Wrap"
+                       Text              ="Infocenter"
+                       Canvas.Top        ="10"
+                       VerticalAlignment ="Center"
+                       FontSize          ="20"
+                       Margin            ="10,-5,0,0"
+                       FontWeight        ="Bold"/>
+
+        </StackPanel>
+
+        <ScrollViewer HorizontalScrollBarVisibility ="Auto"
+                      VerticalScrollBarVisibility   ="Auto">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="160"/>
+                    <RowDefinition Height="180"/>
+                    <RowDefinition Height="160"/>
+
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Column             ="0"
+                            HorizontalAlignment     ="Left"
+                            Width                   ="995"
+                            Orientation             ="Horizontal">
+
+
+                    <local:UC_Informations  HeaderTitle                 ="Hardwarespezifiktion"
+                                            Title_Foreground            ="{DynamicResource FontColor_4}"
+                                            HeaderImage                 ="{DynamicResource WorkstationIcon}"
+                                            ImageSizeHeight             ="40"
+                                            ImageSizeWidth              ="40"
+                                            BackGroundColor             ="{DynamicResource DashletBackgroundColor_4}"
+                                            InformationRow_1            ="{Binding HardwareSpecificationModel.Processor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_2            ="{Binding HardwareSpecificationModel.Graphics,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_3            ="{Binding HardwareSpecificationModel.Ram,       Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_Foreground   ="{DynamicResource FontColor_4}"
+                                            Width                       ="480"
+                                            Margin                      ="25 0 10 0"/>
+
+
+                    <local:UC_Informations  HeaderTitle                 ="Windows-Spezifikation"
+                                            Title_Foreground            ="{DynamicResource FontColor_4}"
+                                            HeaderImage                 ="{DynamicResource WindowsIcon}"
+                                            ImageSizeHeight             ="20"
+                                            ImageSizeWidth              ="20"
+                                            BackGroundColor             ="{DynamicResource DashletBackgroundColor_5}"
+                                            InformationRow_1            ="{Binding  WindowsInformationsModel.CurrentEdition,        Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_2            ="{Binding  WindowsInformationsModel.CurrentOSVersion,      Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_3            ="{Binding  WindowsInformationsModel.CurrentOSBuildVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            InformationRow_Foreground   ="{DynamicResource FontColor_4}"
+                                            Width                       ="480"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row    ="1"
+                            Orientation ="Horizontal">
+
+                    <local:UC_InformationsURL Width="970"
+                                              Margin="25 0 10 0"/>
+
+                </StackPanel>
+
+
+                <StackPanel Grid.Row                 ="2"
+                            Orientation              ="Vertical"
+                            HorizontalAlignment      ="Left"
+                            Margin                   ="25,10,0,0">
+
+                    <Button x:Name                   ="Btn_about"
+                            Style                    ="{StaticResource MaterialDesignFlatDarkBgButton}"
+                            VerticalContentAlignment ="Center"
+                            Width                    ="968"
+                            Height                   ="63"
+                            Margin                   ="0,0,0,0" Click="Btn_about_Click">
+
+                        <StackPanel Orientation         ="Horizontal"
+                                    VerticalAlignment   ="Center"
+                                    Width               ="Auto"
+                                    Margin              ="-5,0,0,0">
+
+                            <MD:PackIcon Kind   ="Info"
+                                         Height ="30"
+                                         Width  ="35"/>
+
+                            <TextBlock Text     ="Über eB Restarter"
+                                       FontSize ="16"
+                                       Margin   ="10,0,0,0"
+                                       Width    ="Auto"
+                                       Height   ="22"/>
+
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
+
+    </DockPanel>
+
+</UserControl>

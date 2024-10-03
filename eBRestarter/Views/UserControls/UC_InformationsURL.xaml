@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_InformationsURL"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+             d:DataContext="{d:DesignInstance Type=VM:InfocenterViewModel}"
+             mc:Ignorable="d"
+             Height="auto"
+             Width="auto">
+
+    <Grid>
+        
+        <Border     x:Name          ="Border_browser_downloadlinks"                     
+                    Grid.Row        ="1"
+                    CornerRadius    ="5"
+                    BorderThickness ="0"
+                    Margin          ="0,0,0,0"
+                    Width           ="Auto"
+                    Height          ="140"
+                    Background      ="#FF3A485C">
+
+            <StackPanel Width  ="Auto"
+                        Margin ="0,5,0,5">
+
+                <StackPanel Orientation="Vertical">
+
+                    <StackPanel Height      ="40"
+                                Orientation ="Horizontal"
+                                Background  ="#FF3A485C">
+
+                        <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                               Source                           ="{DynamicResource GlobeIcon3}"
+                               Margin                           ="10,0,0,0"
+                               Height                           ="25"
+                               Width                            ="25"/>
+
+                        <TextBlock Text="Browser Downloadverlinkungen"
+                                   Height="25"
+                                   FontSize="16"
+                                   Margin="10,0,0,0"
+                                   Foreground="{DynamicResource FontColor_4}"/>
+
+                    </StackPanel>
+
+                    <TextBlock x:Name   ="tbl_link_1"
+                               FontSize ="16"
+                               Margin   ="15,7,0,0">                               
+                                
+                                <Hyperlink  Command             ="{Binding OpenSupportWebsiteCommand}"
+                                            CommandParameter    ="https://www.google.com/chrome/"
+                                            Foreground          ="{DynamicResource FontColor_4}">
+                                    
+                                    <TextBlock Text="Chrome Download"/>
+                                    
+                                    </Hyperlink>
+
+                            </TextBlock>
+
+                    <TextBlock x:Name   ="tbl_link_2"
+                               FontSize ="16"
+                               Margin   ="15,7,0,0">                               
+                                
+                                <Hyperlink  Command             ="{Binding OpenSupportWebsiteCommand}" 
+                                            CommandParameter    ="https://www.mozilla.org/de/firefox/new/"
+                                            Foreground          ="{DynamicResource FontColor_4}" >
+                                    
+                                    <TextBlock Text="Firefox Download"/>
+                                    
+                                    </Hyperlink>
+
+                            </TextBlock>
+
+                    <TextBlock x:Name   ="tbl_link_3"
+                               FontSize ="16"
+                               Margin   ="15,10,0,0">                               
+                                
+                                <Hyperlink  Command             ="{Binding OpenSupportWebsiteCommand}"
+                                            CommandParameter    ="https://www.microsoft.com/de-de/edge"
+                                            Foreground          ="{DynamicResource FontColor_4}" >
+                                    
+                                    <TextBlock Text="Edge Download"/>
+                                    
+                                    </Hyperlink>
+
+                            </TextBlock>
+
+                </StackPanel>
+
+            </StackPanel>
+
+        </Border>
+        
+    </Grid>
+
+</UserControl>

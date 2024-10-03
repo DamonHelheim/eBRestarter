@@ -1,0 +1,220 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.InstalledeVisitorAddOnWindows"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:eBRestarter.Views.Windows"
+                xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+                xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+                d:DataContext="{d:DesignInstance Type=VM:InstalledeVisitorAddOnViewModel}"
+                SnapsToDevicePixels="True"
+                UseLayoutRounding="True"
+                mc:Ignorable="d"
+                FontFamily="{StaticResource MaterialDesignFont}"
+                WindowStartupLocation="CenterScreen"        
+                SaveWindowPosition="False"                       
+                WindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+                Background="{DynamicResource MenuBackgroundColor}"
+                ResizeMode="NoResize"
+                Title="Ebesucher Add-on installieren"        
+                Height="386"
+                Width="800">
+    
+    <Grid x:Name="Grid_Browser_Add_Ons">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="43*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name      ="SP_eVisotor_Add_Ons_Head"
+                    Background  ="{DynamicResource HeaderColor_2}"
+                    Grid.Row    ="0"/>
+
+        <TextBlock     x:Name       ="tbl_choose_browser_to_install_browser_add_on"
+                       Foreground   ="{DynamicResource FontColor_1}"
+                       Margin       ="20,8,0,0"
+                       TextWrapping ="Wrap"
+                       Text         ="Wähle einen Browser aus, um das Add-on zu installieren oder zu deinstallieren"
+                       FontSize     ="16"/>
+
+
+        <Canvas x:Name      ="Canvas_Background_eVisitor_add_ons"
+                Grid.Row    ="1"
+                Margin      ="0,5,0,0">
+
+            <TextBlock x:Name               ="tbl_ChromeIsInstalled"
+                       Canvas.Left          ="20"
+                       TextWrapping         ="Wrap"
+                       Text                 ="{Binding Tbl_ChromeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Top           ="18"
+                       FontSize             ="16"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"/>
+
+            <TextBlock x:Name               ="tbl_FirefoxIsInstalled"
+                       Text                 ="{Binding Tbl_FirefoxIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Left          ="20"
+                       TextWrapping         ="Wrap"                      
+                       Canvas.Top           ="110"
+                       FontSize             ="16"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"/>
+
+            <TextBlock  x:Name               ="tbl_EdgeIsInstalled"
+                        Text                 ="{Binding Tbl_EdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Foreground           ="{DynamicResource FontColor_1}"
+                        Canvas.Left          ="21"
+                        TextWrapping         ="Wrap"
+                        Canvas.Top           ="200"
+                        FontSize             ="16"
+                        HorizontalAlignment  ="Center"
+                        VerticalAlignment    ="Top"/>
+
+            <TextBlock x:Name               ="tbl_AddOnChromeIsInstalled"
+                       Text                 ="{Binding Tbl_AddOnChromeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Left          ="446"
+                       TextWrapping         ="Wrap"                      
+                       Canvas.Top           ="56"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"
+                       FontSize             ="16"/>
+
+            <TextBlock x:Name               ="tbl_AddOnFirefoxIsInstalled"
+                       Text                 ="{Binding Tbl_AddOnFirefoxIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Left          ="446"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="150"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"
+                       FontSize             ="16"/>
+
+            <TextBlock x:Name               ="tbl_AddOnEdgeIsInstalled"
+                       Text                 ="{Binding Tbl_AddOnEdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Left          ="447"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="240"
+                       FontSize             ="16"
+                       HorizontalAlignment  ="Center"
+                       VerticalAlignment    ="Top"/>
+
+            <TextBlock x:Name               ="tbl_ChromeInstallInfoIcon"
+                       Text                 ="{Binding Tbl_ChromeInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Canvas.Left          ="637"
+                       TextWrapping         ="Wrap"                      
+                       Canvas.Top           ="46"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"
+                       FontSize             ="28"
+                       FontWeight           ="Bold"
+                       Foreground           ="{Binding Tbl_ChromeInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       />
+
+            <TextBlock x:Name               ="tbl_FirefoxInstallInfoIcon"
+                       Text                 ="{Binding Tbl_FirefoxInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Canvas.Left          ="638"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="139"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Center"
+                       FontSize             ="28"
+                       FontWeight           ="Bold"
+                       Foreground           ="{Binding Tbl_FirefoxInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock x:Name               = "tbl_EdgeInstallInfoIcon"
+                       Text                 ="{Binding Tbl_EdgeInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Canvas.Left          ="639"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="229"
+                       FontSize             ="28"
+                       FontWeight           ="Bold"
+                       Foreground           ="{Binding Tbl_EdgeInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Top"
+            />
+
+
+            <Button x:Name              ="BtnInstallChromeAddOnOverWebshop"
+                    Style               ="{DynamicResource ButtonStyle}"
+                    Command             ="{Binding ExecuteAddeVisitorChromeAddOnCommand}"
+                    IsEnabled           ="{Binding BtnInstallChromeAddOnOverWebshopEnabled}"
+                    Content             ="{Binding BtnInstallChromeAddOnOverWebshopContent}"
+                    Canvas.Left         ="70"
+                    Canvas.Top          ="49"
+                    HorizontalAlignment ="Left"
+                    VerticalAlignment   ="Center"
+                    Width               ="362"
+                    Height              ="38"
+                    FontSize            ="16"/>
+
+            <Button x:Name              ="BtnInstallFirefoxAddOverWebshop"
+                    Style               ="{DynamicResource ButtonStyle}"
+                    Command             ="{Binding ExecuteAddeVisitorFirefoxAddOnCommand}"
+                    IsEnabled           ="{Binding BtnInstallFirefoxAddOverWebshopEnabled}"
+                    Background          ="{DynamicResource ButtonBackgroundColor}"
+                    Foreground          ="{DynamicResource FontColor_1}"
+                    Content             ="{Binding BtnInstallFirefoxAddOverWebshopContent}"
+                    Canvas.Left         ="70"
+                    Canvas.Top          ="140"
+                    Width               ="362"
+                    Height              ="38"
+                    FontSize            ="16"
+                    HorizontalAlignment ="Left"
+                    VerticalAlignment   ="Center"/>
+
+            <Button x:Name              ="BtnInstallEdgeAddOverWebshop"
+                    Style               ="{DynamicResource ButtonStyle}"
+                    Command             ="{Binding ExecuteAddeVisitorEdgeAddOnCommand}"
+                    IsEnabled           ="{Binding BtnInstallEdgeAddOverWebshopEnabled}"
+                    Background          ="{DynamicResource ButtonBackgroundColor}"
+                    Foreground          ="{DynamicResource FontColor_1}"
+                    Content             ="{Binding BtnInstallEdgeAddOverWebshopContent}"
+                    Canvas.Left         ="71"
+                    Canvas.Top          ="230"
+                    Width               ="362"
+                    Height              ="38"
+                    FontSize            ="16"
+                    HorizontalAlignment ="Left"
+                    VerticalAlignment   ="Top"
+            />
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="/Resources/Images/Icons/Intersection/fa_chrome.png"
+                   Height                           ="38"
+                   Canvas.Left                      ="20"
+                   Canvas.Top                       ="49"
+                   Width                            ="42"
+                   HorizontalAlignment              ="Center"
+                   VerticalAlignment                ="Top" />
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="/Resources/Images/Icons/Intersection/fa_firefox.png"
+                   Height                           ="38"
+                   Canvas.Left                      ="19"
+                   Canvas.Top                       ="140"
+                   Width                            ="42"
+                   HorizontalAlignment              ="Center"
+                   VerticalAlignment                ="Top" />
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="/Resources/Images/Icons/Intersection/fa_edge.png"
+                   Height                           ="38"
+                   Canvas.Left                      ="20"
+                   Canvas.Top                       ="229"
+                   Width                            ="42"
+                   HorizontalAlignment              ="Center"
+                   VerticalAlignment                ="Top" />
+
+        </Canvas>
+
+    </Grid>
+    
+</MW:MetroWindow>

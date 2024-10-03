@@ -1,0 +1,60 @@
+﻿<MW:MetroWindow x:Class="eBRestarter.Views.Windows.PopUpOpenEdgeBrowserWithLink"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local="clr-namespace:eBRestarter.Views.Windows"               
+                xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+                xmlns:MD="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW="http://metro.mahapps.com/winfx/xaml/controls"
+                mc:Ignorable="d"
+                WindowStartupLocation="CenterScreen"
+                SaveWindowPosition="False"                       
+                WindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush="{DynamicResource AppColorBlue}"
+                Background="{DynamicResource MenuBackgroundColor_2}"
+                ResizeMode="NoResize"
+                Height="255"
+                Width="560">
+
+    <StackPanel Margin="5">
+
+        <TextBlock Text="Wenn du den Startup-Boost deaktivieren willst, dann mache folgendes:
+                         Klicke auf den Button und es wird folgender Link in die Zwischenablage kopiert:"
+                   FontSize="14"
+                   TextWrapping="Wrap"
+                   Margin="5"
+                   Foreground ="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text="edge://settings/?search=Startup-Boost"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   TextWrapping="Wrap"
+                   Margin="5"
+                   Foreground="{DynamicResource FontColor_1}"/>
+
+        <TextBlock Text="Anschließend öffnet sich der Edgebrowser und du kannst den Link in die Webbrowserleiste einfügen und wirst direkt zu der Option weitergeleitet,
+                         wo du den Startup-Boost deaktivieren kannst."
+                   FontSize="14"
+                   TextWrapping="Wrap"
+                   Margin="5"
+                   Foreground      ="{DynamicResource FontColor_1}"/>
+
+
+        <Button x:Name="BtnCopyLink"
+                Style                   ="{StaticResource MaterialDesignFlatDarkBgButton}"
+                Content                 ="Link kopieren und den Edgebrowser öffnen"
+                FontSize                ="16"
+                HorizontalAlignment     ="Center"
+                Margin                  ="10, 10, 10, 10" 
+                Height                  ="50"
+                Width                   ="510"
+                Background              ="#FF00CAD4"
+                Foreground              ="#DDFFFFFF"
+                BorderBrush             ="{x:Null}" Click="BtnCopyLink_Click"
+                />
+        
+    </StackPanel>
+
+</MW:MetroWindow>

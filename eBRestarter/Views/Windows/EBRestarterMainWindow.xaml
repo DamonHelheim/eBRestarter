@@ -1,0 +1,293 @@
+﻿<MW:MetroWindow x:Class                     ="eBRestarter.Views.Windows.EBRestarterMainWindow"
+                xmlns                       ="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x                     ="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d                     ="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc                    ="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:local                 ="clr-namespace:eBRestarter.Views.Windows"
+                xmlns:i                     ="http://schemas.microsoft.com/xaml/behaviors"
+                xmlns:VM                    ="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
+                xmlns:MD                    ="http://materialdesigninxaml.net/winfx/xaml/themes"
+                xmlns:MW                    ="http://metro.mahapps.com/winfx/xaml/controls"
+                xmlns:Ctrl                  ="clr-namespace:eBRestarter.Components"
+                xmlns:uc                    ="clr-namespace:eBRestarter.Views.UserControls"
+                mc:Ignorable                ="d"
+                d:DataContext               ="{d:DesignInstance Type=VM:EBRestarterMainViewModel}"               
+                SnapsToDevicePixels         ="True"
+                UseLayoutRounding           ="True"
+                Height                      ="770"
+                Width                       ="1250" 
+                d:DesignHeight              ="770"
+                d:DesignWidth               ="1250"
+                BorderThickness             ="0"
+                TitleBarHeight              ="36"
+                WindowStartupLocation       ="CenterScreen"        
+                SaveWindowPosition          ="True"
+                WindowTitleBrush            ="{DynamicResource AppColorBlue}"
+                NonActiveWindowTitleBrush   ="{DynamicResource AppColorBlue}"
+                NonActiveBorderBrush        ="{DynamicResource AppColorBlue}"
+                Background                  ="{DynamicResource MenuBackgroundColor}"
+                ResizeMode                  ="CanResizeWithGrip">
+
+    <MW:MetroWindow.RightWindowCommands>
+        
+        <MW:WindowCommands>
+
+            <StackPanel x:Name              ="UserPanel"
+                        Orientation         ="Horizontal"
+                        VerticalAlignment   ="Center"
+                        Visibility          ="Hidden">
+
+                <Label Name                 ="LBLUserMail"
+                       Content              ="Update verfügbar!"
+                       Margin               ="0 0 0 4"
+                       FontSize             ="16"
+                       FontWeight           ="Bold"                       
+                       FontFamily           ="Roboto"
+                       Foreground           ="{DynamicResource FontColor_2}"
+                       VerticalAlignment    ="Bottom"/>
+
+                <Menu Margin="0 -6 0 0">
+                    
+                    <MenuItem Padding   ="4"
+                              Cursor    ="Hand">
+
+                        <MenuItem.Header>
+
+                            <MD:PackIcon Kind       ="DownloadCircleOutline"
+                                         Height     ="30"
+                                         Width      ="30"
+                                         Foreground ="#c90241"/>
+
+                            <!--#d90246-->
+                            <!--#a80a3c-->
+
+                        </MenuItem.Header>
+
+                        <MenuItem   Name        ="MenuBtnLogOut"
+                                    Height      ="30"                                  
+                                    FontWeight  ="ExtraBold"
+                                    Cursor      ="Hand"
+                                    Click       ="MenuBtnLogOut_Click">
+
+                            <MenuItem.Header>
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <Label Content                  ="Runterladen"
+                                           Foreground               ="#0a64a8"
+                                           FontSize                 ="20"
+                                           FontWeight               ="ExtraBold"
+                                           VerticalContentAlignment ="Center"/>
+
+
+                                    <MD:PackIcon Kind        ="Download"
+                                                 Height      ="30"
+                                                 Width       ="30"
+                                                 Foreground  ="#0a64a8"/>
+                                </StackPanel>
+                                
+                            </MenuItem.Header>
+                            
+                        </MenuItem>
+                        
+                    </MenuItem>
+                    
+                </Menu>
+                
+            </StackPanel>
+            
+        </MW:WindowCommands>
+        
+    </MW:MetroWindow.RightWindowCommands>
+
+
+    <DockPanel  x:Name          ="DP_Main_Background"                    
+                LastChildFill   ="true">
+
+            <StackPanel x:Name          ="SP_Side_Menu"
+                        Style           ="{DynamicResource StackPanelColorStandardThemeSideMenu}"            
+                        Width           ="172" 
+                        DockPanel.Dock  ="Left"
+                        Cursor          ="">
+
+                <StackPanel Orientation ="Horizontal"
+                            Height      ="52">
+
+                    <Image  x:Name                          ="image_ebRestarter_logo"
+                            RenderOptions.BitmapScalingMode ="HighQuality"
+                            Height                          ="28"
+                            Width                           ="32"
+                            Margin                          ="7"
+                            Source                          ="{DynamicResource AppIcon}"/>
+
+                    <TextBlock  x:Name      ="tbl_eB_Restarter"
+                                Foreground  ="{DynamicResource FontColor_2}"
+                                Height      ="28"
+                                Width       ="122"
+                                Text        ="eB Restarter"
+                                FontWeight  ="Normal"
+                                FontFamily  ="Segoe UI"
+                                FontSize    ="20"/>
+
+                </StackPanel>
+
+                <Button Style       ="{DynamicResource MainMenuButtons}"
+                        Name        ="BtnDashboard"
+                        Click       ="OpenPageOnMain"
+                        Width       ="172"
+                        Height      ="50"                               
+                        FontSize    ="16"
+                        Foreground  ="White">
+
+                    <StackPanel Width       ="170"
+                                Orientation ="Horizontal">
+
+                        <Image  x:Name                          ="image_mainmenu_dashboard"
+                                RenderOptions.BitmapScalingMode ="HighQuality"
+                                Source                          ="{DynamicResource DashbordIconMainMenuIcon}"
+                                Width                           ="25"
+                                Height                          ="30"
+                                Margin                          ="20, 0, 10, 0"
+                        />
+
+                        <TextBlock  x:Name          ="tbl_Dashboard"
+                                    Foreground      ="{DynamicResource FontColor_2}"
+                                    TextAlignment   ="Right"
+                                    Height          ="24">
+                            
+                               Dashboard
+                            
+                        </TextBlock>
+
+                    </StackPanel>
+
+                </Button>
+
+                <Button Click       ="OpenPageOnMain"
+                        Style       ="{DynamicResource MainMenuButtons}"
+                        Name        ="BtnSettings"
+                        Width       ="172"
+                        Height      ="50"
+                        Foreground  ="White"
+                        FontSize    ="16">
+
+                    <StackPanel Width       ="170"
+                                Orientation ="Horizontal">
+
+                        <Image  x:Name                          ="image_mainmenu_settings"
+                                RenderOptions.BitmapScalingMode ="HighQuality"
+                                Source                          ="{DynamicResource GearIconMainMenuIcon}"
+                                Width                           ="25"
+                                Height                          ="30"
+                                Margin                          ="20, 0, 10, 0"
+                        />
+
+                        <TextBlock  x:Name      ="tbl_Einstellungen"
+                                    Foreground  ="{DynamicResource FontColor_2}"
+                                    Height      ="24"> Einstellungen 
+                        </TextBlock>
+
+                    </StackPanel>
+
+                </Button>
+
+                <Button Click       ="OpenPageOnMain"
+                        Style       ="{DynamicResource MainMenuButtons}"
+                        Name        ="BtnOptions"
+                        Width       ="172"
+                        Height      ="50"                  
+                        Foreground  ="White"
+                        FontSize    ="16">
+
+                    <StackPanel Width       ="170"
+                                Orientation ="Horizontal">
+
+                        <Image  x:Name                          ="image_mainmenu_options"
+                                RenderOptions.BitmapScalingMode ="HighQuality"
+                                Source                          ="{DynamicResource OptionMainIconMainMenuIcon}"
+                                Width                           ="23"
+                                Height                          ="30"
+                                Margin                          ="20, 0, 12, 0"/>
+
+                        <TextBlock  x:Name      ="tbl_Optionen"
+                                    Foreground  ="{DynamicResource FontColor_2}"
+                                    Height      ="23">
+                                    
+                                    Optionen
+                        
+                        </TextBlock>
+
+                    </StackPanel>
+
+                </Button>
+                
+            <Button Click       ="OpenPageOnMain"
+                    Style       ="{DynamicResource MainMenuButtons}"
+                    x:Name      ="BtnInfocenter"
+                    Width       ="172"
+                    Height      ="50"                           
+                    Foreground  ="White"                   
+                    FontSize    ="16"
+                    Cursor      ="Hand">
+
+                <StackPanel Width       ="170"
+                            Orientation ="Horizontal">
+
+                    <Image x:Name                           ="image_mainmenu_infocenter"
+                           RenderOptions.BitmapScalingMode  ="HighQuality"
+                           Source                           ="{DynamicResource InfocenterMainMenuIcon}"
+                           Width                            ="23"
+                           Height                           ="30"
+                           Margin                           ="20, 0, 12, 0"/>
+
+                    <TextBlock  x:Name      ="tbl_Infocenter"
+                                Foreground  ="{DynamicResource FontColor_2}"               
+                                Height      ="22"
+                                Text        ="Infocenter"/>
+
+                </StackPanel>
+
+            </Button>
+
+        </StackPanel>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      DockPanel.Dock  ="Bottom">
+            
+        
+            <StackPanel x:Name          ="SP_Main_Bottum"
+                        Background      ="{DynamicResource MenuBackgroundColor_3}"
+                        DockPanel.Dock  ="Bottom"
+                        Height          ="165"
+                        Orientation     ="Horizontal">
+
+                <uc:UC_RestartTask                  x:Name  ="eBRestartTask"
+                                                    Width   ="592"
+                                                    Height  ="134"
+                                                    Margin  ="20, 0, 20, 0"/>
+                
+                <uc:UC_DeleteBrowserContentTask     Width   ="413"
+                                                    Height  ="134"
+                                                    Margin  ="0, 0, 0, 0"/>
+
+            </StackPanel>
+        
+        </ScrollViewer>
+    
+        <Border BorderThickness ="0 0 0 0"
+                BorderBrush     ="{DynamicResource MenuBackgroundColor}"
+                Width           ="Auto">
+                
+                <Ctrl:AnimatedContentControl x:Name ="AnimatedContentControl"
+                                             Width  ="Auto"/>
+                
+            </Border>
+
+            <TextBlock TextWrapping ="Wrap"
+                       Text         ="TextBlock"
+                       Width        ="0"/>
+
+        </DockPanel>
+    
+</MW:MetroWindow>

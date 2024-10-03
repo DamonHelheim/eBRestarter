@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="eBRestarter.Views.UserControls.UC_Browser"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:eBRestarter.Views.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="80"
+             d:DesignWidth="260">
+
+    <StackPanel>
+
+        <Border x:Name          ="Border_Browser"
+                Background      ="{DynamicResource DashletBackgroundColor_1}"              
+                Margin          ="0, 0 ,0, 0"
+                Height          ="80"
+                Width           ="260"
+                BorderThickness ="1"
+                CornerRadius    ="2"
+                Padding         ="0">
+
+            <Canvas>
+
+                <ToggleButton x:Name              ="BtnDownloadBrowser"                     
+                              Style               ="{StaticResource DownloadBrowserToggleButton}"
+                              Content             ="Download"
+                              HorizontalAlignment ="Center"
+                              Height              ="80"
+                              Width               ="80"
+                              Visibility          ="{Binding DownloadToggleButtonVisible}"
+                              Canvas.Top          ="-1"
+                              Canvas.Left         ="-1"
+                              Click               ="BtnDownloadBrowser_Click"/>
+
+                <Button x:Name              ="BtnChooseBrowser"
+                        Style               ="{StaticResource ChooseBrowserButton}"
+                        Content             ="Auswählen"
+                        Height              ="80"
+                        Width               ="80"
+                        Visibility          ="{Binding ChooseBrowserButtonVisible}"
+                        Canvas.Top          ="-1"
+                        Canvas.Left         ="-1" Click="BtnChooseBrowser_Click" Cursor="Hand"/>
+
+                <Image  RenderOptions.BitmapScalingMode ="HighQuality"
+                        Name                            ="uc_browser_image"
+                        Source                          ="{Binding HeaderImageBrowser}"
+                        Height                          ="{Binding ImageSizeHeightBrowser}"
+                        Width                           ="{Binding ImageSizeWidthBrowser}"
+                        Canvas.Left                     ="85"
+                        Canvas.Top                      ="5"
+                        HorizontalAlignment             ="Left"
+                        VerticalAlignment               ="Center"/>
+
+                <TextBlock x:Name               ="tbl_Browser_name"
+                           Foreground           ="{DynamicResource FontColor_1}"                         
+                           TextWrapping         ="Wrap"
+                           Text                 ="{Binding HeaderTitleBrowser}"
+                           Canvas.Left          ="122"
+                           Canvas.Top           ="6"
+                           FontSize             ="16" 
+                           HorizontalAlignment  ="Left"
+                           VerticalAlignment    ="Center"
+                />
+
+                <TextBlock x:Name       ="tbl_BrowserVersion"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Canvas.Left  ="86"
+                           TextWrapping ="Wrap"
+                           Text         ="{Binding BrowserVersion}"
+                           Canvas.Top   ="57"
+                           FontSize     ="14"
+                />
+
+                <TextBlock x:Name       ="tbl_BrowserExist"
+                           Canvas.Left  ="234"
+                           TextWrapping ="Wrap"
+                           Text         ="{Binding BrowserExist}"
+                           Foreground   ="{Binding BrowserExistTextForground}"
+                           FontSize     ="25"
+                           Canvas.Top   ="-1"/>
+
+                <ProgressBar x:Name         ="progressBarDownload"
+                             Height         ="14"
+                             Canvas.Left    ="85"
+                             Canvas.Top     ="41"
+                             Width          ="168"/>
+
+                <TextBlock x:Name       ="tbl_DownloadSize"
+                           Foreground   ="{DynamicResource FontColor_1}"
+                           Canvas.Left  ="86"
+                           TextWrapping ="Wrap"
+                           Text         =""
+                           Canvas.Top   ="57"
+                           FontSize     ="14"/>
+               
+            </Canvas>
+
+        </Border>
+
+    </StackPanel>
+    
+</UserControl>
