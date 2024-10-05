@@ -123,11 +123,40 @@ namespace eBRestarter.Views.Windows
 
         private void BrowserIsStillOpen() {
 
-            string message = $"Der {tbl_choosen_browser.Text} Browser muss geschlossen werden bevor Sie die ausgewählten Inhalte löschen können.";
+            string message = $"Der {tbl_choosen_browser.Text} Browser muss geschlossen werden bevor Sie die ausgewählten Inhalte löschen können." + '\n' + '\n' + $"Möchten Sie den {tbl_choosen_browser.Text} jetzt schließen?";
 
             string title = "Browserinhalte löschen";
 
-            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBoxResult result =  MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+            if (result == MessageBoxResult.Yes) {
+
+                switch (tbl_choosen_browser.Text)
+                {
+                    case "Firefox":
+
+                        Debug.WriteLine("F");
+                        windowOS.StopProcess("firefox");
+
+                        break;
+
+                    case "Chrome":
+
+                        Debug.WriteLine("C");
+                        windowOS.StopProcess("chrome");
+                        break;
+
+                    case "Edge":
+
+                        Debug.WriteLine("Edge");
+
+                        windowOS.StopProcess("msedge");
+
+                        break;
+
+                }           
+            }
+
         }
 
         private void ResetDeleteTriggers()
