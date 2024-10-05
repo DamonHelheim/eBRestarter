@@ -15,8 +15,8 @@ namespace eBRestarter.Classes.InternetBrowser
         //public const string EDGE_DOWNLOAD_LINK_DE         = "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e761727c-958f-4cd6-8861-4e070ea7a6a8/MicrosoftEdgeEnterpriseX64.msi";
         public const string EDGE_DOWNLOAD_LINK_DE           = "https://go.microsoft.com/fwlink/?linkid=2108834&Channel=Stable&language=de&brand=M100"; //"https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/50940088-a2ff-4d2c-acd0-80ae0ffe92fb/MicrosoftEdgeEnterpriseX64.msi";
         
-        public const string FIREFOX_EBESUCHER_ADD_ON_LINK   = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search";
-        public const string CHROME_EBESUCHER_ADD_ON_LINK    = "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk/related?hl=de";
+        public const string FIREFOX_EBESUCHER_ADD_ON_LINK   = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/";
+        public const string CHROME_EBESUCHER_ADD_ON_LINK    = "https://chromewebstore.google.com/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
         public const string EDGE_EBESUCHER_ADD_ON_LINK      = "https://microsoftedge.microsoft.com/addons/search/ebesucher";
 
         public const string CHROME_SEARCH_REQUEST           = "https://www.google.com/search?q=Google+Chrome";
