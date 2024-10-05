@@ -11,7 +11,7 @@ namespace eBRestarter.Services
     public class UpdaterHelper
     {
 
-        private const string UpdateHost = "https://github.com/DamonHelheim/eBRestarter/blob/main/eBRestarter/Resources/XML/eBRestarterUpdate.xml";
+        private const string UpdateHost = "https://raw.githubusercontent.com/DamonHelheim/eBRestarter/refs/heads/main/eBRestarter/Resources/XML/eBRestarterUpdate.xml";
 
         public UpdaterHelper() {}
 
