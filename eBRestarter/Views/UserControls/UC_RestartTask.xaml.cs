@@ -378,11 +378,11 @@ namespace eBRestarter.Views.UserControls
 
         public void StopBrowser()
         {
-            if (MatchChromeBrowser() == true)   { CloseProcess("chrome");     /*chromeBrowser!.CloseBrowser();*/ }
+            if (MatchChromeBrowser() == true)   { CloseProcess("chrome");          /*chromeBrowser!.CloseBrowser();*/  }
 
-            if (MatchFirefoxBrowser() == true)  { CloseProcess("firefox");   /*firefoxBrowser!.CloseBrowser();*/ }
+            if (MatchFirefoxBrowser() == true)  { CloseProcess("firefox");         /*firefoxBrowser!.CloseBrowser();*/ }
 
-            if (MatchEdgeBrowser() == true)     { CloseProcess("msedge");    /*edgeBrowser!.CloseBrowser();*/    }
+            if (MatchEdgeBrowser() == true)     { windowsOS.StopProcess("msedge"); /*edgeBrowser!.CloseBrowser();*/    }
         }
 
         public bool MatchChromeBrowser()

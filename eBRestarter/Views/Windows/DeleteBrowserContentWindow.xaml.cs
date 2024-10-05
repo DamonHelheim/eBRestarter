@@ -112,7 +112,6 @@ namespace eBRestarter.Views.Windows
                     {
                         DeleteProcess();
                     }
-
                 }
             }
             else
@@ -135,20 +134,16 @@ namespace eBRestarter.Views.Windows
                 {
                     case "Firefox":
 
-                        Debug.WriteLine("F");
                         windowOS.StopProcess("firefox");
 
                         break;
 
                     case "Chrome":
 
-                        Debug.WriteLine("C");
                         windowOS.StopProcess("chrome");
                         break;
 
                     case "Edge":
-
-                        Debug.WriteLine("Edge");
 
                         windowOS.StopProcess("msedge");
 
@@ -156,7 +151,6 @@ namespace eBRestarter.Views.Windows
 
                 }           
             }
-
         }
 
         private void ResetDeleteTriggers()
