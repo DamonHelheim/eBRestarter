@@ -122,7 +122,7 @@ namespace eBRestarter.Views.Windows
 
         private void BrowserIsStillOpen() {
 
-            string message = $"Der {tbl_choosen_browser.Text} Browser muss geschlossen werden bevor Sie die ausgewählten Inhalte löschen können." + '\n' + '\n' + $"Möchten Sie den {tbl_choosen_browser.Text} jetzt schließen?";
+            string message = $"Der {tbl_choosen_browser.Text} Browser muss geschlossen werden bevor du die ausgewählten Inhalte löschen kannst." + '\n' + '\n' + $"Möchtest du den {tbl_choosen_browser.Text} jetzt schließen?";
 
             string title = "Browserinhalte löschen";
 
