@@ -146,6 +146,7 @@
     <None Remove="Resources\Images\Icons\LightTheme\windows_white.png" />
     <None Remove="Resources\Images\Icons\LightTheme\workstation_light_theme.png" />
     <None Remove="Resources\Images\Icons\LightTheme\workstation_white.png" />
+    <None Remove="Resources\Images\Readme\EVisitorAddOnInfo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -393,6 +394,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\Icons\LightTheme\workstation_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Readme\EVisitorAddOnInfo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

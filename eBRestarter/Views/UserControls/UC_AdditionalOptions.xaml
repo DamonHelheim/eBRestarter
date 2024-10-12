@@ -10,9 +10,9 @@
              d:DesignWidth="320">
 
     <UserControl.DataContext>
-        
+
         <VM:BrowserViewModel/>
-        
+
     </UserControl.DataContext>
 
 
@@ -60,12 +60,12 @@
                     Style               ="{DynamicResource ButtonStyle}"
                     Content             ="Browserinhalte löschen"
                     Canvas.Left         ="14"
-                    Canvas.Top          ="61"
+                    Canvas.Top          ="65"
                     Width               ="295"
-                    Height              ="60"
+                    Height              ="50"
                     FontSize            ="16"
-                    HorizontalAlignment ="Center"
-                    VerticalAlignment   ="Top"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
                     Click               ="BtnDeleteBrowserContent_Click"
                     IsEnabled           ="{Binding BtnDeleteBrowserContentIsEnabled}"
                     
@@ -73,21 +73,34 @@
 
             <Button x:Name               ="BtnInstalleBesucherAddOn"                                    
                     Style                ="{DynamicResource ButtonStyle}"
-                    Content              ="Installiere eBesucher Add-On"
+                    Content              ="Installiere eBesucher Add-on"
                     Canvas.Left          ="14"
-                    Canvas.Top           ="139"
+                    Canvas.Top           ="127"
                     Width                ="295"
-                    Height               ="60"
+                    Height               ="40"
                     FontSize             ="16"
-                    HorizontalAlignment  ="Center"
-                    VerticalAlignment    ="Top"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
                     IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"
                     Click                ="BtnInstalleBesucherAddOn_Click"
                     
             />
 
+            <Button x:Name               ="BtnInfoeVisitorAddOn"                                    
+                    Style                ="{DynamicResource ButtonStyle}"
+                    Content              ="Wichtige Info zum Add-on"
+                    Canvas.Left          ="14"
+                    Canvas.Top           ="179"
+                    Width                ="295"
+                    Height               ="30"
+                    FontSize             ="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"
+                    Click                ="BtnInfoeVisitorAddOn_Click"/>
+
         </Canvas>
 
     </Border>
-    
+
 </UserControl>

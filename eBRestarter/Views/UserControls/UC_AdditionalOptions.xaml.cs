@@ -53,5 +53,11 @@ namespace eBRestarter.Views.UserControls
             else { return false; }
         }
 
+        private void BtnInfoeVisitorAddOn_Click(object sender, RoutedEventArgs e)
+        {
+            EVisitorAddOnInformation eVisitorAddOnInformation = new();
+
+            eVisitorAddOnInformation.ShowDialog();
+        }
     }
 }
