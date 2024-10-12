@@ -141,7 +141,7 @@ namespace eBRestarter.Views.UserControls
 
         private void LoadSliderSettings()
         {
-            string riskInformation = "Nutzung auf eigenes Risiko: Du erklärst dich mit der Nutzung dieser Funktionalität einverstanden. Für mehr Infos hier klicken";
+            string riskInformation = "Nutzung auf eigenes Risiko: Du erklärst dich mit der Nutzung dieser Funktionalität einverstanden. Für mehr Infos hier klicken.";
 
             if (ComboboxComputerRestartOptions.SelectedIndex is 0)
             {
@@ -363,8 +363,7 @@ namespace eBRestarter.Views.UserControls
         {
             MessageBox.Show("Durch die Nutzung dieser Funktion des automatischen Neustarts, erklärst du dich damit einverstanden, " +
                             "dass du die Risiken verstanden hast und die Nutzung dieser Funktionalität auf eigene Verantwortung erfolgt." + '\n' + '\n' +
-                            "Der Entwickler übernimmt keine Haftung für mögliche Schäden, Datenverlust oder Systemfehler, die durch" + '\n' +
-                            "den erzwungenen Neustart entstehen können",
+                            "Der Entwickler übernimmt keine Haftung für mögliche Schäden, Datenverlust oder Systemfehler, die durch den erzwungenen Neustart entstehen können.",
                             "Nutzung auf eigenes Risiko",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
