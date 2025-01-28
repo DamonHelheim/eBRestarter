@@ -335,15 +335,15 @@ namespace eBRestarter.Views.UserControls
 
         private void BtnChooseBrowser_Click(object sender, RoutedEventArgs e)
         {
-            if (chromeBrowser.ExtensionsExist is true)
+            if (HeaderTitleBrowser is "Chrome")
             {
                 EBesucherAddOnMessage(HeaderTitleBrowser);
             }
-            else if (edgeBrowser.ExtensionsExist is false)
+            else if (HeaderTitleBrowser is "Edge")
             {
                 EBesucherAddOnMessage(HeaderTitleBrowser);
             }
-            else if (firefoxBrowser.ExtensionsExist is false)
+            else if (HeaderTitleBrowser is "Firefox")
             {
                 EBesucherAddOnMessage(HeaderTitleBrowser);
             }
@@ -365,7 +365,6 @@ namespace eBRestarter.Views.UserControls
         {
             if (headerTitleBrowser is "Chrome" && chromeBrowser.ExtensionsExist is false)
             {
-
                 MessageBoxResult MessageBoxResult = MessageBox.Show(MessageEVisitorAddOn(headerTitleBrowser), MessageEVisitorAddOnTitle(headerTitleBrowser), MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                 if (MessageBoxResult == MessageBoxResult.Yes)
@@ -375,10 +374,11 @@ namespace eBRestarter.Views.UserControls
                     chromeBrowser.StartBrowser();
                 }
 
+                SaveChoosenBrowser();
+
             }
             else if (headerTitleBrowser is "Edge" && edgeBrowser.ExtensionsExist is false)
             {
-
                 MessageBoxResult MessageBoxResult = MessageBox.Show(MessageEVisitorAddOn(headerTitleBrowser), MessageEVisitorAddOnTitle(headerTitleBrowser), MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                 if (MessageBoxResult == MessageBoxResult.Yes)
@@ -388,10 +388,10 @@ namespace eBRestarter.Views.UserControls
                     edgeBrowser.StartBrowser();
                 }
 
+                SaveChoosenBrowser();
             }
             else if (headerTitleBrowser is "Firefox" && firefoxBrowser.ExtensionsExist is false)
             {
-
                 MessageBoxResult MessageBoxResult = MessageBox.Show(MessageEVisitorAddOn(headerTitleBrowser), MessageEVisitorAddOnTitle(headerTitleBrowser), MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                 if (MessageBoxResult == MessageBoxResult.Yes)
@@ -400,6 +400,8 @@ namespace eBRestarter.Views.UserControls
 
                     firefoxBrowser.StartBrowser();
                 }
+
+                SaveChoosenBrowser();
 
             }
             else if (headerTitleBrowser is "Chrome" && chromeBrowser.ExtensionsExist is true)
@@ -433,6 +435,10 @@ namespace eBRestarter.Views.UserControls
         {
             string message = "Du musst zwingend das eBesucher Add-on installieren, damit du den " + browserTitle + "browser für das Surfen nutzen kannst." + "\r\n" + "\r\n" +
                              "Ohne die Installation des eBesucher Add-on startet die Surfbar nicht von automatisch." + "\r\n" + "\r\n" +
+
+                             "Hinweis:" + "\r\n" + "\r\n" + 
+                             "Sollte der eB Restarter nicht erkennen, dass das Add-On bereits im " + browserTitle + " Browser hinzugefügt worden ist, dann kannst du trotzdem den eB Restarter mit deinem Browser starten." + "\r\n" + "\r\n" +
+
                              "Wir würden dich jetzt direkt auf den Webstore von " + browserTitle + " für das eBesucher Add-on weiterleiten, damit du dieses von dort aus installieren kannst." + "\r\n" + "\r\n" +
                              "Möchtest du zum " + browserTitle + " - Webstore weitergeleitet werden?";
 
