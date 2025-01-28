@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>1.0.0.0</version>
+    <version>1.0.2.0</version>
     <url>https://github.com/DamonHelheim/eBRestarter/releases/download/eBRestarter/eBRestarterInstaller.exe</url>
     <changelog>Empty</changelog>
     <mandatory>false</mandatory>
