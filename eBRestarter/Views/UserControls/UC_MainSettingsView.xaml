@@ -40,31 +40,49 @@
 
         </StackPanel>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                
+        <Grid>
 
-            <WrapPanel DockPanel.Dock       ="Left"
-                       HorizontalAlignment  ="Left">
+            <Grid.ColumnDefinitions>
 
-                <uc:UC_eVisitorUsername            Width="320" Height="220" Margin ="25, 20, 20, 0"/>
-                <uc:UC_RestartAndRuntimeOptions    Width="320" Height="220" Margin ="25, 20, 20, 0"/>
-                <uc:UC_AutomatedTasks              Width="320" Height="220" Margin ="25, 20, 20, 0"/>
-                <uc:UC_AdditionalOptions           Width="320" Height="220" Margin ="25, 20, 0, 0"/>
+                <ColumnDefinition Width="730px"/>
+                <ColumnDefinition Width="300px"/>
 
-            </WrapPanel>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="0">
+
+                <WrapPanel DockPanel.Dock       ="Left"
+                           HorizontalAlignment  ="Left">
+
+                    <uc:UC_eVisitorUsername            Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                    <uc:UC_RestartAndRuntimeOptions    Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                    <uc:UC_AutomatedTasks              Width="320" Height="220" Margin ="25, 20, 20, 0"/>
+                    <uc:UC_AdditionalOptions           Width="320" Height="220" Margin ="25, 20, 0, 0"/>
+
+                </WrapPanel>
+
+            </ScrollViewer>
+
+            <ScrollViewer VerticalScrollBarVisibility   ="Auto"
+                          HorizontalScrollBarVisibility ="Auto"
+                      
+                          Grid.Column="1">
+
+                <StackPanel DockPanel.Dock="Right">
+
+                    <uc:UC_InstalledBrowsers Width="265" Height="Auto" Margin ="10, 20, 10, 0" />
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+        </Grid>
 
         </ScrollViewer>
 
-        <ScrollViewer VerticalScrollBarVisibility   ="Auto"
-                      HorizontalScrollBarVisibility ="Auto"
-                      Width="320">
 
-            <StackPanel DockPanel.Dock="Right">
-
-                <uc:UC_InstalledBrowsers Width="265" Height="Auto" Margin ="20, 20, 20, 0" />
-
-            </StackPanel>
-
-        </ScrollViewer>
 
     </DockPanel>
 
