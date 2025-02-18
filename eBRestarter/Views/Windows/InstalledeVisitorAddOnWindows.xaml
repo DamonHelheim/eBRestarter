@@ -20,14 +20,17 @@
                 Background="{DynamicResource MenuBackgroundColor}"
                 ResizeMode="NoResize"
                 Title="Ebesucher Add-on installieren"        
-                Height="386"
+                Height="465"
                 Width="800">
-    
+
     <Grid x:Name="Grid_Browser_Add_Ons">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="5*"/>
             <RowDefinition Height="43*"/>
+
+
+
         </Grid.RowDefinitions>
 
         <StackPanel x:Name      ="SP_eVisotor_Add_Ons_Head"
@@ -66,15 +69,7 @@
                        HorizontalAlignment  ="Left"
                        VerticalAlignment    ="Center"/>
 
-            <TextBlock  x:Name               ="tbl_EdgeIsInstalled"
-                        Text                 ="{Binding Tbl_EdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                        Foreground           ="{DynamicResource FontColor_1}"
-                        Canvas.Left          ="21"
-                        TextWrapping         ="Wrap"
-                        Canvas.Top           ="200"
-                        FontSize             ="16"
-                        HorizontalAlignment  ="Center"
-                        VerticalAlignment    ="Top"/>
+
 
             <TextBlock x:Name               ="tbl_AddOnChromeIsInstalled"
                        Text                 ="{Binding Tbl_AddOnChromeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -95,16 +90,6 @@
                        HorizontalAlignment  ="Left"
                        VerticalAlignment    ="Center"
                        FontSize             ="16"/>
-
-            <TextBlock x:Name               ="tbl_AddOnEdgeIsInstalled"
-                       Text                 ="{Binding Tbl_AddOnEdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                       Foreground           ="{DynamicResource FontColor_1}"
-                       Canvas.Left          ="447"
-                       TextWrapping         ="Wrap"
-                       Canvas.Top           ="240"
-                       FontSize             ="16"
-                       HorizontalAlignment  ="Center"
-                       VerticalAlignment    ="Top"/>
 
             <TextBlock x:Name               ="tbl_ChromeInstallInfoIcon"
                        Text                 ="{Binding Tbl_ChromeInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -129,17 +114,7 @@
                        FontWeight           ="Bold"
                        Foreground           ="{Binding Tbl_FirefoxInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBlock x:Name               = "tbl_EdgeInstallInfoIcon"
-                       Text                 ="{Binding Tbl_EdgeInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                       Canvas.Left          ="639"
-                       TextWrapping         ="Wrap"
-                       Canvas.Top           ="229"
-                       FontSize             ="28"
-                       FontWeight           ="Bold"
-                       Foreground           ="{Binding Tbl_EdgeInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                       HorizontalAlignment  ="Left"
-                       VerticalAlignment    ="Top"
-            />
+
 
 
             <Button x:Name              ="BtnInstallChromeAddOnOverWebshop"
@@ -170,21 +145,7 @@
                     HorizontalAlignment ="Left"
                     VerticalAlignment   ="Center"/>
 
-            <Button x:Name              ="BtnInstallEdgeAddOverWebshop"
-                    Style               ="{DynamicResource ButtonStyle}"
-                    Command             ="{Binding ExecuteAddeVisitorEdgeAddOnCommand}"
-                    IsEnabled           ="{Binding BtnInstallEdgeAddOverWebshopEnabled}"
-                    Background          ="{DynamicResource ButtonBackgroundColor}"
-                    Foreground          ="{DynamicResource FontColor_1}"
-                    Content             ="{Binding BtnInstallEdgeAddOverWebshopContent}"
-                    Canvas.Left         ="71"
-                    Canvas.Top          ="230"
-                    Width               ="362"
-                    Height              ="38"
-                    FontSize            ="16"
-                    HorizontalAlignment ="Left"
-                    VerticalAlignment   ="Top"
-            />
+
 
             <Image RenderOptions.BitmapScalingMode  ="HighQuality"
                    Source                           ="/Resources/Images/Icons/Intersection/fa_chrome.png"
@@ -204,6 +165,7 @@
                    HorizontalAlignment              ="Center"
                    VerticalAlignment                ="Top" />
 
+
             <Image RenderOptions.BitmapScalingMode  ="HighQuality"
                    Source                           ="/Resources/Images/Icons/Intersection/fa_edge.png"
                    Height                           ="38"
@@ -213,8 +175,118 @@
                    HorizontalAlignment              ="Center"
                    VerticalAlignment                ="Top" />
 
+            <Button x:Name              ="BtnInstallEdgeAddOverWebshop"
+                    Style               ="{DynamicResource ButtonStyle}"
+                    Command             ="{Binding ExecuteAddeVisitorEdgeAddOnCommand}"
+                    IsEnabled           ="{Binding BtnInstallEdgeAddOverWebshopEnabled}"
+                    Background          ="{DynamicResource ButtonBackgroundColor}"
+                    Foreground          ="{DynamicResource FontColor_1}"
+                    Content             ="{Binding BtnInstallEdgeAddOverWebshopContent}"
+                    Canvas.Left         ="71"
+                    Canvas.Top          ="230"
+                    Width               ="362"
+                    Height              ="38"
+                    FontSize            ="16"
+                    HorizontalAlignment ="Left"
+                    VerticalAlignment   ="Top"
+            />
+
+            <TextBlock x:Name               = "tbl_EdgeInstallInfoIcon"
+                       Text                 ="{Binding Tbl_EdgeInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Canvas.Left          ="639"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="229"
+                       FontSize             ="28"
+                       FontWeight           ="Bold"
+                       Foreground           ="{Binding Tbl_EdgeInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       HorizontalAlignment  ="Left"
+                       VerticalAlignment    ="Top"
+            />
+
+            <TextBlock x:Name               ="tbl_AddOnEdgeIsInstalled"
+                       Text                 ="{Binding Tbl_AddOnEdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Foreground           ="{DynamicResource FontColor_1}"
+                       Canvas.Left          ="447"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="240"
+                       FontSize             ="16"
+                       HorizontalAlignment  ="Center"
+                       VerticalAlignment    ="Top"/>
+
+            <TextBlock  x:Name               ="tbl_EdgeIsInstalled"
+                        Text                 ="{Binding Tbl_EdgeIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Foreground           ="{DynamicResource FontColor_1}"
+                        Canvas.Left          ="21"
+                        TextWrapping         ="Wrap"
+                        Canvas.Top           ="200"
+                        FontSize             ="16"
+                        HorizontalAlignment  ="Center"
+                        VerticalAlignment    ="Top"/>
+
+
+
+
+            <Image RenderOptions.BitmapScalingMode  ="HighQuality"
+                   Source                           ="/Resources/Images/Icons/Intersection/fa_brave.png"
+                   Height                           ="38"
+                   Canvas.Left                      ="20"
+                   Canvas.Top                       ="316"
+                   Width                            ="42"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top" />
+
+            <Button x:Name              ="BtnInstallBraveAddOverWebshop"
+                    Style               ="{DynamicResource ButtonStyle}"
+                    Command             ="{Binding ExecuteAddeVisitorBraveAddOnCommand}"
+                    IsEnabled           ="{Binding BtnInstallBraveAddOverWebshopEnabled}"
+                    Background          ="{DynamicResource ButtonBackgroundColor}"
+                    Foreground          ="{DynamicResource FontColor_1}"
+                    Content             ="{Binding BtnInstallBraveAddOverWebshopContent}"
+                    Canvas.Left         ="71"
+                    Canvas.Top          ="317"
+                    Width               ="362"
+                    Height              ="38"
+                    FontSize            ="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+            />
+
+            <TextBlock x:Name               = "tbl_BravInstallInfoIcon"
+                       Text                 ="{Binding Tbl_BraveInstallInfoIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       Canvas.Left          ="639"
+                       TextWrapping         ="Wrap"
+                       Canvas.Top           ="316"
+                       FontSize             ="28"
+                       FontWeight           ="Bold"
+                       Foreground           ="{Binding Tbl_BraveInstallInfoIconForeground, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+            />
+
+            <TextBlock  x:Name               ="tbl_BraveIsInstalled"
+                        Text                 ="{Binding Tbl_BraveIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Foreground           ="{DynamicResource FontColor_1}"
+                        Canvas.Left          ="21"
+                        TextWrapping         ="Wrap"
+                        Canvas.Top           ="287"
+                        FontSize             ="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"/>
+
+            <TextBlock x:Name               ="tbl_AddOnBraveIsInstalled"
+                        Text                 ="{Binding Tbl_AddOnBraveIsInstalledText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Foreground           ="{DynamicResource FontColor_1}"
+                        Canvas.Left          ="447"
+                        TextWrapping         ="Wrap"
+                        Canvas.Top           ="327"
+                        FontSize             ="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"/>
+
+
+
         </Canvas>
 
     </Grid>
-    
+
 </MW:MetroWindow>

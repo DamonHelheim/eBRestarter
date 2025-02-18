@@ -14,7 +14,10 @@ namespace eBRestarter.Classes.InternetBrowser
         
         //public const string EDGE_DOWNLOAD_LINK_DE         = "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e761727c-958f-4cd6-8861-4e070ea7a6a8/MicrosoftEdgeEnterpriseX64.msi";
         public const string EDGE_DOWNLOAD_LINK_DE           = "https://go.microsoft.com/fwlink/?linkid=2108834&Channel=Stable&language=de&brand=M100"; //"https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/50940088-a2ff-4d2c-acd0-80ae0ffe92fb/MicrosoftEdgeEnterpriseX64.msi";
-        
+
+        public const string BRAVE_DOWNLOAD_LINK_DE           = "https://laptop-updates.brave.com/download/BRV010";
+
+
         public const string FIREFOX_EBESUCHER_ADD_ON_LINK   = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/";
         public const string CHROME_EBESUCHER_ADD_ON_LINK    = "https://chromewebstore.google.com/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
         public const string EDGE_EBESUCHER_ADD_ON_LINK      = "https://microsoftedge.microsoft.com/addons/search/ebesucher";
@@ -22,10 +25,11 @@ namespace eBRestarter.Classes.InternetBrowser
         public const string CHROME_SEARCH_REQUEST           = "https://www.google.com/search?q=Google+Chrome";
         public const string FIREFOX_SEARCH_REQUEST          = "https://www.google.com/search?q=Firefox";
         public const string EDGE_SEARCH_REQUEST             = "https://www.google.com/search?q=Micrsoft+Edge";
+        public const string BAVE_SEARCH_REQUEST             = "https://www.google.com/search?q=Brave";
 
         public const string GOOGLE_LINK                     = "http://www.google.com";
 
         //https://go.microsoft.com/fwlink/?linkid=2108834&Channel=Stable&language=de&brand=M100
-        //"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+        //"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" 
     }
 }

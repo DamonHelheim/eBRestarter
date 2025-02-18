@@ -10,6 +10,7 @@ namespace eBRestarter.ViewModel.ViewModels
         private readonly Browser chromeBrowser = new Chrome();
         private readonly Browser firefoxBrowser = new Firefox();
         private readonly Browser edgeBrowser = new Edge();
+        private readonly Browser braveBrowser = new Brave();
 
         private const string setForegroundColorGreen = "#7ED422";
         private const string setForegroundColorRed = "#E40E87";
@@ -26,6 +27,9 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         public string firefoxVersion = string.Empty;
 
+        [ObservableProperty]
+        public string braveVersion = string.Empty;
+
 
         [ObservableProperty]
         private string chooseButtonChromeIsVisible = string.Empty;
@@ -37,6 +41,10 @@ namespace eBRestarter.ViewModel.ViewModels
         private string chooseButtonEdgeIsVisible = string.Empty;
 
         [ObservableProperty]
+        private string chooseButtonBraveIsVisible = string.Empty;
+
+
+        [ObservableProperty]
         private string downloadButtonChromeIsVisible = string.Empty;
 
         [ObservableProperty]
@@ -44,6 +52,9 @@ namespace eBRestarter.ViewModel.ViewModels
 
         [ObservableProperty]
         private string downloadButtonEdgeIsVisible = string.Empty;
+
+        [ObservableProperty]
+        private string downloadButtonBraveIsVisible = string.Empty;
 
 
         [ObservableProperty]
@@ -62,6 +73,9 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         private string browserExistEdge = string.Empty;
 
+        [ObservableProperty]
+        private string browserExistBrave = string.Empty;
+
 
         [ObservableProperty]
         private string textForegroundColorChromeExist = string.Empty;
@@ -71,6 +85,9 @@ namespace eBRestarter.ViewModel.ViewModels
 
         [ObservableProperty]
         private string textForegroundColorEdgeExist = string.Empty;
+
+        [ObservableProperty]
+        private string textForegroundColorBraveExist = string.Empty;
 
         [ObservableProperty]
         private string tbl_NoBrowserInstalledIsVisible = string.Empty;
@@ -108,6 +125,25 @@ namespace eBRestarter.ViewModel.ViewModels
                             DownloadButtonChromeIsVisible   = "Visible";
                         }
 
+                        if (braveBrowser.BrowserVersion != null)
+                        {
+                            BraveVersion = "Version: " + braveBrowser.BrowserVersion;
+                            TextForegroundColorBraveExist = setForegroundColorGreen;
+                            BrowserExistChrome = greenMark;
+
+                            ChooseButtonBraveIsVisible = "Visible";
+                            DownloadButtonBraveIsVisible = "Hidden";
+                        }
+                        else
+                        {
+                            BraveVersion = "Nicht installiert";
+                            TextForegroundColorBraveExist = setForegroundColorRed;
+                            BrowserExistChrome = redMark;
+
+                            ChooseButtonBraveIsVisible = "Hidden";
+                            DownloadButtonBraveIsVisible = "Visible";
+                        }
+
                         if (edgeBrowser.BrowserVersion != null && edgeBrowser.BrowserExist is true)
                         {
                             EdgeVersion                     = "Version: " + edgeBrowser.BrowserVersion;
@@ -126,6 +162,7 @@ namespace eBRestarter.ViewModel.ViewModels
                             ChooseButtonEdgeIsVisible      = "Hidden";
                             DownloadButtonEdgeIsVisible     = "Visible";
                         }
+
 
                         if (firefoxBrowser.BrowserVersion != null)
                         {
@@ -148,7 +185,7 @@ namespace eBRestarter.ViewModel.ViewModels
                         }
 
 
-                        if (firefoxBrowser.BrowserExist is true || chromeBrowser.BrowserExist is true || edgeBrowser.BrowserExist is true)
+                        if (firefoxBrowser.BrowserExist is true || chromeBrowser.BrowserExist is true || edgeBrowser.BrowserExist is true || braveBrowser.BrowserExist is true)
                         {
                             BtnDeleteBrowserContentIsEnabled    = "True";
                             BtnInstalleBesucherAddOnIsEnabled   = "True";

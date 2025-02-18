@@ -7,8 +7,8 @@
              xmlns:VM="clr-namespace:eBRestarter.ViewModel.ViewModels;assembly=eBRestarter.ViewModel"
              d:DataContext="{d:DesignInstance Type=VM:BrowserViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="320"
-             d:DesignWidth="260">
+             Height="auto"
+             Width="260">
     
     <StackPanel>
 
@@ -82,6 +82,19 @@
                           ImageSizeHeightBrowser        ="30"
                           ImageSizeWidthBrowser         ="30"
                           Margin                        ="0, 20 ,0, 0"/>
+
+        <local:UC_Browser HeaderTitleBrowser            ="Brave"
+                          HeaderImageBrowser            ="\Resources\Images\Icons\Intersection\fa_brave.png"
+                          DownloadLink                  ="{Binding Source={x:Static local:UC_InstalledBrowsers.DownloadLinkBrave}}"
+                          DownloadName                  ="BraveSetup.exe"
+                          BrowserVersion                ="{Binding EdgeVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          BrowserExist                  ="{Binding BrowserExistEdge, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          BrowserExistTextForground     ="{Binding TextForegroundColorEdgeExist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          DownloadToggleButtonVisible   ="{Binding DownloadButtonEdgeIsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          ChooseBrowserButtonVisible    ="{Binding ChooseButtonEdgeIsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          ImageSizeHeightBrowser        ="30"
+                          ImageSizeWidthBrowser         ="30"
+                          Margin                        ="0, 10 ,0, 0"/>
 
     </StackPanel>
     

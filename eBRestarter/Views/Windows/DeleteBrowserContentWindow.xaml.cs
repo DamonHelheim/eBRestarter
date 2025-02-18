@@ -113,6 +113,18 @@ namespace eBRestarter.Views.Windows
                         DeleteProcess();
                     }
                 }
+                else if (bPIService.MatchEdgeBrowser() is true)
+                {
+                    if (windowOS.ProcessAlive("brave") is true)
+                    {
+                        BrowserIsStillOpen();
+                        ResetDeleteTriggers();
+                    }
+                    else
+                    {
+                        DeleteProcess();
+                    }
+                }
             }
             else
             {
@@ -149,6 +161,11 @@ namespace eBRestarter.Views.Windows
 
                         break;
 
+                    case "Brave":
+
+                        windowOS.StopProcess("brave");
+
+                        break;
                 }           
             }
         }
@@ -214,8 +231,7 @@ namespace eBRestarter.Views.Windows
                         delete.DeleteSingleFile(GetFirefoxCookiePath!);
                         deleteProtocol.Text = $"Datei gelöscht: {GetFirefoxCookiePath}";
                     }
-
-                    
+                 
                     InfoDeleteProcess();
                     ResetProgressBarSettings();
                     await Task.Delay(2000);

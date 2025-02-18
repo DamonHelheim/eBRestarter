@@ -79,6 +79,7 @@
     <None Remove="Resources\Images\Icons\Intersection\deactivate.png" />
     <None Remove="Resources\Images\Icons\Intersection\eB Restarter.ico" />
     <None Remove="Resources\Images\Icons\Intersection\edge.png" />
+    <None Remove="Resources\Images\Icons\Intersection\fa_brave.png" />
     <None Remove="Resources\Images\Icons\Intersection\fa_chrome.png" />
     <None Remove="Resources\Images\Icons\Intersection\fa_edge.png" />
     <None Remove="Resources\Images\Icons\Intersection\fa_firefox.png" />
@@ -253,6 +254,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\Icons\Intersection\eB Restarter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Icons\Intersection\fa_brave.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Images\Icons\Intersection\fa_chrome.png">

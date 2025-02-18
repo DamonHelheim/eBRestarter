@@ -24,6 +24,7 @@ namespace eBRestarter.Classes.Services
             Browser chromeBrowser   = new Chrome();
             Browser firefoxrowser   = new Firefox();
             Browser edgeBrowser     = new Edge();
+            Browser braveBrowser    = new Brave();
 
             if (MatchChromeBrowser() is true)
             {
@@ -42,6 +43,15 @@ namespace eBRestarter.Classes.Services
 
                 BrowserName             = "Edge";
                 BrowserIconPath         = @"/Resources/Images/Icons/Intersection/fa_edge.png";
+            }
+            else if (MatchBraveBrowser() is true)
+            {
+                InternetCacheAndCookies = braveBrowser.InternetCacheAndCookiesDirectoryList!;
+                InternetCache = braveBrowser.InternetCacheDirectoryList!;
+                InternetCookies = braveBrowser.InternetCookies!;
+
+                BrowserName = "Brave";
+                BrowserIconPath = @"/Resources/Images/Icons/Intersection/fa_brave.png";
             }
             else if (MatchFirefoxBrowser() is true)
             {
@@ -94,6 +104,17 @@ namespace eBRestarter.Classes.Services
             EBXMLFileService eBFileService = new(eBXMLFileManagement);
 
             if (eBFileService.GetXMLAttributeInConfig<string>(ISystemPaths.File_Path_eBRestarter_Settings, IConfigConstants.BrowserTag, IConfigConstants.BrowserTag_Selected_Attribut).Equals("Edge"))
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
+        public bool MatchBraveBrowser()
+        {
+            EBXMLFileService eBFileService = new(eBXMLFileManagement);
+
+            if (eBFileService.GetXMLAttributeInConfig<string>(ISystemPaths.File_Path_eBRestarter_Settings, IConfigConstants.BrowserTag, IConfigConstants.BrowserTag_Selected_Attribut).Equals("Brave"))
             {
                 return true;
             }
