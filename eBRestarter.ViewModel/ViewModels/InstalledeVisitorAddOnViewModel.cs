@@ -2,6 +2,7 @@
 using eBRestarter.Classes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Diagnostics;
 
 namespace eBRestarter.ViewModel.ViewModels
 {
@@ -11,6 +12,7 @@ namespace eBRestarter.ViewModel.ViewModels
         private readonly Browser chromeBrowser = new Chrome(IWebLinks.CHROME_EBESUCHER_ADD_ON_LINK);
         private readonly Browser firefoxBrowser = new Firefox(IWebLinks.FIREFOX_EBESUCHER_ADD_ON_LINK);
         private readonly Browser edgeBrowser = new Edge(IWebLinks.EDGE_EBESUCHER_ADD_ON_LINK);
+        private readonly Browser braveBrowser = new Brave(IWebLinks.CHROME_EBESUCHER_ADD_ON_LINK);
 
         private readonly string greenMark = "✓";
         private readonly string redMark = "✘";
@@ -25,6 +27,9 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         public string tbl_EdgeIsInstalledText = string.Empty;
 
+        [ObservableProperty]
+        public string tbl_BraveIsInstalledText = string.Empty;
+
 
         [ObservableProperty]
         public string tbl_ChromeIsInstalledTextForeground = string.Empty;
@@ -34,6 +39,9 @@ namespace eBRestarter.ViewModel.ViewModels
 
         [ObservableProperty]
         public string tbl_EdgeIsInstalledTextForeground = string.Empty;
+
+        [ObservableProperty]
+        public string tbl_BraveIsInstalledTextForeground = string.Empty;
 
 
         [ObservableProperty]
@@ -45,6 +53,8 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         public string tbl_AddOnEdgeIsInstalledText = string.Empty;
 
+        [ObservableProperty]
+        public string tbl_AddOnBraveIsInstalledText = string.Empty;
 
 
         [ObservableProperty]
@@ -56,6 +66,9 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         public string tbl_EdgeInstallInfoIcon = string.Empty;
 
+        [ObservableProperty]
+        public string tbl_BraveInstallInfoIcon = string.Empty;
+
 
         [ObservableProperty]
         public string tbl_ChromeInstallInfoIconForeground = string.Empty;
@@ -65,6 +78,9 @@ namespace eBRestarter.ViewModel.ViewModels
 
         [ObservableProperty]
         public string tbl_EdgeInstallInfoIconForeground = string.Empty;
+
+        [ObservableProperty]
+        public string tbl_BraveInstallInfoIconForeground = string.Empty;
 
 
         [ObservableProperty]
@@ -76,6 +92,9 @@ namespace eBRestarter.ViewModel.ViewModels
         [ObservableProperty]
         public bool? btnInstallFirefoxAddOverWebshopEnabled;
 
+        [ObservableProperty]
+        public bool? btnInstallBraveAddOverWebshopEnabled;
+
 
         [ObservableProperty]
         public string btnInstallChromeAddOnOverWebshopContent = string.Empty;
@@ -85,6 +104,9 @@ namespace eBRestarter.ViewModel.ViewModels
 
         [ObservableProperty]
         public string btnInstallFirefoxAddOverWebshopContent = string.Empty;
+
+        [ObservableProperty]
+        public string btnInstallBraveAddOverWebshopContent = string.Empty;
 
 
         public InstalledeVisitorAddOnViewModel() {
@@ -109,6 +131,14 @@ namespace eBRestarter.ViewModel.ViewModels
         public void ExecuteAddeVisitorFirefoxAddOn()
         {
             firefoxBrowser.StartBrowser();          
+        }
+
+        [RelayCommand]
+        public void ExecuteAddeVisitorBraveAddOn()
+        {
+            Debug.WriteLine(braveBrowser.ExtensionsDirectory + " " +braveBrowser.ExtensionsExist);
+
+            //braveBrowser.StartBrowser();
         }
 
 
@@ -181,6 +211,20 @@ namespace eBRestarter.ViewModel.ViewModels
                 BtnInstallFirefoxAddOverWebshopEnabled = false;
             }
 
+            if (braveBrowser.BrowserExist == true)
+            {
+                Tbl_BraveIsInstalledText = "Brave ist installiert";
+
+                BtnInstallBraveAddOverWebshopEnabled = true;
+            }
+            else
+            {
+                Tbl_BraveIsInstalledText = "Brave ist nicht installiert";
+                Tbl_BraveIsInstalledTextForeground = "#BA224D";
+
+                BtnInstallBraveAddOverWebshopEnabled = false;
+            }
+
             //if (firefoxBrowser.BrowserExist == true || chromeBrowser.BrowserExist == true || edgeBrowser.BrowserExist)
             //{
             //}
@@ -193,7 +237,7 @@ namespace eBRestarter.ViewModel.ViewModels
         private void CheckAddOnExist()
         {
 
-            if (Directory.Exists(chromeBrowser.ExtensionsDirectory!))
+            if (chromeBrowser.ExtensionsExist is true)
             {
                 Tbl_AddOnChromeIsInstalledText = "Add-on ist installiert";
 
@@ -213,7 +257,7 @@ namespace eBRestarter.ViewModel.ViewModels
             }
 
 
-            if (Directory.Exists(edgeBrowser.ExtensionsDirectory!))
+            if (edgeBrowser.ExtensionsExist is true)
             {
                 Tbl_AddOnEdgeIsInstalledText = "Add-on ist installiert";
 
@@ -232,7 +276,7 @@ namespace eBRestarter.ViewModel.ViewModels
                 BtnInstallEdgeAddOverWebshopContent = "Add-on über Edge web store installieren";
             }
 
-            if (File.Exists(firefoxBrowser.ExtensionsDirectory!))
+            if (firefoxBrowser.ExtensionsExist)
             {
                 Tbl_AddOnFirefoxIsInstalledText = "Add-on ist installiert";
 
@@ -249,6 +293,25 @@ namespace eBRestarter.ViewModel.ViewModels
                 Tbl_FirefoxInstallInfoIconForeground = "#E40E87";
 
                 BtnInstallFirefoxAddOverWebshopContent = "Add-on über Firefox Erweiterungen installieren";
+            }
+
+            if (braveBrowser.ExtensionsExist is true)
+            {
+                Tbl_AddOnBraveIsInstalledText = "Add-on ist installiert";
+
+                Tbl_BraveInstallInfoIcon = greenMark;
+                Tbl_BraveInstallInfoIconForeground = "#7ED422";
+
+                BtnInstallBraveAddOverWebshopContent = "Add-on über Chrome web store deinstallieren";
+            }
+            else
+            {
+                Tbl_AddOnBraveIsInstalledText = "Add-on ist nicht installiert";
+
+                Tbl_BraveInstallInfoIcon = redMark;
+                Tbl_BraveInstallInfoIconForeground = "#E40E87";
+
+                BtnInstallBraveAddOverWebshopContent = "Add-on über Chrome web store installieren";
             }
 
         }

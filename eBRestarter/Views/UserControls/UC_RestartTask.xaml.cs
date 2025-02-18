@@ -29,6 +29,7 @@ namespace eBRestarter.Views.UserControls
         private Browser? firefoxBrowser;
         private Browser? chromeBrowser;
         private Browser? edgeBrowser;
+        private Browser? braveBrowser;
 
         public string choosenBrowser = string.Empty;
         public string username = string.Empty;
@@ -163,6 +164,7 @@ namespace eBRestarter.Views.UserControls
             chromeBrowser = new Chrome();
             firefoxBrowser = new Firefox();
             edgeBrowser = new Edge();
+            braveBrowser = new Brave();
         }
 
 
@@ -330,6 +332,11 @@ namespace eBRestarter.Views.UserControls
                 edgeBrowser = new Edge(IWebLinks.EV_SURFLINK, username);
                 edgeBrowser.StartBrowser();
             }
+            else if (MatchBraveBrowser() == true)
+            {
+                braveBrowser = new Edge(IWebLinks.EV_SURFLINK, username);
+                braveBrowser.StartBrowser();
+            }
         }
 
 
@@ -364,6 +371,14 @@ namespace eBRestarter.Views.UserControls
                         StartNewBrowserSessionValues(edgeBrowser!, "Browser wurde geschlossen, dieser startet in:");
                     }
                 }
+
+                if (MatchEdgeBrowser() == true)
+                {
+                    if (windowsOS.ProcessAlive("brave") == false)
+                    {
+                        StartNewBrowserSessionValues(edgeBrowser!, "Browser wurde geschlossen, dieser startet in:");
+                    }
+                }
             }
         }
 
@@ -383,6 +398,8 @@ namespace eBRestarter.Views.UserControls
             if (MatchFirefoxBrowser() == true)  { CloseProcess("firefox");         /*firefoxBrowser!.CloseBrowser();*/ }
 
             if (MatchEdgeBrowser() == true)     { windowsOS.StopProcess("msedge"); /*edgeBrowser!.CloseBrowser();*/    }
+
+            if (MatchBraveBrowser() == true)    { CloseProcess("brave");          /*chromeBrowser!.CloseBrowser();*/   }
         }
 
         public bool MatchChromeBrowser()
@@ -415,6 +432,18 @@ namespace eBRestarter.Views.UserControls
             choosenBrowser = eBFileService.GetXMLAttributeInConfig<string>(ISystemPaths.File_Path_eBRestarter_Settings, IConfigConstants.BrowserTag, IConfigConstants.BrowserTag_Selected_Attribut);
 
             if (choosenBrowser.Equals("Edge"))
+            {
+                return true;
+            }
+            else { return false; }
+        }
+
+        public bool MatchBraveBrowser()
+        {
+            EBXMLFileService eBFileService = new(eBXMLFileManagement);
+            choosenBrowser = eBFileService.GetXMLAttributeInConfig<string>(ISystemPaths.File_Path_eBRestarter_Settings, IConfigConstants.BrowserTag, IConfigConstants.BrowserTag_Selected_Attribut);
+
+            if (choosenBrowser.Equals("Brave"))
             {
                 return true;
             }
