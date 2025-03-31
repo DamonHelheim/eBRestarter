@@ -192,7 +192,7 @@ namespace eBRestarter.Views.UserControls
 
             mainTimer.Start();
             
-            tbl_CurrentStatusInfo.Text = "Der Countdowm Timer läuft.";
+            tbl_CurrentStatusInfo.Text = "Der Countdown Timer läuft.";
         }
 
         public void StopRestartTimerTask()
