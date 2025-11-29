@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "eBRestarter.Desktop.WinUI3 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "eBRestarter.Desktop.WinUI3 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

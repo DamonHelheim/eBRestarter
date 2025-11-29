@@ -1,0 +1,16 @@
+﻿C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModelsServices\EVAPIViewModelService.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\ActivateAPIAccessViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\AutomatedTasksViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\AutomaticUserLogInGuidlineViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\BaseViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\BrowserViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\DeleteBrowserContentDateViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\EBRestarterMainViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\EVisitorUsernameViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\InfocenterViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\InstalledeVisitorAddOnViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\OptionsViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\PointsOutputViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\RestartAndRuntimeOptionsViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\RestartBrowserTaskMediatorViewModel.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.ViewModel\ViewModels\RestartBrowserTaskViewModel.cs

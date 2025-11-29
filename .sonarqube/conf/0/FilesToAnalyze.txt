@@ -1,0 +1,6 @@
+﻿C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\EVIPDataValues.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\EVisitorAPIJSONDataValues.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\HardwareSpecification.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\IconCredit.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\NetWorkCardAndTrafficInfo.cs
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Model\Models\WindowsInformation.cs

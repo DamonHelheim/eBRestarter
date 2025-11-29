@@ -10,8 +10,8 @@ namespace eBRestarter.Classes.InternetBrowser
         protected WindowsOS? Windows { get; set; } = new();
 
         //Property fields
-        public string? WebsiteLink { get; set; }
-        public string? AddedLinkComponent { get; set; }
+        protected string? WebsiteLink { get; set; }
+        protected string? AddedLinkComponent { get; set; }
 
         protected Browser()
         {
