@@ -24,7 +24,7 @@
                     Canvas.Left     ="612"
                     Canvas.Top      ="18"
                     BorderThickness ="1"                    
-                    CornerRadius    ="2">
+                    CornerRadius    ="5">
         <Canvas>
 
             <Image         x:Name                           ="image_browser_cleaning"

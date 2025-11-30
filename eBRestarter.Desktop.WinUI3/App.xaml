@@ -9,7 +9,10 @@
             <ResourceDictionary.MergedDictionaries>
                 
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                
+                <!-- Dark Theme -->
+                <!--<ResourceDictionary Source="pack://application:,,,/Resources/Styles/Themes/DarkTheme.xaml"/>-->
+                <!-- Light Theme -->
+                <ResourceDictionary Source="\Resources\Styles\Themes\LightTheme.xaml"/>
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->

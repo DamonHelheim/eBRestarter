@@ -20,6 +20,12 @@
     <None Remove="Views\Pages\P_Options.xaml" />
     <None Remove="Views\Pages\P_RestarterProperties.xaml" />
     <None Remove="Views\Pages\P_Settings.xaml" />
+    <None Remove="Views\UserControls\UC_AdditionalOptions.xaml" />
+    <None Remove="Views\UserControls\UC_AutomatedTasks.xaml" />
+    <None Remove="Views\UserControls\UC_Browser.xaml" />
+    <None Remove="Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
+    <None Remove="Views\UserControls\UC_eVisitorUsername.xaml" />
+    <None Remove="Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +39,243 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Resources\Visuals\Icons\DarkTheme\add_document_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\calendar_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\circle_with_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\clock_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\data-cleaning_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\download_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_arrows-rotate_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_circle-plus_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_clock-rotate-left_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_flatscreen_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_gears_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_globe_2_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_list-ul_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_servicestack_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_whmcs_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\ip-address_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\maintenance_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\network-interface-card_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\note_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\send-data-dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\status_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\User_2_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\user_3_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\user_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\windows_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\workstation_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\api.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\approval.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\deactivate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\eB Restarter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_brave.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_chrome.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_edge.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_firefox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_keyaccess.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\file.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\file_information.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\globe-grid.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\key.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\play.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\plus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\tasks.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\timer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\user.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\wrong_document.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\add_document_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\calendar_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\circle_with_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\clock_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\data-cleaning_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\download_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_arrows-rotate_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_arrows-rotate_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_circle-plus_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_clock-rotate-left_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_flatscreen_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_flatscreen_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_gears_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_gears_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_globe_2_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_list-ul_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_list-ul_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_servicestack_light_theme_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_whmcs_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\ip-address_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\maintenance_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\network-interface-card_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\note_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\send-data-light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\servicestack_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\status_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\user_2_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\user_3_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\user_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\windows_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\workstation_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -62,10 +305,37 @@
     <Folder Include="DependencyInjections\" />
     <Folder Include="Resources\Images\" />
     <Folder Include="Resources\Languages\" />
-    <Folder Include="Resources\Styles\" />
-    <Folder Include="Resources\Visuals\Icons\" />
     <Folder Include="Resources\Visuals\Images\" />
-    <Folder Include="Views\UserControls\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Browser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_AutomatedTasks.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_AdditionalOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_eVisitorUsername.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_DeleteBrowserContentTask.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartTask.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Pages\P_Settings.xaml">
