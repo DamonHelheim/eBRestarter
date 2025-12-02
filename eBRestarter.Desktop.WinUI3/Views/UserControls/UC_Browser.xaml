@@ -22,7 +22,7 @@
             <Canvas>
 
                 <ToggleButton x:Name              ="BtnDownloadBrowser"                     
-                          Style               ="{StaticResource DownloadBrowserToggleButton}"
+                          
                           Content             ="Download"
                           HorizontalAlignment ="Center"
                           Height              ="80"
@@ -33,7 +33,7 @@
                           />
 
                 <Button x:Name              ="BtnChooseBrowser"
-                    Style               ="{StaticResource ChooseBrowserButton}"
+                    
                     Content             ="Auswählen"
                     Height              ="80"
                     Width               ="80"

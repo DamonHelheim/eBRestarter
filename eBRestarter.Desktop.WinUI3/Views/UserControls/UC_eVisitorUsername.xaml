@@ -11,7 +11,7 @@
     <Border x:Name          ="Border_eVisitor_Username"
             Background      ="{ThemeResource DashletBackgroundColor_1}"
             BorderThickness ="1"
-            CornerRadius    ="2">
+            CornerRadius    ="5">
 
         <Grid>
 
@@ -43,7 +43,7 @@
 
                 <Button x:Name              ="BtneVisitorRegistration"
                         Margin              ="20,5,0,0"
-                        Style               ="{ThemeResource ButtonStyle}"           
+                                
                         BorderBrush         ="Transparent"
                         Content             ="Bei eBesucher registrieren" 
                         Height              ="35"

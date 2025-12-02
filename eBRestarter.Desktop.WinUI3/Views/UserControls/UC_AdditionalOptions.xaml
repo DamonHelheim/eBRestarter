@@ -11,7 +11,7 @@
     <Border x:Name             ="Border_Additional_Options"
             Background         ="{ThemeResource DashletBackgroundColor_1}"
             BorderThickness    ="1"
-            CornerRadius       ="2"
+            CornerRadius       ="5"
             Padding            ="0">
 
         <Canvas>

@@ -25,6 +25,8 @@
     <None Remove="Views\UserControls\UC_Browser.xaml" />
     <None Remove="Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
     <None Remove="Views\UserControls\UC_eVisitorUsername.xaml" />
+    <None Remove="Views\UserControls\UC_InstalledBrowsers.xaml" />
+    <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
     <None Remove="Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
 
@@ -306,6 +308,16 @@
     <Folder Include="Resources\Images\" />
     <Folder Include="Resources\Languages\" />
     <Folder Include="Resources\Visuals\Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartAndRuntimeOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InstalledBrowsers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\UserControls\UC_Browser.xaml">
