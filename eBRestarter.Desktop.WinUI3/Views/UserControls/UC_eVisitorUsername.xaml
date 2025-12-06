@@ -42,8 +42,8 @@
             <StackPanel Grid.Row="1">
 
                 <Button x:Name              ="BtneVisitorRegistration"
+                        Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="20,5,0,0"
-                                
                         BorderBrush         ="Transparent"
                         Content             ="Bei eBesucher registrieren" 
                         Height              ="35"
@@ -69,11 +69,11 @@
                          FontSize               ="18"
                          HorizontalAlignment    ="Left"
                          AcceptsReturn          ="False">
-
-
+                    
                 </TextBox>
 
                 <Button x:Name              ="BtnUserNameApply"
+                        Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="21,10,0,0"
                         Command             ="{Binding ExecuteAddUsernameCommand}"
                         CommandParameter    ="{Binding ElementName=tb_PleaseEnterYourUsernameHere, Path=Text}"

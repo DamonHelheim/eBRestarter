@@ -11,43 +11,43 @@
     <StackPanel>
 
         <Border x:Name          ="Border_Installedbrowser"
-             Background      ="{ThemeResource DashletBackgroundColor_1}"
-             Margin          ="0, 0 ,0, 0"
-             Height          ="40"
-             Width           ="260"
-             BorderThickness ="1"
-             CornerRadius    ="2"
-             Padding         ="0">
+                Background      ="{ThemeResource DashletBackgroundColor_1}"
+                Margin          ="0, 0 ,0, 0"
+                Height          ="40"
+                Width           ="260"
+                BorderThickness ="1"
+                CornerRadius    ="5"
+                Padding         ="0">
 
             <StackPanel Orientation="Horizontal">
 
                 <Image x:Name                           ="image_installed_browsers"
-                    Source                           ="{ThemeResource GlobeIcon}"
-                    Margin                           ="5"
-                    Height                           ="28"
-                    Width                            ="auto"                                          
-                    Canvas.Left                      ="5"
-                    Canvas.Top                       ="5"/>
+                       Source                           ="{ThemeResource GlobeIcon}"
+                       Margin                           ="5"
+                       Height                           ="28"
+                       Width                            ="auto"                                          
+                       Canvas.Left                      ="5"
+                       Canvas.Top                       ="5"/>
 
                 <TextBlock x:Name       ="tbl_Installed_Browsers"
-                        Foreground   ="{ThemeResource FontColor_1}"
-                        FontSize     ="18"
-                        Canvas.Left  ="39"
-                        TextWrapping ="Wrap"
-                        Text         ="Installierte Browser"
-                        Canvas.Top   ="6" Height="24"/>
+                           Foreground   ="{ThemeResource FontColor_1}"
+                           FontSize     ="18"
+                           Canvas.Left  ="39"
+                           TextWrapping ="Wrap"
+                           Text         ="Installierte Browser"
+                           Canvas.Top   ="6" Height="24"/>
 
             </StackPanel>
 
         </Border>
 
-        <userControls:UC_Browser/>
+        <userControls:UC_Browser Margin="0,8,0,5" Height="auto"/>
 
-        <userControls:UC_Browser/>
+        <userControls:UC_Browser Margin="0,7,0,5"/>
 
-        <userControls:UC_Browser/>
+        <userControls:UC_Browser Margin="0,15,0,5"/>
 
-        <userControls:UC_Browser />
+        <userControls:UC_Browser Margin="0,7,0,5"/>
 
     </StackPanel>
 </UserControl>

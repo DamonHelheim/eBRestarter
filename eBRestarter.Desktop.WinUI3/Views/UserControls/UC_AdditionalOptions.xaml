@@ -43,38 +43,41 @@
                        Canvas.Top           ="37"
                        Visibility           ="{Binding Tbl_NoBrowserInstalledIsVisible}"/>
 
-            <Button x:Name          ="BtnDeleteBrowserContent"
-                Content             ="Browserinhalte löschen"
-                Canvas.Left         ="14"
-                Canvas.Top          ="65"
-                Width               ="295"
-                Height              ="50"
-                FontSize            ="16"
-                HorizontalAlignment ="Center"
-                VerticalAlignment   ="Top"
-                IsEnabled           ="{Binding BtnDeleteBrowserContentIsEnabled}"/>
+            <Button x:Name              ="BtnDeleteBrowserContent"
+                    Content             ="Browserinhalte löschen"
+                    Style               ="{ThemeResource ButtonCustomStyle_1}"
+                    Canvas.Left         ="14"
+                    Canvas.Top          ="65"
+                    Width               ="295"
+                    Height              ="50"
+                    FontSize            ="16"
+                    HorizontalAlignment ="Center"
+                    VerticalAlignment   ="Top"
+                    IsEnabled           ="{Binding BtnDeleteBrowserContentIsEnabled}"/>
 
-            <Button x:Name           ="BtnInstalleBesucherAddOn"                                    
-                Content              ="Installiere eBesucher Add-on"
-                Canvas.Left          ="14"
-                Canvas.Top           ="127"
-                Width                ="295"
-                Height               ="40"
-                FontSize             ="16"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
+            <Button x:Name               ="BtnInstalleBesucherAddOn"
+                    Style                ="{ThemeResource ButtonCustomStyle_1}"
+                    Content              ="Installiere eBesucher Add-on"
+                    Canvas.Left          ="14"
+                    Canvas.Top           ="127"
+                    Width                ="295"
+                    Height               ="40"
+                    FontSize             ="16"
+                    HorizontalAlignment  ="Center"
+                    VerticalAlignment    ="Top"
+                    IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
 
-            <Button x:Name               ="BtnInfoeVisitorAddOn"                                    
-                Content              ="Wichtige Info zum Add-on"
-                Canvas.Left          ="14"
-                Canvas.Top           ="179"
-                Width                ="295"
-                Height               ="30"
-                FontSize             ="16"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Top"
-                IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
+            <Button x:Name               ="BtnInfoeVisitorAddOn"
+                    Style                ="{ThemeResource ButtonCustomStyle_1}"
+                    Content              ="Wichtige Info zum Add-on"
+                    Canvas.Left          ="14"
+                    Canvas.Top           ="179"
+                    Width                ="295"
+                    Height               ="30"
+                    FontSize             ="16"
+                    HorizontalAlignment  ="Center"
+                    VerticalAlignment    ="Top"
+                    IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
 
         </Canvas>
 

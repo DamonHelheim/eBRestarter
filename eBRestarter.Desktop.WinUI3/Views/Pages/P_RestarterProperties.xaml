@@ -42,11 +42,9 @@
         </StackPanel>
 
         <!-- INHALT -->
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
 
-            <Grid>
+
+            <Grid Grid.Row="1">
                 <!-- links: flexibel, rechts: so breit wie nötig und immer am rechten Rand -->
                 <Grid.ColumnDefinitions>
 
@@ -66,7 +64,7 @@
                         <ItemsPanelTemplate>
 
                             <controls:ItemsWrapGrid Orientation="Horizontal"
-                                                    MaximumRowsOrColumns="2"/>
+                                                    />
                         </ItemsPanelTemplate>
 
                     </GridView.ItemsPanel>
@@ -76,7 +74,7 @@
                         <Style TargetType="GridViewItem">
 
                             <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="25,20,20,0" />
+                            <Setter Property="Margin" Value="2,20,10,0" />
 
                         </Style>
 
@@ -95,7 +93,7 @@
                                                        Height="220"/>
                 </GridView>
 
-                <!-- RECHTE SPALTE: InstalledBrowsers rechtsbündig -->
+                 <!--RECHTE SPALTE: InstalledBrowsers rechtsbündig--> 
                 <ScrollViewer Grid.Column="1"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled"
@@ -112,7 +110,7 @@
 
             </Grid>
 
-        </ScrollViewer>
+      
 
     </Grid>
     

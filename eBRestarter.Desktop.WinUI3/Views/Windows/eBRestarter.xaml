@@ -18,74 +18,129 @@
 
         <Grid.Resources>
             <!-- Eigene Farben -->
-            <SolidColorBrush x:Key="NavBackgroundBrush" Color="#202536" />
-            <SolidColorBrush x:Key="NavItemForegroundBrush" Color="#F5F5F5" />
-            <SolidColorBrush x:Key="NavDividerBrush" Color="#44FFFFFF" />
+            <SolidColorBrush x:Key="NavBackgroundBrush" Color="White" />
+            <SolidColorBrush x:Key="NavTextForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="NavDividerBrush" Color="Black" />
         </Grid.Resources>
 
         <!-- Card-Optik für das Menü -->
         <Border Margin="12"
             CornerRadius="12"
             Background="{StaticResource NavBackgroundBrush}">
+            
             <NavigationView x:Name="NavView"
                         IsSettingsVisible="True"
                         PaneDisplayMode="Left"
                         IsPaneOpen="True"
                         CompactPaneLength="56"
                         OpenPaneLength="260"
-                        Background="Transparent"
+                        Background="Blue"
                         SelectionChanged="NavView_SelectionChanged"
                         ItemInvoked="NavView_ItemInvoked">
 
                 <!-- Header oben im Pane -->
                 <NavigationView.PaneHeader>
-                    <StackPanel Orientation="Horizontal" Margin="12,16,12,8">
-                        <FontIcon Glyph="&#xE7C3;" FontSize="20" />
+                    
+                    <StackPanel Orientation="Horizontal"
+                                Margin="12,16,12,8">
+
+                        <FontIcon Glyph="&#xE895;"
+                                  FontSize="20"
+                                  Foreground="{StaticResource NavTextForegroundBrush}"/>
+                        
                         <TextBlock Text="eBRestarter"
-                               Margin="8,0,0,0"
-                               VerticalAlignment="Center"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="{StaticResource NavItemForegroundBrush}" />
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource NavTextForegroundBrush}"/>
+                        
                     </StackPanel>
+                    
                 </NavigationView.PaneHeader>
 
                 <!-- Footer unten im Pane -->
                 <NavigationView.PaneFooter>
+                    
                     <StackPanel Margin="12,0,12,12">
+                        
                         <Border Height="1"
-                            Margin="0,0,0,8"
-                            Background="{StaticResource NavDividerBrush}" />
+                                Margin="0,0,0,8"
+                                Background="{StaticResource NavDividerBrush}" />
+                        
                         <TextBlock Text="v1.0.0"
-                               Opacity="0.6"
-                               FontSize="12"
-                               Foreground="{StaticResource NavItemForegroundBrush}" />
+                                   Opacity="0.6"
+                                   FontSize="12"
+                                   Foreground="{StaticResource NavTextForegroundBrush}" />
+                        
                     </StackPanel>
+                    
                 </NavigationView.PaneFooter>
 
                 <!-- Menüeinträge -->
                 <NavigationView.MenuItems>
+
                     <NavigationViewItem Content="Übersicht"
-                                    Tag="CommonOverview"
-                                    Icon="Home" />
+                                        Tag="CommonOverview">
+
+                        <NavigationViewItem.Icon>
+                            
+                            <FontIcon Glyph="&#xE7F4;"
+                                      FontFamily="Segoe MDL2 Assets" />
+                            
+                        </NavigationViewItem.Icon>
+
+                    </NavigationViewItem>
+
                     <NavigationViewItem Content="Restarter Properties"
-                                    Tag="RestarterProperties"
-                                    Icon="Edit" />
+                                        Tag="RestarterProperties">
+
+                        <NavigationViewItem.Icon>
+
+                            <FontIcon Glyph="&#xECA5;"
+                                      FontFamily="Segoe MDL2 Assets" />
+
+                        </NavigationViewItem.Icon>
+
+                    </NavigationViewItem>
+
                     <NavigationViewItem Content="Optionen"
-                                    Tag="Options"
-                                    Icon="Setting" />
+                                        Tag="Options">
+
+                        <NavigationViewItem.Icon>
+
+                            <FontIcon Glyph="&#xF2C7;"
+                                      FontFamily="Segoe Fluent Icons" />
+
+                        </NavigationViewItem.Icon>
+
+                    </NavigationViewItem>
+
                     <NavigationViewItem Content="Infocenter"
-                                    Tag="Infocenter"
-                                    Icon="Help" />
+                                        Tag="Infocenter">
+
+                        <NavigationViewItem.Icon>
+
+                            <FontIcon Glyph="&#xE946;"
+                                     FontFamily="Segoe Fluent Icons" />
+
+                        </NavigationViewItem.Icon>
+
+                    </NavigationViewItem>
+
                 </NavigationView.MenuItems>
 
                 <!-- INHALT RECHTS NEBEN DEM HAMBURGER-MENÜ -->
                 <Grid>
+                    
                     <Grid.RowDefinitions>
+                        
                         <!-- oben: Leiste -->
                         <RowDefinition Height="*" />
+                        
                         <!-- unten: eigentlicher Frame-Inhalt -->
                         <RowDefinition Height="auto" />
+                        
                     </Grid.RowDefinitions>
 
                     <!-- Frame für den eigentlichen Seiteninhalt -->
@@ -93,12 +148,11 @@
                            x:Name="NavigationFrame" />
 
                     <!-- Leiste oben -->
-                    <StackPanel Grid.Row="1"
-                                
+                    <StackPanel Grid.Row="1"                                
                             Orientation="Horizontal"
                             Margin="0"
                             HorizontalAlignment="Stretch"
-                                Background="White">
+                            Background="White">
 
                         <usercontrol:UC_RestartTask Margin="5" />
 

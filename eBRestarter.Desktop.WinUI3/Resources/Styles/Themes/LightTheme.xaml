@@ -78,6 +78,13 @@
     <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOnPressed" Color="Black" />
 
 
+    <!-- Farben für die Buttons -->
+    <!-- Farbressourcen -->
+
+
+    <SolidColorBrush x:Key="AppTealButtonBackgroundBrush" Color="#00B894" />
+    <SolidColorBrush x:Key="AppTealButtonForegroundBrush" Color="#FFFFFF" />
+
 
     <Style TargetType="StackPanel" x:Key="StackPanelColorStandardThemeSideMenu">
         <Setter Property="Background">
@@ -90,8 +97,58 @@
         </Setter>
     </Style>
 
+    <!-- Basisfarben für graue Buttons -->
+    <SolidColorBrush x:Key="AppGrayButtonBackgroundBrush" Color="#DDDDDD" />
+    <SolidColorBrush x:Key="AppGrayButtonForegroundBrush" Color="#000000" />
 
-   
+    <!-- Hover/Pressed-Ressourcen, die das DefaultButton-Template benutzt -->
+    <!-- Achtung: gelten global für Buttons, die DefaultButtonStyle-Basis nutzen -->
+    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#E6E6E6" />
+    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#000000" />
+
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#CFCFCF" />
+    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#000000" />
+
+    <!-- Style für deinen "Browserinhalte löschen" Button -->
+    <Style x:Key="ButtonCustomStyle_1"
+           TargetType="Button"
+           BasedOn="{StaticResource DefaultButtonStyle}">
+        
+        <!-- Normalzustand -->
+        <Setter Property="Background"
+                Value="{ThemeResource AppGrayButtonBackgroundBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource AppGrayButtonForegroundBrush}" />
+
+        <!-- Typisches Layout für diese Button-Art -->
+        <Setter Property="Width" Value="295" />
+        <Setter Property="Height" Value="50" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+
+    <!-- Style für deinen "Browserinhalte löschen" Button -->
+    <Style x:Key="ButtonChooseBrowser"
+       TargetType="Button"
+       BasedOn="{StaticResource DefaultButtonStyle}">
+
+        <!-- Normalzustand -->
+        <Setter Property="Background"
+            Value="{ThemeResource AppTealButtonBackgroundBrush}" />
+        <Setter Property="Foreground"
+            Value="{ThemeResource AppTealButtonForegroundBrush}" />
+
+        <!-- Typisches Layout für diese Button-Art -->
+        <Setter Property="Width" Value="295" />
+        <Setter Property="Height" Value="50" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+
+
+
 
     <!--<SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#757575"/>
     <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#38C6FC"/>
