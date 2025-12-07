@@ -16,8 +16,10 @@
         <Grid>
 
             <Grid.RowDefinitions>
+                
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="auto"/>
+                
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0"
@@ -25,9 +27,9 @@
 
                 <Image x:Name                           ="image_eBVisitor_username"
                        Source                           ="{ThemeResource UserIcon}"
-                       Margin                           ="20,5,0,0"
-                       Height                           ="40"
-                       Width                            ="43"/>
+                       Margin                           ="15,5,0,0"
+                       Height                           ="30"
+                       Width                            ="40"/>
 
                 <TextBlock x:Name       ="tbl_Username"
                            Foreground   ="{ThemeResource FontColor_1}"
@@ -56,7 +58,7 @@
                            Foreground           ="{ThemeResource FontColor_1}"
                            Margin               ="20,10,0,0"
                            Text                 ="Bitte gebe hier deinen Nutzernamen ein:"
-                           FontSize             ="16"
+                           FontSize             ="14"
                            HorizontalAlignment  ="Left"/>
 
                 <TextBox x:Name                 ="tb_PleaseEnterYourUsernameHere"

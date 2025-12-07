@@ -1,6 +1,7 @@
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using eBRestarter.Desktop.WinUI3.Views.Pages;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,8 +30,7 @@ namespace eBRestarter.Desktop.WinUI3
     public sealed partial class EBRestarter : Window
     {
         private readonly INavigationService _navigationService;
-        private readonly NavigationTransitionInfo _defaultTransition
-    = new DrillInNavigationTransitionInfo();
+        private readonly NavigationTransitionInfo _defaultTransition = new DrillInNavigationTransitionInfo();
 
         // Routen-Map für Tags aus dem NavigationView
         private static readonly Dictionary<string, Type> _routes = new()
@@ -44,7 +45,7 @@ namespace eBRestarter.Desktop.WinUI3
         public EBRestarter(INavigationService navigationService, MainViewModel mainViewModel)
         {
             InitializeComponent();
-
+            ConfigureTitleBar();
             _navigationService = navigationService;
 
             // Frame an NavigationService "anhängen"
@@ -59,11 +60,35 @@ namespace eBRestarter.Desktop.WinUI3
             _navigationService.Navigate(typeof(P_CommonOverview), new DrillInNavigationTransitionInfo());
         }
 
+        private void ConfigureTitleBar()
+        {
+            // AppWindow aus dem Window holen (ab Windows App SDK 1.3+)
+            var appWindow = this.AppWindow;
+            var titleBar = appWindow.TitleBar;
+
+            // Inhalt in die Titelleiste hineinziehen
+            titleBar.ExtendsContentIntoTitleBar = true;
+
+            // Farben an deinen Hintergrund anpassen
+            var bg = Color.FromArgb(255, 32, 37, 54); // Fix: ColorHelper entfernt, stattdessen Microsoft.UI.Xaml.Media.Color
+
+            titleBar.BackgroundColor = bg;
+            titleBar.InactiveBackgroundColor = bg;
+            titleBar.ButtonBackgroundColor = bg;
+            titleBar.ButtonInactiveBackgroundColor = bg;
+            titleBar.ButtonForegroundColor = Colors.White;
+            titleBar.ButtonInactiveForegroundColor = Colors.Gray;
+
+            // Wenn du eine eigene XAML-Titlebar benutzt, dann zusätzlich:
+            this.ExtendsContentIntoTitleBar = true;
+            this.SetTitleBar(null);
+        }
+
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItemContainer is NavigationViewItem nvi
-        && nvi.Tag is string tag
-        && _routes.TryGetValue(tag, out var pageType))
+                && nvi.Tag is string tag
+                && _routes.TryGetValue(tag, out var pageType))
             {
                 _navigationService.Navigate(
                     pageType,

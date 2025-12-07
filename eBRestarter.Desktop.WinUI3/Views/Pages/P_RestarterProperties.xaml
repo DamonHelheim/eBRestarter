@@ -44,73 +44,71 @@
         <!-- INHALT -->
 
 
-            <Grid Grid.Row="1">
-                <!-- links: flexibel, rechts: so breit wie nötig und immer am rechten Rand -->
-                <Grid.ColumnDefinitions>
+        <Grid Grid.Row="1">
+            <!-- links: flexibel, rechts: so breit wie nötig und immer am rechten Rand -->
+            <Grid.ColumnDefinitions>
 
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
 
-                </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
 
-                <!-- LINKE SPALTE: GridView mit Wrap -->
-                <GridView Grid.Column="0"
+            <!-- LINKE SPALTE: GridView mit Wrap -->
+            <GridView Grid.Column="0"
                           IsItemClickEnabled="False"
                           SelectionMode="None"
                           HorizontalAlignment="Left">
 
-                    <GridView.ItemsPanel>
+                <GridView.ItemsPanel>
 
-                        <ItemsPanelTemplate>
+                    <ItemsPanelTemplate>
 
-                            <controls:ItemsWrapGrid Orientation="Horizontal"
+                        <controls:ItemsWrapGrid Orientation="Horizontal"
                                                     />
-                        </ItemsPanelTemplate>
+                    </ItemsPanelTemplate>
 
-                    </GridView.ItemsPanel>
+                </GridView.ItemsPanel>
 
-                    <GridView.ItemContainerStyle>
+                <GridView.ItemContainerStyle>
 
-                        <Style TargetType="GridViewItem">
+                    <Style TargetType="GridViewItem">
 
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="2,20,10,0" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="20,20,10,0" />
 
-                        </Style>
+                    </Style>
 
-                    </GridView.ItemContainerStyle>
+                </GridView.ItemContainerStyle>
 
-                    <userControls:UC_eVisitorUsername Width="320"
+                <userControls:UC_eVisitorUsername Width="320"
                                                       Height="220"/>
 
-                    <userControls:UC_RestartAndRuntimeOptions Width="320"
+                <userControls:UC_RestartAndRuntimeOptions Width="320"
                                                               Height="220"/>
 
-                    <userControls:UC_AutomatedTasks Width="320"
+                <userControls:UC_AutomatedTasks Width="320"
                                                     Height="220"/>
 
-                    <userControls:UC_AdditionalOptions Width="320"
+                <userControls:UC_AdditionalOptions Width="320"
                                                        Height="220"/>
-                </GridView>
+            </GridView>
 
-                 <!--RECHTE SPALTE: InstalledBrowsers rechtsbündig--> 
-                <ScrollViewer Grid.Column="1"
+            <!--RECHTE SPALTE: InstalledBrowsers rechtsbündig-->
+            <ScrollViewer Grid.Column="1"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled"
                               HorizontalAlignment="Right">
 
-                    <StackPanel>
+                <StackPanel>
 
-                        <userControls:UC_InstalledBrowsers Width="265"
+                    <userControls:UC_InstalledBrowsers Width="265"
                                                            Height="Auto"
                                                            Margin="10,20,10,0" />
-                    </StackPanel>
+                </StackPanel>
 
-                </ScrollViewer>
+            </ScrollViewer>
 
-            </Grid>
-
-      
+        </Grid>
 
     </Grid>
     

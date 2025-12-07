@@ -48,6 +48,8 @@
     <Color x:Key="AppCyanHoverColor">#FF89F0F3</Color>
     <Color x:Key="AppWhiteColor">#FFFDFDFD</Color>
 
+    <SolidColorBrush x:Key = "CostumBackgroundColor" Color = "#DCDCDC"/>
+
     <SolidColorBrush x:Key = "FontColor_1" Color = "Black"/>
     <SolidColorBrush x:Key = "FontColor_2" Color = "White"/>
     <SolidColorBrush x:Key = "FontColor_3" Color = "White"/>
@@ -68,22 +70,58 @@
     <SolidColorBrush x:Key = "TextBoxBackgroundColor" Color = "White"/>
     <SolidColorBrush x:Key = "TextBoxBottumBorderBrushBackgroundColor" Color = "Black"/>
     
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOff" Color="Transparent" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOffPointerOver" Color="Transparent" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.FillOffPressed" Color="#666666" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.StrokeOff" Color="#333333" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.StrokeOffPointerOver" Color="Black" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOff" Color="#333333" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOffPointerOver" Color="Black" />
-    <SolidColorBrush x:Key = "MahApps.Brushes.ToggleSwitch.KnobFillOnPressed" Color="Black" />
 
-
-    <!-- Farben für die Buttons -->
     <!-- Farbressourcen -->
-
-
     <SolidColorBrush x:Key="AppTealButtonBackgroundBrush" Color="#00B894" />
     <SolidColorBrush x:Key="AppTealButtonForegroundBrush" Color="#FFFFFF" />
+
+    <!-- Style für das Hamburger-Menü-Symbol -->
+    <Style x:Key="CustomPaneToggleButtonStyle"
+       TargetType="Button"
+       BasedOn="{StaticResource PaneToggleButtonStyle}">
+        <!--Farbe der drei Striche-->
+        <Setter Property="Foreground" Value="Black" />
+        <!--optional: Hintergrund, wenn du das weiße Quadrat loswerden willst-->
+        <Setter Property="Background" Value="Transparent" />
+
+    </Style>
+
+    <!-- Globale Farben für NavigationViewItem -->
+    <SolidColorBrush x:Key="NavigationViewItemForeground"
+                     Color="{ThemeResource FontColor_1}" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver"
+                     Color="white" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected"
+                     Color="white" />
+
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver"
+                 Color="white" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed"
+                 Color="Black" />
+
+    <!-- Hintergrund der Box -->
+    <SolidColorBrush x:Key="NavigationViewItemBackground"
+                     Color="Transparent" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver"
+                     Color="#2c6bd1" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed"
+                     Color="#2A3245" />
+
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected"
+                     Color="#2c6bd1" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver"
+                     Color="#5384d4" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed"
+                     Color="white" />
+
+    <!-- Standard-Style für alle NavigationViewItem -->
+    <Style TargetType="NavigationViewItem">
+        <Setter Property="Foreground"
+                Value="Black" />
+        <Setter Property="FontSize"
+                Value="14" />
+    </Style>
+    <!-- Style für das Hamburger-Menü-Ende -->
 
 
     <Style TargetType="StackPanel" x:Key="StackPanelColorStandardThemeSideMenu">
@@ -117,6 +155,7 @@
         <!-- Normalzustand -->
         <Setter Property="Background"
                 Value="{ThemeResource AppGrayButtonBackgroundBrush}" />
+        
         <Setter Property="Foreground"
                 Value="{ThemeResource AppGrayButtonForegroundBrush}" />
 
@@ -126,18 +165,20 @@
         <Setter Property="FontSize" Value="16" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
+        
     </Style>
 
     <!-- Style für deinen "Browserinhalte löschen" Button -->
     <Style x:Key="ButtonChooseBrowser"
-       TargetType="Button"
-       BasedOn="{StaticResource DefaultButtonStyle}">
+           TargetType="Button"
+           BasedOn="{StaticResource DefaultButtonStyle}">
 
         <!-- Normalzustand -->
         <Setter Property="Background"
-            Value="{ThemeResource AppTealButtonBackgroundBrush}" />
+                Value="{ThemeResource AppTealButtonBackgroundBrush}" />
+        
         <Setter Property="Foreground"
-            Value="{ThemeResource AppTealButtonForegroundBrush}" />
+                Value="{ThemeResource AppTealButtonForegroundBrush}" />
 
         <!-- Typisches Layout für diese Button-Art -->
         <Setter Property="Width" Value="295" />
@@ -145,19 +186,8 @@
         <Setter Property="FontSize" Value="16" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
+        
     </Style>
 
-
-
-
-    <!--<SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#757575"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#38C6FC"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#3A485C"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_6" Color = "#045B93"/>-->
-
-    <!--<SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#757575"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#38C6FC"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#3A485C"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_6" Color = "#045B93"/>-->
 
 </ResourceDictionary>

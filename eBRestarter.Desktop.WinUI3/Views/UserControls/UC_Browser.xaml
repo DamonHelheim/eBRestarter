@@ -33,6 +33,7 @@
                 <Button x:Name              ="BtnChooseBrowser"
                         Style               ="{StaticResource ButtonChooseBrowser}"
                         Content             ="Auswählen"
+                        FontSize            ="11"
                         Height              ="80"
                         Width               ="80"
                         Visibility          ="{Binding ChooseBrowserButtonVisible}"
