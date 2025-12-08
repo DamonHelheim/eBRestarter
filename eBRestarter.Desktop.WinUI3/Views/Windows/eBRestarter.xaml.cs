@@ -84,6 +84,19 @@ namespace eBRestarter.Desktop.WinUI3
             this.SetTitleBar(null);
         }
 
+        private void AppTitleBar_BackRequested(TitleBar sender, object args)
+        {
+            if (NavigationFrame.CanGoBack)
+            {
+                NavigationFrame.GoBack();
+            }
+        }
+
+        private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
+        {
+            NavView.IsPaneOpen = !NavView.IsPaneOpen;
+        }
+
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItemContainer is NavigationViewItem nvi

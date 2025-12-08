@@ -6,7 +6,8 @@
     xmlns:local="using:eBRestarter.Desktop.WinUI3"
     xmlns:usercontrol="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Title="eBRestarter.Desktop.WinUI3">
 
@@ -15,52 +16,46 @@
     </Window.SystemBackdrop>
 
     <Grid Background="{ThemeResource MenuBackgroundColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- TitleBar -->
+            <RowDefinition Height="*" />
+            <!-- NavigationView -->
+        </Grid.RowDefinitions>
 
-        <Grid.Resources>
-            <!-- Eigene Farben -->
-            <SolidColorBrush x:Key="NavBackgroundBrush" Color="Black" />
-            <SolidColorBrush x:Key="NavTextForegroundBrush" Color="Black" />
-            <SolidColorBrush x:Key="NavDividerBrush" Color="Black" />
-        </Grid.Resources>
+        <!--  TITLE BAR wie in der Gallery  -->
+        <controls:TitleBar x:Name="AppTitleBar"
+                           Grid.Row="0"
+                           Title="eBRestarter"
+                           Foreground="Black"
+                           IsBackButtonVisible="false"
+                           IsBackButtonEnabled="{x:Bind NavigationFrame.CanGoBack, Mode=OneWay}"
+                           BackRequested="AppTitleBar_BackRequested"
+                           IsPaneToggleButtonVisible="True"
+                           PaneToggleRequested="AppTitleBar_PaneToggleRequested">
 
-        <!-- Card-Optik für das Menü -->
-        <Border Margin="0,30,0,0"
-                CornerRadius="0"
-                Background="{ThemeResource MenuBackgroundColor}">
-            
-            <NavigationView x:Name="NavView"
-                            Margin="0,0,0,0"
-                            IsSettingsVisible="True"
-                            PaneDisplayMode="Left"
-                            IsPaneOpen="True"
-                            CompactPaneLength="56"
-                            OpenPaneLength="260"
-                            Background="{ThemeResource MenuBackgroundColor}"
-                            PaneToggleButtonStyle="{StaticResource CustomPaneToggleButtonStyle}"
-                            SelectionChanged="NavView_SelectionChanged"
-                            ItemInvoked="NavView_ItemInvoked">
+            <controls:TitleBar.IconSource>
+                <FontIconSource Glyph="&#xE895;" Foreground="{ThemeResource FontColor_1}"/>
+            </controls:TitleBar.IconSource>
 
-                
-                <!-- Header oben im Pane -->
-                <NavigationView.PaneHeader>
-                    
-                    <StackPanel Orientation="Horizontal"
-                                Margin="12,16,12,8">
+        </controls:TitleBar>
 
-                        <FontIcon Glyph="&#xE895;"
-                                  FontSize="20"
-                                  Foreground="Black"/>
-                        
-                        <TextBlock Text="eBRestarter"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"
-                                   FontSize="18"
-                                   FontWeight="SemiBold"
-                                   Foreground="Black"/>
-                        
-                    </StackPanel>
-                    
-                </NavigationView.PaneHeader>
+        <!--  NavigationView darunter  -->
+        <NavigationView x:Name="NavView"
+                    Grid.Row="1"
+                    IsSettingsVisible="True"
+                    PaneDisplayMode="Left"
+                    IsPaneOpen="True"
+                    CompactPaneLength="56"
+                    OpenPaneLength="260"
+                    Background="{ThemeResource MenuBackgroundColor}"
+                    PaneToggleButtonStyle="{StaticResource CustomPaneToggleButtonStyle}"
+                    SelectionChanged="NavView_SelectionChanged"
+                    ItemInvoked="NavView_ItemInvoked"
+                    IsBackButtonVisible="Collapsed"
+                    IsPaneToggleButtonVisible="False">
+
+
 
                 <!-- Footer unten im Pane -->
                 <NavigationView.PaneFooter>
@@ -69,7 +64,7 @@
                         
                         <Border Height="1"
                                 Margin="0,0,0,8"
-                                Background="{StaticResource NavDividerBrush}" />
+                                Background="Black" />
                         
                         <TextBlock Text="v1.0.0"
                                    Opacity="0.6"
@@ -134,41 +129,29 @@
 
                 </NavigationView.MenuItems>
 
-                <!-- INHALT RECHTS NEBEN DEM HAMBURGER-MENÜ -->
-                <Grid>
-                    
-                    <Grid.RowDefinitions>
-                        
-                        <!-- oben: Leiste -->
-                        <RowDefinition Height="*" />
-                        
-                        <!-- unten: eigentlicher Frame-Inhalt -->
-                        <RowDefinition Height="auto" />
-                        
-                    </Grid.RowDefinitions>
+            <!-- INHALT RECHTS NEBEN DEM HAMBURGER-MENÜ -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <!-- Frame für den eigentlichen Seiteninhalt -->
-                    <Frame Grid.Row="0"
-                           x:Name="NavigationFrame" />
+                <Frame Grid.Row="0"
+                   x:Name="NavigationFrame" />
 
-                    <!-- Leiste oben -->
-                    <StackPanel Grid.Row="1"                                
-                                Orientation="Horizontal"
-                                Margin="0"
-                                HorizontalAlignment="Stretch"
-                                Background="White">
+                <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        Margin="0"
+                        HorizontalAlignment="Stretch"
+                        Background="White">
+                    <usercontrol:UC_RestartTask Margin="5" />
+                    <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
+                </StackPanel>
+            </Grid>
 
-                        <usercontrol:UC_RestartTask Margin="5" />
-
-                        <usercontrol:UC_DeleteBrowserContentTask Margin="5"/>
-
-                    </StackPanel>
-
-                </Grid>
-
-            </NavigationView>
+        </NavigationView>
             
-        </Border>
+     
         
     </Grid>
 

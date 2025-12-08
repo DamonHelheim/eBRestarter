@@ -69,7 +69,42 @@
     <SolidColorBrush x:Key = "ButtonBackgroundColor" Color = "#D4D4D4"/>
     <SolidColorBrush x:Key = "TextBoxBackgroundColor" Color = "White"/>
     <SolidColorBrush x:Key = "TextBoxBottumBorderBrushBackgroundColor" Color = "Black"/>
-    
+
+
+    <!-- ToggleSwitch -->
+    <!-- TRACK / HINTERGRUND: AUS -->
+    <SolidColorBrush x:Key="ToggleSwitchFillOff"               Color="#D2D5D6" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver"    Color="#FF505050" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOffPressed"        Color="#FF303030" />
+
+    <!-- KNOPF: AUS -->
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOff"           Color="#FF00B894" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPointerOver" Color="#FF1ED3AE" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPressed"    Color="#FF009973" />
+
+    <!-- TRACK / HINTERGRUND: AN -->
+    <SolidColorBrush x:Key="ToggleSwitchFillOn"                Color="#FF00B894" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"     Color="#FF1ED3AE" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"         Color="#FF009973" />
+
+    <!-- KNOPF: AN -->
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOn"            Color="White" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="White" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed"     Color="White" />
+
+
+    <SolidColorBrush x:Key="ToggleSwitchBackgroundFillOff"     Color="Black" />
+
+    <!-- optional: Ränder ausblenden -->
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOff"             Color="#19aabd" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOffPointerOver"  Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOffPressed"      Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOn"              Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver"   Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed"       Color="Transparent" />
+    <!-- ToggleSwitch -->
+
+    <SolidColorBrush x:Key="AppTitleBarForegroundBrush" Color="Black" />
 
     <!-- Farbressourcen -->
     <SolidColorBrush x:Key="AppTealButtonBackgroundBrush" Color="#00B894" />

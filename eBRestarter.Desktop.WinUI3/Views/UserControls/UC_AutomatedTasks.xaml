@@ -5,24 +5,120 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             >
 
     <Border x:Name          ="Border_Automated_Task"
-         Background      ="{ThemeResource DashletBackgroundColor_1}"
-         BorderThickness ="1"
-         CornerRadius    ="5"
-         Padding         ="0">
+            Background      ="{ThemeResource DashletBackgroundColor_1}"
+            BorderThickness ="1"
+            CornerRadius    ="5"
+            Padding         ="0">
 
         <Grid>
+
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="80"/>
+
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row    ="0"
+                        Orientation ="Horizontal">
+
+                <Image x:Name ="image_automated_task"
+                       Source ="{ThemeResource GearIcon}"
+                       Margin ="10, 10, 0, 0"
+                       Height ="35"
+                       Width  ="35"/>
+
+                <TextBlock x:Name       ="tbl_Automated_Task"
+                           Foreground   ="{ThemeResource FontColor_1}"
+                           Margin       ="10, 15, 0, 0"
+                           TextWrapping ="Wrap"
+                           Text         ="Automatisierte Aufgaben"
+                           Width        ="212"
+                           FontSize     ="18"/>
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="1"
+                        Spacing="0">
+
+                <ToggleSwitch x:Name          ="TSStartBrowserWithProgrammStart"
+                              Foreground      ="{ThemeResource FontColor_1}"
+                              IsOn            ="{Binding TSStartBrowserWithProgrammStartIsOn}"
+                              Margin          ="10 0 0 0"
+                              OffContent      ="Mit Programmstart, Restarter starten"
+                              OnContent       ="Mit Programmstart, Restarter starten"
+                              BorderBrush     ="{ThemeResource FontColor_1}"
+                              Width           ="304">
+
+                    <ToggleSwitch.Resources>
+                        <!-- TRACK / HINTERGRUND: AUS -->
+                        <SolidColorBrush x:Key="ToggleSwitchFillOff"               Color="#D2D5D6" />
+                        <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver"    Color="#FF505050" />
+                        <SolidColorBrush x:Key="ToggleSwitchFillOffPressed"        Color="#FF303030" />
+
+                        <!-- KNOPF: AUS -->
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOff"           Color="#FF00B894" />
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPointerOver" Color="#FF1ED3AE" />
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPressed"    Color="#FF009973" />
+
+                        <!-- TRACK / HINTERGRUND: AN -->
+                        <SolidColorBrush x:Key="ToggleSwitchFillOn"                Color="#FF00B894" />
+                        <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"     Color="#FF1ED3AE" />
+                        <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"         Color="#FF009973" />
+
+                        <!-- KNOPF: AN -->
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOn"            Color="White" />
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="White" />
+                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed"     Color="White" />
+
+
+                        <SolidColorBrush x:Key="ToggleSwitchBackgroundFillOff"     Color="Black" />
+                        
+                        <!-- optional: Ränder ausblenden -->
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOff"             Color="#19aabd" />
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOffPointerOver"  Color="Transparent" />
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOffPressed"      Color="Transparent" />
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOn"              Color="Transparent" />
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver"   Color="Transparent" />
+                        <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed"       Color="Transparent" />
+                    </ToggleSwitch.Resources>
+
+
+                </ToggleSwitch>
+
+                <ToggleSwitch x:Name          ="TSCheckBrowserIsAlive"
+                              Foreground      ="{ThemeResource FontColor_1}"
+                              IsOn            ="{Binding TSCheckBrowserIsAliveIsOn}"
+                              Margin          ="10 0 0 0" 
+                              OffContent      ="Prüfe, ob Browser geschlossen wurde"
+                              OnContent       ="Prüfe, ob Browser geschlossen wurde"/>
+
+
+                <TextBlock x:Name       ="tbl_info_startup_boost_edge"
+                           FontSize     ="10"
+                           Margin       ="0,0,0,0"
+                           Width        ="286"
+                           Foreground   ="#FF008CD5"
+                           Text         ="Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)"
+                           TextWrapping ="Wrap"
+                           Height       ="40"/>
+            </StackPanel>
+
             <ComboBox x:Name="ComboboxDeleteBrowserCache"
-                      Margin="0"
+                      Grid.Row="2"
+                      Margin="10,0,0,0"
                       Foreground="Black"
                       Background="#DCDCDC"
-                      PlaceholderText="Pick a color"
-                      Header="Cache und Cookies automatisch löschen"       
+                      PlaceholderText="Pick a color" 
                       FontSize="14"
                       Width="294"
-                      Height="60"
+                      Height="40"
+                      VerticalAlignment="Top"
                       SelectedIndex="0">
 
                 <ComboBox.Resources>
@@ -40,7 +136,7 @@
                     <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
                     <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
                     <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
-                    
+
                 </ComboBox.Resources>
 
                 <ComboBoxItem Content="Cache und Cookies nicht löschen" />
@@ -50,123 +146,9 @@
                 <ComboBoxItem Content="Cache und Cookies alle 14 Tage löschen" />
 
             </ComboBox>
-        </Grid>
 
+        </Grid>
 
     </Border>
-    
+
 </UserControl>
-
-<!--<Border x:Name          ="Border_Automated_Task"
-         Background      ="{ThemeResource DashletBackgroundColor_1}"
-         BorderThickness ="1"
-         CornerRadius    ="5"
-         Padding         ="0">
-
-        <Grid>
-
-            <Grid.RowDefinitions>
-
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="*"/>
-
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row    ="0"
-                        Orientation ="Horizontal">
-
-                <Image x:Name                           ="image_automated_task"
-                       Source                           ="{ThemeResource GearIcon}"
-                       Margin                           ="10, 10, 0, 0"
-                       Height                           ="35"
-                       Width                            ="35"/>
-
-                <TextBlock x:Name       ="tbl_Automated_Task"
-                           Foreground   ="{ThemeResource FontColor_1}"
-                           Margin       ="10, 10, 0, 0"
-                           TextWrapping ="Wrap"
-                           Text         ="Automatisierte Aufgaben"
-                           Width        ="212"
-                           FontSize     ="18"
-                           Height       ="26"/>
-
-            </StackPanel>
-
-            <StackPanel Grid.Row    ="1"
-                        Orientation ="Vertical">
-
-                <StackPanel Orientation ="Horizontal"
-                            Height      ="36">
-
-                    
-                    <ToggleSwitch x:Name          ="TSStartBrowserWithProgrammStart"
-                                  Foreground      ="{ThemeResource FontColor_1}"
-                                  IsOn            ="{Binding TSStartBrowserWithProgrammStartIsOn}"
-                                  Margin          ="10 0 0 0"
-                                  OffContent      ="Mit Programmstart, Restarter starten"
-                                  OnContent       ="Mit Programmstart, Restarter starten"
-                                  BorderBrush     ="{ThemeResource FontColor_1}"
-                                  Width           ="304">
-
-                    </ToggleSwitch>
-
-                </StackPanel>
-
-                <StackPanel Orientation ="Horizontal">
-
-                    <ToggleSwitch x:Name          ="TSCheckBrowserIsAlive"
-                                  Foreground      ="{ThemeResource FontColor_1}"
-                                  IsOn            ="{Binding TSCheckBrowserIsAliveIsOn}"
-                                  Margin          ="10 0 0 0" 
-                                  OffContent      ="Prüfe, ob Browser geschlossen wurde"
-                                  OnContent       ="Prüfe, ob Browser geschlossen wurde"/>
-
-                </StackPanel>
-
-                --><!--<TextBlock x:Name       ="tbl_info_startup_boost_edge"
-                           FontSize     ="12"
-                           Margin       ="0,6,0,0"
-                           Width        ="286"
-                           Foreground   ="#FF008CD5"
-                           Text         ="Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)"
-                           TextWrapping ="Wrap"
-                           Height       ="40"/>--><!--
-
-
-                <ComboBox x:Name="ComboboxDeleteBrowserCache"
-                          Margin="0,0,0,0"
-                          Foreground="White"
-                          Background="Black"
-                          PlaceholderText="Pick a color"
-                          Header="Cache und Cookies automatisch löschen"
-                          FontSize="16"
-                          Width="294"
-                          Height="30"
-                          SelectedIndex="0">
-
-                    <ComboBoxItem Content="Cache und Cookies nicht löschen" />
-                    <ComboBoxItem Content="Cache und Cookies jeden Tag löschen" />
-                    <ComboBoxItem Content="Cache und Cookies alle 3 Tage löschen" />
-                    <ComboBoxItem Content="Cache und Cookies alle 7 Tage löschen" />
-                    <ComboBoxItem Content="Cache und Cookies alle 14 Tage löschen" />
-                    
-                </ComboBox>
-
-
-                --><!--<ComboBox x:Name            ="ComboboxDeleteBrowserCache"
-                          Margin            ="0, 10, 0, 0"
-                          FontSize          ="16"
-                          Width             ="294"
-                          Height            ="30"
-                          SelectedIndex     ="{Binding ComboboxSelectedIndex}"                       
-                          ItemsSource       ="{Binding ListComboBoxDeleteBrowserCache}">
-
-                </ComboBox>--><!--
-
-            </StackPanel>
-
-        </Grid>
-
-    </Border>-->
-    
-

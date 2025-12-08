@@ -8,78 +8,89 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Border x:Name             ="Border_Additional_Options"
-            Background         ="{ThemeResource DashletBackgroundColor_1}"
-            BorderThickness    ="1"
-            CornerRadius       ="5"
-            Padding            ="0">
+    <Border x:Name="Border_Additional_Options"
+        Background="{ThemeResource DashletBackgroundColor_1}"
+        BorderThickness="1"
+        CornerRadius="5"
+        Padding="10">
 
-        <Canvas>
+        <Grid>
 
-            <Image x:Name                       ="image_additional_options"
-                   Source                       ="{ThemeResource CirclePlusIcon}"
-                   Height                       ="32"
-                   Canvas.Left                  ="11"
-                   Canvas.Top                   ="10"
-                   Width                        ="36"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!-- Header: Icon + Titel -->
+                <RowDefinition Height="Auto" />
+                <!-- Hinweis-Text -->
+                <RowDefinition Height="Auto" />
+                <!-- Button 1 -->
+                <RowDefinition Height="Auto" />
+                <!-- Button 2 -->
+                <RowDefinition Height="Auto" />
+                <!-- Button 3 -->
+            </Grid.RowDefinitions>
 
-            <TextBlock x:Name       ="tbl_AdditionalOptions"
-                       Foreground   ="{ThemeResource FontColor_1}"
-                       Canvas.Left  ="59"
-                       TextWrapping ="Wrap"
-                       Text         ="Zusatzoptionen"
-                       Canvas.Top   ="13"
-                       Width        ="135"
-                       FontSize     ="18"/>
 
-            <TextBlock x:Name               ="tbl_NoBrowserInstalled"                      
-                       Canvas.Left          ="59"
-                       TextWrapping         ="Wrap"
-                       Text                 ="Keine Browser installiert!"
-                       FontSize             ="16"
-                       Foreground           ="#FFC70E3F"
-                       HorizontalAlignment  ="Left"
-                       VerticalAlignment    ="Top"
-                       Canvas.Top           ="37"
-                       Visibility           ="{Binding Tbl_NoBrowserInstalledIsVisible}"/>
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,8">
 
-            <Button x:Name              ="BtnDeleteBrowserContent"
-                    Content             ="Browserinhalte löschen"
-                    Style               ="{ThemeResource ButtonCustomStyle_1}"
-                    Canvas.Left         ="14"
-                    Canvas.Top          ="65"
-                    Width               ="295"
-                    Height              ="50"
-                    FontSize            ="16"
-                    HorizontalAlignment ="Center"
-                    VerticalAlignment   ="Top"
-                    IsEnabled           ="{Binding BtnDeleteBrowserContentIsEnabled}"/>
+                <Image x:Name="image_additional_options"
+                       Source="{ThemeResource CirclePlusIcon}"
+                       Height="28"
+                       Width="28"
+                       Margin="0,0,8,0" />
 
-            <Button x:Name               ="BtnInstalleBesucherAddOn"
-                    Style                ="{ThemeResource ButtonCustomStyle_1}"
-                    Content              ="Installiere eBesucher Add-on"
-                    Canvas.Left          ="14"
-                    Canvas.Top           ="127"
-                    Width                ="295"
-                    Height               ="40"
-                    FontSize             ="16"
-                    HorizontalAlignment  ="Center"
-                    VerticalAlignment    ="Top"
-                    IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
+                <TextBlock x:Name="tbl_AdditionalOptions"
+                           Foreground="{ThemeResource FontColor_1}"
+                           TextWrapping="Wrap"
+                           Text="Zusatzoptionen"
+                           FontSize="18"
+                           VerticalAlignment="Center" />
+                
+            </StackPanel>
 
-            <Button x:Name               ="BtnInfoeVisitorAddOn"
-                    Style                ="{ThemeResource ButtonCustomStyle_1}"
-                    Content              ="Wichtige Info zum Add-on"
-                    Canvas.Left          ="14"
-                    Canvas.Top           ="179"
-                    Width                ="295"
-                    Height               ="30"
-                    FontSize             ="16"
-                    HorizontalAlignment  ="Center"
-                    VerticalAlignment    ="Top"
-                    IsEnabled            ="{Binding BtnInstalleBesucherAddOnIsEnabled}"/>
+        <TextBlock Grid.Row="1"
+                   x:Name="tbl_NoBrowserInstalled"
+                   Text="Keine Browser installiert!"
+                   FontSize="16"
+                   Foreground="#FFC70E3F"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"
+                   Visibility="{Binding Tbl_NoBrowserInstalledIsVisible}" />
 
-        </Canvas>
 
+        <Button Grid.Row="2"
+                x:Name="BtnDeleteBrowserContent"
+                Content="Browserinhalte löschen"
+                Style="{ThemeResource ButtonCustomStyle_1}"
+                Margin="0,4,0,0"
+                Height="40"
+                FontSize="16"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
+
+        <Button Grid.Row="3"
+                x:Name="BtnInstalleBesucherAddOn"
+                Content="Installiere eBesucher Add-on"
+                Style="{ThemeResource ButtonCustomStyle_1}"
+                Margin="0,8,0,0"
+                Height="40"
+                FontSize="16"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+
+        <Button Grid.Row="4"
+                x:Name="BtnInfoeVisitorAddOn"
+                Content="Wichtige Info zum Add-on"
+                Style="{ThemeResource ButtonCustomStyle_1}"
+                Margin="0,8,0,0"
+                Height="30"
+                FontSize="12"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+
+        </Grid>
+            
     </Border>
+
 </UserControl>
