@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_Options"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid"
+      Background="{ThemeResource MenuBackgroundColor_2}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Top-Balken -->
+            <RowDefinition Height="*" />
+            <!-- Pivot + Inhalt -->
+        </Grid.RowDefinitions>
+
+        <!-- OBERER BALKEN -->
+        <StackPanel Grid.Row="0"
+                Background="{ThemeResource MenuBackgroundColor_3}"
+                Orientation="Horizontal"
+                Height="30">
+
+            <Image x:Name="im_MainWindowIconTitle"
+               Source="{ThemeResource OptionIcon}"
+               Margin="10,-2,0,0"
+               Height="28"
+               Width="41" />
+
+            <TextBlock x:Name="tbl_MainWindowTitle"
+                   Foreground="{ThemeResource FontColor_1}"
+                   Text="Optionen"
+                   VerticalAlignment="Center"
+                   FontSize="20"
+                   Margin="10,-5,0,0"
+                   FontWeight="Bold" />
+        </StackPanel>
+
+        <!-- PIVOT -->
+        <Pivot Grid.Row="1"
+                    x:Name="OptionsPivot"
+                    Title="Optionen">
+
+            <!-- ========================================
+             PIVOT 1: ALLGEMEIN
+        ========================================= -->
+            <PivotItem Margin="10,0,60,0">
+
+                <PivotItem.Header>
+                    <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                        <!-- optional: Icon -->
+                        <FontIcon Glyph="&#xE713;" Width="20" Foreground="Black"/>
+                        <TextBlock Text="Allgemein"
+                               FontSize="14"
+                               VerticalAlignment="Center" Foreground="Black"/>
+                    </StackPanel>
+                </PivotItem.Header>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Auto">
+
+                    <Grid x:Name="Grid_Options_General"
+          Margin="20,10,20,20"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Top">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                    
+        <Border Grid.Column="0"
+                Background="#FFF5F5F5"
+                CornerRadius="6"
+                Padding="16"
+                Margin="0,0,24,0">
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock x:Name="lbl_Options_OperatingSettings"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Text="Windows"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+
+                <Button x:Name="btnOptionsAutomaticWindowsUserLogin"
+                        Content="Automatische Nutzeranmeldung"
+                        FontSize="16"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,12"
+                        Height="50"
+                        Width="336"
+                        Background="#FF00CAD4"
+                        Foreground="#DDFFFFFF"
+                        BorderBrush="{x:Null}"
+                        Click="BtnOptionsAutomaticWindowsUserLogin_Click" />
+
+                <TextBlock Text="eB Restarter mit Windows starten:"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="0,8,0,4" />
+
+                <ToggleSwitch x:Name="cbxOptionsStartWithWindows"
+                              OffContent="Deaktiviert"
+                              OnContent="Aktiviert"
+                              IsOn="{Binding SetStartUp}"
+                              Foreground="{ThemeResource FontColor_1}"
+                              HorizontalAlignment="Left"
+                              Margin="10,0,0,12"
+                              Height="29"
+                              Width="300"
+                              FontSize="16" />
+
+                <TextBlock x:Name="lbl_Computer_Restartoptionen"
+                           Text="Computer Neustartoptionen"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="10,0,0,8"
+                           FontSize="16"
+                           FontWeight="Bold" />
+
+                <ComboBox x:Name="ComboboxComputerRestartOptions"
+                          FontSize="16"
+                          BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
+                          Foreground="{ThemeResource FontColor_1}"
+                          Margin="10,0,10,12"
+                          Width="336"
+                          SelectedIndex="{Binding ComboboxRestartComputerSelectedIndex}"
+                          ItemsSource="{Binding ListComboBoxRestartComputerOptions}"
+                          SelectionChanged="ComboboxComputerRestartOptions_SelectionChanged" />
+
+                <StackPanel Orientation="Horizontal"
+                            Height="45"
+                            Margin="0,0,0,8">
+                    <Slider x:Name="SliderRestartComputer"
+                            Minimum="1"
+                            Maximum="23"
+                            Margin="10,10,10,10"
+                            Width="273"
+                            Height="24"
+                            Foreground="#FF167DA4"
+                            ValueChanged="SliderRestartComputer_ValueChanged" />
+
+                    <TextBox x:Name="tb_RestartComputerInput"
+                             Foreground="{ThemeResource FontColor_1}"
+                             BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
+                             Text="{Binding ElementName=SliderRestartComputer, Path=Value, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                             FontSize="16"
+                             KeyDown="OnKeyDownHandlerSliderRestartComputerTime"
+                             Width="30"
+                             Height="30" />
+
+                    <TextBlock x:Name="lbl_clock_restart"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Margin="3,0,0,4"
+                               Text="Uhr"
+                               Width="27" />
+                </StackPanel>
+
+                <TextBlock x:Name="lbl_Options_DateOfRestartComputerInfo"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="10,0,0,4"
+                           Text="{Binding Options_DateOfRestartComputerInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           FontSize="16" />
+
+                <TextBlock x:Name="lbl_Options_RestartTime"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="10,0,0,4"
+                           Text="um 0 Uhr neugestartet."
+                           FontSize="16" />
+
+                <TextBlock x:Name="tbl_restart_information"
+                           Foreground="#de1043"
+                           Margin="10,0,0,0"
+                           Text=""
+                           TextWrapping="Wrap"
+                           FontSize="12"
+                           Height="51"
+                           Width="336"
+                           Tapped="Tbl_restart_information_MouseLeftButtonDown" />
+            </StackPanel>
+        </Border>
+
+       
+        <Border Grid.Column="1"
+                Background="#FFEFEFEF"
+                CornerRadius="6"
+                Padding="16"
+                Margin="0,0,24,0">
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock x:Name="lbl_options_settings"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Text="Update"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,12" />
+
+                <Button x:Name="BtnCheckForUpdates"
+                        Content="Auf Updates prüfen"
+                        Margin="0,0,0,0"
+                        Height="50"
+                        Width="226"
+                        FontSize="16"
+                        Background="#FF4DC89E"
+                        Foreground="#DDFFFFFF"
+                        BorderBrush="{x:Null}"
+                        Click="BtnCheckForUpdates_Click" />
+            </StackPanel>
+        </Border>
+
+      
+        <Border Grid.Column="2"
+                Background="#FFF5F5F5"
+                CornerRadius="6"
+                Padding="16"
+                Margin="0,0,24,0">
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock x:Name="lbl_go_to_settings"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Text="Speicherort Konfig"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+
+                <Button x:Name="Btn_go_to_settings_data"
+                        Content="Gehe zu Speicherort"
+                        Width="190"
+                        Height="50"
+                        Margin="0,0,0,0"
+                        Background="#FF149DAE"
+                        Foreground="#DDFFFFFF"
+                        BorderBrush="{x:Null}"
+                        Click="Btn_go_to_settings_data_Click" />
+            </StackPanel>
+        </Border>
+
+      
+        <Border Grid.Column="3"
+                Background="#FFEFEFEF"
+                CornerRadius="6"
+                Padding="16">
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock x:Name="lbl_options_Themes"
+                           Foreground="{ThemeResource FontColor_1}"
+                           Text="Themes"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+
+                <Button x:Name="BtnSetStandardTheme"
+                        Content="Standard"
+                        Margin="0,0,0,8"
+                        Height="50"
+                        Width="150"
+                        FontSize="16"
+                        Background="#FFD5D5D5"
+                        Foreground="Black"
+                        BorderBrush="{x:Null}"
+                        Click="BtnSetStandardTheme_Click" />
+
+                <Button x:Name="BtnSetDarkTheme"
+                        Content="Dunkel"
+                        Margin="0,0,0,0"
+                        Height="50"
+                        Width="150"
+                        FontSize="16"
+                        Foreground="White"
+                        Background="#FF414D4F"
+                        BorderBrush="{x:Null}"
+                        Click="BtnSetDarkTheme_Click" />
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</ScrollViewer>
+
+            </PivotItem>
+
+            <!-- ========================================
+             PIVOT 2: API ZUGANG
+        ========================================= -->
+            <PivotItem Margin="10,0,60,0">
+
+                <PivotItem.Header>
+                    <StackPanel Orientation="Horizontal"
+                            Spacing="4">
+                        <FontIcon Glyph="&#xE8B8;" Width="20" Foreground="Black"/>
+                        <TextBlock Text="API Zugang"
+                               FontSize="14"
+                               VerticalAlignment="Center" Foreground="Black"/>
+                    </StackPanel>
+                </PivotItem.Header>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Auto">
+
+                    <Grid x:Name="Grid_API_Access"
+          Margin="20,10,20,20"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Top">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="360" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        
+        <Border Grid.Column="0"
+                Background="#FFF5F5F5"
+                CornerRadius="6"
+                Padding="16"
+                Margin="0,0,24,0">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Header -->
+                        <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,12">
+                            <Image Margin="0,0,0,0"
+                           Source="\Resources\Visuals\Icons\Intersection\file_information.png"
+                           Height="35"
+                           Width="35" />
+                            <TextBlock x:Name="lbl_options_api_informations"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Margin="10,4,0,0"
+                               Text="API Information"
+                               FontSize="16" />
+                        </StackPanel>
+
+                        <!-- „Karte“ mit Username / Key -->
+                        <Border x:Name="sp_Options_API_Information"
+                        Background="{ThemeResource DashletBackgroundColor_2}"
+                        CornerRadius="6"
+                        Padding="12"
+                        Margin="0,0,0,0">
+                            <StackPanel Orientation="Vertical">
+
+                                <TextBlock x:Name="lbl_APIUsername"
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,0,0,8"
+                                   Text="Nutzername:"
+                                   FontSize="16" />
+
+                                <StackPanel Orientation="Horizontal"
+                                    Height="52">
+                                    <TextBlock x:Name="lbl_options_key"
+                                       Foreground="{ThemeResource FontColor_1}"
+                                       Margin="0,10,0,10"
+                                       Text="Schlüssel:"
+                                       FontSize="16"
+                                       Width="94" />
+
+                                    <Button x:Name="BtnShowAPIKey"
+                                    Content="Anzeigen"
+                                    Margin="8,10,0,10"
+                                    Width="194"
+                                    FontSize="16"
+                                    Height="30"
+                                    Background="#FF1598C9"
+                                    Foreground="#DDFFFFFF"
+                                    BorderBrush="{x:Null}"
+                                    Click="BtnShowAPIKey_Click" />
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+                        </StackPanel>
+                        </Border>
+
+                        
+        <Border Grid.Column="1"
+                Background="#FFEFEFEF"
+                CornerRadius="6"
+                Padding="16">
+            <StackPanel Orientation="Vertical">
+
+                <!-- Header -->
+                        <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,12">
+                            <Image Margin="0,0,0,0"
+                           Source="\Resources\Visuals\Icons\Intersection\api.png"
+                           Height="40"
+                           Width="40" />
+                            <TextBlock x:Name="lbl_options_ebesucher_api_options"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Margin="10,8,0,0"
+                               Text="eBesucher API Optionen"
+                               FontSize="16" />
+                        </StackPanel>
+
+                        <!-- Karte: Verbindung herstellen -->
+                        <Border x:Name="sp_Options_API_1"
+                        Background="{ThemeResource DashletBackgroundColor_2}"
+                        CornerRadius="6"
+                        Padding="10"
+                        Margin="0,0,0,10">
+                            <StackPanel Orientation="Vertical">
+
+                                <Button x:Name="BtnConnectWithAPIInterface"
+                                Content="Mit API Schnittstelle verbinden"
+                                Margin="0,0,0,8"
+                                Width="330"
+                                Height="40"
+                                FontSize="16"
+                                Background="#FF1598C9"
+                                Foreground="White"
+                                BorderBrush="{x:Null}"
+                                Click="BtnConnectWithAPIInterface_Click" />
+
+                                <Button x:Name="BtnImportAPIFile"
+                                Content="API Verbindung mit Datei Import herstellen"
+                                Margin="0,0,0,0"
+                                Width="330"
+                                Height="40"
+                                FontSize="16"
+                                Background="#FF1598C9"
+                                Foreground="White"
+                                BorderBrush="{x:Null}"
+                                Click="BtnImportAPIFile_Click" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Karte: Export / Entfernen -->
+                        <Border x:Name="sp_Options_API_2"
+                        Background="{ThemeResource DashletBackgroundColor_2}"
+                        CornerRadius="6"
+                        Padding="10">
+                            <StackPanel Orientation="Vertical">
+
+                                <Button x:Name="BtnGoToSavedAPIFile"
+                                Content="API Zugangsdatei exportieren"
+                                Margin="0,0,0,8"
+                                Width="330"
+                                FontSize="16"
+                                Height="40"
+                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
+                                Background="#FF1598C9"
+                                Foreground="White"
+                                BorderBrush="{x:Null}"
+                                Click="BtnGoToSavedAPIFile_Click" />
+
+                                <Button x:Name="BtnRemoveAPIFile"
+                                Content="API Schnittstelle deaktivieren"
+                                Margin="0,0,0,0"
+                                Width="330"
+                                FontSize="16"
+                                Height="40"
+                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
+                                Background="#FF1598C9"
+                                Foreground="White"
+                                BorderBrush="{x:Null}"
+                                Click="BtnRemoveAPIFile_Click" />
+                            </StackPanel>
+                        </Border>
+
+                        </StackPanel>
+                        </Border>
+
+                    </Grid>
+                </ScrollViewer>
+
+            </PivotItem>
+
+        </Pivot>
+
+    </Grid>
+
+
+
+
+</UserControl>
