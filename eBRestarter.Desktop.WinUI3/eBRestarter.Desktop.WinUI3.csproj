@@ -24,9 +24,16 @@
     <None Remove="Views\UserControls\UC_AutomatedTasks.xaml" />
     <None Remove="Views\UserControls\UC_Browser.xaml" />
     <None Remove="Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
+    <None Remove="Views\UserControls\UC_EarningsAmount.xaml" />
     <None Remove="Views\UserControls\UC_eVisitorUsername.xaml" />
+    <None Remove="Views\UserControls\UC_Infocenter.xaml" />
+    <None Remove="Views\UserControls\UC_InformationCardUrls.xaml" />
+    <None Remove="Views\UserControls\UC_InformationsCard.xaml" />
     <None Remove="Views\UserControls\UC_InstalledBrowsers.xaml" />
+    <None Remove="Views\UserControls\UC_IPInformation.xaml" />
+    <None Remove="Views\UserControls\UC_Networktraffic.xaml" />
     <None Remove="Views\UserControls\UC_Options.xaml" />
+    <None Remove="Views\UserControls\UC_PointsOutput.xaml" />
     <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
     <None Remove="Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
@@ -295,12 +302,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
-    <PackageReference Include="System.Text.Json" Version="10.0.0" />
+    <PackageReference Include="System.Text.Json" Version="10.0.1" />
 	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc6.1" />
   </ItemGroup>
   <ItemGroup>
@@ -309,6 +316,41 @@
     <Folder Include="Resources\Images\" />
     <Folder Include="Resources\Languages\" />
     <Folder Include="Resources\Visuals\Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_PointsOutput.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_EarningsAmount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Networktraffic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_IPInformation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Infocenter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InformationCardUrls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InformationsCard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\UserControls\UC_Options.xaml">

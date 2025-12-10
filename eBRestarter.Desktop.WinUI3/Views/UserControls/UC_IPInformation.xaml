@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_IPInformation"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Border x:Name="Border_IP_Information"
+        Background="{ThemeResource DashletBackgroundColor_2}"
+        BorderThickness="1"
+        CornerRadius="2"
+        Padding="0">
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header-Zeile -->
+            <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="5,5,5,0">
+
+                <Image Margin="0,0,0,0"
+                   Height="35"
+                   Width="35"
+                   Source="{ThemeResource IPAddressIcon}" />
+
+                <TextBlock x:Name="tbl_IP_Information"
+                       Foreground="{ThemeResource FontColor_1}"
+                       Margin="10,0,0,0"
+                       TextWrapping="Wrap"
+                       Text="IP Informationen"
+                       FontSize="20"
+                       VerticalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Inhalt (Expander) -->
+            <Expander Grid.Row="1"
+                  Margin="5,5,5,5"
+                  Header="Zeige IP Informationen"
+                  IsExpanded="False">
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+
+                    <StackPanel Margin="10,0,0,0"
+                            Spacing="4">
+
+                        <TextBlock x:Name="tbl_IPAdress"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Text="{Binding IpAdress}"
+                               FontSize="14"
+                               Width="245"
+                               Margin="0,5,0,0" />
+
+                        <TextBlock x:Name="tbl_host"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Text="{Binding Host}"
+                               FontSize="14"
+                               Width="245"
+                               Margin="0,5,0,0" />
+
+                        <TextBlock x:Name="tbl_CountryCode"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Text="{Binding CountryCode}"
+                               FontSize="14"
+                               Width="245"
+                               Margin="0,5,0,0" />
+
+                        <TextBlock x:Name="tbl_CountryName"
+                               Foreground="{ThemeResource FontColor_1}"
+                               Text="{Binding CountryName}"
+                               FontSize="14"
+                               Width="245"
+                               Margin="0,5,0,5" />
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+            </Expander>
+
+        </Grid>
+    </Border>
+
+
+</UserControl>
