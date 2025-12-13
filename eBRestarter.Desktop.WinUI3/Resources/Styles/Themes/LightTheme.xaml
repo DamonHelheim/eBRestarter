@@ -23,7 +23,9 @@
     <BitmapImage x:Key="UserIcon2"          UriSource="\Resources\Visuals\Icons\LightTheme\User_2_light_theme.png"/>
 
     <BitmapImage x:Key="CalendarIcon"          UriSource="\Resources\Visuals\Icons\LightTheme\calendar_light_theme.png"/>
+    
     <BitmapImage x:Key="ClockIcon"             UriSource="\Resources\Visuals\Icons\LightTheme\clock_light_theme.png"/>
+    
     <BitmapImage x:Key="IPAddressIcon"             UriSource="\Resources\Visuals\Icons\LightTheme\ip-address_light_theme.png"/>
 
     <BitmapImage x:Key="WindowsIcon"             UriSource="\Resources\Visuals\Icons\LightTheme\windows_light_theme.png"/>
@@ -41,7 +43,7 @@
     <!--SolidColorBrush-->
     <SolidColorBrush x:Key="AppColorBlue"      Color="#FF0B4F80"/>
     <SolidColorBrush x:Key="AppColorCyanHover" Color="#FF89F0F3"/>
-    <SolidColorBrush x:Key="HeaderColor_2" Color="#e3e1e1"/>
+    <SolidColorBrush x:Key="HeaderColor_2"     Color="#e3e1e1"/>
 
     <!--Color-->
     <Color x:Key="AppCyanColor">#FF038F9E</Color>
@@ -55,7 +57,7 @@
     <SolidColorBrush x:Key = "FontColor_3" Color = "White"/>
     <SolidColorBrush x:Key = "FontColor_4" Color = "White"/>
 
-    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "#DCDCDC"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "White"/>
     <SolidColorBrush x:Key = "MenuBackgroundColor_2" Color = "White"/>
     <SolidColorBrush x:Key = "MenuBackgroundColor_3" Color = "White"/>
     <SolidColorBrush x:Key = "DashletBackgroundColor_1" Color = "White"/>

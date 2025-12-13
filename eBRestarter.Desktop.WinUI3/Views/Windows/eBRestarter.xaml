@@ -141,9 +141,9 @@
 
                 <StackPanel Grid.Row="1"
                         Orientation="Horizontal"
-                        Margin="0"
                         HorizontalAlignment="Stretch"
                         Background="White">
+                    
                     <usercontrol:UC_RestartTask Margin="5" />
                     <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
                 </StackPanel>

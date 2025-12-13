@@ -9,11 +9,11 @@
     mc:Ignorable="d">
 
     <Border x:Name              ="border_sum_points_todday"
-         BorderThickness     ="1"
-         Background          ="{ThemeResource DashletBackgroundColor_2}"
-         CornerRadius        ="2"
-         Padding             ="0"           
-         VerticalAlignment   ="Top">
+            BorderThickness     ="1"
+            Background          ="{ThemeResource DashletBackgroundColor_1}"
+            CornerRadius        ="5"
+            Padding             ="0"           
+            VerticalAlignment   ="Top">
 
         <StackPanel Height="130"
                  Width="340">
@@ -30,23 +30,22 @@
             </Grid>
 
             <StackPanel Grid.Row    ="0"
-                     Orientation ="Horizontal">
+                        Orientation ="Horizontal">
 
-                <Image 
-                    x:Name                           ="headerImage"
-                    Source                           ="{Binding HeaderImageEarnings}"
-                    Margin                           ="10,10,0,0"
-                    Height                           ="35"
-                    Width                            ="35"/>
+                <Image x:Name                           ="headerImage"
+                       Source                           ="{Binding HeaderImageEarnings}"
+                       Margin                           ="10,10,0,0"
+                       Height                           ="35"
+                       Width                            ="35"/>
 
-                <TextBlock  x:Name       ="tbl_sum_points_daily"
-                         Foreground   ="{ThemeResource FontColor_1}"
-                         Margin       ="10,5,0,0"
-                         TextWrapping ="Wrap"
-                         Text         ="{Binding HeaderTitleEarnings}"
-                         FontSize     ="22"
-                         FontWeight   ="Normal"
-                         Height       ="30"/>
+                <TextBlock x:Name       ="tbl_sum_points_daily"
+                           Foreground   ="{ThemeResource FontColor_1}"
+                           Margin       ="10,5,0,0"
+                           TextWrapping ="Wrap"
+                           Text         ="{Binding HeaderTitleEarnings}"
+                           FontSize     ="22"
+                           FontWeight   ="Normal"
+                           Height       ="30"/>
 
             </StackPanel>
 

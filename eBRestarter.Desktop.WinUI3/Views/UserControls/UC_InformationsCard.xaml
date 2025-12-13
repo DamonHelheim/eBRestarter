@@ -28,8 +28,8 @@
                             Name                            ="uc_information_header_image"
                             Source                          ="{Binding HeaderImage}"                               
                             Margin                          ="10,0,0,0"
-                            Height                          ="{Binding ImageSizeHeight}"
-                            Width                           ="{Binding ImageSizeWidth}"/>
+                            Height                          ="{Binding ImageHeight}"
+                            Width                           ="{Binding ImageWidth}"/>
 
                     <TextBlock  Name         ="uc_information_title"
                             Text         ="{Binding HeaderTitle}"

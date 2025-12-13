@@ -9,7 +9,8 @@
     mc:Ignorable="d">
 
     <Grid x:Name="RootGrid"
-      Background="{ThemeResource MenuBackgroundColor_2}">
+      Background="{ThemeResource MenuBackgroundColor_2}"
+CornerRadius="8,0,0,0">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,26 +18,31 @@
             <RowDefinition Height="*" />
             <!-- Pivot + Inhalt -->
         </Grid.RowDefinitions>
-
+        
         <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
-                Background="{ThemeResource MenuBackgroundColor_3}"
-                Orientation="Horizontal"
-                Height="30">
+            Background="{ThemeResource MenuBackgroundColor_3}"
+    Orientation="Horizontal"
+    Height="35"
+           
+    VerticalAlignment="Center"
+    Spacing="10"
+    Padding="10,0,0,0">
 
-            <Image x:Name="im_MainWindowIconTitle"
-               Source="{ThemeResource OptionIcon}"
-               Margin="10,-2,0,0"
-               Height="28"
-               Width="41" />
+            <FontIcon Glyph="&#xF2C7;"
+ 
+      Foreground="{ThemeResource FontColor_1}"
+      FontSize="26"
+      VerticalAlignment="Bottom"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
-                   Foreground="{ThemeResource FontColor_1}"
-                   Text="Optionen"
-                   VerticalAlignment="Center"
-                   FontSize="20"
-                   Margin="10,-5,0,0"
-                   FontWeight="Bold" />
+       Foreground="{ThemeResource FontColor_1}"
+                       Margin="0,6,0,0"
+       Text="Optionen"
+       VerticalAlignment="Center"
+       FontSize="18"
+       FontWeight="Bold"/>
+
         </StackPanel>
 
         <!-- PIVOT -->

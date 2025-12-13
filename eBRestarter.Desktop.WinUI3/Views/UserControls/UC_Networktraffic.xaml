@@ -21,7 +21,7 @@
                 Orientation="Horizontal">
 
                 <Image 
-               Source                           ="/Resources/Images/Icons/Intersection/globe-grid.png"
+               Source                           ="/Resources/Visuals/Icons/Intersection/globe-grid.png"
                x:Name                           ="im_Networktitle_Icon"
                Height                           ="32"
                Width                            ="32"

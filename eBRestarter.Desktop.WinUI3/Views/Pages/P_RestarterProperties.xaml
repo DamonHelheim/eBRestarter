@@ -8,9 +8,11 @@
     xmlns:userControls="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    NavigationCacheMode="Required"
     mc:Ignorable="d">
 
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid"
+          CornerRadius="8,0,0,0">
 
         <!-- 2 Zeilen: oben Titel, unten Inhalt -->
         <Grid.RowDefinitions>
@@ -20,25 +22,28 @@
 
         <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
-                    Background="{ThemeResource MenuBackgroundColor_3}"
-                    Orientation="Horizontal"
-                    Height="35">
+            Background="{ThemeResource MenuBackgroundColor_3}"
+            Orientation="Horizontal"
+            Height="35"
+                   
+            VerticalAlignment="Center"
+            Spacing="10"
+            Padding="10,0,0,0">
 
-            <Image x:Name="im_MainWindowIconTitle"
-                   Source="{ThemeResource GearIcon_2}"
-                   Height="30"
-                   Width="41"
-                   Margin="10,0,0,5" />
+            <FontIcon Glyph="&#xECA5;"
+              FontFamily="Segoe MDL2 Assets"
+              Foreground="{ThemeResource FontColor_1}"
+              FontSize="28"
+              VerticalAlignment="Center"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
-                       Foreground="{ThemeResource FontColor_1}"
-                       TextWrapping="Wrap"
-                       Text="Einstellungen"
-                       VerticalAlignment="Center"
-                       FontSize="20"
-                       Margin="10,-5,0,0"
-                       FontWeight="Bold" />
-
+               Foreground="{ThemeResource FontColor_1}"
+                       Margin="0,-3,0,0"
+               Text="Einstellungen"
+               VerticalAlignment="Center"
+               FontSize="18"
+               FontWeight="Bold"/>
+            
         </StackPanel>
 
         <!-- INHALT -->

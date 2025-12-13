@@ -20,6 +20,7 @@ namespace eBRestarter.Desktop.WinUI3.Services
             NavigationTransitionInfo? infoOverride = null
         ) where TPage : Page
         {
+            infoOverride = new DrillInNavigationTransitionInfo();
             if (_frame is null) return false;
 
             if (infoOverride is null)
@@ -37,6 +38,7 @@ namespace eBRestarter.Desktop.WinUI3.Services
             NavigationTransitionInfo? infoOverride = null
         )
         {
+            infoOverride = new DrillInNavigationTransitionInfo();
             if (_frame is null) return false;
 
             if (infoOverride is null)

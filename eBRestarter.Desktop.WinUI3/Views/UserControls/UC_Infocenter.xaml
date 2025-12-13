@@ -9,7 +9,8 @@
     mc:Ignorable="d">
 
     <Grid x:Name="DP_MainWindows_Top"
-      Background="{ThemeResource MenuBackgroundColor_2}">
+      Background="{ThemeResource MenuBackgroundColor_2}"
+      CornerRadius="8,0,0,0">
 
         <Grid.RowDefinitions>
             <!-- Top-Bar -->
@@ -18,26 +19,30 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- OBERER BALKEN (anstelle DockPanel + StackPanel) -->
+        <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
-                    Background="{ThemeResource MenuBackgroundColor_3}"
-                    Orientation="Horizontal"
-                    Height="30"
-                    Margin="0">
+        Background="{ThemeResource MenuBackgroundColor_3}"
+Orientation="Horizontal"
+Height="35"
+       
+VerticalAlignment="Center"
+Spacing="10"
+Padding="10,0,0,0">
 
-            <Image x:Name="im_MainWindowIconTitle"
-               Source="{ThemeResource InfocenterIcon}"
-               Margin="10,-7,0,0"
-               Height="30"
-               Width="30" />
+            <FontIcon Glyph="&#xE946;"
+ 
+  Foreground="{ThemeResource FontColor_1}"
+  FontSize="24"
+  VerticalAlignment="Bottom"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
-                   Foreground="{ThemeResource FontColor_1}"
-                   Text="Infocenter"
-                   VerticalAlignment="Center"
-                   FontSize="20"
-                   Margin="10,-5,0,0"
-                   FontWeight="Bold" />
+   Foreground="{ThemeResource FontColor_1}"
+                   Margin="0,7,0,0"
+   Text="Infocenter"
+   VerticalAlignment="Center"
+   FontSize="18"
+   FontWeight="Bold"/>
+
         </StackPanel>
 
         <!-- INHALT -->
@@ -75,14 +80,15 @@
                     <local:UC_InformationsCard HeaderTitle="Windows-Spezifikation"
                                        TitleForeground="{ThemeResource FontColor_4}"
                                        HeaderImage="{ThemeResource WindowsIcon}"
-                                       ImageHeight="20"
-                                       ImageWidth="20"
+                                       ImageHeight="25"
+                                       ImageWidth="25"
                                        BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
                                        InformationRow1="{Binding  WindowsInformationsModel.CurrentEdition,        Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        InformationRow2="{Binding  WindowsInformationsModel.CurrentOSVersion,      Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        InformationRow3="{Binding  WindowsInformationsModel.CurrentOSBuildVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                        InformationRowForeground="{ThemeResource FontColor_4}"
-                                       Width="480" />
+                                       Width="480"
+                                               />
                 </StackPanel>
 
                 <!-- ROW 1: URL-Karte -->
