@@ -315,7 +315,6 @@
     <Folder Include="Models\" />
     <Folder Include="DependencyInjections\" />
     <Folder Include="Resources\Images\" />
-    <Folder Include="Resources\Languages\" />
     <Folder Include="Resources\Visuals\Images\" />
   </ItemGroup>
   <ItemGroup>

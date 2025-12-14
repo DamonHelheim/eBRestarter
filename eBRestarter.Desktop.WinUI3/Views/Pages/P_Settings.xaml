@@ -10,9 +10,10 @@
     mc:Ignorable="d">
 
     <Grid>
+        
         <TextBlock Text="Settings Page"
-           HorizontalAlignment="Center"
-           VerticalAlignment="Center"/>
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
 
     </Grid>
 </Page>

@@ -57,7 +57,7 @@
     <SolidColorBrush x:Key = "FontColor_3" Color = "White"/>
     <SolidColorBrush x:Key = "FontColor_4" Color = "White"/>
 
-    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "White"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "#DCDCDC"/>
     <SolidColorBrush x:Key = "MenuBackgroundColor_2" Color = "White"/>
     <SolidColorBrush x:Key = "MenuBackgroundColor_3" Color = "White"/>
     <SolidColorBrush x:Key = "DashletBackgroundColor_1" Color = "White"/>

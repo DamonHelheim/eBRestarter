@@ -37,6 +37,7 @@
               VerticalAlignment="Center"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
+                       x:Uid="Properties"
                Foreground="{ThemeResource FontColor_1}"
                        Margin="0,-3,0,0"
                Text="Einstellungen"

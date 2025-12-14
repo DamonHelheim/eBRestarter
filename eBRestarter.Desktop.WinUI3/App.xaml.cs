@@ -23,6 +23,7 @@ using Windows.Devices.Display.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Services.Maps;
+using Windows.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,6 +50,9 @@ namespace eBRestarter.Desktop.WinUI3
             InitializeComponent();
 
             AppHost = CreateHostBuilder().Build();
+
+
+            ApplicationLanguages.PrimaryLanguageOverride = "en-US"; // oder "de-DE"
         }
 
         private static IHostBuilder CreateHostBuilder() => Host.CreateDefaultBuilder() // explizit statische Klasse

@@ -16,11 +16,14 @@
     </Window.SystemBackdrop>
 
     <Grid Background="{ThemeResource MenuBackgroundColor}">
+        
         <Grid.RowDefinitions>
+            
             <RowDefinition Height="Auto" />
             <!-- TitleBar -->
             <RowDefinition Height="*" />
             <!-- NavigationView -->
+            
         </Grid.RowDefinitions>
 
         <!--  TITLE BAR wie in der Gallery  -->
@@ -35,27 +38,28 @@
                            PaneToggleRequested="AppTitleBar_PaneToggleRequested">
 
             <controls:TitleBar.IconSource>
-                <FontIconSource Glyph="&#xE895;" Foreground="{ThemeResource FontColor_1}"/>
+                
+                <FontIconSource Glyph="&#xE895;"
+                                Foreground="{ThemeResource FontColor_1}"/>
+                
             </controls:TitleBar.IconSource>
 
         </controls:TitleBar>
 
         <!--  NavigationView darunter  -->
         <NavigationView x:Name="NavView"
-                    Grid.Row="1"
-                    IsSettingsVisible="True"
-                    PaneDisplayMode="Left"
-                    IsPaneOpen="True"
-                    CompactPaneLength="56"
-                    OpenPaneLength="260"
-                    Background="{ThemeResource MenuBackgroundColor}"
-                    PaneToggleButtonStyle="{StaticResource CustomPaneToggleButtonStyle}"
-                    SelectionChanged="NavView_SelectionChanged"
-                    ItemInvoked="NavView_ItemInvoked"
-                    IsBackButtonVisible="Collapsed"
-                    IsPaneToggleButtonVisible="False">
-
-
+                        Grid.Row="1"
+                        IsSettingsVisible="True"
+                        PaneDisplayMode="Left"
+                        IsPaneOpen="True"
+                        CompactPaneLength="56"
+                        OpenPaneLength="260"
+                        Background="{ThemeResource MenuBackgroundColor}"
+                        PaneToggleButtonStyle="{StaticResource CustomPaneToggleButtonStyle}"
+                        SelectionChanged="NavView_SelectionChanged"
+                        ItemInvoked="NavView_ItemInvoked"
+                        IsBackButtonVisible="Collapsed"
+                        IsPaneToggleButtonVisible="False">
 
                 <!-- Footer unten im Pane -->
                 <NavigationView.PaneFooter>
@@ -78,14 +82,13 @@
                 <!-- Menüeinträge -->
                 <NavigationView.MenuItems>
 
-                    <NavigationViewItem Content="Übersicht"
+                <NavigationViewItem Content="Allgemeine Übersicht"
                                         Tag="CommonOverview">
 
                         <NavigationViewItem.Icon>
                             
                             <FontIcon Glyph="&#xE7F4;"
-                                      FontFamily="Segoe MDL2 Assets"
-                                      />
+                                      FontFamily="Segoe MDL2 Assets"/>
                             
                         </NavigationViewItem.Icon>
 
@@ -131,28 +134,32 @@
 
             <!-- INHALT RECHTS NEBEN DEM HAMBURGER-MENÜ -->
             <Grid>
+                
                 <Grid.RowDefinitions>
+                    
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    
                 </Grid.RowDefinitions>
 
                 <Frame Grid.Row="0"
-                   x:Name="NavigationFrame" />
+                       x:Name="NavigationFrame" />
 
                 <StackPanel Grid.Row="1"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Stretch"
-                        Background="White">
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Stretch"
+                            Background="White">
                     
                     <usercontrol:UC_RestartTask Margin="5" />
+                    
                     <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
+                    
                 </StackPanel>
+                
             </Grid>
 
         </NavigationView>
-            
-     
-        
+                 
     </Grid>
 
 </Window>
