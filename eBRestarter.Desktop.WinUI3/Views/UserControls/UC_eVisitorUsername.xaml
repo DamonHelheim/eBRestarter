@@ -32,22 +32,22 @@
                        Width                            ="40"/>
 
                 <TextBlock x:Name       ="tbl_Username"
+                           x:Uid        ="eVisitorUsername"
                            Foreground   ="{ThemeResource FontColor_1}"
                            Margin       ="10,5,0,0"
                            TextWrapping ="Wrap"
-                           Text         ="eBesucher Nutzername"
                            FontSize     ="20"
                            Height       ="27"/>
 
             </StackPanel>
 
             <StackPanel Grid.Row="1">
-
+                
                 <Button x:Name              ="BtneVisitorRegistration"
+                        x:Uid               ="RegisterWitheVisitor"
                         Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="20,5,0,0"
                         BorderBrush         ="Transparent"
-                        Content             ="Bei eBesucher registrieren" 
                         Height              ="35"
                         Width               ="279"
                         FontSize            ="16"
@@ -55,9 +55,9 @@
                         Command             ="{Binding RegisterToEVisitorCommand}"/>
 
                 <TextBlock x:Name               ="tbl_PleaseEnterYourUsernameHere"
+                           x:Uid                ="Please_Enter_Your_Username_Here"
                            Foreground           ="{ThemeResource FontColor_1}"
                            Margin               ="20,10,0,0"
-                           Text                 ="Bitte gebe hier deinen Nutzernamen ein:"
                            FontSize             ="14"
                            HorizontalAlignment  ="Left"/>
 
@@ -75,12 +75,12 @@
                 </TextBox>
 
                 <Button x:Name              ="BtnUserNameApply"
+                        x:Uid                ="Add"
                         Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="21,10,0,0"
                         Command             ="{Binding ExecuteAddUsernameCommand}"
                         CommandParameter    ="{Binding ElementName=tb_PleaseEnterYourUsernameHere, Path=Text}"
                         BorderBrush         ="Transparent"
-                        Content             ="Hinzufügen"
                         HorizontalAlignment ="Left"
                         Width               ="278"
                         Height              ="35"

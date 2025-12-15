@@ -82,7 +82,7 @@
                 <!-- Menüeinträge -->
                 <NavigationView.MenuItems>
 
-                <NavigationViewItem Content="Allgemeine Übersicht"
+                <NavigationViewItem x:Uid="GeneralOverviewNavigation"
                                         Tag="CommonOverview">
 
                         <NavigationViewItem.Icon>
@@ -94,8 +94,8 @@
 
                     </NavigationViewItem>
 
-                    <NavigationViewItem Content="Restarter Properties"
-                                        Tag="RestarterProperties">
+                <NavigationViewItem x:Uid="PropertiesNavigation"
+                                    Tag="RestarterProperties">
 
                         <NavigationViewItem.Icon>
 
@@ -106,8 +106,8 @@
 
                     </NavigationViewItem>
 
-                    <NavigationViewItem Content="Optionen"
-                                        Tag="Options">
+                <NavigationViewItem x:Uid="OptionsNavigation"
+                                    Tag="Options">
 
                         <NavigationViewItem.Icon>
 
@@ -118,8 +118,9 @@
 
                     </NavigationViewItem>
 
-                    <NavigationViewItem Content="Infocenter"
-                                        Tag="Infocenter">
+                <NavigationViewItem x:Uid="InfocenterNavigation"
+                                    Content="Infocenter"
+                                    Tag="Infocenter">
 
                         <NavigationViewItem.Icon>
 

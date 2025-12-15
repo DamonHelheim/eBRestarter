@@ -41,6 +41,7 @@
                        Margin="0,0,8,0" />
 
                 <TextBlock x:Name="tbl_AdditionalOptions"
+                           x:Uid="AdditionalOptions"
                            Foreground="{ThemeResource FontColor_1}"
                            TextWrapping="Wrap"
                            Text="Zusatzoptionen"
@@ -51,6 +52,7 @@
 
         <TextBlock Grid.Row="1"
                    x:Name="tbl_NoBrowserInstalled"
+                   x:Uid="No_Browsers_Installed"
                    Text="Keine Browser installiert!"
                    FontSize="16"
                    Foreground="#FFC70E3F"
@@ -61,7 +63,7 @@
 
         <Button Grid.Row="2"
                 x:Name="BtnDeleteBrowserContent"
-                Content="Browserinhalte löschen"
+                x:Uid="Delete_browser_content"
                 Style="{ThemeResource ButtonCustomStyle_1}"
                 Margin="0,4,0,0"
                 Height="40"
@@ -71,7 +73,7 @@
 
         <Button Grid.Row="3"
                 x:Name="BtnInstalleBesucherAddOn"
-                Content="Installiere eBesucher Add-on"
+                x:Uid="Install_eVisitor_add_on"
                 Style="{ThemeResource ButtonCustomStyle_1}"
                 Margin="0,8,0,0"
                 Height="40"
@@ -81,7 +83,7 @@
 
         <Button Grid.Row="4"
                 x:Name="BtnInfoeVisitorAddOn"
-                Content="Wichtige Info zum Add-on"
+                x:Uid="Important_information_about_the_add_on"
                 Style="{ThemeResource ButtonCustomStyle_1}"
                 Margin="0,8,0,0"
                 Height="30"

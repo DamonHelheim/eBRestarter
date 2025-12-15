@@ -40,9 +40,9 @@
               VerticalAlignment="Bottom"/>
 
                 <TextBlock x:Name="tbl_MainWindowTitle"
+                           x:Uid="GeneralOverview"
                Foreground="{ThemeResource FontColor_1}"
                Margin="0,6,0,0"
-               Text="Allgemeine Übersicht"
                VerticalAlignment="Center"
                FontSize="18"
                FontWeight="Bold"/>
@@ -204,8 +204,8 @@
                                       VerticalAlignment="Center"/>
 
                                 <TextBlock Grid.Column="1"
-                                       Text="Zu API Optionen"
-                                       VerticalAlignment="Center"/>
+                                           x:Uid="Go_to_API_options"
+                                            VerticalAlignment="Center"/>
 
                                 <!-- ChevronRight -->
                                 <FontIcon Grid.Column="2"

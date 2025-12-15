@@ -30,12 +30,12 @@
                        Canvas.Top                       ="5"/>
 
                 <TextBlock x:Name       ="tbl_Installed_Browsers"
+                           x:Uid        ="Installed_browser"
                            Foreground   ="{ThemeResource FontColor_1}"
                            FontSize     ="18"
                            Canvas.Left  ="39"
                            TextWrapping ="Wrap"
-                           Text         ="Installierte Browser"
-                           Canvas.Top   ="6" Height="24"/>
+                           Height="24"/>
 
             </StackPanel>
 

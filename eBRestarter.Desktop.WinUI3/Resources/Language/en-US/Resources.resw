@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GeneralOverview.Text" xml:space="preserve">
+  <data name="GeneralOverviewNavigation.Content" xml:space="preserve">
     <value>General Overview</value>
   </data>
   <data name="Infocenter.Text" xml:space="preserve">
@@ -153,13 +153,13 @@
   <data name="eVisitorUsername.Text" xml:space="preserve">
     <value>eVisitor Username</value>
   </data>
-  <data name="RegisterWitheVisitor.Text" xml:space="preserve">
+  <data name="RegisterWitheVisitor.Content" xml:space="preserve">
     <value>Register with eVisitor</value>
   </data>
   <data name="Please_Enter_Your_Username_Here.Text" xml:space="preserve">
     <value>Please enter your username here:</value>
   </data>
-  <data name="Add.Text" xml:space="preserve">
+  <data name="Add.Content" xml:space="preserve">
     <value>Add</value>
   </data>
   <data name="Restart_And_Runtime_Options.Text" xml:space="preserve">
@@ -174,8 +174,8 @@
   <data name="AutomatedTasks.Text" xml:space="preserve">
     <value>Automated tasks</value>
   </data>
-  <data name="When_the_program_starts_start_restarter" xml:space="preserve">
-    <value>When the program starts, start Restarter</value>
+  <data name="TSStartBrowserWithProgrammStart.OffContent" xml:space="preserve">
+    <value>When the program starts, start Restarter off</value>
   </data>
   <data name="StartupEdgeBoost_Info.Text" xml:space="preserve">
     <value>Disable Startup Boost in Edge to use this feature. (Click on the text for more information)</value>
@@ -201,13 +201,94 @@
   <data name="No_Browsers_Installed.Text" xml:space="preserve">
     <value>No browsers installed</value>
   </data>
-  <data name="Delete_browser_content.Text" xml:space="preserve">
+  <data name="Delete_browser_content.Content" xml:space="preserve">
     <value>Delete browser content</value>
   </data>
-  <data name="Install_eVisitor_add_on.Text" xml:space="preserve">
+  <data name="Install_eVisitor_add_on.Content" xml:space="preserve">
     <value>Install eVisitor add-on</value>
   </data>
-  <data name="Important_information_about_the_add_on.Text" xml:space="preserve">
+  <data name="Important_information_about_the_add_on.Content" xml:space="preserve">
     <value>Important information about the add-on</value>
+  </data>
+  <data name="General.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="API_Access.Text" xml:space="preserve">
+    <value>API Access</value>
+  </data>
+  <data name="Windows.Text" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Start_eV_Restarter_with_Windows.Text" xml:space="preserve">
+    <value>Start eV Restarter with Windows</value>
+  </data>
+  <data name="Computer_restart_options.Text" xml:space="preserve">
+    <value>Computer restart options</value>
+  </data>
+  <data name="Check_for_updates.Text" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="Configuration_storage_location.Text" xml:space="preserve">
+    <value>Configuration storage location</value>
+  </data>
+  <data name="Standard.Text" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Dark.Text" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Language.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Username.Text" xml:space="preserve">
+    <value>Username:</value>
+  </data>
+  <data name="API_Key.Text" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="API_Information.Text" xml:space="preserve">
+    <value>API Information</value>
+  </data>
+  <data name="eVisitor_API_Options.Text" xml:space="preserve">
+    <value>eVisitor API Options</value>
+  </data>
+  <data name="Connect_to_API_interface.Text" xml:space="preserve">
+    <value>Connect to API interface</value>
+  </data>
+  <data name="Establish_API_connection_with_file_import.Text" xml:space="preserve">
+    <value>Establish API connection with file import</value>
+  </data>
+  <data name="Export_API_access_file.Text" xml:space="preserve">
+    <value>Export API access file</value>
+  </data>
+  <data name="Deactivate_API_interface.Text" xml:space="preserve">
+    <value>Disable API interface</value>
+  </data>
+  <data name="TSStartBrowserWithProgrammStart.OnContent" xml:space="preserve">
+    <value>When the program starts, start Restarter on</value>
+  </data>
+  <data name="TSCheckBrowserIsAlive.OnContent" xml:space="preserve">
+    <value>Check whether the browser has been closed on</value>
+  </data>
+  <data name="TSCheckBrowserIsAlive.OffContent" xml:space="preserve">
+    <value>Check whether the browser has been closed off</value>
+  </data>
+  <data name="Installed_browser.Text" xml:space="preserve">
+    <value>Installed browser</value>
+  </data>
+  <data name="OptionsNavigation.Content" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="InfocenterNavigation.Content" xml:space="preserve">
+    <value>Infocenter</value>
+  </data>
+  <data name="PropertiesNavigation.Content" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="GeneralOverview.Text" xml:space="preserve">
+    <value>General Overview</value>
+  </data>
+  <data name="Go_to_API_options.Text" xml:space="preserve">
+    <value>Go to API options</value>
   </data>
 </root>

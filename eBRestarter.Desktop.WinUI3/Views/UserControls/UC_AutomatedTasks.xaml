@@ -34,10 +34,10 @@
                        Width  ="35"/>
 
                 <TextBlock x:Name       ="tbl_Automated_Task"
+                           x:Uid        ="AutomatedTasks"
                            Foreground   ="{ThemeResource FontColor_1}"
                            Margin       ="10, 15, 0, 0"
                            TextWrapping ="Wrap"
-                           Text         ="Automatisierte Aufgaben"
                            Width        ="212"
                            FontSize     ="18"/>
             </StackPanel>
@@ -47,11 +47,10 @@
                         Spacing="0">
 
                 <ToggleSwitch x:Name          ="TSStartBrowserWithProgrammStart"
+                              x:Uid           ="TSStartBrowserWithProgrammStart"
                               Foreground      ="{ThemeResource FontColor_1}"
                               IsOn            ="{Binding TSStartBrowserWithProgrammStartIsOn}"
                               Margin          ="10 0 0 0"
-                              OffContent      ="Mit Programmstart, Restarter starten"
-                              OnContent       ="Mit Programmstart, Restarter starten"
                               BorderBrush     ="{ThemeResource FontColor_1}"
                               Width           ="304">
 
@@ -92,19 +91,18 @@
                 </ToggleSwitch>
 
                 <ToggleSwitch x:Name          ="TSCheckBrowserIsAlive"
+                              x:Uid           ="TSCheckBrowserIsAlive"
                               Foreground      ="{ThemeResource FontColor_1}"
                               IsOn            ="{Binding TSCheckBrowserIsAliveIsOn}"
-                              Margin          ="10 0 0 0" 
-                              OffContent      ="Prüfe, ob Browser geschlossen wurde"
-                              OnContent       ="Prüfe, ob Browser geschlossen wurde"/>
+                              Margin          ="10 0 0 0" />
 
 
                 <TextBlock x:Name       ="tbl_info_startup_boost_edge"
+                           x:Uid        ="StartupEdgeBoost_Info"
                            FontSize     ="10"
                            Margin       ="0,0,0,0"
                            Width        ="286"
                            Foreground   ="#FF008CD5"
-                           Text         ="Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)"
                            TextWrapping ="Wrap"
                            Height       ="40"/>
             </StackPanel>

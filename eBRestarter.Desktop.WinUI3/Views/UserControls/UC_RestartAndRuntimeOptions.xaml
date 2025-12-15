@@ -51,9 +51,9 @@
                        Width="30" />
 
                 <TextBlock x:Name="tbl_Restart_and_Runtime_Option"
+                           x:Uid="Restart_And_Runtime_Options"
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="8,0,0,0"
-                           Text="Neustart- und Laufzeitoptionen"
                            FontSize="18"
                            VerticalAlignment="Center" />
 
@@ -63,9 +63,9 @@
             <TextBlock Grid.Row="1"
                        Grid.ColumnSpan="2"
                        x:Name="Tbl_waiting_time_until_the_browser_starts"
+                       x:Uid="Waiting_time_until_the_browser_restarts"
                        Foreground="{ThemeResource FontColor_1}"
                        Margin="0,4,0,10"
-                       Text="Wartezeit bis der Browser wieder startet"
                        FontSize="15" />
 
             <!-- SLIDER + WERT (Sekunden) -->
@@ -110,9 +110,9 @@
             <TextBlock Grid.Row="3"
                        Grid.ColumnSpan="2"                      
                        x:Name="Tbl_set_your_browser_runtime"
+                       x:Uid="Determine_your_browser_runtime_here"
                        Foreground="{ThemeResource FontColor_1}"
                        Margin="0,12,0,10"
-                       Text="Bestimme hier deine Browserlaufzeit"
                        FontSize="15" />
 
             <!-- SLIDER + WERT (Stunden) -->
