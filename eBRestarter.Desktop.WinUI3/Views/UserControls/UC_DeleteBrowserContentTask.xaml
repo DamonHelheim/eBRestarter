@@ -29,9 +29,9 @@
                    VerticalAlignment                ="Top"/>
 
             <TextBlock x:Name                       ="tbl_BrowserCleaning"
+                       x:Uid                        ="BrowserCleanup"
                        Foreground                   ="{ThemeResource FontColor_1}"
                        Canvas.Left                  ="46"
-                       Text                         ="Browserbereinigung"
                        Canvas.Top                   ="10"
                        FontSize                     ="16"
                        HorizontalAlignment          ="Center"

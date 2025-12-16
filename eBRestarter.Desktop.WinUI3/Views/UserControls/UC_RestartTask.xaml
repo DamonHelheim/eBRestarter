@@ -63,6 +63,7 @@
                                Source="/Resources/Visuals/Icons/Intersection/timer.png" />
 
                         <TextBlock x:Name="tbl_Restarter_Agent"
+                                   x:Uid="RestarterAgent"
                                    Foreground="{ThemeResource FontColor_1}"
                                    VerticalAlignment="Center"
                                    Margin="10,0,0,0"
@@ -112,8 +113,8 @@
                            VerticalAlignment="Center" />
 
                     <TextBlock x:Name="tbl_Browser"
+                               x:Uid="Browser"
                                Foreground="{ThemeResource FontColor_1}"
-                               Text="Browser:"
                                Margin="10,0,0,0"
                                FontSize="16"
                                VerticalAlignment="Center"
@@ -143,9 +144,9 @@
                        VerticalAlignment="Center" />
 
                     <TextBlock x:Name="tbl_User"
+                               x:Uid="User"
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="10,0,0,0"
-                           Text="Nutzer:"
                            FontSize="16"
                            VerticalAlignment="Center"
                            Height="Auto"
@@ -180,9 +181,9 @@
                     
 
                     <TextBlock x:Name="tbl_Status"
+                               x:Uid="Status"
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="10,0,0,0"
-                           Text="Status:"
                            FontSize="16"
                            VerticalAlignment="Center"
                            Height="22"

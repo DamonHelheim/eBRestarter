@@ -62,7 +62,7 @@
                                   Width="20"
                                   Foreground="Black"/>
 
-                        <TextBlock Text="Allgemein"
+                        <TextBlock x:Uid="General"
                                    FontSize="14"
                                    VerticalAlignment="Center" Foreground="Black"/>
                     </StackPanel>
@@ -94,14 +94,14 @@
                             <StackPanel Orientation="Vertical">
 
                                 <TextBlock x:Name="lbl_Options_OperatingSettings"
+                                           x:Uid="Windows"
                                            Foreground="{ThemeResource FontColor_1}"
-                                           Text="Windows"
                                            FontSize="18"
                                            FontWeight="SemiBold"
                                            Margin="0,0,0,12" />
 
                                 <Button x:Name="btnOptionsAutomaticWindowsUserLogin"
-                                        Content="Automatische Nutzeranmeldung"
+                                        x:Uid="Automatic_User_Login"
                                         FontSize="16"
                                         HorizontalAlignment="Left"
                                         Margin="0,0,0,12"
@@ -112,13 +112,12 @@
                                         BorderBrush="{x:Null}"
                                         Click="BtnOptionsAutomaticWindowsUserLogin_Click" />
 
-                                <TextBlock Text="eB Restarter mit Windows starten:"
+                                <TextBlock x:Uid="Start_eV_Restarter_with_Windows"
                                            Foreground="{ThemeResource FontColor_1}"
                                            Margin="10,8,0,4" />
 
-                                <ToggleSwitch x:Name="cbxOptionsStartWithWindows"
-                                              OffContent="Deaktiviert"
-                                              OnContent="Aktiviert"
+                                <ToggleSwitch x:Name="TS_OptionsStartWithWindows"
+                                              x:Uid="TS_OptionsStartWithWindows"
                                               IsOn="{Binding SetStartUp}"
                                               Foreground="{ThemeResource FontColor_1}"
                                               HorizontalAlignment="Left"
@@ -128,6 +127,7 @@
                                               FontSize="16" />
 
                                 <TextBlock x:Name="lbl_Computer_Restartoptionen"
+                                           x:Uid="Computer_restart_options"
                                            Text="Computer Neustartoptionen"
                                            Foreground="{ThemeResource FontColor_1}"
                                            Margin="10,0,0,8"
@@ -247,11 +247,11 @@
                                 <!-- UPDATE -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock Text="Update"
+                                    <TextBlock x:Uid="Update"
                                                Style="{StaticResource SectionTitleStyle}"/>
 
                                     <Button x:Name="BtnCheckForUpdates"
-                                            Content="Auf Updates prüfen"
+                                            x:Uid="Check_for_updates"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FF4DC89E"
@@ -268,11 +268,11 @@
                                 <!-- SPEICHERORT -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock Text="Speicherort Konfig"
+                                    <TextBlock x:Uid="Configuration_storage_location"
                                                Style="{StaticResource SectionTitleStyle}" />
 
                                     <Button x:Name="Btn_go_to_settings_data"
-                                            Content="Gehe zu Speicherort"
+                                            x:Uid="Go_to_storage_location"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FF149DAE"
@@ -288,11 +288,11 @@
                                 <!-- THEMES -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock Text="Themes"
+                                    <TextBlock x:Uid="Themes"
                                                Style="{StaticResource SectionTitleStyle}" />
 
                                     <Button x:Name="BtnSetStandardTheme"
-                                            Content="Standard"
+                                            x:Uid="Standard"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FFD5D5D5"
@@ -301,7 +301,7 @@
                                             Click="BtnSetStandardTheme_Click" />
 
                                     <Button x:Name="BtnSetDarkTheme"
-                                            Content="Dunkel"
+                                            x:Uid="Dark"
                                             Margin="0"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
@@ -319,7 +319,7 @@
                                 <!-- RESTARTOPTIONEN -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock Text="Sprache"
+                                    <TextBlock x:Uid="Language"
                                                Foreground="{ThemeResource FontColor_1}"
                                                FontSize="16"
                                                FontWeight="Bold" />
@@ -381,7 +381,7 @@
                                   Width="20"
                                   Foreground="Black"/>
 
-                        <TextBlock Text="API Zugang"
+                        <TextBlock x:Uid="API_access"
                                    FontSize="14"
                                    VerticalAlignment="Center"
                                    Foreground="Black"/>
@@ -424,9 +424,9 @@
                                            Width="35"/>
 
                                     <TextBlock x:Name="lbl_options_api_informations"
+                                               x:Uid="API_Information"
                                                Foreground="{ThemeResource FontColor_1}"
                                                Margin="10,4,0,0"
-                                               Text="API Information"
                                                FontSize="16" />
                                 </StackPanel>
 
@@ -440,23 +440,24 @@
                                     <StackPanel Orientation="Vertical">
 
                                         <TextBlock x:Name="lbl_APIUsername"
+                                                   x:Uid="Username"
                                                     Foreground="{ThemeResource FontColor_1}"
                                                     HorizontalAlignment="Left"
                                                     Margin="0,0,0,8"
-                                                    Text="Nutzername:"
                                                     FontSize="16" />
 
                                         <StackPanel Orientation="Horizontal"
                                                     Height="52">
 
                                             <TextBlock x:Name="lbl_options_key"
+                                                       x:Uid="API_key"
                                                        Foreground="{ThemeResource FontColor_1}"
                                                        Margin="0,10,0,10"
-                                                       Text="Schlüssel:"
                                                        FontSize="16"
                                                        Width="94" />
 
                                             <Button x:Name="BtnShowAPIKey"
+                                                    x:Uid="Show"
                                                     Content="Anzeigen"
                                                     Margin="8,5,0,10"
                                                     Width="175"
@@ -495,9 +496,9 @@
                                            Width="40"/>
 
                                     <TextBlock x:Name="lbl_options_ebesucher_api_options"
+                                               x:Uid="eVisitor_API_Options"
                                                Foreground="{ThemeResource FontColor_1}"
                                                Margin="10,8,0,0"
-                                               Text="eBesucher API Optionen"
                                                FontSize="16" />
                                 </StackPanel>
 
@@ -511,7 +512,7 @@
                                     <StackPanel Orientation="Vertical">
 
                                         <Button x:Name="BtnConnectWithAPIInterface"
-                                                Content="Mit API Schnittstelle verbinden"
+                                                x:Uid="Connect_to_API_interface"
                                                 Margin="0,0,0,8"
                                                 Width="330"
                                                 Height="40"
@@ -522,7 +523,7 @@
                                                 Click="BtnConnectWithAPIInterface_Click" />
 
                                         <Button x:Name="BtnImportAPIFile"
-                                                Content="API Verbindung mit Datei Import herstellen"
+                                                x:Uid="Establish_API_connection_with_file_import"
                                                 Margin="0,0,0,0"
                                                 Width="330"
                                                 Height="40"
@@ -545,7 +546,7 @@
                                     <StackPanel Orientation="Vertical">
 
                                         <Button x:Name="BtnGoToSavedAPIFile"
-                                                Content="API Zugangsdatei exportieren"
+                                                x:Uid="Export_API_access_file"
                                                 Margin="0,0,0,8"
                                                 Width="330"
                                                 FontSize="16"
@@ -557,8 +558,7 @@
                                                 Click="BtnGoToSavedAPIFile_Click" />
 
                                         <Button x:Name="BtnRemoveAPIFile"
-                                                Content="API Schnittstelle deaktivieren"
-                                                Margin="0,0,0,0"
+                                                x:Uid="Deactivate_API_interface"                                                Margin="0,0,0,0"
                                                 Width="330"
                                                 FontSize="16"
                                                 Height="40"

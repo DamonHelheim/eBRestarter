@@ -101,37 +101,40 @@ Padding="10,0,0,0">
 
                 <!-- ROW 2: "Über eB Restarter"-Button -->
                 <StackPanel Grid.Row="2"
-                        Orientation="Vertical"
-                        HorizontalAlignment="Left"
-                        Margin="25,10,0,0">
+                            Orientation="Vertical"
+                            HorizontalAlignment="Left"
+                            Margin="25,10,0,0">
 
                     <Button x:Name="Btn_about"
-                        Style="{ThemeResource AccentButtonStyle}"
-                        Width="968"
-                        Height="63"
-                        Margin="0"
-                        Click="Btn_about_Click">
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Width="968"
+                            Height="63"
+                            Margin="0"
+                            Click="Btn_about_Click">
 
                         <StackPanel Orientation="Horizontal"
-                                VerticalAlignment="Center"
-                                Margin="-5,0,0,0">
+                                    VerticalAlignment="Center"
+                                    Margin="-5,0,0,0">
 
                             <!-- Info-Icon (statt MD:PackIcon) -->
                             <FontIcon Glyph="&#xE946;"
-                                  FontSize="20"
-                                  Width="35"
-                                  Height="30" />
+                                      FontSize="20"
+                                      Width="35"
+                                      Height="30" />
 
-                            <TextBlock Text="Über eB Restarter"
-                                   FontSize="16"
-                                   Margin="10,0,0,0"
-                                   VerticalAlignment="Center" />
+                            <TextBlock x:Uid="About_eV_Restarter"
+                                       FontSize="16"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center" />
+                            
                         </StackPanel>
+                        
                     </Button>
 
                 </StackPanel>
 
             </Grid>
+            
         </ScrollViewer>
 
     </Grid>

@@ -30,12 +30,13 @@
                        Height="25"
                        Width="25" />
 
-                    <TextBlock Text="Browser Downloadverlinkungen"
-                           Height="25"
-                           FontSize="16"
-                           Margin="10,0,0,0"
-                           VerticalAlignment="Center"
-                           Foreground="{ThemeResource FontColor_4}" />
+                    <TextBlock x:Uid="Browser_download_links"
+                               Height="25"
+                               FontSize="16"
+                               Margin="10,0,0,0"
+                               VerticalAlignment="Center"
+                               Foreground="{ThemeResource FontColor_4}" />
+                    
                 </StackPanel>
 
                 <!-- Links -->

@@ -139,13 +139,13 @@
     <value>Restarter Agent</value>
   </data>
   <data name="Browser.Text" xml:space="preserve">
-    <value>Browser</value>
+    <value>Browser:</value>
   </data>
   <data name="User.Text" xml:space="preserve">
-    <value>User</value>
+    <value>User:</value>
   </data>
   <data name="Status.Text" xml:space="preserve">
-    <value>Status</value>
+    <value>Status:</value>
   </data>
   <data name="BrowserCleanup.Text" xml:space="preserve">
     <value>Browser cleanup</value>
@@ -225,16 +225,16 @@
   <data name="Computer_restart_options.Text" xml:space="preserve">
     <value>Computer restart options</value>
   </data>
-  <data name="Check_for_updates.Text" xml:space="preserve">
+  <data name="Check_for_updates.Content" xml:space="preserve">
     <value>Check for updates</value>
   </data>
   <data name="Configuration_storage_location.Text" xml:space="preserve">
     <value>Configuration storage location</value>
   </data>
-  <data name="Standard.Text" xml:space="preserve">
+  <data name="Standard.Content" xml:space="preserve">
     <value>Standard</value>
   </data>
-  <data name="Dark.Text" xml:space="preserve">
+  <data name="Dark.Content" xml:space="preserve">
     <value>Dark</value>
   </data>
   <data name="Language.Text" xml:space="preserve">
@@ -244,7 +244,7 @@
     <value>Username:</value>
   </data>
   <data name="API_Key.Text" xml:space="preserve">
-    <value>API Key</value>
+    <value>API Key:</value>
   </data>
   <data name="API_Information.Text" xml:space="preserve">
     <value>API Information</value>
@@ -252,16 +252,16 @@
   <data name="eVisitor_API_Options.Text" xml:space="preserve">
     <value>eVisitor API Options</value>
   </data>
-  <data name="Connect_to_API_interface.Text" xml:space="preserve">
+  <data name="Connect_to_API_interface.Content" xml:space="preserve">
     <value>Connect to API interface</value>
   </data>
-  <data name="Establish_API_connection_with_file_import.Text" xml:space="preserve">
+  <data name="Establish_API_connection_with_file_import.Content" xml:space="preserve">
     <value>Establish API connection with file import</value>
   </data>
-  <data name="Export_API_access_file.Text" xml:space="preserve">
+  <data name="Export_API_access_file.Content" xml:space="preserve">
     <value>Export API access file</value>
   </data>
-  <data name="Deactivate_API_interface.Text" xml:space="preserve">
+  <data name="Deactivate_API_interface.Content" xml:space="preserve">
     <value>Disable API interface</value>
   </data>
   <data name="TSStartBrowserWithProgrammStart.OnContent" xml:space="preserve">
@@ -290,5 +290,35 @@
   </data>
   <data name="Go_to_API_options.Text" xml:space="preserve">
     <value>Go to API options</value>
+  </data>
+  <data name="Automatic_User_Login.Content" xml:space="preserve">
+    <value>Automatic user login</value>
+  </data>
+  <data name="TS_OptionsStartWithWindows.OffContent" xml:space="preserve">
+    <value>Deactivated</value>
+  </data>
+  <data name="TS_OptionsStartWithWindows.OnContent" xml:space="preserve">
+    <value>Activated</value>
+  </data>
+  <data name="Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Go_to_storage_location.Content" xml:space="preserve">
+    <value>Go to storage location</value>
+  </data>
+  <data name="Themes.Text" xml:space="preserve">
+    <value>Themes</value>
+  </data>
+  <data name="Show.Content" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="Browser_download_links.Text" xml:space="preserve">
+    <value>Browser download links</value>
+  </data>
+  <data name="About_eV_Restarter.Text" xml:space="preserve">
+    <value>About eB Restarter</value>
+  </data>
+  <data name="AppTitleBar.Title" xml:space="preserve">
+    <value>eVRestarter</value>
   </data>
 </root>

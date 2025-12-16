@@ -28,8 +28,8 @@
 
         <!--  TITLE BAR wie in der Gallery  -->
         <controls:TitleBar x:Name="AppTitleBar"
+                           x:Uid="AppTitleBar"
                            Grid.Row="0"
-                           Title="eBRestarter"
                            Foreground="Black"
                            IsBackButtonVisible="false"
                            IsBackButtonEnabled="{x:Bind NavigationFrame.CanGoBack, Mode=OneWay}"
