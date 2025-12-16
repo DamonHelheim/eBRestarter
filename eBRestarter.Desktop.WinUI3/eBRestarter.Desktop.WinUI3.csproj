@@ -313,7 +313,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="DependencyInjections\" />
     <Folder Include="Resources\Images\" />
     <Folder Include="Resources\Visuals\Images\" />
   </ItemGroup>

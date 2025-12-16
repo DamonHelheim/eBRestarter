@@ -1,4 +1,5 @@
-﻿using eBRestarter.Desktop.WinUI3.Services;
+﻿using eBRestarter.Desktop.WinUI3.DependencyInjections;
+using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using Microsoft.Extensions.Configuration;
@@ -22,8 +23,8 @@ using Windows.ApplicationModel.Activation;
 using Windows.Devices.Display.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.Services.Maps;
 using Windows.Globalization;
+using Windows.Services.Maps;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -65,12 +66,14 @@ namespace eBRestarter.Desktop.WinUI3
                  .ConfigureServices((ctx, services) =>
                  {
                      // Navigation
-                     services.AddSingleton<INavigationService, NavigationService>();
+                     //services.AddSingleton<INavigationService, NavigationService>();
 
-                     // MainWindow via DI
-                     services.AddSingleton<EBRestarter>();
+                     //// MainWindow via DI
+                     //services.AddSingleton<EBRestarter>();
 
-                     services.AddSingleton<MainViewModel>();
+                     //services.AddSingleton<MainViewModel>();
+
+                     ServiceRegistration.ConfigureServices(services);
 
                  });
 
@@ -80,7 +83,6 @@ namespace eBRestarter.Desktop.WinUI3
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
             MainWindoweBRestarter.Activate();

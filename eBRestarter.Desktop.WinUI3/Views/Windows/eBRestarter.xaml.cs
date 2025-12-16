@@ -1,3 +1,4 @@
+using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using eBRestarter.Desktop.WinUI3.Views.Pages;
@@ -33,58 +34,51 @@ namespace eBRestarter.Desktop.WinUI3
         private readonly NavigationTransitionInfo _defaultTransition = new DrillInNavigationTransitionInfo();
 
         // Routen-Map für Tags aus dem NavigationView
-        private static readonly Dictionary<string, Type> _routes = new()
-        {
-            ["CommonOverview"] = typeof(P_CommonOverview),
-            ["RestarterProperties"] = typeof(P_RestarterProperties),
-            ["Options"] = typeof(P_Options),
-            ["Infocenter"] = typeof(P_Infocenter),
-            ["Settings"] = typeof(P_Settings)
-        };
+        //private static readonly Dictionary<string, Type> _routes = new()
+        //{
+        //    ["CommonOverview"] = typeof(P_CommonOverview),
+        //    ["RestarterProperties"] = typeof(P_RestarterProperties),
+        //    ["Options"] = typeof(P_Options),
+        //    ["Infocenter"] = typeof(P_Infocenter),
+        //    ["Settings"] = typeof(P_Settings)
+        //};
 
         public EBRestarter(INavigationService navigationService, MainViewModel mainViewModel)
         {
             InitializeComponent();
-            ConfigureTitleBar();
+
+            // 1. SRP: Externe Helfer-Methode aufrufen
+            this.ConfigureTitleBarColors();
 
             NavigationFrame.CacheSize = 10;
-
             _navigationService = navigationService;
 
             // Frame an NavigationService "anhängen"
             _navigationService.AttachFrame(NavigationFrame);
 
-            // Optional: DataContext aus DI
-            // DataContext = App.AppHost!.Services.GetRequiredService<MainViewModel>();
-
+            // DataContext
             (this.Content as FrameworkElement)!.DataContext = mainViewModel;
 
-            // Startseite setzen
-            _navigationService.Navigate(typeof(P_CommonOverview), new DrillInNavigationTransitionInfo());
-        }
+            // Startseite setzen, jetzt mit dem Route-Tag
+            _navigationService.NavigateTo("CommonOverview", transitionInfo: new DrillInNavigationTransitionInfo());
 
-        private void ConfigureTitleBar()
-        {
-            // AppWindow aus dem Window holen (ab Windows App SDK 1.3+)
-            var appWindow = this.AppWindow;
-            var titleBar = appWindow.TitleBar;
+            //InitializeComponent();
+            //ConfigureTitleBar();
 
-            // Inhalt in die Titelleiste hineinziehen
-            titleBar.ExtendsContentIntoTitleBar = true;
+            //NavigationFrame.CacheSize = 10;
 
-            // Farben an deinen Hintergrund anpassen
-            var bg = Color.FromArgb(255, 32, 37, 54); // Fix: ColorHelper entfernt, stattdessen Microsoft.UI.Xaml.Media.Color
+            //_navigationService = navigationService;
 
-            titleBar.BackgroundColor = bg;
-            titleBar.InactiveBackgroundColor = bg;
-            titleBar.ButtonBackgroundColor = bg;
-            titleBar.ButtonInactiveBackgroundColor = bg;
-            titleBar.ButtonForegroundColor = Colors.White;
-            titleBar.ButtonInactiveForegroundColor = Colors.Gray;
+            //// Frame an NavigationService "anhängen"
+            //_navigationService.AttachFrame(NavigationFrame);
 
-            // Wenn du eine eigene XAML-Titlebar benutzt, dann zusätzlich:
-            this.ExtendsContentIntoTitleBar = true;
-            this.SetTitleBar(null);
+            //// Optional: DataContext aus DI
+            //// DataContext = App.AppHost!.Services.GetRequiredService<MainViewModel>();
+
+            //(this.Content as FrameworkElement)!.DataContext = mainViewModel;
+
+            //// Startseite setzen
+            //_navigationService.Navigate(typeof(P_CommonOverview), new DrillInNavigationTransitionInfo());
         }
 
         private void AppTitleBar_BackRequested(TitleBar sender, object args)
@@ -100,36 +94,96 @@ namespace eBRestarter.Desktop.WinUI3
             NavView.IsPaneOpen = !NavView.IsPaneOpen;
         }
 
-        private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-        {
-            if (args.SelectedItemContainer is NavigationViewItem nvi
-                && nvi.Tag is string tag
-                && _routes.TryGetValue(tag, out var pageType))
-            {
-                _navigationService.Navigate(
-                    pageType,
-                    parameter: null,
-                    infoOverride: _defaultTransition
-                );
-            }
-        }
-
+        // Beide Methoden NavView_SelectionChanged und NavView_ItemInvoked zusammenführen/vereinfachen
         private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            // Settings wird vom NavigationService intern behandelt oder ignoriert
             if (args.IsSettingsInvoked)
             {
-                // Falls du später eigene Settings-Page hast
-                // _navigationService.Navigate(typeof(P_Options));
+                // Optional: Navigiere zur Settings-Route
+                // _navigationService.NavigateToRoute("Settings", _defaultTransition);
                 return;
             }
 
             if (args.InvokedItemContainer is NavigationViewItem nvi
-                && nvi.Tag is string tag
-                && _routes.TryGetValue(tag, out var pageType))
+                && nvi.Tag is string tag)
             {
-                _navigationService.Navigate(pageType, _defaultTransition);
+                // 2. DIP: Direkter Aufruf des Service mit dem Tag
+                _navigationService.NavigateTo(
+                    tag,
+                    parameter: null,
+                    transitionInfo: _defaultTransition
+                );
             }
         }
+
+        //private void ConfigureTitleBar()
+        //{
+        //    // AppWindow aus dem Window holen (ab Windows App SDK 1.3+)
+        //    var appWindow = this.AppWindow;
+        //    var titleBar = appWindow.TitleBar;
+
+        //    // Inhalt in die Titelleiste hineinziehen
+        //    titleBar.ExtendsContentIntoTitleBar = true;
+
+        //    // Farben an deinen Hintergrund anpassen
+        //    var bg = Color.FromArgb(255, 32, 37, 54); // Fix: ColorHelper entfernt, stattdessen Microsoft.UI.Xaml.Media.Color
+
+        //    titleBar.BackgroundColor = bg;
+        //    titleBar.InactiveBackgroundColor = bg;
+        //    titleBar.ButtonBackgroundColor = bg;
+        //    titleBar.ButtonInactiveBackgroundColor = bg;
+        //    titleBar.ButtonForegroundColor = Colors.White;
+        //    titleBar.ButtonInactiveForegroundColor = Colors.Gray;
+
+        //    // Wenn du eine eigene XAML-Titlebar benutzt, dann zusätzlich:
+        //    this.ExtendsContentIntoTitleBar = true;
+        //    this.SetTitleBar(null);
+        //}
+
+        //private void AppTitleBar_BackRequested(TitleBar sender, object args)
+        //{
+        //    if (NavigationFrame.CanGoBack)
+        //    {
+        //        NavigationFrame.GoBack();
+        //    }
+        //}
+
+        //private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
+        //{
+        //    NavView.IsPaneOpen = !NavView.IsPaneOpen;
+        //}
+
+        //private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        //{
+        //    if (args.SelectedItemContainer is NavigationViewItem nvi
+        //        && nvi.Tag is string tag
+        //        && _routes.TryGetValue(tag, out var pageType))
+        //    {
+        //        _navigationService.Navigate(
+        //            pageType,
+        //            parameter: null,
+        //            infoOverride: _defaultTransition
+        //        );
+        //    }
+        //}
+
+        //private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        //{
+        //    if (args.IsSettingsInvoked)
+        //    {
+        //        // Falls du später eigene Settings-Page hast
+        //        // _navigationService.Navigate(typeof(P_Options));
+        //        return;
+        //    }
+
+        //    if (args.InvokedItemContainer is NavigationViewItem nvi
+        //        && nvi.Tag is string tag
+        //        && _routes.TryGetValue(tag, out var pageType))
+        //    {
+        //        _navigationService.Navigate(pageType, _defaultTransition);
+        //    }
+        //}
     }
 }
 

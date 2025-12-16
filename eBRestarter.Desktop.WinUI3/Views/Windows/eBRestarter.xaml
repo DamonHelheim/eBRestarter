@@ -46,7 +46,7 @@
 
         </controls:TitleBar>
 
-        <!--  NavigationView darunter  -->
+        <!--  NavigationView darunter  SelectionChanged="NavView_SelectionChanged"-->
         <NavigationView x:Name="NavView"
                         Grid.Row="1"
                         IsSettingsVisible="True"
@@ -56,7 +56,7 @@
                         OpenPaneLength="260"
                         Background="{ThemeResource MenuBackgroundColor}"
                         PaneToggleButtonStyle="{StaticResource CustomPaneToggleButtonStyle}"
-                        SelectionChanged="NavView_SelectionChanged"
+                        
                         ItemInvoked="NavView_ItemInvoked"
                         IsBackButtonVisible="Collapsed"
                         IsPaneToggleButtonVisible="False">
