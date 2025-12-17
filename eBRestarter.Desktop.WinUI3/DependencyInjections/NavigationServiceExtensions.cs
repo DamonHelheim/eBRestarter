@@ -11,16 +11,18 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.DependencyInjections
 {
-    public static class ServiceRegistration
+    public static class NavigationServiceExtensions
     {
-        public static void ConfigureServices(IServiceCollection services)
+        // "this" macht es zur Extension Method für IServiceCollection
+        public static IServiceCollection AddNavigationService(this IServiceCollection services)
         {
-            // 1. ViewModels & Fenster normal registrieren
-            services.AddSingleton<MainViewModel>();
-            services.AddSingleton<EBRestarter>();
+            //// 1. ViewModels & Fenster
+            //// HINWEIS: Falls du diese bereits in "AddViewModels()" hast, 
+            //// solltest du sie hier entfernen, um doppelte Registrierung zu vermeiden!
+            //services.AddSingleton<MainViewModel>();
+            //services.AddSingleton<EBRestarter>();
 
-            // 2. NavigationService mit KONFIGURATION registrieren (Factory Pattern)
-            // Wir übergeben eine Funktion (Lambda), die ausgeführt wird, wenn der Service zum ersten Mal gebraucht wird.
+            // 2. NavigationService mit Factory Pattern
             services.AddSingleton<INavigationService>(provider =>
             {
                 // Instanz erzeugen
@@ -36,6 +38,9 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
                 // Den fertig konfigurierten Service zurückgeben
                 return navService;
             });
+
+            // Wichtig für Chaining (Fluent API)
+            return services;
         }
     }
 }

@@ -14,13 +14,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private readonly INavigationService _navigationService;
 
-        public ICommand OpenOptionsCommand { get; }
-
         public MainViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
 
-            OpenOptionsCommand = new RelayCommand(() => _navigationService.Navigate<P_CommonOverview>());
         }
     }
 

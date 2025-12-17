@@ -37,9 +37,7 @@ namespace eBRestarter.Desktop.WinUI3
     public partial class App : Application
     {
         public static Window? MainWindoweBRestarter { get; private set; }
-
         public static IHost? AppHost { get; private set; } // Generic Host
-
         public static Microsoft.UI.Dispatching.DispatcherQueue? AppDispatcherQueue { get; private set; }
 
         /// <summary>
@@ -52,7 +50,6 @@ namespace eBRestarter.Desktop.WinUI3
 
             AppHost = CreateHostBuilder().Build();
 
-
             ApplicationLanguages.PrimaryLanguageOverride = "en-US"; // oder "de-DE"
         }
 
@@ -64,17 +61,9 @@ namespace eBRestarter.Desktop.WinUI3
                      cfg.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                  })
                  .ConfigureServices((ctx, services) =>
-                 {
-                     // Navigation
-                     //services.AddSingleton<INavigationService, NavigationService>();
-
-                     //// MainWindow via DI
-                     //services.AddSingleton<EBRestarter>();
-
-                     //services.AddSingleton<MainViewModel>();
-
-                     ServiceRegistration.ConfigureServices(services);
-
+                 {        
+                     services.AddNavigationService();
+                     services.AddViewModels();
                  });
 
         /// <summary>
