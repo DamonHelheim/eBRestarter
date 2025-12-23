@@ -75,11 +75,10 @@
                 </TextBox>
 
                 <Button x:Name              ="BtnUserNameApply"
-                        x:Uid                ="Add"
+                        x:Uid               ="Add"
                         Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="21,10,0,0"
-                        Command             ="{Binding ExecuteAddUsernameCommand}"
-                        CommandParameter    ="{Binding ElementName=tb_PleaseEnterYourUsernameHere, Path=Text}"
+                        Command             ="{Binding AddeVVisitorUsernameCommand}"
                         BorderBrush         ="Transparent"
                         HorizontalAlignment ="Left"
                         Width               ="278"

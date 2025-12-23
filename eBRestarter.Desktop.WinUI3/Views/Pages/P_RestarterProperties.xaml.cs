@@ -32,7 +32,7 @@ namespace eBRestarter.Desktop.WinUI3.Views.Pages
     public sealed partial class P_RestarterProperties : Page
     {
         // Kein "new()", da wir es aus dem DI Container wollen!
-        public ViewModelRestarterProperties ViewModel { get; }
+        public ViewModelRestarterProperties ViewModelRestarterProperties { get; }
 
         // WICHTIG: Der Konstruktor muss LEER sein (Parameterlos)
         public P_RestarterProperties()
@@ -40,10 +40,10 @@ namespace eBRestarter.Desktop.WinUI3.Views.Pages
             this.InitializeComponent();
 
             // Hier holen wir uns das ViewModel manuell aus dem Container
-            ViewModel = App.AppHost.Services.GetRequiredService<ViewModelRestarterProperties>();
+            ViewModelRestarterProperties = App.AppHost.Services.GetRequiredService<ViewModelRestarterProperties>();
 
             // DataContext setzen
-            this.DataContext = ViewModel;
+            this.DataContext = ViewModelRestarterProperties;
         }
     }
 }

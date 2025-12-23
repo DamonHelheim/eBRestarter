@@ -2,6 +2,7 @@
 using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
+using eBRestarter.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,7 +35,7 @@ namespace eBRestarter.Desktop.WinUI3
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public partial class App : Application
+    public partial class App : Microsoft.UI.Xaml.Application
     {
         public static Window? MainWindoweBRestarter { get; private set; }
         public static IHost? AppHost { get; private set; } // Generic Host
@@ -61,7 +62,8 @@ namespace eBRestarter.Desktop.WinUI3
                      cfg.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                  })
                  .ConfigureServices((ctx, services) =>
-                 {        
+                 {
+                     services.AddInfrastructureServices();
                      services.AddNavigationService();
                      services.AddViewModels();
                  });
