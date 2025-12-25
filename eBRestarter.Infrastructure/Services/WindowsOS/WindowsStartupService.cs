@@ -1,4 +1,5 @@
 ﻿using eBRestarter.Application.Services.Ports.Interfaces;
+using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Serilog;
@@ -8,179 +9,185 @@ using System.Runtime.Versioning;
 namespace eBRestarter.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Manages system startup configurations, including Windows Autostart, Edge Startup Boost, 
-    /// and AutoLogon settings via the Windows Registry.
+    /// Verwaltet Systemstart-Konfigurationen, einschließlich Windows Autostart, Edge Startup Boost 
+    /// und AutoLogon-Einstellungen über die Windows Registry.
     /// <br/>
-    /// <b>Layer:</b> Infrastructure (Adapter)
+    /// <b>Architektur-Layer:</b> Infrastructure (Adapter)
+    /// <br/>
+    /// <b>Verantwortlichkeit:</b> Kapselt die Logik zum Schreiben und Lesen von Registry-Werten, 
+    /// um das Verhalten von Windows beim Start zu beeinflussen. Nutzt Wrapper-Interfaces, 
+    /// um die Testbarkeit (Mocking) der statischen Registry-Klassen zu gewährleisten.
     /// </summary>
-    [SupportedOSPlatform("windows")]
     public class WindowsStartupService : IStartupManagerService
     {
-        // --- Constants for Registry Paths ---
-        // Path for the "Current User" Run key (Standard Autostart)
+        // --- Konstanten für Registry-Pfade ---
+
+        // Pfad für den "Current User" Run-Key (Standard Autostart für den aktuellen Benutzer).
+        // Anwendungen, die hier eingetragen sind, starten automatisch nach dem Login.
         private const string RegistryPathRun = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
 
-        // Path for Edge Policies (Machine-wide)
+        // Pfad für Edge Policies (Maschinenweit / HKLM).
+        // Hier wird der "Startup Boost" gesteuert, der Edge im Hintergrund vorlädt.
         private const string RegistryPathEdgePolicies = @"SOFTWARE\Policies\Microsoft\Edge";
 
-        // Path for Passwordless Sign-in (Machine-wide)
+        // Pfad für Passwordless Sign-in (Maschinenweit / HKLM).
+        // Steuert, ob Windows Hello zwingend erforderlich ist oder ob AutoLogon möglich ist.
         private const string RegistryPathPasswordLess = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device";
 
         private readonly ILogger<WindowsStartupService> _logger;
 
+        // Wrapper für Registry-Zugriffe (ermöglicht Unit-Tests ohne echte Registry).
+        private readonly IRegistryService _registry;
+
+        // Wrapper für Prozess-Informationen (ermöglicht Unit-Tests ohne echten Prozess).
+        private readonly IProcessInfoService _processInfo;
+
         /// <summary>
-        /// Initializes the startup service with a logger.
+        /// Initialisiert eine neue Instanz des <see cref="WindowsStartupService"/>.
         /// </summary>
-        public WindowsStartupService(ILogger<WindowsStartupService> logger)
+        /// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
+        /// <param name="registry">Inijiierter Service zum Zugriff auf die Windows-Registry (Wrapper).</param>
+        /// <param name="processInfo">Inijiierter Service zum Abrufen des aktuellen Exe-Pfads (Wrapper).</param>
+        public WindowsStartupService(
+            ILogger<WindowsStartupService> logger,
+            IRegistryService registry,
+            IProcessInfoService processInfo)
         {
             _logger = logger;
+            _registry = registry;
+            _processInfo = processInfo;
         }
 
         /// <summary>
-        /// Adds the current application to the Windows Registry "Run" key for the current user.
-        /// This ensures the app starts automatically when the user logs in.
+        /// Fügt die aktuelle Anwendung zum Windows Autostart ("Run"-Key) für den aktuellen Benutzer hinzu.
         /// </summary>
+        /// <remarks>
+        /// Nutzt <see cref="IProcessInfoService"/>, um den Pfad der laufenden .exe zu ermitteln.
+        /// Schreibt in <c>HKEY_CURRENT_USER</c>, was keine Administratorrechte erfordert.
+        /// </remarks>
         public void EnableAutoStart()
         {
             try
             {
-                // We open the key with write permissions (true).
-                // 'Registry.CurrentUser' does not require Admin rights.
-                using var rkApp = Registry.CurrentUser.OpenSubKey(RegistryPathRun, true);
+                // Hole den Pfad der aktuell ausgeführten .exe-Datei über den Wrapper.
+                string exePath = _processInfo.GetCurrentExecutablePath();
 
-                if (rkApp != null)
-                {
-                    // "eV Restarter" is the key name, the value is the path to the .exe
-                    rkApp.SetValue("eV Restarter", Process.GetCurrentProcess().MainModule!.FileName);
-                    _logger.LogInformation("Autostart entry for 'eV Restarter' created.");
-                }
+                // Setze den Registry-Wert: Name = "eV Restarter", Wert = "C:\Pfad\zur\App.exe"
+                _registry.SetCurrentUserValue(RegistryPathRun, "eBRestarter", exePath);
+
+                _logger.LogInformation("Autostart-Eintrag für 'eBRestarter' erfolgreich erstellt.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to set Autostart in registry.");
+                _logger.LogError(ex, "Fehler beim Setzen des Autostarts in der Registry.");
             }
         }
 
         /// <summary>
-        /// Removes the application from the Windows Registry "Run" key.
+        /// Entfernt die Anwendung aus dem Windows Autostart ("Run"-Key).
         /// </summary>
         public void DisableAutoStart()
         {
             try
             {
-                using var rkApp = Registry.CurrentUser.OpenSubKey(RegistryPathRun, true);
+                // Löscht den Wert "eV Restarter" aus dem Run-Key.
+                // Der Wrapper behandelt den Fall, dass der Key gar nicht existiert, intern.
+                _registry.DeleteCurrentUserValue(RegistryPathRun, "eBRestarter");
 
-                // deleteValue(..., false) prevents an exception if the key doesn't exist.
-                rkApp?.DeleteValue("eV Restarter", false);
-                _logger.LogInformation("Autostart entry for 'eV Restarter' removed.");
+                _logger.LogInformation("Autostart-Eintrag für 'eBRestarter' entfernt.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to remove Autostart from registry.");
+                _logger.LogError(ex, "Fehler beim Entfernen des Autostarts aus der Registry.");
             }
         }
 
         /// <summary>
-        /// Retrieves all current autostart entries for the current user.
+        /// Ruft alle aktuellen Autostart-Einträge des Benutzers ab.
         /// </summary>
-        /// <returns>A dictionary containing the application name (Key) and the executable path (Value).</returns>
+        /// <returns>Ein Dictionary mit dem Namen der Anwendung (Key) und dem Pfad (Value).</returns>
         public Dictionary<string, object> GetStartupEntries()
         {
-            var valuesBynames = new Dictionary<string, object>();
-
             try
             {
-                // Open the registry key read-only
-                using var rootKey = Registry.CurrentUser.OpenSubKey(RegistryPathRun);
-
-                if (rootKey != null)
-                {
-                    // Get all entry names (e.g., "Steam", "Discord", "eV Restarter")
-                    string[] valueNames = rootKey.GetValueNames();
-
-                    foreach (string currSubKey in valueNames)
-                    {
-                        // Get the value (the path to the exe)
-                        object value = rootKey.GetValue(currSubKey)!;
-                        valuesBynames.Add(currSubKey, value);
-                    }
-                }
-
-                return valuesBynames;
+                // Liest alle Werte unter HKCU\...\Run aus.
+                return _registry.GetCurrentUserValues(RegistryPathRun);
             }
             catch (Exception ex)
             {
-                // Replaced static Log.Error with injected _logger
-                _logger.LogError(ex, "Failed to retrieve startup entries.");
-
-                // Return empty dictionary instead of null to avoid NullReferenceException in the caller
+                _logger.LogError(ex, "Fehlerbeim Abrufen der Autostart-Einträge.");
+                // Gib eine leere Liste zurück, um NullReferenceExceptions im UI zu vermeiden.
                 return new Dictionary<string, object>();
             }
         }
 
         /// <summary>
-        /// Activates or deactivates the "Startup Boost" feature of Microsoft Edge.
+        /// Aktiviert oder deaktiviert das "Startup Boost" Feature von Microsoft Edge.
         /// </summary>
-        /// <param name="enable">True to enable (Sets registry value to 1), False to disable (Sets registry value to 0).</param>
+        /// <param name="enable">
+        /// <c>true</c>: Setzt Registry-Wert auf 1 (Aktiviert).
+        /// <c>false</c>: Setzt Registry-Wert auf 0 (Deaktiviert).
+        /// </param>
         /// <remarks>
-        /// <b>Requires Administrator Privileges</b> because it writes to <c>HKEY_LOCAL_MACHINE</c>.
+        /// <b>Erfordert Administratorrechte</b>, da in <c>HKEY_LOCAL_MACHINE</c> geschrieben wird.
         /// </remarks>
         public void SetEdgeStartupBoost(bool enable)
         {
             try
             {
+                // Konvertierung: Registry erwartet DWORD (1 = an, 0 = aus)
                 int dwordValue = enable ? 1 : 0;
 
-                // CreateSubKey automatically opens the key if it exists, or creates it if it doesn't.
-                // It simplifies the old if/else logic significantly.
-                using RegistryKey key = Registry.LocalMachine.CreateSubKey(RegistryPathEdgePolicies);
+                // Setzt den Wert im HKLM-Zweig via Wrapper.
+                // Der Wrapper kümmert sich um "CreateSubKey", falls der Pfad noch nicht existiert.
+                _registry.SetLocalMachineValue(RegistryPathEdgePolicies, "StartupBoostEnabled", dwordValue, RegistryValueKind.DWord);
 
-                key.SetValue("StartupBoostEnabled", dwordValue, RegistryValueKind.DWord);
-
-                _logger.LogInformation("Edge Startup Boost set to {State} ({Value}).", enable, dwordValue);
+                _logger.LogInformation("Edge Startup Boost auf {State} gesetzt (Wert: {Value}).", enable, dwordValue);
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.LogError(ex, "Permission denied modifying Edge Policies. Run application as Administrator.");
+                // Spezifisches Logging, wenn dem User die Rechte fehlen (App nicht als Admin gestartet).
+                _logger.LogError(ex, "Zugriff verweigert beim Ändern der Edge-Policies. Bitte als Administrator ausführen.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error setting Edge Startup Boost.");
+                _logger.LogError(ex, "Allgemeiner Fehler beim Setzen von Edge Startup Boost.");
             }
         }
 
         /// <summary>
-        /// Configures the "DevicePasswordLessBuildVersion" setting to allow or disallow automatic logon (removing the Hello requirement).
+        /// Konfiguriert die "DevicePasswordLessBuildVersion"-Einstellung, um automatische Anmeldung zu erlauben oder zu verbieten.
         /// </summary>
         /// <param name="enable">
-        /// <c>true</c>: Sets value to 0 (Enables ability for auto-logon / disables mandatory Hello).
-        /// <c>false</c>: Sets value to 2 (Enforces Windows Hello / disables auto-logon).
+        /// <c>true</c>: Setzt Wert auf 0 (Erlaubt AutoLogon / deaktiviert Hello-Zwang).
+        /// <c>false</c>: Setzt Wert auf 2 (Erzwingt Windows Hello / deaktiviert AutoLogon).
         /// </param>
         /// <remarks>
-        /// <b>Requires Administrator Privileges</b> (HKEY_LOCAL_MACHINE).
+        /// <b>Erfordert Administratorrechte</b> (HKEY_LOCAL_MACHINE).
+        /// <br/>
+        /// Logik-Erklärung:
+        /// 0 = PasswordLess Disabled -> Klassischer Login (inkl. AutoLogon) möglich.
+        /// 2 = PasswordLess Enabled -> Windows Hello zwingend erforderlich.
         /// </remarks>
         public void SetAutoLogon(bool enable)
         {
             try
             {
-                // Logic derived from your previous code:
-                // 0 = PasswordLess Disabled (Standard Login / Autologon possible)
-                // 2 = PasswordLess Enabled (Windows Hello required)
+                // Die Logik ist hier invertiert zur Registry-Bedeutung:
+                // Wir wollen AutoLogon *einschalten* (enable=true) -> Das bedeutet PasswordLess *aus* (Wert 0).
                 int dwordValue = enable ? 0 : 2;
 
-                using RegistryKey key = Registry.LocalMachine.CreateSubKey(RegistryPathPasswordLess);
+                _registry.SetLocalMachineValue(RegistryPathPasswordLess, "DevicePasswordLessBuildVersion", dwordValue, RegistryValueKind.DWord);
 
-                key.SetValue("DevicePasswordLessBuildVersion", dwordValue, RegistryValueKind.DWord);
-
-                _logger.LogInformation("Windows PasswordLess Login requirement set to {State} (RegValue: {Value}).", !enable, dwordValue);
+                _logger.LogInformation("AutoLogon-Einstellung auf {State} gesetzt (RegWert: {Value}).", enable, dwordValue);
             }
             catch (UnauthorizedAccessException ex)
             {
-                _logger.LogError(ex, "Permission denied modifying PasswordLess settings. Run application as Administrator.");
+                _logger.LogError(ex, "Zugriff verweigert beim Ändern der PasswordLess-Einstellungen. Bitte als Administrator ausführen.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error configuring AutoLogon settings.");
+                _logger.LogError(ex, "Fehler beim Konfigurieren der AutoLogon-Einstellungen.");
             }
         }
     }

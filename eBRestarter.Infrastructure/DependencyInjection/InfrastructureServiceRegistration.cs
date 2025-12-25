@@ -28,14 +28,20 @@ namespace eBRestarter.Infrastructure.DependencyInjection
                 builder.AddDebug();      // Schreibt ins Visual Studio "Ausgabe"-Fenster
             });
 
-            // 1. Erst die Wrapper registrieren (oft als Transient oder Singleton)
-            // Wir registrieren den "echten" Wrapper für die Laufzeit der App.
-            services.AddTransient<IProcessWrapper, RealProcessWrapper>();
+
 
             // Die Windows-Services registrieren
 #pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+
+            // 1. Erst die Wrapper registrieren (oft als Transient oder Singleton)
+            // Wir registrieren den "echten" Wrapper für die Laufzeit der App.
+            services.AddTransient<IProcessWrapper, RealProcessWrapper>();
             services.AddSingleton<IProcessControlService, WindowsProcessService>();
             services.AddSingleton<ISystemInfoService, WindowsSystemInfoService>();
+
+            // Registrierung der Wrapper
+            services.AddTransient<IProcessInfoService, ProcessInfoService>();
+            services.AddTransient<IRegistryService, RegistryService>();
             services.AddSingleton<IStartupManagerService, WindowsStartupService>();
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 

@@ -6,35 +6,59 @@ using System.Text;
 
 namespace eBRestarter.Infrastructure.Wrapper
 {
+    /// <summary>
+    /// Die konkrete Implementierung von <see cref="IProcessWrapper"/> für die Laufzeitumgebung.
+    /// <br/>
+    /// <b>Zweck:</b> Dient als "Thin Wrapper" um die statische Klasse <see cref="Process"/>.
+    /// Dies ermöglicht es, Systemaufrufe in Unit-Tests zu mocken, indem im Test eine andere Implementierung
+    /// des Interfaces verwendet wird.
+    /// </summary>
     public class RealProcessWrapper : IProcessWrapper
     {
-        // 1. Prozess starten (existierte schon)
-        public void Start(ProcessStartInfo info) => Process.Start(info);
+        /// <summary>
+        /// Startet eine Prozessressource, die durch den Parameter <see cref="ProcessStartInfo"/> angegeben wird,
+        /// und verknüpft die Ressource mit einer neuen <see cref="Process"/>-Komponente.
+        /// </summary>
+        /// <param name="info">Die <see cref="ProcessStartInfo"/>, die die Startdaten (Dateiname, Argumente etc.) enthält.</param>
+        /// <returns>
+        /// Eine neue <see cref="Process"/>-Komponente, die der Prozessressource zugeordnet ist, 
+        /// oder <c>null</c>, wenn keine Prozessressource gestartet wurde.
+        /// </returns>
+        public Process? Start(ProcessStartInfo info) => Process.Start(info);
 
-        // 2. Prozesse abrufen (existierte schon)
-        public Process[] GetProcessesByName(string name) => Process.GetProcessesByName(name);
-
-        // 3. Prüfen, ob Prozess läuft
+        /// <summary>
+        /// Prüft, ob aktuell mindestens eine Instanz eines Prozesses mit dem angegebenen Namen läuft.
+        /// </summary>
+        /// <param name="name">Der freundliche Name des Prozesses (ohne die Erweiterung .exe).</param>
+        /// <returns><c>true</c>, wenn der Prozess läuft; andernfalls <c>false</c>.</returns>
         public bool IsProcessRunning(string name)
         {
-            // Wir nutzen einfach die bestehende .NET API
+            // Leitet direkt an die statische .NET API weiter
             return Process.GetProcessesByName(name).Length > 0;
         }
 
-        // 4. Prozess killen
+        /// <summary>
+        /// Beendet alle laufenden Instanzen des angegebenen Prozesses sofort (harter Kill).
+        /// </summary>
+        /// <param name="name">Der Name des Prozesses, der beendet werden soll.</param>
+        /// <remarks>
+        /// Diese Methode enthält <b>kein Exception-Handling</b>. Fehler (z.B. "Zugriff verweigert") 
+        /// werden an den Aufrufer (den Service) weitergereicht und müssen dort behandelt werden.
+        /// </remarks>
         public void KillProcess(string name)
         {
-            // Da die Methode "KillProcess" heißt, aber "name" (String) als Parameter nimmt,
-            // müssen wir hier intern die Prozesse suchen und beenden.
             var processes = Process.GetProcessesByName(name);
-
             foreach (var process in processes)
             {
-                // Wir rufen hier stumpf Kill auf.
-                // Das Error-Handling (try/catch) bleibt im SERVICE (WindowsProcessService),
-                // damit der Wrapper so "dumm" und einfach wie möglich bleibt.
                 process.Kill();
             }
         }
+
+        /// <summary>
+        /// Erstellt ein Array neuer <see cref="Process"/>-Komponenten und ordnet sie 
+        /// allen Prozessressourcen zu, die aktuell auf dem lokalen Computer ausgeführt werden.
+        /// </summary>
+        /// <returns>Ein Array vom Typ <see cref="Process"/>, das alle laufenden Prozesse repräsentiert.</returns>
+        public Process[] GetProcesses() => Process.GetProcesses();
     }
 }

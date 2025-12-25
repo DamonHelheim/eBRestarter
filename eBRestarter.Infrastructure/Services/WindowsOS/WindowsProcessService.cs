@@ -14,25 +14,25 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
     /// <br/>
     /// <b>Architektur-Layer:</b> Infrastructure (Adapter)
     /// <br/>
-    /// <b>Verantwortlichkeit:</b> Kapselt alle direkten Interaktionen mit Windows-Prozessen, 
-    /// dem Starten von Dateien und dem Herunterfahren des Systems.
+    /// <b>Verantwortlichkeit:</b> Kapselt die technische Umsetzung der Prozesssteuerung. 
+    /// Nutzt einen <see cref="IProcessWrapper"/>, um Systemaufrufe testbar zu machen, 
+    /// und P/Invoke für Fenster-Interaktionen.
     /// </summary>
     [SupportedOSPlatform("windows")]
     public class WindowsProcessService : IProcessControlService
     {
-        /// <summary>
-        /// Der Logger für diesen Service. Wird via Dependency Injection bereitgestellt.
-        /// </summary>
         private readonly ILogger<WindowsProcessService> _logger;
-        private readonly IProcessWrapper _processWrapper; // Neu!
+
+        /// <summary>
+        /// Abstraktionsschicht für <see cref="Process"/>-Aufrufe, um Unit-Testing zu ermöglichen.
+        /// </summary>
+        private readonly IProcessWrapper _processWrapper;
 
         /// <summary>
         /// Initialisiert eine neue Instanz des <see cref="WindowsProcessService"/>.
         /// </summary>
-        /// <param name="logger">
-        /// Der Logger, der vom DI-Container (z.B. in App.xaml.cs konfiguriert) injiziert wird.
-        /// Ermöglicht das Schreiben von Logs (Serilog, Konsole, Datei) ohne statische Abhängigkeiten.
-        /// </param>
+        /// <param name="logger">Der Logger für Fehler- und Info-Meldungen.</param>
+        /// <param name="processWrapper">Der Wrapper für Systemprozess-Aufrufe (Injected).</param>
         public WindowsProcessService(ILogger<WindowsProcessService> logger, IProcessWrapper processWrapper)
         {
             _logger = logger;
@@ -40,48 +40,58 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Startet eine ausführbare Datei (.exe).
+        /// Startet eine externe Anwendung (.exe).
         /// </summary>
-        /// <param name="exeFilePath">Der vollständige Pfad zur .exe-Datei.</param>
+        /// <param name="exeFilePath">Der vollständige Pfad zur ausführbaren Datei.</param>
+        /// <remarks>
+        /// Setzt <c>UseShellExecute = true</c>, damit Windows die Datei so behandelt, 
+        /// als würde der Benutzer sie im Explorer doppelklicken (berücksichtigt UAC, Pfade und Assoziationen).
+        /// </remarks>
         public void StartExecutable(string exeFilePath)
         {
             try
             {
-                // Kein statischer Aufruf mehr!
-                _processWrapper.Start(new ProcessStartInfo { FileName = exeFilePath });
+                _processWrapper.Start(new ProcessStartInfo
+                {
+                    FileName = exeFilePath,
+                    UseShellExecute = true
+                });
+                _logger.LogInformation("Executable gestartet: {Path}", exeFilePath);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "...");
+                _logger.LogError(ex, "Fehler beim Starten der EXE: {Path}", exeFilePath);
             }
         }
 
         /// <summary>
-        /// Startet einen MSI-Installer und protokolliert dessen Ausgabe.
+        /// Startet einen MSI-Installer (via msiexec.exe) und protokolliert dessen Textausgabe.
         /// </summary>
         /// <param name="path">Der Pfad zur .msi-Datei.</param>
+        /// <remarks>
+        /// <b>Achtung:</b> Diese Methode läuft <i>synchron</i> und blockiert den aufrufenden Thread, 
+        /// bis die Installation abgeschlossen ist, um die Logs (StdOut/StdErr) vollständig zu lesen.
+        /// </remarks>
         public void StartMsiFile(string path)
         {
-            // Konfiguration für den MSI-Start.
-            // Wir nutzen msiexec.exe direkt, um Argumente (/i für Install) sauber zu übergeben.
             var startInfo = new ProcessStartInfo
             {
                 FileName = "msiexec.exe",
                 Arguments = $"/i \"{path}\"",
 
-                // UseShellExecute = false wird benötigt, um StandardOutput und StandardError umzuleiten.
-                // Mit 'true' könnten wir den Text-Output des Prozesses nicht lesen.
+                // UseShellExecute = false ist zwingend nötig, um Output-Streams umzuleiten.
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
 
-                // Verhindert, dass ein leeres Konsolenfenster aufpoppt.
+                // Unterdrückt das Aufpoppen eines leeren Konsolenfensters.
                 CreateNoWindow = true
             };
 
             try
             {
-                using var process = Process.Start(startInfo);
+                // Startet den Prozess über den Wrapper
+                using var process = _processWrapper.Start(startInfo);
 
                 if (process == null)
                 {
@@ -89,15 +99,13 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
                     return;
                 }
 
-                // WICHTIG: Wir lesen den Output synchron bis zum Ende.
-                // Das blockiert diesen Thread, bis der Installer fertig ist oder Output liefert.
+                // Liest die Ausgabeströme (blockierend bis zum Ende)
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
 
-                // Wir warten explizit, bis der Installer-Prozess beendet ist.
                 process.WaitForExit();
 
-                // Logging der Ergebnisse
+                // Protokolliert Fehler oder Ausgaben, falls vorhanden
                 if (!string.IsNullOrWhiteSpace(error))
                 {
                     _logger.LogWarning("MSI Installer Fehler-Output: {Error}", error);
@@ -105,7 +113,6 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
 
                 if (!string.IsNullOrWhiteSpace(output))
                 {
-                    // Debug-Level, da Output bei Erfolg oft sehr geschwätzig sein kann
                     _logger.LogDebug("MSI Installer Output: {Output}", output);
                 }
             }
@@ -116,16 +123,15 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Öffnet eine URL im Standardbrowser des Systems.
+        /// Öffnet eine URL im Standardbrowser des Betriebssystems.
         /// </summary>
-        /// <param name="url">Die zu öffnende Webadresse (z.B. https://google.com).</param>
+        /// <param name="url">Die Webadresse (z.B. https://...).</param>
         public void OpenUrlInBrowser(string url)
         {
             try
             {
-                // Trick: Durch UseShellExecute = true erkennt Windows anhand des Protokolls (http/https),
-                // dass der Standardbrowser geöffnet werden muss.
-                Process.Start(new ProcessStartInfo
+                // Windows erkennt durch das Protokoll (http/https) automatisch die Standardanwendung.
+                _processWrapper.Start(new ProcessStartInfo
                 {
                     FileName = url,
                     UseShellExecute = true
@@ -138,18 +144,17 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Führt einen Neustart des Computers durch.
+        /// Erzwingt einen sofortigen Neustart des Computers.
         /// </summary>
         /// <remarks>
-        /// Nutzt den Windows-Befehl 'shutdown'.
-        /// Parameter: /r (Reboot), /f (Force close apps), /t 0 (Time zero/sofort).
+        /// Ruft <c>shutdown.exe</c> mit den Parametern <c>/r</c> (Reboot), <c>/f</c> (Force Close) und <c>/t 0</c> (Sofort) auf.
         /// </remarks>
         public void ShutdownComputer()
         {
             try
             {
                 _logger.LogInformation("Fahre Computer herunter (Neustart)...");
-                Process.Start("shutdown", "/r /f /t 0");
+                _processWrapper.Start(new ProcessStartInfo("shutdown", "/r /f /t 0") { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -158,68 +163,69 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Prüft, ob ein Prozess mit dem angegebenen Namen aktuell läuft.
+        /// Prüft, ob mindestens eine Instanz eines Prozesses mit dem angegebenen Namen läuft.
         /// </summary>
-        /// <param name="processName">Der Name des Prozesses (ohne .exe Endung).</param>
-        /// <returns>True, wenn mindestens eine Instanz läuft, sonst False.</returns>
+        /// <param name="processName">Der Name des Prozesses (ohne .exe).</param>
+        /// <returns><c>true</c>, wenn der Prozess läuft, sonst <c>false</c>.</returns>
         public bool IsProcessAlive(string processName)
         {
-            return Process.GetProcessesByName(processName).Length > 0;
+            return _processWrapper.IsProcessRunning(processName);
         }
 
         /// <summary>
-        /// Beendet eine Anwendung hart, falls sie läuft.
+        /// Beendet alle Instanzen einer Anwendung hart (Kill), falls sie laufen.
         /// </summary>
-        /// <param name="processName">Name des Prozesses.</param>
+        /// <param name="processName">Der Name des zu beendenden Prozesses.</param>
         public void CloseApplication(string processName)
         {
             try
             {
                 if (_processWrapper.IsProcessRunning(processName))
                 {
+                    // KillProcess im Wrapper führt process.Kill() aus.
                     _processWrapper.KillProcess(processName);
                 }
             }
             catch (Exception ex)
             {
-                // Hier wird der Fehler gefangen, der aus dem Wrapper kommt
+                // Fängt Fehler ab, z.B. wenn der Prozess Systemrechte hat und wir ihn nicht beenden dürfen.
                 _logger.LogError(ex, "Fehler beim Beenden von {Name}", processName);
             }
         }
 
         /// <summary>
-        /// Versucht, alle geöffneten Fenster/Programme auf dem Desktop sanft zu schließen.
+        /// Versucht, alle sichtbaren Desktop-Programme sanft zu schließen.
         /// </summary>
         /// <remarks>
-        /// Sendet zuerst eine WM_CLOSE Nachricht (entspricht dem Klicken auf das X).
+        /// Diese Methode sendet eine <c>WM_CLOSE</c>-Nachricht an das Hauptfenster jedes Prozesses 
+        /// (entspricht dem Klicken auf das X). Wartet bis zu 5 Sekunden auf das Beenden.
+        /// <br/>
+        /// Kritische Systemprozesse ("System", "Idle") werden ignoriert.
         /// </remarks>
         public void CloseAllOpenPrograms()
         {
-            var processes = Process.GetProcesses();
+            var processes = _processWrapper.GetProcesses();
 
             foreach (var process in processes)
             {
-                // WICHTIG: Kritische Systemprozesse dürfen nicht geschlossen werden,
-                // da sonst Windows instabil wird oder abstürzt.
+                // Sicherheitscheck: Systemprozesse niemals schließen
                 if (process.ProcessName == "System" || process.ProcessName == "Idle")
                     continue;
 
                 try
                 {
-                    // Wir interagieren nur mit Prozessen, die ein Fenster haben (MainWindowHandle).
-                    // Hintergrunddienste werden hier ignoriert.
+                    // Wir schließen nur Prozesse, die ein grafisches Fenster haben (MainWindowHandle != 0)
                     if (process.MainWindowHandle != IntPtr.Zero)
                     {
-                        // Sende "Schließen"-Signal (sanftes Beenden)
+                        // Sende "Schließen"-Signal an das Fenster
                         PostMessage(process.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 
-                        // Warte max. 5 Sekunden, ob der Prozess reagiert
+                        // Warte max. 5 Sekunden auf Reaktion
                         bool exited = process.WaitForExit(5000);
 
                         if (!exited)
                         {
-                            _logger.LogWarning("Prozess {Name} hat auf WM_CLOSE nicht reagiert (hängt evtl.).", process.ProcessName);
-                            // Optional: Hier könnte man process.Kill() aufrufen, wenn man aggressiver sein will.
+                            _logger.LogWarning("Prozess {Name} hat auf WM_CLOSE nicht reagiert.", process.ProcessName);
                         }
                     }
                 }
@@ -230,51 +236,18 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
             }
         }
 
-        // --- Private Helper Methoden ---
-
-        /// <summary>
-        /// Interne Methode zum harten Beenden (Kill) von Prozessen.
-        /// </summary>
-        /// <param name="processName">Name des Prozesses.</param>
-        private void StopProcessInternal(string processName)
-        {
-            try
-            {
-                foreach (var process in Process.GetProcessesByName(processName))
-                {
-                    try
-                    {
-                        // Kill() ist ein hartes Beenden (Task Manager -> Task beenden).
-                        // Daten im Prozess werden eventuell nicht gespeichert.
-                        process.Kill();
-                        _logger.LogInformation("Prozess gekillt: {Name}", processName);
-                    }
-                    catch (Win32Exception ex)
-                    {
-                        // Win32Exception tritt auf, wenn:
-                        // 1. Der Prozess zwischenzeitlich schon beendet wurde (Race Condition).
-                        // 2. Wir keine Berechtigung haben (z.B. Systemprozess).
-                        _logger.LogWarning(ex, "Konnte Prozess {Name} nicht killen (Win32Exception).", processName);
-                    }
-                }
-            }
-            catch (IOException ex)
-            {
-                _logger.LogError(ex, "IOException beim Stoppen von Prozess {Name}", processName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Allgemeiner Fehler beim Stoppen von Prozess {Name}", processName);
-            }
-        }
-
         // --- Native Importe (P/Invoke) ---
 
-        // Importiert die Funktion aus der Windows User32.dll, um Nachrichten an Fenster zu senden.
+        /// <summary>
+        /// Importiert die Funktion <c>PostMessage</c> aus der <c>user32.dll</c>.
+        /// Ermöglicht das Senden von Nachrichten an Fenster-Handles.
+        /// </summary>
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-        // Konstante für die "Fenster schließen"-Nachricht
+        /// <summary>
+        /// Windows Message ID für "Close Window" (0x0010).
+        /// </summary>
         private const uint WM_CLOSE = 0x0010;
     }
 }

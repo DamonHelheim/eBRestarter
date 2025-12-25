@@ -1,4 +1,5 @@
 ﻿using eBRestarter.Application.Services.Ports.Interfaces;
+using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Runtime.Versioning;
@@ -8,23 +9,28 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
     [SupportedOSPlatform("windows")]
     public class WindowsSystemInfoService : ISystemInfoService
     {
-        // Konstanten sauber benannt
-        private const string RegistryPathUserChoiceHttp = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
-        private const string RegistryPathUserChoiceHttps = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice";
-        private const string RegistryPathCurrentVersion = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion";
+        // Pfade angepasst (Ohne "HKEY_...", da der Wrapper den Hive bestimmt)
+        private const string RegistryPathUserChoiceHttp = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
+        private const string RegistryPathUserChoiceHttps = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice";
+        private const string RegistryPathCurrentVersion = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
         private readonly ILogger<WindowsSystemInfoService> _logger;
+        private readonly IRegistryService _registry; // Der Wrapper
 
-        public WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger)
+        public WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, IRegistryService registry)
         {
             _logger = logger;
+            _registry = registry;
         }
 
         public string GetCurrentOsDisplayVersion()
         {
             try
             {
-                var version = Registry.GetValue(RegistryPathCurrentVersion, "DisplayVersion", "")?.ToString();
+                // Refactoring: Nutzung des Wrappers statt Registry.GetValue
+                var versionObj = _registry.GetLocalMachineValue(RegistryPathCurrentVersion, "DisplayVersion");
+
+                var version = versionObj?.ToString();
                 return !string.IsNullOrWhiteSpace(version) ? version : "Unknown";
             }
             catch (Exception ex)
@@ -38,12 +44,13 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         {
             try
             {
-                // Registry-Zugriff in using-Block für sauberes Aufräumen
-                using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+                // Refactoring: Nutzung des Wrappers für den "UBR" Wert (Update Build Revision)
+                var ubrObj = _registry.GetLocalMachineValue(RegistryPathCurrentVersion, "UBR");
 
-                if (key == null) return "Unknown";
+                string ubr = ubrObj?.ToString() ?? "0";
 
-                var ubr = key.GetValue("UBR")?.ToString() ?? "0";
+                // Environment.OSVersion ist harmlos genug, um es direkt zu nutzen, 
+                // da es keine Exception wirft und sich auf jedem PC ähnlich verhält.
                 return $"{Environment.OSVersion.Version.Build}.{ubr}";
             }
             catch (Exception ex)
@@ -53,80 +60,53 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
             }
         }
 
-        /// <summary>
-        /// Liest einen Wert aus der Registry aus.
-        /// </summary>
-        private string? GetRegistryValueAsString(string keyPath, string valueName)
-        {
-            try
-            {
-                // Optimierung: Nur ein Zugriff auf die Registry
-                return Registry.GetValue(keyPath, valueName, null) as string;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Konnte Registry-Pfad nicht lesen: {Path}", keyPath);
-
-                return null;
-            }
-        }
-
         public string GetCurrentStandardBrowserName()
         {
-            // 1. ProgId auslesen (Das ist der interne Name, z.B. "ChromeHTML" oder "FirefoxURL...")
+            // 1. ProgId auslesen über Wrapper (HKCU)
             string? progIdHttp = GetRegistryValueAsString(RegistryPathUserChoiceHttp, "ProgId");
             string? progIdHttps = GetRegistryValueAsString(RegistryPathUserChoiceHttps, "ProgId");
 
-            // Wenn null, können wir nichts bestimmen
             if (string.IsNullOrEmpty(progIdHttp) || string.IsNullOrEmpty(progIdHttps))
             {
                 return "-";
             }
 
-            // Optional: Prüfen, ob HTTP und HTTPS den gleichen Browser nutzen
             if (!string.Equals(progIdHttp, progIdHttps, StringComparison.OrdinalIgnoreCase))
             {
                 _logger.LogInformation("Unterschiedliche Browser für HTTP ({Http}) und HTTPS ({Https}) erkannt.", progIdHttp, progIdHttps);
-                // Wir nehmen im Zweifel HTTPS oder geben "Mixed" zurück. Hier weiter mit HTTP-Wert.
             }
 
-            // 2. Mapping des ProgId auf lesbare Namen (Pattern Matching statt Regex)
+            // 2. Mapping
             return IdentifyBrowserByProgId(progIdHttp);
         }
 
         /// <summary>
-        /// Wandelt die kryptische ProgId in einen lesbaren Browsernamen um.
+        /// Hilfsmethode, die den Wrapper nutzt und direkt in string castet inkl. Fehlerbehandlung.
+        /// </summary>
+        private string? GetRegistryValueAsString(string subKey, string valueName)
+        {
+            try
+            {
+                return _registry.GetCurrentUserValue(subKey, valueName)?.ToString();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Konnte Registry-Pfad nicht lesen: {Path}", subKey);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Reine Logik-Methode (Statisch, daher leicht testbar oder hier intern genutzt).
         /// </summary>
         private static string IdentifyBrowserByProgId(string progId)
         {
-            // Performance: Contains ist viel schneller als Regex für einfache Strings
-            if (progId.Contains("ChromeHTML", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Chrome";
-            }
+            if (progId.Contains("ChromeHTML", StringComparison.OrdinalIgnoreCase)) return "Chrome";
+            if (progId.Contains("Firefox", StringComparison.OrdinalIgnoreCase)) return "Firefox";
+            if (progId.Contains("MSEdge", StringComparison.OrdinalIgnoreCase)) return "Edge";
+            if (progId.Contains("Opera", StringComparison.OrdinalIgnoreCase)) return "Opera";
+            if (progId.Contains("Brave", StringComparison.OrdinalIgnoreCase)) return "Brave";
 
-            // Firefox ProgIds sind oft "FirefoxURL-308046B0AF4A39CB", "FirefoxURL", etc.
-            if (progId.Contains("Firefox", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Firefox";
-            }
-
-            if (progId.Contains("MSEdge", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Edge";
-            }
-
-            if (progId.Contains("Opera", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Opera";
-            }
-
-            if (progId.Contains("Brave", StringComparison.OrdinalIgnoreCase))
-            {
-                return "Brave";
-            }
-
-            // Fallback: Wenn wir es nicht kennen, geben wir den internen Namen zurück oder "-"
             return "-";
         }
     }
