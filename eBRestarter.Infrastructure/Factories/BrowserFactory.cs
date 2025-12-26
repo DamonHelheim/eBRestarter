@@ -23,7 +23,8 @@ namespace eBRestarter.Infrastructure.Factories
             {
                 BrowserType.Chrome => _serviceProvider.GetRequiredService<ChromeBrowser>(),
                 BrowserType.Firefox => _serviceProvider.GetRequiredService<FirefoxBrowser>(),
-                // BrowserType.Edge => _serviceProvider.GetRequiredService<EdgeBrowser>(),
+                BrowserType.Edge => _serviceProvider.GetRequiredService<EdgeBrowser>(),
+                BrowserType.Brave => _serviceProvider.GetRequiredService<BraveBrowser>(),
                 _ => throw new NotSupportedException($"Browser {type} ist noch nicht implementiert.")
             };
         }

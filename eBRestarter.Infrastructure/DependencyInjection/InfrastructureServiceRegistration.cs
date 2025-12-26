@@ -55,6 +55,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             // 2. Browser (Transient, damit sie bei jedem Factory-Call frisch sind)
             services.AddTransient<ChromeBrowser>();
             services.AddTransient<FirefoxBrowser>();
+            services.AddTransient<EdgeBrowser>();
+            services.AddTransient<BraveBrowser>();
 
             // 3. Factory
             services.AddSingleton<IBrowserFactory, BrowserFactory>();
