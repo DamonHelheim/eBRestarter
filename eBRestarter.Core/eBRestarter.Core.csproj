@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
+    <Folder Include="Domain\Exceptions\" />
+    <Folder Include="Domain\Entities\" />
   </ItemGroup>
 
 </Project>

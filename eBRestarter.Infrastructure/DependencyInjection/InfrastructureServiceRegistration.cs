@@ -1,6 +1,9 @@
-﻿using eBRestarter.Application.Facade;
-using eBRestarter.Application.Facade.Interfaces;
-using eBRestarter.Application.Services.Ports.Interfaces;
+﻿using eBRestarter.Core.Application.Facade;
+using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Infrastructure.Browsers;
+using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Infrastructure.Wrapper;
 using eBRestarter.Infrastructure.Wrapper.Interface;
@@ -36,17 +39,25 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             // 1. Erst die Wrapper registrieren (oft als Transient oder Singleton)
             // Wir registrieren den "echten" Wrapper für die Laufzeit der App.
             services.AddTransient<IProcessWrapper, RealProcessWrapper>();
-            services.AddSingleton<IProcessControlService, WindowsProcessService>();
-            services.AddSingleton<ISystemInfoService, WindowsSystemInfoService>();
+            services.AddSingleton<IWindowsProcessControlService, WindowsProcessService>();
+            services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
 
             // Registrierung der Wrapper
             services.AddTransient<IProcessInfoService, ProcessInfoService>();
-            services.AddTransient<IRegistryService, RegistryService>();
-            services.AddSingleton<IStartupManagerService, WindowsStartupService>();
+            services.AddTransient<IWindowsRegistryService, WindowsRegistryService>();
+            services.AddTransient<IWindowsFileSystemService, WindowsFileSystemService>();
+            services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 
             // NEU: Die Facade registrieren
             services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
+
+            // 2. Browser (Transient, damit sie bei jedem Factory-Call frisch sind)
+            services.AddTransient<ChromeBrowser>();
+            services.AddTransient<FirefoxBrowser>();
+
+            // 3. Factory
+            services.AddSingleton<IBrowserFactory, BrowserFactory>();
 
             return services;
         }

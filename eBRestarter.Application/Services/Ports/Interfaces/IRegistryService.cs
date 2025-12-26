@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace eBRestarter.Infrastructure.Wrapper.Interface
+namespace eBRestarter.Application.Services.Ports.Interfaces
 {
     // 2. Die Abstraktion für die Registry
     public interface IRegistryService

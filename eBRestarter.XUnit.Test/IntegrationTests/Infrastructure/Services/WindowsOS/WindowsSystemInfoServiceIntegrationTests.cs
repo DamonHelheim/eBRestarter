@@ -18,7 +18,7 @@ namespace eBRestarter.XUnit.Test.IntegrationTests.Infrastructure.Services.Window
         {
             // 1. Setup: Wir nutzen die ECHTEN Implementierungen (keine Mocks!)
             var logger = NullLogger<WindowsSystemInfoService>.Instance;
-            var registryService = new RegistryService();
+            var registryService = new WindowsRegistryService();
 
             _service = new WindowsSystemInfoService(logger, registryService);
         }

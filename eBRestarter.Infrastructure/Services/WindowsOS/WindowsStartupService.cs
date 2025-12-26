@@ -1,4 +1,4 @@
-﻿using eBRestarter.Application.Services.Ports.Interfaces;
+﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
@@ -18,7 +18,7 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
     /// um das Verhalten von Windows beim Start zu beeinflussen. Nutzt Wrapper-Interfaces, 
     /// um die Testbarkeit (Mocking) der statischen Registry-Klassen zu gewährleisten.
     /// </summary>
-    public class WindowsStartupService : IStartupManagerService
+    public class WindowsStartupService : IWindowsStartupManagerService
     {
         // --- Konstanten für Registry-Pfade ---
 
@@ -37,7 +37,7 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         private readonly ILogger<WindowsStartupService> _logger;
 
         // Wrapper für Registry-Zugriffe (ermöglicht Unit-Tests ohne echte Registry).
-        private readonly IRegistryService _registry;
+        private readonly IWindowsRegistryService _registry;
 
         // Wrapper für Prozess-Informationen (ermöglicht Unit-Tests ohne echten Prozess).
         private readonly IProcessInfoService _processInfo;
@@ -50,7 +50,7 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         /// <param name="processInfo">Inijiierter Service zum Abrufen des aktuellen Exe-Pfads (Wrapper).</param>
         public WindowsStartupService(
             ILogger<WindowsStartupService> logger,
-            IRegistryService registry,
+            IWindowsRegistryService registry,
             IProcessInfoService processInfo)
         {
             _logger = logger;

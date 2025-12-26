@@ -10,17 +10,23 @@ namespace eBRestarter.Application.Facade
     {
         public IProcessControlService Process { get; }
         public ISystemInfoService SystemInfo { get; }
+        public IRegistryService Registry { get; }
         public IStartupManagerService Startup { get; }
+        public IFileSystemService FileSystem { get; }
 
         // Constructor Injection: Der Container füllt hier die 3 Services ein
         public OperatingSystemFacade(
             IProcessControlService process,
             ISystemInfoService systemInfo,
-            IStartupManagerService startup)
+            IRegistryService registry,
+            IStartupManagerService startup,
+            IFileSystemService fileSystem)
         {
             Process = process;
             SystemInfo = systemInfo;
+            Registry = registry;
             Startup = startup;
+            FileSystem = fileSystem;
         }
     }
 }

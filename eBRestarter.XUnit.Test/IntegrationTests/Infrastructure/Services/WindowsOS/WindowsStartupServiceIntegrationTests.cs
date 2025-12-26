@@ -28,7 +28,7 @@ namespace eBRestarter.XUnit.Test.IntegrationTests.Infrastructure.Services.Window
             // 1. Setup: Wir nutzen die ECHTEN Implementierungen (keine Mocks!)
             // Damit testen wir den kompletten Durchstich bis zum Betriebssystem.
             var logger = NullLogger<WindowsStartupService>.Instance;
-            var realRegistry = new RegistryService();
+            var realRegistry = new WindowsRegistryService();
             var realProcessInfo = new ProcessInfoService();
 
             _service = new WindowsStartupService(logger, realRegistry, realProcessInfo);

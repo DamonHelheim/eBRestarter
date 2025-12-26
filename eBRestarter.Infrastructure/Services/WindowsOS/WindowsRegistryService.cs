@@ -1,17 +1,15 @@
-﻿using eBRestarter.Infrastructure.Wrapper.Interface;
+﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Text;
 
-namespace eBRestarter.Infrastructure.Wrapper
+namespace eBRestarter.Infrastructure.Services.WindowsOS
 {
     [SupportedOSPlatform("windows")]
-    public class RegistryService : IRegistryService
+    public class WindowsRegistryService : IWindowsRegistryService
     {
-        // ... (Die Set/Delete Methoden von vorhin bleiben hier bestehen) ...
-
         public void SetCurrentUserValue(string subKey, string name, object value)
         {
             using var key = Registry.CurrentUser.CreateSubKey(subKey);
@@ -44,8 +42,6 @@ namespace eBRestarter.Infrastructure.Wrapper
             }
             return result;
         }
-
-        // --- NEUE IMPLEMENTIERUNGEN ---
 
         public object? GetCurrentUserValue(string subKey, string valueName)
         {

@@ -11,6 +11,8 @@ namespace eBRestarter.Application.Facade.Interfaces
         // Wir stellen die einzelnen Services als Properties zur Verfügung
         IProcessControlService Process { get; }
         ISystemInfoService SystemInfo { get; }
+        IRegistryService Registry { get; }
         IStartupManagerService Startup { get; }
+        IFileSystemService FileSystem { get; }
     }
 }

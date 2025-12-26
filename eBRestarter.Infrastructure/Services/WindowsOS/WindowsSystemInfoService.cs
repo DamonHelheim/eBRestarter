@@ -1,4 +1,4 @@
-﻿using eBRestarter.Application.Services.Ports.Interfaces;
+﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
@@ -7,7 +7,7 @@ using System.Runtime.Versioning;
 namespace eBRestarter.Infrastructure.Services.WindowsOS
 {
     [SupportedOSPlatform("windows")]
-    public class WindowsSystemInfoService : ISystemInfoService
+    public class WindowsSystemInfoService : IWindowsSystemInfoService
     {
         // Pfade angepasst (Ohne "HKEY_...", da der Wrapper den Hive bestimmt)
         private const string RegistryPathUserChoiceHttp = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
@@ -15,9 +15,9 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         private const string RegistryPathCurrentVersion = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
         private readonly ILogger<WindowsSystemInfoService> _logger;
-        private readonly IRegistryService _registry; // Der Wrapper
+        private readonly IWindowsRegistryService _registry; // Der Wrapper
 
-        public WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, IRegistryService registry)
+        public WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, IWindowsRegistryService registry)
         {
             _logger = logger;
             _registry = registry;

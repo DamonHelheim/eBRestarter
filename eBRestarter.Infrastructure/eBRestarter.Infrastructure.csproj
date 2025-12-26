@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eBRestarter.Application\eBRestarter.Application.csproj" />
+    <ProjectReference Include="..\eBRestarter.Core\eBRestarter.Core.csproj" />
   </ItemGroup>
 
 </Project>
