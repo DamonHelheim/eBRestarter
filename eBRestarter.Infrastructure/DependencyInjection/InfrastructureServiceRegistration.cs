@@ -1,9 +1,14 @@
 ﻿using eBRestarter.Core.Application.Facade;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
+using eBRestarter.Infrastructure.Services.Config;
+using eBRestarter.Infrastructure.Services.RestSharp;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Infrastructure.Wrapper;
 using eBRestarter.Infrastructure.Wrapper.Interface;
@@ -30,8 +35,6 @@ namespace eBRestarter.Infrastructure.DependencyInjection
                 // builder.AddConsole(); // Schreibt in die Konsole
                 builder.AddDebug();      // Schreibt ins Visual Studio "Ausgabe"-Fenster
             });
-
-
 
             // Die Windows-Services registrieren
 #pragma warning disable CA1416 // Plattformkompatibilität überprüfen
@@ -60,6 +63,12 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             // 3. Factory
             services.AddSingleton<IBrowserFactory, BrowserFactory>();
+
+            // Registrierung des Interfaces mit der Implementierung
+            services.AddTransient<IRestClientService, RestSharpClientService>();
+
+            services.AddSingleton<IPathService, WindowsPathService>();
+            services.AddSingleton<IConfigService, JsonConfigService>();
 
             return services;
         }
