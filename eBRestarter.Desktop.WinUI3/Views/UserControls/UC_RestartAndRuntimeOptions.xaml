@@ -5,6 +5,8 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+             xmlns:behaviors="using:eBRestarter.Desktop.WinUI3.Behaviors"
              mc:Ignorable="d">
 
     <Border x:Name="Border_Restart_and_Runtime_Options"
@@ -55,7 +57,7 @@
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="8,0,0,0"
                            FontSize="18"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center"/>
 
             </StackPanel>
 
@@ -72,38 +74,59 @@
             <Slider Grid.Row="2"
                     Grid.Column="0"                       
                     x:Name="SliderBrowserWaitingTimeToStart"
-                    Minimum="{Binding Browser_waiting_time_min}"
-                    Maximum="{Binding Browser_waiting_time_max}"
-                    Value="{Binding SliderBrowserWaitingTimeToStartValue}"
+                    Minimum="{Binding RuntimePauseSecondsMin, Mode=OneTime}"
+                    Maximum="{Binding RuntimePauseSecondsMax, Mode=OneTime}"
+                    Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Margin="0,4,12,5"
                     Height="30"
+                    Width="100"
                     Background="Black"
                     Foreground="#FF00D4BC" 
                     VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"/>
+                    HorizontalAlignment="Left"/>
 
             <StackPanel Grid.Row="2"
                         Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
 
-                <TextBox x:Name="TxtB_Browser_Waiting_Time_To_Start"                      
+                <!--<TextBox x:Name="TxtB_Browser_Waiting_Time_To_Start"                      
                          MinWidth="50"
                          MaxWidth="70"
                          Margin="0,0,0,0"
                          FontSize="14"
                          TextAlignment="Left"
+                         MaxLength="2"
+                         KeyDown="TxtB_Browser_Waiting_Time_To_Start_KeyDown"
                          Foreground="{ThemeResource FontColor_1}"
                          BorderBrush="{ThemeResource FontColor_1}"
-                         Text="{Binding Value, ElementName=SliderBrowserWaitingTimeToStart,
-                                        Mode=TwoWay, UpdateSourceTrigger=Explicit}" />
+                         Text="{Binding RestMinutes, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
+
+                    <interactivity:Interaction.Behaviors>
+                        
+                        <behaviors:TextBoxNumericOnlyBehavior />
+                        
+                    </interactivity:Interaction.Behaviors>
+                    
+                </TextBox>-->
+
+                <NumberBox Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                           Width="150"
+                           Minimum="20"
+                           Maximum="60"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Left"
+                           Foreground="{ThemeResource FontColor_1}"
+                           BorderBrush="{ThemeResource FontColor_1}"
+                           SpinButtonPlacementMode="Inline"
+                           SmallChange="1" />
 
                 <TextBlock x:Name="tbl_restart_and_runtime_options_s"
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="5,0,0,0"
                            Text="s"
                            FontSize="18"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- LABEL: Browserlaufzeit -->
@@ -113,47 +136,63 @@
                        x:Uid="Determine_your_browser_runtime_here"
                        Foreground="{ThemeResource FontColor_1}"
                        Margin="0,12,0,10"
-                       FontSize="15" />
+                       FontSize="15"/>
 
             <!-- SLIDER + WERT (Stunden) -->
             <Slider Grid.Row="4"
                     Grid.Column="0"
                     x:Name="SliderBrowserRuntime"
-                    Minimum="{Binding Browser_waiting_runtime_min}"
-                    Maximum="{Binding Browser_waiting_runtime_max}"
-                    Value="{Binding SliderBrowserRuntimeValue}"
+                    Minimum="{Binding BrowserRuntimeHoursMin, Mode=OneTime}"
+                    Maximum="{Binding BrowserRuntimeHoursMax, Mode=OneTime}"
+                    Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     Margin="0,4,12,10"
                     Height="30"
                     Background="Black"
                     Foreground="#FF00D4BC" 
                     VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"
-                    />
+                    HorizontalAlignment="Stretch"/>
 
             <StackPanel Grid.Row="4"
                         Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
 
-                <TextBox x:Name="Txt_Browser_Runtime"
+                <!--<TextBox x:Name="Txt_Browser_Runtime"
                          MinWidth="50"
                          MaxWidth="70"
                          Margin="0,0,0,0"
                          FontSize="14"
                          TextAlignment="Left"
+                         MaxLength="2"
                          Foreground="{ThemeResource FontColor_1}"
                          BorderBrush="{ThemeResource FontColor_1}"
-                         Text="{Binding ElementName=SliderBrowserRuntime,
-                                        Path=Value,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=Explicit}" />
+                         Text="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
+
+                    <interactivity:Interaction.Behaviors>
+
+                        <behaviors:TextBoxNumericOnlyBehavior />
+
+                    </interactivity:Interaction.Behaviors>
+
+                </TextBox>-->
+
+                <NumberBox Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                           Width="150"
+                           Minimum="1"
+                           Maximum="12"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Left"
+                           Foreground="{ThemeResource FontColor_1}"
+                           BorderBrush="{ThemeResource FontColor_1}"
+                           SpinButtonPlacementMode="Inline"
+                           SmallChange="1" />
 
                 <TextBlock x:Name="Tbl_restart_and_runtime_options_h"
                            Foreground="{ThemeResource FontColor_1}"
                            Margin="5,0,0,0"
                            Text="h"
                            FontSize="18"
-                           VerticalAlignment="Center" />
+                           VerticalAlignment="Center"/>
                 
             </StackPanel>
 

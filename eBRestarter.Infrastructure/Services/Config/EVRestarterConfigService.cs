@@ -17,10 +17,10 @@ namespace eBRestarter.Infrastructure.Services.Config
     /// <b>Verantwortlichkeit:</b> Lädt und speichert die <see cref="AppConfig"/> in eine JSON-Datei im Dateisystem.
     /// Kapselt die Serialisierungs-Logik (System.Text.Json) und den Dateizugriff.
     /// </summary>
-    public class JsonConfigService : IConfigService
+    public class EVRestarterConfigService : IEVisitorConfigService
     {
         private readonly IPathService _pathService;
-        private readonly ILogger<JsonConfigService> _logger;
+        private readonly ILogger<EVRestarterConfigService> _logger;
 
         // Optionen für die JSON-Serialisierung.
         // WriteIndented: Erzeugt lesbares JSON (mit Zeilenumbrüchen).
@@ -32,11 +32,11 @@ namespace eBRestarter.Infrastructure.Services.Config
         };
 
         /// <summary>
-        /// Initialisiert eine neue Instanz des <see cref="JsonConfigService"/>.
+        /// Initialisiert eine neue Instanz des <see cref="eVRestarterConfigService"/>.
         /// </summary>
         /// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
         /// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
-        public JsonConfigService(IPathService pathService, ILogger<JsonConfigService> logger)
+        public EVRestarterConfigService(IPathService pathService, ILogger<EVRestarterConfigService> logger)
         {
             _pathService = pathService;
             _logger = logger;

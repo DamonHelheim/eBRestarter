@@ -7,7 +7,7 @@ namespace eBRestarter.Core.Domain.Models.Records.Config
     public record BrowserConfig
     {
         public string SelectedBrowser { get; set; } = "Chrome";
-        public int RuntimeMinutes { get; set; } = 1;
-        public int RestMinutes { get; set; } = 20;
+        public int RuntimeHours { get; set; } = 1;
+        public int RuntimePauseSeconds { get; set; } = 20;
     }
 }

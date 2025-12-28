@@ -40,7 +40,7 @@ namespace eBRestarter.Desktop.WinUI3.Views.Pages
             this.InitializeComponent();
 
             // Hier holen wir uns das ViewModel manuell aus dem Container
-            ViewModelRestarterProperties = App.AppHost.Services.GetRequiredService<ViewModelRestarterProperties>();
+            ViewModelRestarterProperties = App.AppHost!.Services.GetRequiredService<ViewModelRestarterProperties>();
 
             // DataContext setzen
             this.DataContext = ViewModelRestarterProperties;

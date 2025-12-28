@@ -5,7 +5,7 @@ using System.Text;
 
 namespace eBRestarter.Core.Application.Interfaces.Config
 {
-    public interface IConfigService
+    public interface IEVisitorConfigService
     {
         // Lädt die Config. Falls keine existiert, wird eine Standard-Config erstellt.
         AppConfig LoadConfig();

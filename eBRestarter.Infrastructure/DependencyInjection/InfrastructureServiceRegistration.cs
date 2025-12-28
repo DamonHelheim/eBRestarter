@@ -68,7 +68,7 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddTransient<IRestClientService, RestSharpClientService>();
 
             services.AddSingleton<IPathService, WindowsPathService>();
-            services.AddSingleton<IConfigService, JsonConfigService>();
+            services.AddSingleton<IEVisitorConfigService, EVRestarterConfigService>();
 
             return services;
         }

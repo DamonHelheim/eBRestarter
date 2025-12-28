@@ -6,6 +6,8 @@
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
     mc:Ignorable="d">
 
     <Border x:Name          ="Border_eVisitor_Username"
@@ -69,10 +71,17 @@
                          Height                 ="35"
                          Width                  ="280"                        
                          FontSize               ="18"
-                         HorizontalAlignment    ="Left"
-                         AcceptsReturn          ="False">
-                    
+                         AcceptsReturn          ="False"
+                         HorizontalAlignment    ="Left">
+
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:KeyDownTriggerBehavior Key="Enter">
+                            <interactivity:InvokeCommandAction Command="{Binding AddeVVisitorUsernameCommand}" />
+                        </behaviors:KeyDownTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+
                 </TextBox>
+
 
                 <Button x:Name              ="BtnUserNameApply"
                         x:Uid               ="Add"
