@@ -7,7 +7,6 @@ using eBRestarter.ViewModel.ViewModels;
 
 namespace eBRestarter.Views.UserControls
 {
-
     public partial class UC_AutomatedTasks : UserControl
     {
         private readonly Browser edgeBrowser = new Edge();

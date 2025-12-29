@@ -4,28 +4,27 @@ using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Facade;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelRestarterProperties : ObservableObject
     {
+        private readonly AppConfig _currentConfig;
+
         // Nur noch EINE Abhängigkeit
         private readonly IOperatingSystemFacade _operatingSystemFacade;
         private readonly IEVisitorConfigService _eVisitorConfigService;
 
-        private readonly AppConfig _currentConfig;
-
-        // Min/Max Konstanten (können auch readonly properties sein)
-        public int RuntimePauseSecondsMin { get; init; }
-        public int RuntimePauseSecondsMax { get; init; }
-        public int BrowserRuntimeHoursMin { get; init; }
-        public int BrowserRuntimeHoursMax { get; init; }
+        // Die Liste für die Combobox (readonly, da sich die Optionen nicht ändern)
+        public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList => BrowserCacheConstants.Options;
 
         // 1. Die Property an den Command binden
         // Das Attribut sagt: Wenn sich _username ändert, lade den Command neu!
@@ -34,10 +33,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public partial string Username { get; set; } = string.Empty;
 
         [ObservableProperty] private partial string StandardBrowser { get; set; } = string.Empty;
-
         [ObservableProperty] public partial int RuntimePauseSeconds { get; set; }
-
         [ObservableProperty] public partial int RuntimeHours { get; set; }
+
+        // Das aktuell ausgewählte Item
+        [ObservableProperty] public partial BrowserCacheDeleteOption SelectedDeleteBrowserCacheOption { get; set; }
+        [ObservableProperty] public partial bool StartBrowserWithProgrammStartIs { get; set; } = false;
+        [ObservableProperty] public partial bool CheckBrowserIsAliveIsOn { get; set; } = false;
+
+
+        // Min/Max Konstanten (können auch readonly properties sein)
+        public int RuntimePauseSecondsMin { get; init; }
+        public int RuntimePauseSecondsMax { get; init; }
+        public int BrowserRuntimeHoursMin { get; init; }
+        public int BrowserRuntimeHoursMax { get; init; }
+
 
         // Der Konstruktor ist extrem schlank
         public ViewModelRestarterProperties(IOperatingSystemFacade operatingSystemFacade, IEVisitorConfigService eVisitorConfigService)
@@ -45,18 +55,53 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _operatingSystemFacade = operatingSystemFacade;
             _eVisitorConfigService = eVisitorConfigService;
 
+            // 1. Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
+            // 2. Konstanten setzen
             RuntimePauseSecondsMin = 20;
             RuntimePauseSecondsMax = 60;
             BrowserRuntimeHoursMin = 1;
             BrowserRuntimeHoursMax = 12;
 
+            // 3. UI-Properties aus Config befüllen (Mapping)
+
+            // Zahlen
             RuntimePauseSeconds = _currentConfig.Browser.RuntimePauseSeconds;
             RuntimeHours = _currentConfig.Browser.RuntimeHours;
 
-            //// Zugriff erfolgt nun hierarchisch: _os.SystemInfo...
-            //StandardBrowser = _operatingSystemFacade.WindowsSystemInfoService.GetCurrentStandardBrowserName();
+            // Bools (WICHTIG!)
+            StartBrowserWithProgrammStartIs = _currentConfig.Browser.StartBrowserWithProgrammStart;
+            CheckBrowserIsAliveIsOn = _currentConfig.Browser.CheckBrowserAliveRoutine;
+
+            // ComboBox (WICHTIG!)
+            // Wir suchen den Eintrag in der Liste, der den Tagen aus der Config entspricht.
+            // Fallback auf Index 0, falls nichts gefunden (z.B. bei neuer Config).
+            var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
+
+            SelectedDeleteBrowserCacheOption = BrowserDeleteCacheOptionList.FirstOrDefault(x => x.Days == configDays) ?? BrowserDeleteCacheOptionList[0];
+        }
+
+        // Wenn sich die Auswahl ändert, kannst du hier reagieren
+        partial void OnSelectedDeleteBrowserCacheOptionChanged(BrowserCacheDeleteOption value)
+        {
+            // Beispiel: Speichern des Integer-Wertes in die Config
+            _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
+            SaveSettings();
+        }
+
+        partial void OnStartBrowserWithProgrammStartIsChanged(bool value)
+        {
+            Debug.WriteLine($"StartBrowserWithProgrammStartIsChanged: {value}");
+            _currentConfig.Browser.StartBrowserWithProgrammStart = value;
+            SaveSettings();
+        }
+
+        partial void OnCheckBrowserIsAliveIsOnChanged(bool value)
+        {
+            Debug.WriteLine($"CheckBrowserIsAliveIsOnChanged: {value}");
+            _currentConfig.Browser.CheckBrowserAliveRoutine = value;
+            SaveSettings();
         }
 
         // 2. Der Command mit CanExecute-Prüfung
@@ -64,6 +109,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void AddeVVisitorUsername()
         {
             _currentConfig.Username = Username;
+            
+            SaveSettings();
 
             Username = string.Empty;
         }
@@ -89,8 +136,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // 1. Clamping
             int clampedValue = Math.Clamp(value, RuntimePauseSecondsMin, RuntimePauseSecondsMax);
 
-            Debug.WriteLine($"RestMinutes geändert: {value} -> Korrigiert auf: {clampedValue}");
-
             // 2. Auto-Korrektur in der UI
             if (value != clampedValue)
             {
@@ -110,9 +155,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         partial void OnRuntimeHoursChanged(int value)
         {
-            int clampedValue = Math.Clamp(value, BrowserRuntimeHoursMin, BrowserRuntimeHoursMin);
-
-            Debug.WriteLine($"RestMinutes geändert: {value} -> Korrigiert auf: {clampedValue}");
+            int clampedValue = Math.Clamp(value, BrowserRuntimeHoursMin, BrowserRuntimeHoursMax);
 
             if (value != clampedValue)
             {
@@ -121,8 +164,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
 
             if (_currentConfig.Browser.RuntimeHours != value)
-            {
-                RuntimeHours = value;
+            {        
                 _currentConfig.Browser.RuntimeHours = value;
                 SaveSettings();
             }

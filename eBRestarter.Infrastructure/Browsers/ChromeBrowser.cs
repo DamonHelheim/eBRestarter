@@ -1,4 +1,5 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+﻿using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
@@ -12,6 +13,9 @@ namespace eBRestarter.Infrastructure.Browsers
     public class ChromeBrowser : BrowserBase
     {
         public override BrowserType Type => BrowserType.Chrome;
+        public override string DisplayName => "Google Chrome";
+        public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_chrome.png";
+        public override string DownloadUrl => WebLinks.ChromeDownloadLinkDE;
         protected override string ProcessName => "chrome";
         // Chrome speichert Version oft unter HKCU\BLBeacon
         protected override string RegistryKeyVersion => @"Software\Google\Chrome\BLBeacon";

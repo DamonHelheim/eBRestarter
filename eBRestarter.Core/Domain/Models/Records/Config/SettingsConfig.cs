@@ -8,5 +8,6 @@ namespace eBRestarter.Core.Domain.Models.Records.Config
     {
         public string Theme { get; set; } = "Light";
         public bool StartWithWindows { get; set; } = false;
+        public bool  StartRestarterWithProgramStart { get; set; } = false;
     }
 }

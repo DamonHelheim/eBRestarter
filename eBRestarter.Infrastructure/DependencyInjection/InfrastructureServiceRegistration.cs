@@ -46,10 +46,11 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
 
             // Registrierung der Wrapper
-            services.AddTransient<IProcessInfoService, ProcessInfoService>();
+            services.AddTransient<IProcessInfoService, ProcessInfoService>(); 
             services.AddTransient<IWindowsRegistryService, WindowsRegistryService>();
             services.AddTransient<IWindowsFileSystemService, WindowsFileSystemService>();
             services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
+            
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 
             // NEU: Die Facade registrieren
@@ -63,6 +64,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             // 3. Factory
             services.AddSingleton<IBrowserFactory, BrowserFactory>();
+
+            services.AddSingleton<IBrowserService, WindowsBrowserService>();
 
             // Registrierung des Interfaces mit der Implementierung
             services.AddTransient<IRestClientService, RestSharpClientService>();

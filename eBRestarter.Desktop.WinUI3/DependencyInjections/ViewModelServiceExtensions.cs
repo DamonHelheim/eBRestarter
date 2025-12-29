@@ -1,6 +1,7 @@
 ﻿using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using eBRestarter.Desktop.WinUI3.Views.Pages;
+using eBRestarter.Desktop.WinUI3.Views.UserControls;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,9 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             // Hinweis: Pages registriert man oft als Transient, 
             // aber Singleton ist okay, wenn sie den Zustand behalten sollen.
             services.AddSingleton<P_CommonOverview>();
+
+            services.AddSingleton<InstalledBrowsersViewModel>();
+            services.AddSingleton<UC_InstalledBrowsers>();
 
             // Rückgabe von "services" ermöglicht Chaining (services.AddX().AddY())
             return services;

@@ -5,8 +5,7 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             >
+             mc:Ignorable="d">
 
     <Border x:Name          ="Border_Automated_Task"
             Background      ="{ThemeResource DashletBackgroundColor_1}"
@@ -49,12 +48,13 @@
                 <ToggleSwitch x:Name          ="TSStartBrowserWithProgrammStart"
                               x:Uid           ="TSStartBrowserWithProgrammStart"
                               Foreground      ="{ThemeResource FontColor_1}"
-                              IsOn            ="{Binding TSStartBrowserWithProgrammStartIsOn}"
+                              IsOn            ="{Binding StartBrowserWithProgrammStartIs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Margin          ="10 0 0 0"
                               BorderBrush     ="{ThemeResource FontColor_1}"
                               Width           ="304">
 
                     <ToggleSwitch.Resources>
+                        
                         <!-- TRACK / HINTERGRUND: AUS -->
                         <SolidColorBrush x:Key="ToggleSwitchFillOff"               Color="#D2D5D6" />
                         <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver"    Color="#FF505050" />
@@ -85,15 +85,15 @@
                         <SolidColorBrush x:Key="ToggleSwitchStrokeOn"              Color="Transparent" />
                         <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver"   Color="Transparent" />
                         <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed"       Color="Transparent" />
+                        
                     </ToggleSwitch.Resources>
-
 
                 </ToggleSwitch>
 
                 <ToggleSwitch x:Name          ="TSCheckBrowserIsAlive"
                               x:Uid           ="TSCheckBrowserIsAlive"
                               Foreground      ="{ThemeResource FontColor_1}"
-                              IsOn            ="{Binding TSCheckBrowserIsAliveIsOn}"
+                              IsOn            ="{Binding CheckBrowserIsAliveIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Margin          ="10 0 0 0" />
 
 
@@ -112,12 +112,15 @@
                       Margin="10,0,0,0"
                       Foreground="Black"
                       Background="#DCDCDC"
-                      PlaceholderText="Pick a color" 
+                      PlaceholderText="Browser delete cache options" 
                       FontSize="14"
                       Width="294"
                       Height="40"
                       VerticalAlignment="Top"
-                      SelectedIndex="0">
+                      SelectedIndex="0"
+                      DisplayMemberPath="DisplayText"
+                      ItemsSource="{Binding BrowserDeleteCacheOptionList}"
+                      SelectedItem="{Binding SelectedDeleteBrowserCacheOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                 <ComboBox.Resources>
                     <!-- Normal -->
@@ -136,12 +139,6 @@
                     <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
 
                 </ComboBox.Resources>
-
-                <ComboBoxItem Content="Cache und Cookies nicht löschen" />
-                <ComboBoxItem Content="Cache und Cookies jeden Tag löschen" />
-                <ComboBoxItem Content="Cache und Cookies alle 3 Tage löschen" />
-                <ComboBoxItem Content="Cache und Cookies alle 7 Tage löschen" />
-                <ComboBoxItem Content="Cache und Cookies alle 14 Tage löschen" />
 
             </ComboBox>
 

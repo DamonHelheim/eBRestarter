@@ -41,13 +41,21 @@
 
         </Border>
 
-        <userControls:UC_Browser Margin="0,8,0,5" Height="auto"/>
+        <ItemsControl ItemsSource="{Binding Browsers}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <userControls:UC_Browser DataContext="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
+        <!--<userControls:UC_Browser Margin="0,8,0,5" Height="auto"/>
 
         <userControls:UC_Browser Margin="0,7,0,5"/>
 
         <userControls:UC_Browser Margin="0,15,0,5"/>
 
-        <userControls:UC_Browser Margin="0,7,0,5"/>
+        <userControls:UC_Browser Margin="0,7,0,5"/>-->
 
     </StackPanel>
 </UserControl>
