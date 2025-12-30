@@ -23,7 +23,7 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
 
             // Wir iterieren dynamisch über alle Werte im Enum BrowserType.
             // Das macht den Code zukunftssicher: Neuer Browser im Enum + Factory = automatisch hier drin.
-            foreach (BrowserType type in Enum.GetValues(typeof(BrowserType)))
+            foreach (BrowserType type in Enum.GetValues<BrowserType>())
             {
                 try
                 {

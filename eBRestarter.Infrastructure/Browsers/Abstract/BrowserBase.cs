@@ -23,6 +23,9 @@ namespace eBRestarter.Infrastructure.Browsers.Abstract
         public abstract BrowserType Type { get; }
 
         // Diese abstrakten Properties müssen Chrome/Firefox liefern
+        public abstract string DisplayName { get; }
+        public abstract string IconPath { get; }
+        public abstract string DownloadUrl { get; }
         protected abstract string ProcessName { get; }
         protected abstract string RegistryKeyVersion { get; }
         protected abstract List<string> ExecutablePaths { get; }
@@ -57,8 +60,7 @@ namespace eBRestarter.Infrastructure.Browsers.Abstract
             get
             {
                 // Versucht Registry-Werte zu lesen (Chrome und Firefox nutzen unterschiedliche Keys)
-                var raw = _os.WindowsRegistryService.GetLocalMachineValue(RegistryKeyVersion, "CurrentVersion")
-                       ?? _os.WindowsRegistryService.GetCurrentUserValue(RegistryKeyVersion, "version");
+                var raw = _os.WindowsRegistryService.GetCurrentUserValue(RegistryKeyVersion, "version") ?? _os.WindowsRegistryService.GetCurrentUserValue(RegistryKeyVersion, "CurrentVersion");
 
                 return CleanVersionString(raw?.ToString());
             }
@@ -66,24 +68,47 @@ namespace eBRestarter.Infrastructure.Browsers.Abstract
 
         public bool IsInstalled => ExecutablePaths.Any(path => _os.WindowsFileSystemService.FileExists(path));
 
-        public abstract string DisplayName { get; }
-        public abstract string IconPath { get; }
-        public abstract string DownloadUrl { get; }
-
         protected string GetExecutablePath()
         {
             // Sucht den ersten Pfad aus der Liste, der wirklich existiert
-            return ExecutablePaths.FirstOrDefault(path => _os.WindowsFileSystemService.FileExists(path))
-                   ?? throw new FileNotFoundException($"{Type} executable not found.");
+            return ExecutablePaths.FirstOrDefault(path => _os.WindowsFileSystemService.FileExists(path)) ?? throw new FileNotFoundException($"{Type} executable not found.");
         }
 
         public abstract BrowserPaths GetPaths();
 
+        // Neue Helper-Methode für alle Kinder
+        protected void AddPathFromUninstallKey(List<string> paths, string subKey, string exeName, bool isHklm)
+        {
+            var val = isHklm
+                ? _os.WindowsRegistryService.GetLocalMachineValue(subKey, "InstallLocation")
+                : _os.WindowsRegistryService.GetCurrentUserValue(subKey, "InstallLocation");
+
+            if (val != null && !string.IsNullOrEmpty(val.ToString()))
+            {
+                // Robustheit: Pfad kombinieren
+                var fullPath = _os.WindowsFileSystemService.CombinePaths(val.ToString()!, exeName);
+                paths.Add(fullPath);
+            }
+        }
+
+        //Wichtig damit bei der Firefox Version die (x64 de) entfernt wird.
         protected virtual string CleanVersionString(string? raw)
         {
             if (string.IsNullOrEmpty(raw)) return "Unknown";
-            // Einfache Bereinigung (Regex entfernen von Buchstaben)
-            return System.Text.RegularExpressions.Regex.Replace(raw, "[^0-9.]", "");
+
+            // Trim() entfernt Leerzeichen am Anfang und Ende, falls vorhanden.
+            // Das macht den Regex noch robuster.
+            var cleanRaw = raw.Trim();
+
+            // Nimmt Zahlen und Punkte am Anfang. Stoppt beim ersten Leerzeichen/Buchstaben.
+            var match = System.Text.RegularExpressions.Regex.Match(cleanRaw, @"^[\d\.]+");
+
+            if (match.Success)
+            {
+                return match.Value;
+            }
+
+            return raw;
         }
     }
 }

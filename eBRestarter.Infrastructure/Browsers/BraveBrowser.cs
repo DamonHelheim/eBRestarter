@@ -10,8 +10,14 @@ using System.Text;
 
 namespace eBRestarter.Infrastructure.Browsers
 {
-    public class BraveBrowser : BrowserBase
+    public class BraveBrowser : ChromiumBrowserBase
     {
+
+        protected override string ExeFileName => "brave.exe";
+        protected override string BrowserRegistryName => "Brave"; // Oder "BraveSoftware Brave-Browser", je nach Registry
+        protected override string UninstallSubKey => "BraveSoftware Brave-Browser";
+        protected override string ProgramFilesSubPath => @"BraveSoftware\Brave-Browser\Application";
+
         public override string DisplayName => "Brave";
         public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_brave.png";
         public override string DownloadUrl => WebLinks.BraveDownloadLinkDE;
@@ -28,12 +34,6 @@ namespace eBRestarter.Infrastructure.Browsers
         private const string ExtensionId = "agchmcconfdfcenopioeilpgjngelefk";
 
         public BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logger) : base(os, logger) { }
-
-        protected override List<string> ExecutablePaths => new()
-        {
-            _os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles"), @"BraveSoftware\Brave-Browser\Application\brave.exe"),
-            _os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles(x86)"), @"BraveSoftware\Brave-Browser\Application\brave.exe")
-        };
 
         public override BrowserPaths GetPaths()
         {
