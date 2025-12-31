@@ -245,6 +245,44 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        public async Task StartExecutableAsync(string exeFilePath)
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = exeFilePath,
+                    UseShellExecute = true
+                };
+
+                // 1. Prozess starten
+                // Wichtig: Wir nutzen 'using', damit Ressourcen bereinigt werden, 
+                // ABER erst nachdem wir gewartet haben.
+                using var process = _processWrapper.Start(startInfo);
+
+                if (process != null)
+                {
+                    _logger.LogInformation("Executable gestartet und warte auf Beendeung: {Path}", exeFilePath);
+
+                    // 2. Asynchron warten
+                    // Das blockiert den UI-Thread NICHT technisch, aber die Methode wartet hier logisch.
+                    await process.WaitForExitAsync();
+
+                    _logger.LogInformation("Executable wurde beendet: {Path}", exeFilePath);
+                }
+                else
+                {
+                    _logger.LogWarning("Prozess konnte nicht gestartet werden (null zurückerhalten): {Path}", exeFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fehler beim Starten/Warten der EXE: {Path}", exeFilePath);
+                // Optional: Exception weiterwerfen, damit das ViewModel Bescheid weiß
+                throw;
+            }
+        }
+
         /// <summary>
         /// Windows Message ID für "Close Window" (0x0010).
         /// </summary>

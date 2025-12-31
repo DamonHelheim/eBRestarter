@@ -65,6 +65,7 @@ namespace eBRestarter.Desktop.WinUI3
                  {
                      services.AddInfrastructureServices();
                      services.AddNavigationService();
+                     services.AddDialoglServiceExtensions();
                      services.AddViewModels();
                  });
 

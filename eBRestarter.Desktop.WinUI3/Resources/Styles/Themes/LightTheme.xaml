@@ -63,9 +63,8 @@
     <SolidColorBrush x:Key = "DashletBackgroundColor_1" Color = "White"/>
     <SolidColorBrush x:Key = "DashletBackgroundColor_2" Color = "#DCDCDC"/>
     <SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#DCDCDC"/>
-
-    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#757575"/>
-    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#38C6FC"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#e1e2e3"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#D4D4D4"/>
 
     <SolidColorBrush x:Key = "MenuHeaderBackgroundColor" Color = "White"/>
     <SolidColorBrush x:Key = "ButtonBackgroundColor" Color = "#D4D4D4"/>
@@ -226,5 +225,94 @@
         
     </Style>
 
+    <Style x:Key="DownloadBrowserToggleButton" TargetType="Button">
+        <Setter Property="Background" Value="#0681ba"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="0">
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      AutomationProperties.AccessibilityView="Raw"/>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#0f83d1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#0A5A82"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#333333"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="#AAAAAA"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DownloadBrowserToggleButtonRed" TargetType="Button">
+        <Setter Property="Background" Value="#BA224D"/>
+        <Setter Property="Foreground" Value="White"/>
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="0">
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      Foreground="{TemplateBinding Foreground}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#9e2044"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#7A1632"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#333333"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="#AAAAAA"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

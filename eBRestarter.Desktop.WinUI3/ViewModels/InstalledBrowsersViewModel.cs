@@ -2,6 +2,7 @@
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IEVisitorConfigService _eVisitorConfigService;
         private readonly IBrowserDownloadService _downloadService;
         private readonly IOperatingSystemFacade _os;
+        private readonly IDialogService _dialogService;
 
         [ObservableProperty]
         public partial ObservableCollection<BrowserItemViewModel> Browsers { get; set; } = [];
@@ -23,11 +25,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IBrowserService browserService,
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,
+            IDialogService dialogService,
             IEVisitorConfigService eVisitorConfigService)
         {
             _downloadService = downloadService;
             _os = os;
             _browserService = browserService;
+            _dialogService = dialogService;
             _eVisitorConfigService = eVisitorConfigService;
             // Initiale Ladung oder Start eines Timers
             LoadBrowsers();
@@ -41,7 +45,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             foreach (var info in browserInfos)
             {
-                Browsers.Add(new BrowserItemViewModel(info, _downloadService, _os, _eVisitorConfigService));
+                Browsers.Add(new BrowserItemViewModel(info, _downloadService, _os, _eVisitorConfigService, _dialogService));
             }
         }
     }

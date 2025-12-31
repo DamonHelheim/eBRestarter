@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_InstalledBrowsers"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,54 +7,58 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
+    <Grid CornerRadius="8"
+          Background="{ThemeResource DashletBackgroundColor_1}"
+          BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+          BorderThickness="1"
+          Padding="4">
 
-        <Border x:Name          ="Border_Installedbrowser"
-                Background      ="{ThemeResource DashletBackgroundColor_1}"
-                Margin          ="0, 0 ,0, 0"
-                Height          ="40"
-                Width           ="260"
-                BorderThickness ="1"
-                CornerRadius    ="5"
-                Padding         ="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <Image x:Name                           ="image_installed_browsers"
-                       Source                           ="{ThemeResource GlobeIcon}"
-                       Margin                           ="5"
-                       Height                           ="28"
-                       Width                            ="auto"                                          
-                       Canvas.Left                      ="5"
-                       Canvas.Top                       ="5"/>
+            <Image x:Name="image_installed_browsers"
+                   Source="{ThemeResource GlobeIcon}"
+                   Height="24" Width="24"
+                   VerticalAlignment="Center"
+                   Margin="0,0,12,0"/>
 
-                <TextBlock x:Name       ="tbl_Installed_Browsers"
-                           x:Uid        ="Installed_browser"
-                           Foreground   ="{ThemeResource FontColor_1}"
-                           FontSize     ="18"
-                           Canvas.Left  ="39"
-                           TextWrapping ="Wrap"
-                           Height="24"/>
+            <TextBlock x:Name="tbl_Installed_Browsers"
+                       Grid.Column="1"
+                       x:Uid="Installed_browser"
+                       Text="Installierte Browser" 
+                       FontSize="18"
+                       VerticalAlignment="Center"
+                       Foreground="{ThemeResource FontColor_1}"/>
 
-            </StackPanel>
+        </Grid>
 
-        </Border>
+        <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalAlignment="Left">
 
-        <ItemsControl ItemsSource="{Binding Browsers}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <userControls:UC_Browser DataContext="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        
-        <!--<userControls:UC_Browser Margin="0,8,0,5" Height="auto"/>
+            <ItemsControl ItemsSource="{Binding Browsers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <userControls:UC_Browser DataContext="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
-        <userControls:UC_Browser Margin="0,7,0,5"/>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
 
-        <userControls:UC_Browser Margin="0,15,0,5"/>
-
-        <userControls:UC_Browser Margin="0,7,0,5"/>-->
-
-    </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

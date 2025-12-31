@@ -8,6 +8,7 @@ namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS
     {
         void StartMsiFile(string msiFilePath);
         void StartExecutable(string exeFilePath);
+        Task StartExecutableAsync(string exeFilePath);
         void OpenUrlInBrowser(string url);
         void CloseApplication(string processName);
         void CloseAllOpenPrograms();

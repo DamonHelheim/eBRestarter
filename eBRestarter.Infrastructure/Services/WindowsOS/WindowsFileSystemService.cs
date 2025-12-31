@@ -28,5 +28,24 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
                 _ => string.Empty
             };
         }
+
+        /// <summary>
+        /// Löscht die Datei am angegebenen Pfad.
+        /// </summary>
+        /// <param name="path">Der vollständige Pfad zur Datei.</param>
+        /// <exception cref="ArgumentException">Wenn der Pfad leer ist.</exception>
+        /// <exception cref="IOException">Wenn die Datei gerade verwendet wird.</exception>
+        /// <exception cref="UnauthorizedAccessException">Wenn Schreibrechte fehlen.</exception>
+        public void DeleteFile(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentException("Pfad darf nicht leer sein.", nameof(path));
+            }
+
+            // File.Delete wirft keine Exception, falls die Datei schon weg ist.
+            // Das spart uns eine "if (Exists)" Abfrage und Race-Conditions.
+            File.Delete(path);
+        }
     }
 }

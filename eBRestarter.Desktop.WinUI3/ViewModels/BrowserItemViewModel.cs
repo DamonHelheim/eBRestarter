@@ -7,6 +7,7 @@ using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Models;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -19,54 +20,114 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class BrowserItemViewModel : ObservableObject
     {
+        #region Constants
+        private const string SetForegroundColorGreen = "#7ED422";
+        private const string SetForegroundColorRed = "#E40E87";
+        #endregion
+
+        #region Fields
+        // Services und Dependencies
         private readonly BrowserInfo _browserInfo;
-
         private readonly AppConfig _currentConfig;
-
         private readonly IBrowserDownloadService _downloadService;
-
         private readonly IOperatingSystemFacade _os;
-
         private readonly IEVisitorConfigService _eVisitorConfigService;
+        private readonly IDialogService _dialogService;
 
+        // Interner State
         private CancellationTokenSource? _cts;
+        #endregion
+
+        #region Constructor
         public BrowserItemViewModel(
             BrowserInfo info,
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,
-            IEVisitorConfigService eVisitorConfigService)
+            IEVisitorConfigService eVisitorConfigService,
+            IDialogService dialogService)
         {
             _browserInfo = info;
-            _eVisitorConfigService = eVisitorConfigService;
             _downloadService = downloadService;
             _os = os;
+            _eVisitorConfigService = eVisitorConfigService;
+            _dialogService = dialogService;
 
+            // Config laden (falls nötig direkt im Ctor)
             _currentConfig = _eVisitorConfigService.LoadConfig();
         }
-        private const string SetForegroundColorGreen = "#7ED422";
-        private const string SetForegroundColorRed = "#E40E87";
+        #endregion
+
+        #region Observable Properties (State)
+        // Diese Properties speichern den aktuellen Zustand.
+        // Sie lösen PropertyChanged aus und triggern abhängige Properties.
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(DownloadButtonContent))]
+        [NotifyPropertyChangedFor(nameof(DownloadButtonStyleKey))]
+        [NotifyPropertyChangedFor(nameof(IsDownloading))] // Optional, falls Bindings darauf hören
+        [NotifyPropertyChangedFor(nameof(IsNotDownloading))]
+        public partial bool IsDownloadActive { get; set; }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotInstalling))]
+        public partial bool IsInstalling { get; set; }
+
+        [ObservableProperty]
+        public partial double DownloadProgressValue { get; set; }
+
+        [ObservableProperty]
+        public partial string DownloadSizeText { get; set; } = string.Empty;
+        #endregion
+
+        #region Computed Properties (View Logic)
+        // Diese Properties berechnen Werte "on the fly" basierend auf Feldern oder State.
+
+        // --- Header & Info ---
         public string HeaderTitleBrowser => _browserInfo.Name;
         public string HeaderImageBrowser => _browserInfo.IconPath;
-
         public string ImageSizeHeightBrowser => _browserInfo.IconHeight;
         public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
 
-        // UI-Logik: Textformatierung
-        public string BrowserVersion => _browserInfo.IsInstalled ? $"Version: {_browserInfo.Version}" : "Nicht installiert";
+        // --- Status Anzeige (Installiert / Nicht Installiert) ---
+        public string BrowserVersion => _browserInfo.IsInstalled
+            ? $"Version: {_browserInfo.Version}"
+            : "Nicht installiert";
 
-        // UI-Logik: Farben & Icons über Properties (besser als Converter für einfache Logik)
-        public SolidColorBrush BrowserExistTextForground => _browserInfo.IsInstalled ?
-            new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorGreen)) :
-            new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorRed));
         public string BrowserExist => _browserInfo.IsInstalled ? "✓" : "✘";
 
-        // Sichtbarkeiten (Boolesche Werte für x:Bind oder Converter)
+        public SolidColorBrush BrowserExistTextForground => _browserInfo.IsInstalled
+            ? new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorGreen))
+            : new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorRed));
+
+        // --- Sichtbarkeiten (Visibility) ---
         public bool IsDownloadButtonVisible => !_browserInfo.IsInstalled;
         public bool IsChooseButtonVisible => _browserInfo.IsInstalled;
 
-        // Commands
-        [RelayCommand]
-        private void Download() { /* ... */ }
+        public bool IsBrowserVersionVisible => _browserInfo.IsInstalled;
+
+        public bool IsDownloadSizeTextVisible => !_browserInfo.IsInstalled;
+
+        // --- Download & Install State Helpers ---
+        public bool IsDownloading => IsDownloadActive;
+        public bool IsNotDownloading => !IsDownloadActive;
+        public bool IsNotInstalling => !IsInstalling;
+
+        // --- Button Styling & Text ---
+        public string DownloadButtonContent => IsDownloadActive ? "Abbrechen" : "Download";
+
+        public string DownloadButtonStyleKey => IsDownloadActive
+            ? "DownloadBrowserToggleButtonRed"
+            : "DownloadBrowserToggleButton";
+        #endregion
+
+        #region Commands
+        // Hier würden deine [RelayCommand] Methoden stehen (ToggleDownload, InstallBrowser etc.)
+        #endregion
+
+        #region Private Methods
+        // Hier deine Hilfsmethoden (StartDownloadAsync, CancelDownload etc.)
+        #endregion
+
 
         [RelayCommand]
         private void ChooseBrowser() {
@@ -75,34 +136,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SaveSettings();
 
         }
-
-        // --- Neue Properties für den Download ---
-
-        // 1. Die Property mit dem Attribut
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(DownloadButtonContent))]
-        [NotifyPropertyChangedFor(nameof(DownloadButtonStyleKey))] // Auch hier automatisch triggern!
-        public partial bool IsDownloadActive { get; set; }
-
-        // 2. Die berechneten Properties (Keine Änderung nötig)
-        public string DownloadButtonContent => IsDownloadActive ? "Abbrechen" : "Download";
-
-        public bool IsDownloading => IsDownloadActive; // Für Bindings (Sichtbarkeiten)
-        public bool IsNotDownloading => !IsDownloadActive; // Gegenpart
-
-        [ObservableProperty]
-        public partial double DownloadProgressValue { get; set; }
-
-        [ObservableProperty]
-        public partial string DownloadSizeText { get; set; } = string.Empty;
-
-        // Button Text ändert sich: "Download" <-> "Abbrechen"
-
-
-
-        // Style Name für den Button (muss in XAML Resources definiert sein)
-        public string DownloadButtonStyleKey => IsDownloadActive ? "DownloadBrowserToggleButtonRed" : "DownloadBrowserToggleButton";
-
 
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task ToggleDownload()
@@ -122,19 +155,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void CancelDownload()
         {
             _cts?.Cancel();
-            ResetDownloadState();
+            _ = ResetDownloadState();
         }
 
         private async Task StartDownloadAsync()
         {
             _cts = new CancellationTokenSource();
 
-            // UI Status setzen
             IsDownloadActive = true;
 
-            var fileName = $"{_browserInfo.Name}_Installer.exe"; // Oder aus BrowserInfo holen
-            var downloadPath = _os.WindowsFileSystemService.CombinePaths(
-                _os.WindowsFileSystemService.GetEnvironmentPath("UserProfile"), "Downloads", fileName);
+            // Dateinamen und Pfad zusammenbauen
+            var fileName = $"{_browserInfo.Name}_Installer.exe";
+            var userProfile = _os.WindowsFileSystemService.GetEnvironmentPath("UserProfile");
+            var downloadPath = _os.WindowsFileSystemService.CombinePaths(userProfile, "Downloads", fileName);
 
             var progressHandler = new Progress<DownloadProgressStatus>(status =>
             {
@@ -145,24 +178,36 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             try
             {
                 await _downloadService.DownloadFileAsync(_browserInfo.DownloadUrl, downloadPath, progressHandler, _cts.Token);
-
-                // Erfolg!
-                ResetDownloadState();
-                AskToInstall(downloadPath);
+                await AskToInstall(downloadPath);
+                await ResetDownloadState();
             }
             catch (OperationCanceledException)
             {
-                // Abbruch durch User - nichts tun, State wird im finally resettet
+                CleanupPartialFile(downloadPath);
+                await ResetDownloadState();
             }
             catch (Exception ex)
             {
-                // Fehlerbehandlung
-                // _dialogService.ShowError("Download fehlgeschlagen...");
-                ResetDownloadState();
+                CleanupPartialFile(downloadPath);
+                await ResetDownloadState();
             }
         }
 
-        private void ResetDownloadState()
+        private void CleanupPartialFile(string path)
+        {
+            try
+            {
+                if (_os.WindowsFileSystemService.FileExists(path))
+                {
+                    _os.WindowsFileSystemService.DeleteFile(path);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private async Task ResetDownloadState()
         {
             IsDownloadActive = false;
             DownloadProgressValue = 0;
@@ -170,10 +215,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _cts = null;
         }
 
-        private void AskToInstall(string path)
+        private async Task AskToInstall(string path)
         {
             // Hier deinen MessageBox Service oder Facade nutzen
             // if (ShowMessage("Installieren?")) _os.WindowsProcessControlService.StartExecutable(path);
+
+            bool installNow = await _dialogService.ShowYesNoDialogAsync(
+               "Installation",
+               "Möchtest du installieren?");
+
+            if (installNow)
+            {
+                await _os.WindowsProcessControlService.StartExecutableAsync(path);
+
+                // 3. Wenn wir hier sind, ist der Installer fertig/geschlossen!
+                await _dialogService.ShowMessageAsync("Installation beendet", "Der Browser wurde installiert.");
+            }
         }
 
         private void SaveSettings()

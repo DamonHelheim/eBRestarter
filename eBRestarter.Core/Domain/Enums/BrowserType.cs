@@ -6,6 +6,9 @@ namespace eBRestarter.Core.Domain.Enums
 {
     public enum BrowserType
     {
+        //SRWare Iron,
+        //Vivaldi,
+        //Epic Privacy Browser
         Brave,
         Chrome,
         Edge,
