@@ -11,8 +11,6 @@
     mc:Ignorable="d">
 
     <Grid>
-
         <userControl:UC_Options/>
-
     </Grid>
 </Page>

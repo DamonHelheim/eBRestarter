@@ -19,13 +19,15 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             services.AddSingleton<EBRestarter>();
 
             services.AddSingleton<ViewModelRestarterProperties>();
-
             // Hinweis: Pages registriert man oft als Transient, 
             // aber Singleton ist okay, wenn sie den Zustand behalten sollen.
             services.AddSingleton<P_CommonOverview>();
 
             services.AddSingleton<InstalledBrowsersViewModel>();
             services.AddSingleton<UC_InstalledBrowsers>();
+
+            services.AddSingleton<UC_Options>();
+            services.AddSingleton<ViewModelOptions>();
 
             // Rückgabe von "services" ermöglicht Chaining (services.AddX().AddY())
             return services;

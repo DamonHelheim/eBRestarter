@@ -11,6 +11,7 @@ using eBRestarter.Infrastructure.Services;
 using eBRestarter.Infrastructure.Services.Config;
 using eBRestarter.Infrastructure.Services.RestSharp;
 using eBRestarter.Infrastructure.Services.WindowsOS;
+using eBRestarter.Infrastructure.Services.WindowsOS.Security;
 using eBRestarter.Infrastructure.Wrapper;
 using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +52,9 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddTransient<IWindowsRegistryService, WindowsRegistryService>();
             services.AddTransient<IWindowsFileSystemService, WindowsFileSystemService>();
             services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
-            
+
+            services.AddTransient<IWindowsAutoLogonService, WindowsAutoLogonService>();
+
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 
             // NEU: Die Facade registrieren

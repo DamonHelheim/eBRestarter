@@ -102,6 +102,7 @@
 
                                 <Button x:Name="btnOptionsAutomaticWindowsUserLogin"
                                         x:Uid="Automatic_User_Login"
+                                        Command="{Binding ConfigureAutoLogonCommand}" 
                                         FontSize="16"
                                         HorizontalAlignment="Left"
                                         Margin="0,0,0,12"
@@ -109,8 +110,7 @@
                                         Width="300"
                                         Background="#FF00CAD4"
                                         Foreground="#DDFFFFFF"
-                                        BorderBrush="{x:Null}"
-                                        Click="BtnOptionsAutomaticWindowsUserLogin_Click" />
+                                        BorderBrush="{x:Null}"/>
 
                                 <TextBlock x:Uid="Start_eV_Restarter_with_Windows"
                                            Foreground="{ThemeResource FontColor_1}"
@@ -118,7 +118,7 @@
 
                                 <ToggleSwitch x:Name="TS_OptionsStartWithWindows"
                                               x:Uid="TS_OptionsStartWithWindows"
-                                              IsOn="{Binding SetStartUp}"
+                                              IsOn="{Binding SetStartUp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Foreground="{ThemeResource FontColor_1}"
                                               HorizontalAlignment="Left"
                                               Margin="10,0,0,12"

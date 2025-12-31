@@ -1,4 +1,7 @@
-﻿using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+﻿using eBRestarter.Core.Domain.Models;
+using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Views.Dialogs;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -12,7 +15,7 @@ namespace eBRestarter.Desktop.WinUI3.Services
     {
         // Du musst hier irgendwie an das XamlRoot kommen. 
         // Entweder übergebene UI-Elemente oder über App.MainWindow.Content.XamlRoot
-        private XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
+        private XamlRoot _xamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
 
         public Task ShowMessageAsync(string title, string message)
         {
@@ -23,16 +26,42 @@ namespace eBRestarter.Desktop.WinUI3.Services
         {
             var dialog = new ContentDialog
             {
-                XamlRoot = XamlRoot,
+                XamlRoot = _xamlRoot,
                 Title = title,
                 Content = message,
                 PrimaryButtonText = "Ja",
                 CloseButtonText = "Nein"
             };
+
             var result = await dialog.ShowAsync();
+
             return result == ContentDialogResult.Primary;
         }
 
-        // ... Implementierung für ShowMessageAsync ähnlich ...
+        public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null, string defaultDomain = null)
+        {
+            var dialog = new AutoLogonDialog
+            {
+                XamlRoot = _xamlRoot
+            };
+
+            // --- HIER IST DIE ÄNDERUNG ---
+            // Wir übergeben die Daten an den Dialog, damit die Textboxen gefüllt werden
+            dialog.SetDefaults(defaultUser, defaultDomain);
+            // -----------------------------
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                return AutoLogonDialogResult.Save(dialog.GetCredentials());
+            }
+            else if (result == ContentDialogResult.Secondary)
+            {
+                return AutoLogonDialogResult.Deactivate();
+            }
+
+            return null;
+        }
     }
 }
