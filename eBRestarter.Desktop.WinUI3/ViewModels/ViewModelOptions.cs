@@ -1,14 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.DirectoryServices.AccountManagement; // Wichtig: Referenz hinzufügen!
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +20,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelOptions : ObservableObject
     {
+
+        private bool _isInitializing = false; // Sperre flag
+
         private readonly AppConfig _currentConfig;
         private readonly IEVisitorConfigService _eVisitorConfigService;
 
@@ -23,7 +30,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IWindowsAutoLogonService _autoLogonService;
         private readonly IOperatingSystemFacade _os;
 
-        [ObservableProperty] public partial bool SetStartUp { get; set; } = false;
+        public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList => ComputerRestartConstants.Options;
+
+        [ObservableProperty] public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
+        [ObservableProperty] public partial int ComputerRestartClockTime { get; set; }
+        [ObservableProperty] public partial bool StartWithWindows { get; set; } = false;
+
+        // NEUE PROPERTIES FÜR DIE UI
+        [ObservableProperty]
+        public partial bool IsRestartSliderVisible { get; set; }
+
+        [ObservableProperty]
+        public partial string RestartStatusText { get; set; } = "";
+
+        public int ComputerRestartClockTimeMin { get; init; }
+        public int ComputerRestartClockTimeMax { get; init; }
+
+
 
         public ViewModelOptions(
             IDialogService dialogService,
@@ -35,35 +58,130 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _autoLogonService = autoLogonService;
             _os = os;
             _eVisitorConfigService = eVisitorConfigService;
+            _currentConfig = _eVisitorConfigService.LoadConfig();
+
+            ComputerRestartClockTimeMin = 0;
+            ComputerRestartClockTimeMax = 23;
+            ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
+
+            // ComboBox (WICHTIG!)
+            // Wir suchen den Eintrag in der Liste, der den Tagen aus der Config entspricht.
+            // Fallback auf Index 0, falls nichts gefunden (z.B. bei neuer Config).
+            var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
+
+            SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(x => x.Days == configDays) ?? ComputerRestartList[0];
+
+            _ = InitializeAsync();
         }
 
-        [RelayCommand]
-        private void ExecuteToggleSwitchStartWithWindows(object value)
+        // --- NEUE LOGIK-METHODE ---
+        private void UpdateRestartUiState()
         {
-            bool activateStartWithWindows = (bool)value;
+            int days = SelectedComputerRestartOption?.Days ?? 0;
 
-            if (activateStartWithWindows is true) { 
+            // 1. Sichtbarkeit des Sliders steuern
+            IsRestartSliderVisible = days > 0;
 
-                _os.WindowsStartupManagerService.EnableAutoStart();
+            // 2. Text generieren
+            if (days == 0)
+            {
+                RestartStatusText = "Computer wird nicht neugestartet";
             }
             else
             {
-                _os.WindowsStartupManagerService.DisableAutoStart();
+                // HIER DIE KORREKTUR:
+                // Wir holen das Datum. Ist es 'null', nutzen wir MinValue als Platzhalter.
+                DateTime targetDate = _currentConfig.Computer.NextRestartDate ?? DateTime.MinValue;
+
+                // Wenn es MinValue ist (weil es null war oder noch nicht gesetzt),
+                // berechnen wir es hier "on the fly" für die Anzeige.
+                if (targetDate == DateTime.MinValue)
+                {
+                    targetDate = DateTime.Today.AddDays(days).AddHours(ComputerRestartClockTime);
+                }
+
+                // Text formatieren
+                RestartStatusText = $"Computer wird am {targetDate:dd.MM.yyyy} um {targetDate:HH} Uhr neugestartet";
             }
         }
 
-        partial void OnSetStartUpChanged(bool value)
+        // Wenn sich die Auswahl ändert, kannst du hier reagieren
+        partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
         {
-            if (value is true)
+            _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
+
+            RecalculateNextRestartDate(); // Berechnet das Datum in der Config
+            UpdateRestartUiState();       // <--- NEU: Aktualisiert Text & Sichtbarkeit für UI
+
+            SaveSettings();
+        }
+
+        partial void OnComputerRestartClockTimeChanged(int value)
+        {
+            // 1. Clamping
+            int clampedValue = Math.Clamp(value, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
+
+            // 2. Auto-Korrektur in der UI
+            if (value != clampedValue)
             {
-                _os.WindowsStartupManagerService.EnableAutoStart();
-                _currentConfig.Browser.StartBrowserWithProgrammStart = value;
+                // Das setzt die Property neu. 
+                // WICHTIG: Da es eine partial Property ist, funktioniert der Setter hier rekursiv sicher.
+                ComputerRestartClockTime = clampedValue;
+                return;
+            }
+
+            // 3. Speichern
+            if (_currentConfig.Computer.RestartClockTime != value)
+            {
+                _currentConfig.Computer.RestartClockTime = value;
+
+                RecalculateNextRestartDate(); // Berechnet das Datum in der Config
+                UpdateRestartUiState();       // <--- NEU: Aktualisiert Text
+
+                SaveSettings();
+            }
+        }
+
+        private async Task InitializeAsync()
+        {
+            _isInitializing = true; // Sperre aktivieren
+
+            try
+            {
+                StartWithWindows = await _os.WindowsStartupManagerService.IsAutoStartEnabledAsync();
+
+                if (_currentConfig.Settings.StartWithWindows is true && StartWithWindows is false)
+                {
+                    await _os.WindowsStartupManagerService.EnableAutoStartAsync();
+                }
+            }
+            finally
+            {
+                _isInitializing = false; // Sperre aufheben
+            }
+        }
+
+
+        partial void OnStartWithWindowsChanged(bool value)
+        {
+            if (_isInitializing) return; // Abbrechen, wenn wir nur den Startwert laden
+
+            // Jetzt wirklich ändern
+            ToggleAutoStartAsync(value);
+        }
+
+        private async void ToggleAutoStartAsync(bool enable)
+        {
+            if (enable) { 
+
+                await _os.WindowsStartupManagerService.EnableAutoStartAsync();
+                _currentConfig.Settings.StartWithWindows = enable;
                 SaveSettings();
             }
             else
             {
-                _os.WindowsStartupManagerService.DisableAutoStart();
-                _currentConfig.Browser.StartBrowserWithProgrammStart = value;
+                await _os.WindowsStartupManagerService.DisableAutoStartAsync();
+                _currentConfig.Settings.StartWithWindows = enable;
                 SaveSettings();
             }
         }
@@ -151,7 +269,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        // Diese Methode rufst du in OnComputerRestartClockTimeChanged UND 
+        // in OnSelectedComputerRestartOptionChanged auf.
+        private void RecalculateNextRestartDate()
+        {
+            int days = _currentConfig.Computer.ComputerRestartIntervalDays;
+            int hours = _currentConfig.Computer.RestartClockTime;
 
+            if (days > 0)
+            {
+                _currentConfig.Computer.NextRestartDate = DateTime.Today.AddDays(days).AddHours(hours);
+            }
+            else
+            {
+                _currentConfig.Computer.NextRestartDate = DateTime.MinValue;
+            }
+        }
         private void SaveSettings()
         {
             _eVisitorConfigService.SaveConfig(_currentConfig);

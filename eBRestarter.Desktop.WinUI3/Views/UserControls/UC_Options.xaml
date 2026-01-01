@@ -6,7 +6,12 @@
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
 
     <Grid x:Name="RootGrid"
           Background="{ThemeResource MenuBackgroundColor_2}"
@@ -114,25 +119,24 @@
 
                                 <TextBlock x:Uid="Start_eV_Restarter_with_Windows"
                                            Foreground="{ThemeResource FontColor_1}"
-                                           Margin="10,8,0,4" />
+                                           Margin="10,8,0,4"/>
 
                                 <ToggleSwitch x:Name="TS_OptionsStartWithWindows"
                                               x:Uid="TS_OptionsStartWithWindows"
-                                              IsOn="{Binding SetStartUp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              IsOn="{Binding StartWithWindows, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               Foreground="{ThemeResource FontColor_1}"
                                               HorizontalAlignment="Left"
                                               Margin="10,0,0,12"
                                               Height="40"
                                               Width="250"
-                                              FontSize="16" />
+                                              FontSize="16"/>
 
                                 <TextBlock x:Name="lbl_Computer_Restartoptionen"
                                            x:Uid="Computer_restart_options"
-                                           Text="Computer Neustartoptionen"
                                            Foreground="{ThemeResource FontColor_1}"
                                            Margin="10,0,0,8"
                                            FontSize="16"
-                                           FontWeight="Bold" />
+                                           FontWeight="Bold"/>
 
                                 <ComboBox x:Name="ComboboxComputerRestartOptions"
                                           FontSize="16"
@@ -140,9 +144,9 @@
                                           Foreground="{ThemeResource FontColor_1}"
                                           Margin="10,0,10,12"
                                           Width="300"
-                                          SelectedIndex="{Binding ComboboxRestartComputerSelectedIndex}"
-                                          ItemsSource="{Binding ListComboBoxRestartComputerOptions}"
-                                          SelectionChanged="ComboboxComputerRestartOptions_SelectionChanged">
+                                          DisplayMemberPath="DisplayText"
+                                          ItemsSource="{Binding ComputerRestartList}"
+                                          SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                                     <ComboBox.Resources>
                                         <!-- Normal -->
@@ -162,55 +166,60 @@
 
                                     </ComboBox.Resources>
 
-                                    <ComboBoxItem Content="Computer nicht neustarten" />
-                                    <ComboBoxItem Content="Computer jeden Tag neustarten" />
-                                    <ComboBoxItem Content="Computer alle 3 Tage neustarten" />
-                                    <ComboBoxItem Content="Computer alle 3 Tage neustarten" />
-                                    <ComboBoxItem Content="Computer alle 14 Tage neustarten" />
-
                                 </ComboBox>
 
 
-                                <StackPanel Orientation="Horizontal"
-                                            Height="45"
-                                            Margin="0,0,0,8">
+                                <StackPanel Margin="10,5,10,10"
+                                            HorizontalAlignment="Left"
+                                            Width="300"
+                                            Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
 
+                                    <TextBlock Margin="0,5,5,0"
+                                               Text="Lege die Uhrzeit fest:"
+                                               x:Uid="Set_the_time"
+                                               FontSize="14"
+                                               Foreground="{ThemeResource FontColor_1}"
+                                               HorizontalAlignment="Left" />
+                                    
                                     <Slider x:Name="SliderRestartComputer"
-                                            Minimum="1"
-                                            Maximum="23"
-                                            Margin="10,5,10,10"
-                                            Width="200"
-                                            Height="50"
-                                            Foreground="#FF167DA4"
-                                            ValueChanged="SliderRestartComputer_ValueChanged" />
+                                            Minimum="{Binding ComputerRestartClockTimeMin, Mode=OneTime}"
+                                            Maximum="{Binding ComputerRestartClockTimeMax, Mode=OneTime}"
+                                            Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                            
+                                            Foreground="#FF167DA4"                                            
+                                            TickFrequency="1"
+                                            TickPlacement="BottomRight"
+                                            SnapsTo="StepValues"
+                                            HorizontalAlignment="Stretch"/>
 
-                                    <TextBox x:Name="tb_RestartComputerInput"
-                                             Foreground="{ThemeResource FontColor_1}"
-                                             BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
-                                             Text="{Binding ElementName=SliderRestartComputer, Path=Value, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                             FontSize="16"
-                                             KeyDown="OnKeyDownHandlerSliderRestartComputerTime"
-                                             Width="30"
-                                             Height="30" />
+                                    <Grid Margin="0,-5,0,0">
+                                        
+                                        <Grid.ColumnDefinitions>
+                                            
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock x:Name="lbl_clock_restart"
-                                                Foreground="{ThemeResource FontColor_1}"
-                                                Margin="3,0,0,4"
-                                                Text="Uhr"
-                                                Width="27" />
+                                        <TextBlock Grid.Column="0" 
+                                                   Text="{Binding ComputerRestartClockTimeMin, Mode=OneTime}" 
+                                                   Foreground="Gray" 
+                                                   FontSize="12"/>
+
+                                        <TextBlock Grid.Column="2" 
+                                                   Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" 
+                                                   Foreground="Gray" 
+                                                   FontSize="12"/>
+                                    </Grid>
+
                                 </StackPanel>
 
                                 <TextBlock x:Name="lbl_Options_DateOfRestartComputerInfo"
                                            Foreground="{ThemeResource FontColor_1}"
                                            Margin="10,0,0,4"
-                                           Text="{Binding Options_DateOfRestartComputerInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                           FontSize="16" />
+                                           Text="{Binding RestartStatusText, Mode=OneWay}"
+                                           FontSize="16"/>
 
-                                <TextBlock x:Name="lbl_Options_RestartTime"
-                                           Foreground="{ThemeResource FontColor_1}"
-                                           Margin="10,0,0,4"
-                                           Text="um 0 Uhr neugestartet."
-                                           FontSize="16" />
 
                                 <TextBlock x:Name="tbl_restart_information"
                                            Foreground="#de1043"

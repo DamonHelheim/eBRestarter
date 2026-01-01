@@ -321,4 +321,7 @@
   <data name="AppTitleBar.Title" xml:space="preserve">
     <value>eBRestarter</value>
   </data>
+  <data name="Set_the_time.Text" xml:space="preserve">
+    <value>Lege die Uhrzeit fest:</value>
+  </data>
 </root>

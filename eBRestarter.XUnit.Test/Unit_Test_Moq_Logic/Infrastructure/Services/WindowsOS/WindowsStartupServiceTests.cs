@@ -1,4 +1,5 @@
-﻿using eBRestarter.Infrastructure.Services.WindowsOS;
+﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,14 +12,14 @@ namespace eBRestarter.XUnit.Test.Unit_Test_Moq_Logic.Infrastructure.Services.Win
     public class WindowsStartupServiceTests
     {
         private readonly Mock<ILogger<WindowsStartupService>> _loggerMock;
-        private readonly Mock<IRegistryService> _registryMock;
+        private readonly Mock<IWindowsRegistryService> _registryMock;
         private readonly Mock<IProcessInfoService> _processMock;
         private readonly WindowsStartupService _windowsStartupService;
 
         public WindowsStartupServiceTests()
         {
             _loggerMock = new Mock<ILogger<WindowsStartupService>>();
-            _registryMock = new Mock<IRegistryService>();
+            _registryMock = new Mock<IWindowsRegistryService>();
             _processMock = new Mock<IProcessInfoService>();
 
             _windowsStartupService = new WindowsStartupService(_loggerMock.Object, _registryMock.Object, _processMock.Object);

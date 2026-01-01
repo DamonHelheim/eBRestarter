@@ -321,4 +321,7 @@
   <data name="AppTitleBar.Title" xml:space="preserve">
     <value>eVRestarter</value>
   </data>
+  <data name="Set_the_time.Text" xml:space="preserve">
+    <value>Set the time:</value>
+  </data>
 </root>
