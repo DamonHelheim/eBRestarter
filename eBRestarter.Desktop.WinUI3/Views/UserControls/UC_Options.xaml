@@ -338,8 +338,9 @@
                                               Foreground="{ThemeResource FontColor_1}"
                                               Margin="0,0,10,12"
                                               Width="300"
-                                              SelectedIndex="{Binding ComboboxRestartComputerSelectedIndex}"
-                                              ItemsSource="{Binding ListComboBoxRestartComputerOptions}">
+                                              DisplayMemberPath="DisplayText"
+                                              ItemsSource="{Binding LanguageList}"
+                                              SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                                         <ComboBox.Resources>
                                             <!-- Normal -->
