@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Desktop.WinUI3.Services;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,6 +18,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IHardwareInfoService _hardwareService;
         private readonly IOsEditionService _osEditionService;
         private readonly IWindowsSystemInfoService _systemInfoService; // Dein Registry-Service
+        private readonly IDialogService _dialogService;
 
         // Properties für die UI (direkt gebunden)
         [ObservableProperty] public partial string ProcessorText { get; set; } = "Lade...";
@@ -32,15 +35,24 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ViewModelInfocenter(
             IHardwareInfoService hardwareService,
             IOsEditionService osEditionService,
-            IWindowsSystemInfoService systemInfoService)
+            IWindowsSystemInfoService systemInfoService,
+            IDialogService dialogService)
         {
             _hardwareService = hardwareService;
             _osEditionService = osEditionService;
             _systemInfoService = systemInfoService;
-
+            _dialogService = dialogService;
             // Startet das Laden asynchron, ohne den Konstruktor zu blockieren
             _ = LoadDataAsync();
         }
+
+        [RelayCommand]
+        private async Task ShowAboutInfo()
+        {
+            // Der Dialog öffnet sich, Code wartet hier, bis Dialog geschlossen wird
+            await _dialogService.ShowAboutDialogAsync();
+        }
+
 
         private async Task LoadDataAsync()
         {

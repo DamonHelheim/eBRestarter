@@ -18,20 +18,25 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace eBRestarter.Desktop.WinUI3.Views.UserControls;
+namespace eBRestarter.Desktop.WinUI3.Views.Dialogs;
 
-public sealed partial class UC_Infocenter : UserControl
+public sealed partial class AboutDialog : ContentDialog
 {
-    public ViewModelInfocenter ViewModelInfocenter { get; }
+    public ViewModelAbout ViewModelAbout { get; }
 
-    public UC_Infocenter()
+    public AboutDialog()
     {
-        InitializeComponent();
+        this.InitializeComponent();
 
-        // Hier holen wir uns das ViewModel manuell aus dem Container
-        ViewModelInfocenter = App.AppHost!.Services.GetRequiredService<ViewModelInfocenter>();
+        // HIER HOLST DU DAS VIEWMODEL
+        // Entweder per Dependency Injection (App.Services...) oder manuell:
 
-        // DataContext setzen
-        this.DataContext = ViewModelInfocenter;
+        // Manuell (Quick & Dirty zum Testen):
+        // ViewModel = new AboutViewModel(new Infrastructure.Services.AppInfoService());
+
+        // Besser via DI (wenn vorhanden):
+        ViewModelAbout = App.AppHost!.Services.GetRequiredService<ViewModelAbout>();
+
+        this.DataContext = ViewModelAbout;
     }
 }

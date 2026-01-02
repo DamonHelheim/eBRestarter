@@ -63,5 +63,18 @@ namespace eBRestarter.Desktop.WinUI3.Services
 
             return null;
         }
+
+        public async Task ShowAboutDialogAsync()
+        {
+            // 1. Instanz erstellen
+            var dialog = new AboutDialog
+            {
+                // 2. XamlRoot setzen (sonst stürzt WinUI 3 ab)
+                XamlRoot = _xamlRoot
+            };
+
+            // 3. Anzeigen und warten, bis der Nutzer ihn schließt
+            await dialog.ShowAsync();
+        }
     }
 }

@@ -107,10 +107,10 @@ Padding="10,0,0,0">
 
                     <Button x:Name="Btn_about"
                             Style="{ThemeResource AccentButtonStyle}"
+                            Command="{Binding ShowAboutInfoCommand}"
                             Width="968"
                             Height="63"
-                            Margin="0"
-                            Click="Btn_about_Click">
+                            Margin="0">
 
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center"
@@ -126,15 +126,15 @@ Padding="10,0,0,0">
                                        FontSize="16"
                                        Margin="10,0,0,0"
                                        VerticalAlignment="Center" />
-                            
+
                         </StackPanel>
-                        
+
                     </Button>
 
                 </StackPanel>
 
             </Grid>
-            
+
         </ScrollViewer>
 
     </Grid>

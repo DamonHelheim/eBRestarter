@@ -88,6 +88,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             services.AddSingleton<IEVisitorConfigService, EVRestarterConfigService>();
 
+            services.AddSingleton<IAppInfoService, AppInfoService>();
+
             return services;
         }
     }

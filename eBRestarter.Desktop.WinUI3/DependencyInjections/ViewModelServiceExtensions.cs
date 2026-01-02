@@ -32,6 +32,8 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             services.AddSingleton<ViewModelInfocenter>();
             services.AddSingleton<UC_Infocenter>();
 
+            services.AddSingleton<ViewModelAbout>();
+
             // Rückgabe von "services" ermöglicht Chaining (services.AddX().AddY())
             return services;
         }
