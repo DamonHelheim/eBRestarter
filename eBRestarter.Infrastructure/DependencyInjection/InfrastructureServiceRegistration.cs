@@ -57,6 +57,15 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 
+            // 1. Die konkrete Klasse als Singleton registrieren
+            services.AddSingleton<WindowsWmiHardwareService>();
+
+            // 2. Das erste Interface anfordern -> leitet weiter an die bereits erstellte Instanz
+            services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+
+            // 3. Das zweite Interface anfordern -> leitet weiter an dieselbe Instanz
+            services.AddSingleton<IOsEditionService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+
             // NEU: Die Facade registrieren
             services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
 

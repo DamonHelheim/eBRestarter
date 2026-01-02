@@ -18,47 +18,48 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    using CommunityToolkit.Mvvm.ComponentModel;
+    using CommunityToolkit.Mvvm.Input;
+    using System.Collections.ObjectModel;
+    using System.DirectoryServices.AccountManagement;
+
     public partial class ViewModelOptions : ObservableObject
     {
+        // =========================================================
+        // 1. FIELDS (Private Felder & Services)
+        // =========================================================
 
-        private bool _isInitializing = false; // Sperre flag
+        private bool _isInitializing = false; // Sperre-Flag
 
         private readonly AppConfig _currentConfig;
         private readonly IEVisitorConfigService _eVisitorConfigService;
-
         private readonly IDialogService _dialogService;
         private readonly IWindowsAutoLogonService _autoLogonService;
         private readonly IOperatingSystemFacade _os;
 
+        // =========================================================
+        // 2. PROPERTIES (Öffentliche Eigenschaften)
+        // =========================================================
+
+        // Konstante Listen & Limits
         public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList => ComputerRestartConstants.Options;
-
         public ReadOnlyCollection<LanguageOption> LanguageList => LanguageSelectionConstants.Options;
-
-        [ObservableProperty] public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
-
-        [ObservableProperty] public partial LanguageOption SelectedLanguageOption { get; set; }
-
-        partial void OnSelectedLanguageOptionChanged(LanguageOption value)
-        {
-            _currentConfig.Settings.Language = value.Index;
-
-            SaveSettings();
-        }
-
-        [ObservableProperty] public partial int ComputerRestartClockTime { get; set; }
-        [ObservableProperty] public partial bool StartWithWindows { get; set; } = false;
-
-        // NEUE PROPERTIES FÜR DIE UI
-        [ObservableProperty]
-        public partial bool IsRestartSliderVisible { get; set; }
-
-        [ObservableProperty]
-        public partial string RestartStatusText { get; set; } = "";
 
         public int ComputerRestartClockTimeMin { get; init; }
         public int ComputerRestartClockTimeMax { get; init; }
 
+        // Observable Properties (UI-Bindings)
+        [ObservableProperty] public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
+        [ObservableProperty] public partial LanguageOption SelectedLanguageOption { get; set; }
+        [ObservableProperty] public partial int ComputerRestartClockTime { get; set; }
+        [ObservableProperty] public partial bool StartWithWindows { get; set; } = false;
+        // UI-State Properties (Sichtbarkeit & Text)
+        [ObservableProperty] public partial bool IsRestartSliderVisible { get; set; }
+        [ObservableProperty] public partial string RestartStatusText { get; set; } = "";
 
+        // =========================================================
+        // 3. CONSTRUCTOR
+        // =========================================================
 
         public ViewModelOptions(
             IDialogService dialogService,
@@ -70,136 +71,32 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _autoLogonService = autoLogonService;
             _os = os;
             _eVisitorConfigService = eVisitorConfigService;
+
+            // Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
+            // Limits setzen
             ComputerRestartClockTimeMin = 0;
             ComputerRestartClockTimeMax = 23;
             ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
 
-            // ComboBox (WICHTIG!)
-            // Wir suchen den Eintrag in der Liste, der den Tagen aus der Config entspricht.
-            // Fallback auf Index 0, falls nichts gefunden (z.B. bei neuer Config).
+            // ComboBox Vorbelegung (WICHTIG!)
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
             var configLanguageIndex = _currentConfig.Settings.Language;
 
             SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(x => x.Days == configDays) ?? ComputerRestartList[0];
-
             SelectedLanguageOption = LanguageList.FirstOrDefault(x => x.Index == configLanguageIndex) ?? LanguageList[0];
 
+            // UI-Status initial berechnen
+            UpdateRestartUiState();
+
+            // Async Initialisierung starten (Fire & Forget)
             _ = InitializeAsync();
         }
 
-        // --- NEUE LOGIK-METHODE ---
-        private void UpdateRestartUiState()
-        {
-            int days = SelectedComputerRestartOption?.Days ?? 0;
-
-            // 1. Sichtbarkeit des Sliders steuern
-            IsRestartSliderVisible = days > 0;
-
-            // 2. Text generieren
-            if (days == 0)
-            {
-                RestartStatusText = "Computer wird nicht neugestartet";
-            }
-            else
-            {
-                // HIER DIE KORREKTUR:
-                // Wir holen das Datum. Ist es 'null', nutzen wir MinValue als Platzhalter.
-                DateTime targetDate = _currentConfig.Computer.NextRestartDate ?? DateTime.MinValue;
-
-                // Wenn es MinValue ist (weil es null war oder noch nicht gesetzt),
-                // berechnen wir es hier "on the fly" für die Anzeige.
-                if (targetDate == DateTime.MinValue)
-                {
-                    targetDate = DateTime.Today.AddDays(days).AddHours(ComputerRestartClockTime);
-                }
-
-                // Text formatieren
-                RestartStatusText = $"Computer wird am {targetDate:dd.MM.yyyy} um {targetDate:HH} Uhr neugestartet";
-            }
-        }
-
-        // Wenn sich die Auswahl ändert, kannst du hier reagieren
-        partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
-        {
-            _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
-
-            RecalculateNextRestartDate(); // Berechnet das Datum in der Config
-            UpdateRestartUiState();       // <--- NEU: Aktualisiert Text & Sichtbarkeit für UI
-
-            SaveSettings();
-        }
-
-        partial void OnComputerRestartClockTimeChanged(int value)
-        {
-            // 1. Clamping
-            int clampedValue = Math.Clamp(value, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
-
-            // 2. Auto-Korrektur in der UI
-            if (value != clampedValue)
-            {
-                // Das setzt die Property neu. 
-                // WICHTIG: Da es eine partial Property ist, funktioniert der Setter hier rekursiv sicher.
-                ComputerRestartClockTime = clampedValue;
-                return;
-            }
-
-            // 3. Speichern
-            if (_currentConfig.Computer.RestartClockTime != value)
-            {
-                _currentConfig.Computer.RestartClockTime = value;
-
-                RecalculateNextRestartDate(); // Berechnet das Datum in der Config
-                UpdateRestartUiState();       // <--- NEU: Aktualisiert Text
-
-                SaveSettings();
-            }
-        }
-
-        private async Task InitializeAsync()
-        {
-            _isInitializing = true; // Sperre aktivieren
-
-            try
-            {
-                StartWithWindows = await _os.WindowsStartupManagerService.IsAutoStartEnabledAsync();
-
-                if (_currentConfig.Settings.StartWithWindows is true && StartWithWindows is false)
-                {
-                    await _os.WindowsStartupManagerService.EnableAutoStartAsync();
-                }
-            }
-            finally
-            {
-                _isInitializing = false; // Sperre aufheben
-            }
-        }
-
-
-        partial void OnStartWithWindowsChanged(bool value)
-        {
-            if (_isInitializing) return; // Abbrechen, wenn wir nur den Startwert laden
-
-            // Jetzt wirklich ändern
-            ToggleAutoStartAsync(value);
-        }
-
-        private async void ToggleAutoStartAsync(bool enable)
-        {
-            if (enable) { 
-
-                await _os.WindowsStartupManagerService.EnableAutoStartAsync();
-                _currentConfig.Settings.StartWithWindows = enable;
-                SaveSettings();
-            }
-            else
-            {
-                await _os.WindowsStartupManagerService.DisableAutoStartAsync();
-                _currentConfig.Settings.StartWithWindows = enable;
-                SaveSettings();
-            }
-        }
+        // =========================================================
+        // 4. COMMANDS
+        // =========================================================
 
         [RelayCommand]
         private async Task ConfigureAutoLogon()
@@ -208,13 +105,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string currentUser = Environment.UserName;
             string currentDomain = Environment.UserDomainName;
 
-            // 2. Dialog anzeigen und Defaults übergeben
-            // Hinweis: Du musst deine Methode ShowAutoLogonDialogAsync so anpassen, 
-            // dass sie diese Parameter akzeptiert und ins Textfeld schreibt.
+            // 2. Dialog anzeigen
             var dialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain);
 
-            // Wenn null, wurde abgebrochen -> Nichts tun
-            if (dialogResult == null) return;
+            if (dialogResult == null) return; // Abgebrochen
 
             try
             {
@@ -231,15 +125,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     var domain = dialogResult.Credentials.Domain;
                     var pass = dialogResult.Credentials.Password;
 
-                    // --- NEU: Validierung der Zugangsdaten ---
+                    // Validierung
                     bool isValid = ValidateCredentials(user, domain, pass);
 
                     if (!isValid)
                     {
                         await _dialogService.ShowMessageAsync("Fehler", "Benutzername oder Passwort sind nicht korrekt. Bitte prüfen Sie die Eingaben.");
-                        return; // Abbruch, nicht speichern
+                        return;
                     }
-                    // -----------------------------------------
 
                     _autoLogonService.EnableAutoLogon(user, domain, pass);
                     await _dialogService.ShowMessageAsync("Erfolg", "Die automatische Anmeldung wurde eingerichtet.");
@@ -251,41 +144,96 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        // Hilfsmethode zur Überprüfung der Anmeldedaten
-        private bool ValidateCredentials(string username, string domain, string password)
+        // =========================================================
+        // 5. PROPERTY CHANGE HANDLERS (Partial Methods)
+        // =========================================================
+
+        partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
         {
-            try
-            {
-                // Entscheidung: Ist es ein Domain-Account oder ein lokaler Account?
-                ContextType contextType = ContextType.Machine;
+            _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
 
-                // Wenn die angegebene Domain ungleich dem Computernamen ist, versuchen wir Domain-Auth
-                if (!string.Equals(domain, Environment.MachineName, StringComparison.OrdinalIgnoreCase))
-                {
-                    contextType = ContextType.Domain;
-                }
+            RecalculateNextRestartDate();
+            UpdateRestartUiState();
+            SaveSettings();
+        }
 
-                // PrincipalContext erstellen und validieren
-                using (var context = new PrincipalContext(contextType, domain))
-                {
-                    return context.ValidateCredentials(username, password);
-                }
-            }
-            catch (PrincipalServerDownException)
+        partial void OnComputerRestartClockTimeChanged(int value)
+        {
+            // Clamping & UI Korrektur
+            int clampedValue = Math.Clamp(value, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
+            if (value != clampedValue)
             {
-                // Fallback: Wenn Domain-Controller nicht erreichbar, kann man evtl. nicht prüfen.
-                // Hier entscheiden: Trotzdem erlauben oder Fehler werfen?
-                throw new Exception("Der Domänen-Controller konnte zur Überprüfung nicht erreicht werden.");
+                ComputerRestartClockTime = clampedValue;
+                return;
             }
-            catch (Exception)
+
+            // Speichern
+            if (_currentConfig.Computer.RestartClockTime != value)
             {
-                // Bei anderen Fehlern (z.B. Domain existiert nicht) ist die Validierung fehlgeschlagen
-                return false;
+                _currentConfig.Computer.RestartClockTime = value;
+                RecalculateNextRestartDate();
+                UpdateRestartUiState();
+                SaveSettings();
             }
         }
 
-        // Diese Methode rufst du in OnComputerRestartClockTimeChanged UND 
-        // in OnSelectedComputerRestartOptionChanged auf.
+        partial void OnSelectedLanguageOptionChanged(LanguageOption value)
+        {
+            _currentConfig.Settings.Language = value.Index;
+            SaveSettings();
+        }
+
+        partial void OnStartWithWindowsChanged(bool value)
+        {
+            if (_isInitializing) return;
+            ToggleAutoStartAsync(value);
+        }
+
+        // =========================================================
+        // 6. PRIVATE HELPER METHODS
+        // =========================================================
+
+        private async Task InitializeAsync()
+        {
+            _isInitializing = true;
+            try
+            {
+                StartWithWindows = await _os.WindowsStartupManagerService.IsAutoStartEnabledAsync();
+
+                if (_currentConfig.Settings.StartWithWindows && !StartWithWindows)
+                {
+                    await _os.WindowsStartupManagerService.EnableAutoStartAsync();
+                }
+            }
+            finally
+            {
+                _isInitializing = false;
+            }
+        }
+
+        private void UpdateRestartUiState()
+        {
+            int days = SelectedComputerRestartOption?.Days ?? 0;
+
+            IsRestartSliderVisible = days > 0;
+
+            if (days == 0)
+            {
+                RestartStatusText = "Computer wird nicht neugestartet";
+            }
+            else
+            {
+                DateTime targetDate = _currentConfig.Computer.NextRestartDate ?? DateTime.MinValue;
+
+                if (targetDate == DateTime.MinValue)
+                {
+                    targetDate = DateTime.Today.AddDays(days).AddHours(ComputerRestartClockTime);
+                }
+
+                RestartStatusText = $"Computer wird am {targetDate:dd.MM.yyyy} um {targetDate:HH} Uhr neugestartet";
+            }
+        }
+
         private void RecalculateNextRestartDate()
         {
             int days = _currentConfig.Computer.ComputerRestartIntervalDays;
@@ -300,6 +248,48 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 _currentConfig.Computer.NextRestartDate = DateTime.MinValue;
             }
         }
+
+        private async void ToggleAutoStartAsync(bool enable)
+        {
+            if (enable)
+            {
+                await _os.WindowsStartupManagerService.EnableAutoStartAsync();
+            }
+            else
+            {
+                await _os.WindowsStartupManagerService.DisableAutoStartAsync();
+            }
+
+            _currentConfig.Settings.StartWithWindows = enable;
+            SaveSettings();
+        }
+
+        private bool ValidateCredentials(string username, string domain, string password)
+        {
+            try
+            {
+                ContextType contextType = ContextType.Machine;
+
+                if (!string.Equals(domain, Environment.MachineName, StringComparison.OrdinalIgnoreCase))
+                {
+                    contextType = ContextType.Domain;
+                }
+
+                using (var context = new PrincipalContext(contextType, domain))
+                {
+                    return context.ValidateCredentials(username, password);
+                }
+            }
+            catch (PrincipalServerDownException)
+            {
+                throw new Exception("Der Domänen-Controller konnte zur Überprüfung nicht erreicht werden.");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void SaveSettings()
         {
             _eVisitorConfigService.SaveConfig(_currentConfig);

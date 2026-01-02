@@ -228,8 +228,7 @@
                                            TextWrapping="Wrap"
                                            FontSize="12"
                                            Height="51"
-                                           Width="336"
-                                           Tapped="Tbl_restart_information_MouseLeftButtonDown" />
+                                           Width="336"/>
                             </StackPanel>
 
                         </Border>
@@ -265,8 +264,7 @@
                                             HorizontalAlignment="Stretch"
                                             Background="#FF4DC89E"
                                             Foreground="#DDFFFFFF"
-                                            BorderBrush="{x:Null}"
-                                            Click="BtnCheckForUpdates_Click" />
+                                            BorderBrush="{x:Null}"/>
 
                                 </StackPanel>
 
@@ -286,8 +284,7 @@
                                             HorizontalAlignment="Stretch"
                                             Background="#FF149DAE"
                                             Foreground="#DDFFFFFF"
-                                            BorderBrush="{x:Null}"
-                                            Click="Btn_go_to_settings_data_Click"/>
+                                            BorderBrush="{x:Null}"/>
 
                                 </StackPanel>
 
@@ -306,8 +303,7 @@
                                             HorizontalAlignment="Stretch"
                                             Background="#FFD5D5D5"
                                             Foreground="Black"
-                                            BorderBrush="{x:Null}"
-                                            Click="BtnSetStandardTheme_Click" />
+                                            BorderBrush="{x:Null}"/>
 
                                     <Button x:Name="BtnSetDarkTheme"
                                             x:Uid="Dark"
@@ -316,8 +312,7 @@
                                             HorizontalAlignment="Stretch"
                                             Background="#FF414D4F"
                                             Foreground="White"
-                                            BorderBrush="{x:Null}"
-                                            Click="BtnSetDarkTheme_Click" />
+                                            BorderBrush="{x:Null}"/>
 
                                 </StackPanel>
 
@@ -475,8 +470,7 @@
                                                     Height="35"
                                                     Background="#FF1598C9"
                                                     Foreground="#DDFFFFFF"
-                                                    BorderBrush="{x:Null}"
-                                                    Click="BtnShowAPIKey_Click" />
+                                                    BorderBrush="{x:Null}"/>
 
                                         </StackPanel>
 
@@ -529,8 +523,7 @@
                                                 FontSize="16"
                                                 Background="#FF1598C9"
                                                 Foreground="White"
-                                                BorderBrush="{x:Null}"
-                                                Click="BtnConnectWithAPIInterface_Click" />
+                                                BorderBrush="{x:Null}"/>
 
                                         <Button x:Name="BtnImportAPIFile"
                                                 x:Uid="Establish_API_connection_with_file_import"
@@ -540,8 +533,7 @@
                                                 FontSize="16"
                                                 Background="#FF1598C9"
                                                 Foreground="White"
-                                                BorderBrush="{x:Null}"
-                                                Click="BtnImportAPIFile_Click" />
+                                                BorderBrush="{x:Null}"/>
 
                                     </StackPanel>
 
@@ -564,19 +556,18 @@
                                                 IsEnabled="{Binding BtnAPISectionIsEnabled}"
                                                 Background="#FF1598C9"
                                                 Foreground="White"
-                                                BorderBrush="{x:Null}"
-                                                Click="BtnGoToSavedAPIFile_Click" />
+                                                BorderBrush="{x:Null}"/>
 
                                         <Button x:Name="BtnRemoveAPIFile"
-                                                x:Uid="Deactivate_API_interface"                                                Margin="0,0,0,0"
+                                                x:Uid="Deactivate_API_interface"
+                                                Margin="0,0,0,0"
                                                 Width="330"
                                                 FontSize="16"
                                                 Height="40"
                                                 IsEnabled="{Binding BtnAPISectionIsEnabled}"
                                                 Background="#FF1598C9"
                                                 Foreground="White"
-                                                BorderBrush="{x:Null}"
-                                                Click="BtnRemoveAPIFile_Click" />
+                                                BorderBrush="{x:Null}"/>
 
                                     </StackPanel>
 

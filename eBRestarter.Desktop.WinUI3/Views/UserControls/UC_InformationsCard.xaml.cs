@@ -172,11 +172,11 @@ public sealed partial class UC_InformationsCard : UserControl
     {
         InitializeComponent();
 
-        uc_information_backgroundcolor.DataContext = this;
-        uc_information_header_image.DataContext = this;
-        tbl_cpu_name.DataContext = this;
-        tbl_gpu_name.DataContext = this;
-        tbl_installed_RAM.DataContext = this;
-        uc_information_title.DataContext = this;
+        //uc_information_backgroundcolor.DataContext = this;
+        //uc_information_header_image.DataContext = this;
+        //tbl_cpu_name.DataContext = this;
+        //tbl_gpu_name.DataContext = this;
+        //tbl_installed_RAM.DataContext = this;
+        //uc_information_title.DataContext = this;
     }
 }

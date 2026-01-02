@@ -8,60 +8,47 @@
              mc:Ignorable="d">
 
     <Grid>
+        <Border CornerRadius="5"
+                BorderThickness="0"                     
+                Width="Auto"
+                Height="140"
+                Margin="0"
+                Background="{x:Bind BackGroundColor, Mode=OneWay}">
 
-        <Border     Name                        ="uc_information_backgroundcolor"                      
-                    CornerRadius                ="5"
-                    BorderThickness             ="0"                     
-                    Width                       ="Auto"
-                    Height                      ="140"
-                    Margin                      ="0"
-                    Background                  ="{Binding BackGroundColor}">
+            <StackPanel Orientation="Vertical" Width="Auto" Height="140">
 
-            <StackPanel Orientation         ="Vertical"
-                    Width               ="Auto"
-                    Height              ="140">
+                <StackPanel Height="40" Orientation="Horizontal">
 
-                <StackPanel     Height          ="40"
-                            Orientation     ="Horizontal">
+                    <Image Source="{x:Bind HeaderImage, Mode=OneWay}"                                    
+                           Margin="10,0,0,0"
+                           Height="{x:Bind ImageHeight, Mode=OneWay}"
+                           Width="{x:Bind ImageWidth, Mode=OneWay}"/>
 
-                    <Image
-                            Name                            ="uc_information_header_image"
-                            Source                          ="{Binding HeaderImage}"                               
-                            Margin                          ="10,0,0,0"
-                            Height                          ="{Binding ImageHeight}"
-                            Width                           ="{Binding ImageWidth}"/>
-
-                    <TextBlock  Name         ="uc_information_title"
-                            Text         ="{Binding HeaderTitle}"
-                            Foreground   ="{Binding Title_Foreground}"
-                            Margin       ="10,0,0,0"
-                            Height       ="22"
-                            FontSize     ="16"/>
+                    <TextBlock Text="{x:Bind HeaderTitle, Mode=OneWay}"
+                               Foreground="{x:Bind TitleForeground, Mode=OneWay}"
+                               Margin="10,0,0,0"
+                               Height="22"
+                               FontSize="16"/>
 
                 </StackPanel>
 
-                <TextBlock         Name             ="tbl_cpu_name"
-                               Text             ="{Binding InformationRow_1}" 
-                               Foreground       ="{Binding InformationRow_Foreground}"
-                               FontSize         ="16"
-                               Margin           ="15,7,0,0"
-                               TextWrapping     ="Wrap"/>
+                <TextBlock Text="{x:Bind InformationRow1, Mode=OneWay}" 
+                           Foreground="{x:Bind InformationRowForeground, Mode=OneWay}"
+                           FontSize="16"
+                           Margin="15,7,0,0"
+                           TextWrapping="Wrap"/>
 
-                <TextBlock         Name             ="tbl_gpu_name"
-                               Text             ="{Binding InformationRow_2}"
-                               Foreground       ="{Binding InformationRow_Foreground}"
-                               FontSize         ="16"
-                               Margin           ="15,10,0,0"/>
+                <TextBlock Text="{x:Bind InformationRow2, Mode=OneWay}"
+                           Foreground="{x:Bind InformationRowForeground, Mode=OneWay}"
+                           FontSize="16"
+                           Margin="15,10,0,0"/>
 
-                <TextBlock         Name             ="tbl_installed_RAM"
-                               Text             ="{Binding InformationRow_3}"
-                               Foreground       ="{Binding InformationRow_Foreground}"
-                               FontSize         ="16"
-                               Margin           ="15,10,0,15"/>
+                <TextBlock Text="{x:Bind InformationRow3, Mode=OneWay}"
+                           Foreground="{x:Bind InformationRowForeground, Mode=OneWay}"
+                           FontSize="16"
+                           Margin="15,10,0,15"/>
 
             </StackPanel>
-
         </Border>
-
     </Grid>
 </UserControl>

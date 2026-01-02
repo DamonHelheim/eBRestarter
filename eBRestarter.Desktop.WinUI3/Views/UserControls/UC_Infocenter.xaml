@@ -60,35 +60,35 @@ Padding="10,0,0,0">
 
                 <!-- ROW 0: zwei Info-Karten nebeneinander -->
                 <StackPanel Grid.Row="0"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Left"
-                        Width="995">
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Left"
+                            Width="995">
 
                     <local:UC_InformationsCard HeaderTitle="Hardwarespezifiktion"
-                                       TitleForeground="{ThemeResource FontColor_4}"
-                                       HeaderImage="{ThemeResource WorkstationIcon}"
-                                       ImageHeight="40"
-                                       ImageWidth="40"
-                                       BackGroundColor="{ThemeResource DashletBackgroundColor_4}"
-                                       InformationRow1="{Binding HardwareSpecificationModel.Processor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRow2="{Binding HardwareSpecificationModel.Graphics,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRow3="{Binding HardwareSpecificationModel.Ram,       Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRowForeground="{ThemeResource FontColor_4}"
-                                       Width="480"
-                                       Margin="25,0,10,0" />
+                                               TitleForeground="{ThemeResource FontColor_1}"
+                                               HeaderImage="{ThemeResource WorkstationIcon}"
+                                               ImageHeight="40"
+                                               ImageWidth="40"
+                                               BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
+                                               InformationRow1="{Binding ProcessorText, Mode=OneWay}"
+                                               InformationRow2="{Binding GraphicsText,  Mode=OneWay}"
+                                               InformationRow3="{Binding RamText,       Mode=OneWay}"
+                                               InformationRowForeground="{ThemeResource FontColor_1}"
+                                               
+                                               Width="480"
+                                               Margin="25,0,10,0" />
 
                     <local:UC_InformationsCard HeaderTitle="Windows-Spezifikation"
-                                       TitleForeground="{ThemeResource FontColor_4}"
-                                       HeaderImage="{ThemeResource WindowsIcon}"
-                                       ImageHeight="25"
-                                       ImageWidth="25"
-                                       BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
-                                       InformationRow1="{Binding  WindowsInformationsModel.CurrentEdition,        Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRow2="{Binding  WindowsInformationsModel.CurrentOSVersion,      Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRow3="{Binding  WindowsInformationsModel.CurrentOSBuildVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       InformationRowForeground="{ThemeResource FontColor_4}"
-                                       Width="480"
-                                               />
+                                               TitleForeground="{ThemeResource FontColor_1}"
+                                               HeaderImage="{ThemeResource WindowsIcon}"
+                                               ImageHeight="25"
+                                               ImageWidth="25"
+                                               BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
+                                               InformationRow1="{Binding  OsEditionText, Mode=OneWay}"
+                                               InformationRow2="{Binding  OsVersionText, Mode=OneWay}"
+                                               InformationRow3="{Binding  OsBuildText,   Mode=OneWay}"
+                                               InformationRowForeground="{ThemeResource FontColor_1}"
+                                               Width="480"/>
                 </StackPanel>
 
                 <!-- ROW 1: URL-Karte -->

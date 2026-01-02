@@ -11,9 +11,9 @@
 
     <UserControl.Resources>
 
-        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
         <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisInverted" TrueValue="Collapsed" FalseValue="Visible"/>
-        <converters:StringKeyToStyleConverter x:Key="StringKeyToStyleConverter" />
+        <converters:StringKeyToStyleConverter x:Key="StringKeyToStyleConverter"/>
 
     </UserControl.Resources>
 
