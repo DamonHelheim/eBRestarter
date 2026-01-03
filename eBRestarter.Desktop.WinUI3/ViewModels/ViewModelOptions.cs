@@ -55,7 +55,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool StartWithWindows { get; set; } = false;
         // UI-State Properties (Sichtbarkeit & Text)
         [ObservableProperty] public partial bool IsRestartSliderVisible { get; set; }
-        [ObservableProperty] public partial string RestartStatusText { get; set; } = "";
+        [ObservableProperty] public partial string RestartStatusText { get; set; } = string.Empty;
 
         // =========================================================
         // 3. CONSTRUCTOR
