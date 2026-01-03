@@ -31,6 +31,7 @@
                    Margin="5,0,0,0"/>
 
             <TextBlock x:Name            ="tbl_Networktraffic_title"
+                       x:Uid=""
                        Foreground        ="{DynamicResource FontColor_1}"
                        Canvas.Left       ="48"
                        TextWrapping      ="Wrap"

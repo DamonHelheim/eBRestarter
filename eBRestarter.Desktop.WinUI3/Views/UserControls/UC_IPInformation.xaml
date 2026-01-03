@@ -34,11 +34,12 @@
 
                 <TextBlock x:Name="tbl_IP_Information"
                            x:Uid="IPInformation"
-                       Foreground="{ThemeResource FontColor_1}"
-                       Margin="10,0,0,0"
-                       TextWrapping="Wrap"
-                       FontSize="20"
-                       VerticalAlignment="Center" />
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="10,0,0,0"
+                           TextWrapping="Wrap"
+                           FontSize="20"
+                           VerticalAlignment="Center" />
+                
             </StackPanel>
 
             <!-- Inhalt (Expander) -->

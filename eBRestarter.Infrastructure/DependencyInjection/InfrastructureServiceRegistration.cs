@@ -69,6 +69,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             // NEU: Die Facade registrieren
             services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
 
+            services.AddSingleton<IWindowsNetworkInfoService, WindowsNetworkInfoService>();
+
             // 2. Browser (Transient, damit sie bei jedem Factory-Call frisch sind)
             services.AddTransient<ChromeBrowser>();
             services.AddTransient<FirefoxBrowser>();
