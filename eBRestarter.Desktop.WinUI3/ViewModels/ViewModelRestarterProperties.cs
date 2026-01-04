@@ -6,12 +6,15 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Desktop.WinUI3.Services;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -22,6 +25,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // Nur noch EINE Abhängigkeit
         private readonly IOperatingSystemFacade _operatingSystemFacade;
         private readonly IEVisitorConfigService _eVisitorConfigService;
+        private readonly IDialogService _dialogService;
 
         // Die Liste für die Combobox (readonly, da sich die Optionen nicht ändern)
         public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList => BrowserCacheConstants.Options;
@@ -50,10 +54,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
 
         // Der Konstruktor ist extrem schlank
-        public ViewModelRestarterProperties(IOperatingSystemFacade operatingSystemFacade, IEVisitorConfigService eVisitorConfigService)
+        public ViewModelRestarterProperties(
+            IOperatingSystemFacade operatingSystemFacade,
+            IEVisitorConfigService eVisitorConfigService,
+            IDialogService dialogService)
         {
             _operatingSystemFacade = operatingSystemFacade;
             _eVisitorConfigService = eVisitorConfigService;
+            _dialogService = dialogService;
 
             // 1. Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();
@@ -104,6 +112,47 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SaveSettings();
         }
 
+        // Der Generator erstellt diese Methode 'partial' im Hintergrund und ruft sie im Setter auf.
+        // Wir implementieren hier den "Rumpf".
+        partial void OnRuntimePauseSecondsChanged(int value)
+        {
+            // 1. Clamping
+            int clampedValue = Math.Clamp(value, RuntimePauseSecondsMin, RuntimePauseSecondsMax);
+
+            // 2. Auto-Korrektur in der UI
+            if (value != clampedValue)
+            {
+                // Das setzt die Property neu. 
+                // WICHTIG: Da es eine partial Property ist, funktioniert der Setter hier rekursiv sicher.
+                RuntimePauseSeconds = clampedValue;
+                return;
+            }
+
+            // 3. Speichern
+            if (_currentConfig.Browser.RuntimePauseSeconds != value)
+            {
+                _currentConfig.Browser.RuntimePauseSeconds = value;
+                SaveSettings();
+            }
+        }
+
+        partial void OnRuntimeHoursChanged(int value)
+        {
+            int clampedValue = Math.Clamp(value, BrowserRuntimeHoursMin, BrowserRuntimeHoursMax);
+
+            if (value != clampedValue)
+            {
+                RuntimeHours = clampedValue;
+                return;
+            }
+
+            if (_currentConfig.Browser.RuntimeHours != value)
+            {
+                _currentConfig.Browser.RuntimeHours = value;
+                SaveSettings();
+            }
+        }
+
         // 2. Der Command mit CanExecute-Prüfung
         [RelayCommand(CanExecute = nameof(CanAddUsername))]
         private void AddeVVisitorUsername()
@@ -128,46 +177,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _operatingSystemFacade.WindowsProcessControlService.OpenUrlInBrowser(WebLinks.RegistrationLink);
         }
 
-        // Der Generator erstellt diese Methode 'partial' im Hintergrund und ruft sie im Setter auf.
-        // Wir implementieren hier den "Rumpf".
-
-        partial void OnRuntimePauseSecondsChanged(int value)
+        [RelayCommand]
+        private async Task ShowBrowserDeleteContent()
         {
-            // 1. Clamping
-            int clampedValue = Math.Clamp(value, RuntimePauseSecondsMin, RuntimePauseSecondsMax);
-
-            // 2. Auto-Korrektur in der UI
-            if (value != clampedValue)
-            {
-                // Das setzt die Property neu. 
-                // WICHTIG: Da es eine partial Property ist, funktioniert der Setter hier rekursiv sicher.
-                RuntimePauseSeconds = clampedValue;
-                return; 
-            }
-
-            // 3. Speichern
-            if (_currentConfig.Browser.RuntimePauseSeconds != value)
-            {
-                _currentConfig.Browser.RuntimePauseSeconds = value;
-                SaveSettings();
-            }
-        }
-
-        partial void OnRuntimeHoursChanged(int value)
-        {
-            int clampedValue = Math.Clamp(value, BrowserRuntimeHoursMin, BrowserRuntimeHoursMax);
-
-            if (value != clampedValue)
-            {
-                RuntimeHours = clampedValue;
-                return;
-            }
-
-            if (_currentConfig.Browser.RuntimeHours != value)
-            {        
-                _currentConfig.Browser.RuntimeHours = value;
-                SaveSettings();
-            }
+            // Der Dialog öffnet sich, Code wartet hier, bis Dialog geschlossen wird
+            await _dialogService.ShowBrowserDeleteContentDialogAsync();
         }
 
         private void SaveSettings()

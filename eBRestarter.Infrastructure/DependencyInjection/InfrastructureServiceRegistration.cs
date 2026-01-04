@@ -92,6 +92,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             services.AddSingleton<IAppInfoService, AppInfoService>();
 
+            services.AddSingleton<IFileDeletionService, FileDeletionService>();
+
             return services;
         }
     }

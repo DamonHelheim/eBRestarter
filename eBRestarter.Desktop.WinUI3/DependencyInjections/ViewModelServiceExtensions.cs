@@ -35,6 +35,7 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             services.AddSingleton<ViewModelAbout>();
 
             services.AddTransient<NetworkTrafficViewModel>();
+            services.AddTransient<ViewModelDeleteBrowserContent>();
 
             // Rückgabe von "services" ermöglicht Chaining (services.AddX().AddY())
             return services;

@@ -15,5 +15,6 @@ namespace eBRestarter.Desktop.WinUI3.Services.Interfaces
         Task<AutoLogonDialogResult> ShowAutoLogonDialogAsync(string defaultUser = null, string defaultDomain = null);
 
         Task ShowAboutDialogAsync();
+        Task ShowBrowserDeleteContentDialogAsync();
     }
 }

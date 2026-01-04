@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class DeleteBrowserContentViewModel : ObservableObject
+    public partial class ViewModelDeleteBrowserContent : ObservableObject
     {
         private readonly IBrowserFactory _browserFactory;
         private readonly IWindowsProcessControlService _processService; // Dein existierender Service
@@ -36,11 +36,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-        private partial bool IsDeleteCookiesChecked { get; set; } = true;
+        public partial bool IsDeleteCookiesChecked { get; set; } = true;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-        private partial bool IsDeleteInternetCacheChecked { get; set; } = true;
+        public partial bool IsDeleteInternetCacheChecked { get; set; } = true;
 
         [ObservableProperty] public partial double ProgressValue { get; set; } = 0;
         [ObservableProperty] public partial double ProgressMaximum { get; set; } = 100;
@@ -50,9 +50,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
         [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
-        private partial bool IsBusy { get; set; } = false;
+        public partial bool IsBusy { get; set; } = false;
 
-        public DeleteBrowserContentViewModel(
+        public ViewModelDeleteBrowserContent(
             IBrowserFactory browserFactory,
             IWindowsProcessControlService processService,
             IFileDeletionService fileDeletionService,
