@@ -22,6 +22,9 @@ namespace eBRestarter.Core.Application.Interfaces.Browser
         // Cache & Pfad Infos
         BrowserPaths GetPaths();
 
+        bool IsExtensionInstalled(string extensionId); // NEU
+        string ExtensionInstallUrl { get; } // NEU: Link zum Store
+
 
     }
 }

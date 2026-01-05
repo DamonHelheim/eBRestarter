@@ -61,7 +61,7 @@
                    Visibility="{Binding Tbl_NoBrowserInstalledIsVisible}" />
 
 
-        <Button Grid.Row="2"
+            <Button Grid.Row="2"
                 x:Name="BtnDeleteBrowserContent"
                 x:Uid="Delete_browser_content"
                 Style="{ThemeResource ButtonCustomStyle_1}"
@@ -72,9 +72,10 @@
                 HorizontalAlignment="Stretch"
                 IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
 
-        <Button Grid.Row="3"
+            <Button Grid.Row="3"
                 x:Name="BtnInstalleBesucherAddOn"
                 x:Uid="Install_eVisitor_add_on"
+                Command="{Binding ShowInstallAddOnDialogCommand}"
                 Style="{ThemeResource ButtonCustomStyle_1}"
                 Margin="0,8,0,0"
                 Height="40"

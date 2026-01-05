@@ -23,10 +23,15 @@ namespace eBRestarter.Infrastructure.Browsers.Abstract
         public abstract string DisplayName { get; }
         public abstract string IconPath { get; }
         public abstract string DownloadUrl { get; }
+
+        // --- NEU: Extension URL muss von konkreter Klasse geliefert werden ---
+        public abstract string ExtensionInstallUrl { get; }
         protected abstract string ProcessName { get; }
         protected abstract string RegistryKeyVersion { get; }
         protected abstract List<string> ExecutablePaths { get; }
 
+        // --- NEU: Extension Check muss von konkreter Klasse (oder Zwischenklasse) implementiert werden ---
+        public abstract bool IsExtensionInstalled(string? extensionId = null);
         public virtual void Start(string url, string arguments = "")
         {
             try

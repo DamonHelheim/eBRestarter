@@ -24,8 +24,9 @@ namespace eBRestarter.Infrastructure.Browsers
         // Registry Key für Versionsprüfung (ähnlich Chrome)
         protected override string RegistryKeyVersion => @"Software\Microsoft\Edge\BLBeacon";
 
-        // Konstanten spezifisch für Edge
-        private const string ExtensionId = "kjhejmaladginnedpoppohfnkionnghi";
+        // --- NEU IMPLEMENTIERT ---
+        protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
+        public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 
         public EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger) : base(os, logger) { }
 

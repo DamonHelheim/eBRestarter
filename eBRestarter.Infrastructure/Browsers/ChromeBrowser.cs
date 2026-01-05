@@ -26,7 +26,9 @@ namespace eBRestarter.Infrastructure.Browsers
         protected override string ProcessName => "chrome";
         // Chrome speichert Version oft unter HKCU\BLBeacon
         protected override string RegistryKeyVersion => @"Software\Google\Chrome\BLBeacon";
-
+        // --- NEU IMPLEMENTIERT ---
+        protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
+        public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
         public ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> logger) : base(os, logger) { }
 
         public override BrowserPaths GetPaths()

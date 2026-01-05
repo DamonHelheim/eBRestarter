@@ -30,8 +30,9 @@ namespace eBRestarter.Infrastructure.Browsers
         // Registry Key für Versionsprüfung
         protected override string RegistryKeyVersion => @"Software\BraveSoftware\Brave-Browser\BLBeacon";
 
-        // Konstanten spezifisch für Brave
-        private const string ExtensionId = "agchmcconfdfcenopioeilpgjngelefk";
+        // --- NEU IMPLEMENTIERT ---
+        protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
+        public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 
         public BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logger) : base(os, logger) { }
 

@@ -11,10 +11,14 @@ using System.Text;
 namespace eBRestarter.Infrastructure.Browsers
 {
     public class FirefoxBrowser : BrowserBase
-    {
+    {// Konstanten (Könnten auch aus deiner WebLinks Klasse kommen)
+        private const string FirefoxEbesucherAddOnLink = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/";
+        private const string EbesucherAddOnNameForFirefox = "{fef425dc-a60f-4484-954d-71ecf2544846}.xpi";
         public override string DisplayName => "Firefox";
         public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_firefox.png";
         public override string DownloadUrl => WebLinks.FirefoxDownloadLink; // Stellen Sie sicher, dass WebLinks existiert
+        // --- Implementierung der neuen abstrakten Properties ---
+        public override string ExtensionInstallUrl => FirefoxEbesucherAddOnLink;
         public override BrowserType Type => BrowserType.Firefox;
         protected override string ProcessName => "firefox";
 
@@ -23,6 +27,33 @@ namespace eBRestarter.Infrastructure.Browsers
 
         public FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> logger)
             : base(os, logger) { }
+
+        // --- Implementierung der Extension-Prüfung ---
+        public override bool IsExtensionInstalled(string? extensionId = null)
+        {
+            var paths = GetPaths();
+            var extensionsDir = paths.ExtensionsDir;
+
+            // Firefox Extensions liegen im Profilordner unter "extensions"
+            if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) return false;
+
+            // Wenn keine spezifische ID übergeben wird, nehmen wir unseren Standard-Namen
+            // Wir entfernen führende Backslashes, falls in der Konstante vorhanden, um sauber zu kombinieren
+            var idToCheck = string.IsNullOrEmpty(extensionId)
+                ? EbesucherAddOnNameForFirefox.TrimStart('\\')
+                : extensionId;
+
+            // Fall 1: Die Extension ist eine .xpi Datei (häufigster Fall)
+            var xpiPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
+            if (_os.WindowsFileSystemService.FileExists(xpiPath)) return true;
+
+            // Fall 2: Die Extension ist ein entpackter Ordner (z.B. bei Sideloading oder Entwicklung)
+            // Dafür entfernen wir ".xpi" vom Namen, falls vorhanden
+            var folderName = idToCheck.Replace(".xpi", "");
+            var folderPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, folderName);
+
+            return _os.WindowsFileSystemService.DirectoryExists(folderPath);
+        }
 
         protected override List<string> ExecutablePaths
         {
