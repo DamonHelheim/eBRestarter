@@ -99,6 +99,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
 
         [RelayCommand]
+        private async Task ShowActivateApiDialog()
+        {
+            await _dialogService.ShowActivateApiDialogAsync();
+        }
+
+            [RelayCommand]
         private async Task ConfigureAutoLogon()
         {
             // 1. Aktuellen Windows-Nutzer auslesen

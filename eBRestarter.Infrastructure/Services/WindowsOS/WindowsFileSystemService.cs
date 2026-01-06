@@ -47,5 +47,17 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
             // Das spart uns eine "if (Exists)" Abfrage und Race-Conditions.
             File.Delete(path);
         }
+
+        public void WriteAllText(string path, string content)
+        {
+            File.WriteAllText(path, content);
+        }
+
+        public string ReadAllText(string path)
+        {
+            var content = File.ReadAllText(path);
+
+            return content;
+        }
     }
 }

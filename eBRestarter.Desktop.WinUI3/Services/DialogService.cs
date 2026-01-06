@@ -101,5 +101,17 @@ namespace eBRestarter.Desktop.WinUI3.Services
             // 3. Anzeigen und warten, bis der Nutzer ihn schließt
             await dialog.ShowAsync();
         }
+
+        public async Task ShowActivateApiDialogAsync()
+        {
+            // 1. Instanz erstellen
+            var dialog = new ActivateApiDialog
+            {
+                // 2. XamlRoot setzen (sonst stürzt WinUI 3 ab)
+                XamlRoot = _xamlRoot
+            };
+            // 3. Anzeigen und warten, bis der Nutzer ihn schließt
+            await dialog.ShowAsync();
+        }
     }
 }

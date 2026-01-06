@@ -12,27 +12,38 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace eBRestarter.Desktop.WinUI3.Views.Dialogs;
 
-public sealed partial class InstallAddOnDialog : ContentDialog
+public sealed partial class ActivateApiDialog : ContentDialog
 {
-    public InstallAddOnViewModel InstallAddOnViewModel { get; }
+    public ActivateApiViewModel ActivateApiViewModel { get; }
 
-    public InstallAddOnDialog()
+    public ActivateApiDialog()
     {
         InitializeComponent();
-        // ViewModel via DI holen
-        InstallAddOnViewModel = App.AppHost!.Services.GetRequiredService<InstallAddOnViewModel>();
 
-        this.DataContext = InstallAddOnViewModel;
+        ActivateApiViewModel = App.AppHost!.Services.GetRequiredService<ActivateApiViewModel>();
 
-        // Wenn Dialog geschlossen wird, Timer stoppen
-        this.Closed += (s, e) => InstallAddOnViewModel.Dispose();
+        this.DataContext = ActivateApiViewModel;
+    }
+
+    private async void Grid_Drop(object sender, DragEventArgs e)
+    {
+        if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        {
+            var items = await e.DataView.GetStorageItemsAsync();
+            if (items.Count > 0 && items[0] is StorageFile file)
+            {
+                ActivateApiViewModel.ImportLegacyFile(file.Path);
+            }
+        }
     }
 }

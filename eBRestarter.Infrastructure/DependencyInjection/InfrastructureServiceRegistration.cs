@@ -1,5 +1,6 @@
 ﻿using eBRestarter.Core.Application.Facade;
 using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
@@ -8,6 +9,7 @@ using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services;
+using eBRestarter.Infrastructure.Services.Authentication;
 using eBRestarter.Infrastructure.Services.Config;
 using eBRestarter.Infrastructure.Services.RestSharp;
 using eBRestarter.Infrastructure.Services.WindowsOS;
@@ -93,6 +95,11 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddSingleton<IAppInfoService, AppInfoService>();
 
             services.AddSingleton<IFileDeletionService, FileDeletionService>();
+
+            services.AddSingleton<IApiAuthenticationService, EVisitorApiService>();
+
+            services.AddSingleton<ICredentialStore, JsonCredentialStore>();
+
 
             return services;
         }

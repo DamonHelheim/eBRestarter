@@ -517,6 +517,7 @@
 
                                         <Button x:Name="BtnConnectWithAPIInterface"
                                                 x:Uid="Connect_to_API_interface"
+                                                Command="{Binding ShowActivateApiDialogCommand}"
                                                 Margin="0,0,0,8"
                                                 Width="330"
                                                 Height="40"

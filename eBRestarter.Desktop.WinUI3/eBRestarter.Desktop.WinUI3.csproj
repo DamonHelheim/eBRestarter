@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Remove="appsettings.json" />
     <None Remove="Views\Dialogs\AboutDialog.xaml" />
+    <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
     <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
     <None Remove="Views\Pages\P_CommonOverview.xaml" />
@@ -325,6 +326,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\ActivateApiDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\InstallAddOnDialog.xaml">
