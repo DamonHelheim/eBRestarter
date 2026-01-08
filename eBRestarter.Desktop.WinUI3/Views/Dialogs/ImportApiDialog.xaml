@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="eBRestarter.Desktop.WinUI3.Views.Dialogs.ImportApiDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d"
+    Title="API Zugang importieren"
+    CloseButtonText="Schließen"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    RequestedTheme="Dark">
+
+    <ContentDialog.Resources>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </ContentDialog.Resources>
+
+    <Grid MinWidth="500" RowSpacing="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Spacing="15">
+            <Image Source="ms-appx:///Assets/Images/Icons/Intersection/AddFileIcon_2.png" 
+                   Width="40" Height="40"/>
+            <TextBlock Text="API Zugang aus Datei importieren" 
+                       VerticalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+        </StackPanel>
+
+        <Button Grid.Row="1" Content="Durchsuchen..." 
+                Click="BtnBrowse_Click"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{x:Bind ViewModel.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="oder" HorizontalAlignment="Center" Margin="0,0,0,10" Opacity="0.6"/>
+
+            <Border Grid.Row="1" 
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumBrush}" 
+                    BorderThickness="2" 
+                    CornerRadius="4" 
+                    Padding="20"
+                    AllowDrop="True"
+                    Drop="DropZone_Drop"
+                    DragOver="DropZone_DragOver"
+                    Background="Transparent">
+                <StackPanel HorizontalAlignment="Center" Spacing="10">
+                    <Image Source="{x:Bind ViewModel.FileStatusIcon, Mode=OneWay}" 
+                           Width="48" Height="48"/>
+
+                    <TextBlock Text="{x:Bind ViewModel.ImportedFileName, Mode=OneWay, TargetNullValue='Datei hier ablegen'}" 
+                               HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <TextBox Grid.Row="3" 
+                 Header="Dateipfad"
+                 Text="{x:Bind ViewModel.ImportedFilePath, Mode=OneWay}"
+                 IsReadOnly="True"
+                 IsEnabled="False"/>
+
+        <Button Grid.Row="4" 
+                Content="Importieren &amp; Aktivieren"
+                Command="{x:Bind ViewModel.ImportCommand}"
+                HorizontalAlignment="Stretch"
+                Style="{ThemeResource AccentButtonStyle}"/>
+
+        <StackPanel Grid.Row="5" Spacing="10">
+            <ProgressBar IsIndeterminate="True" 
+                         Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
+
+            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                       Foreground="{x:Bind ViewModel.StatusColor, Mode=OneWay}"
+                       HorizontalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap"/>
+        </StackPanel>
+
+    </Grid>
+</ContentDialog>

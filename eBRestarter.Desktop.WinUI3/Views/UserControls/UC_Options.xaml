@@ -528,6 +528,7 @@
 
                                         <Button x:Name="BtnImportAPIFile"
                                                 x:Uid="Establish_API_connection_with_file_import"
+                                                Command="{Binding ShowImportApiDialogCommand}"
                                                 Margin="0,0,0,0"
                                                 Width="330"
                                                 Height="40"

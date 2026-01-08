@@ -41,6 +41,8 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
 
             services.AddTransient<ActivateApiViewModel>();
 
+            services.AddTransient<ImportApiViewModel>();
+
             // Rückgabe von "services" ermöglicht Chaining (services.AddX().AddY())
             return services;
         }
