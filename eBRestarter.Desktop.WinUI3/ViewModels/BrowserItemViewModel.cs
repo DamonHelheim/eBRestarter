@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.Helpers;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
@@ -89,9 +90,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
 
         // --- Status Anzeige (Installiert / Nicht Installiert) ---
-        public string BrowserVersion => _browserInfo.IsInstalled
-            ? $"Version: {_browserInfo.Version}"
-            : "Nicht installiert";
+        public string BrowserVersion => _browserInfo.IsInstalled ? $"Version: {_browserInfo.Version}" : "Nicht installiert";
 
         public string BrowserExist => _browserInfo.IsInstalled ? "✓" : "✘";
 
@@ -133,6 +132,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void ChooseBrowser() {
 
             _currentConfig.Browser.Selected = HeaderTitleBrowser;
+
+            // Senden des reinen Records
+            WeakReferenceMessenger.Default.Send(new BrowserChangedMessage(HeaderTitleBrowser));
+
             SaveSettings();
 
         }

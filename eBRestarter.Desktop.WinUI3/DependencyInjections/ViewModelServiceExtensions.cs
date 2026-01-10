@@ -17,8 +17,10 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             // 1. ViewModels & Fenster registrieren
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<EBRestarter>();
+            services.AddSingleton<ViewModelRestartTask>();
 
             services.AddSingleton<ViewModelRestarterProperties>();
+   
             // Hinweis: Pages registriert man oft als Transient, 
             // aber Singleton ist okay, wenn sie den Zustand behalten sollen.
             services.AddSingleton<P_CommonOverview>();

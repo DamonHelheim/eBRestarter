@@ -5,6 +5,8 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+             d:DataContext  ="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
              mc:Ignorable="d">
 
     <Border x:Name          ="Border_Automated_Task"

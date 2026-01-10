@@ -9,11 +9,6 @@
              d:DesignHeight="220"
              d:DesignWidth="320">
 
-    <UserControl.DataContext>
-
-        <VM:BrowserViewModel/>
-
-    </UserControl.DataContext>
 
 
     <Border  x:Name             ="Border_Additional_Options"

@@ -19,9 +19,12 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,12">
+            
             <Grid.ColumnDefinitions>
+                
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                
             </Grid.ColumnDefinitions>
 
             <Image x:Name="image_installed_browsers"
