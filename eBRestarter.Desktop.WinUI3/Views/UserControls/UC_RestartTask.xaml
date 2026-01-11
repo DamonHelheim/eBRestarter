@@ -11,10 +11,10 @@
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        
-        <!--<converters:BoolToImageConverter x:Key="BoolToImageConverter"
-                                         ImagePathWhenFalse="\Resources\Visuals\Icons\Intersection\play.png"
-                                         ImagePathWhenTrue="\Resources\Visuals\Icons\Intersection\play.png" />-->
+
+        <converters:BoolToImageConverter x:Key="BoolToImageConverter"
+                                         ImagePathWhenFalse="ms-appx:///Resources/Visuals/Icons/Intersection/play.png"
+                                         ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/tasks.png" />
 
         <converters:TimerStateToTextConverter x:Key="TextConverter"/>
         <converters:TimerStateToColorConverter x:Key="ColorConverter"/>
@@ -60,6 +60,7 @@
                     <!-- links: Icon + "Restarter Agent" -->
                     <StackPanel Orientation="Horizontal"
                                 Grid.Column="0"
+                                Margin="0,5,0,0"
                                 Width="301">
 
                         <Image x:Name="image_restarter_agent"
@@ -83,6 +84,7 @@
                     <!-- rechts: Timer + Status-Icon -->
                     <StackPanel Orientation="Horizontal"
                                 Grid.Column="1"
+                                Margin="0,5,0,0"
                                 Width="203">
 
                         <StackPanel Width="166"
@@ -99,10 +101,10 @@
                                         HorizontalAlignment="Right" />
                         </StackPanel>
 
-                        <!--<Image x:Name="tbl_CurrentStatusIcon"
+                        <Image x:Name="tbl_CurrentStatusIcon"
                                Width="32"
                                Height="32"
-                               Source="{Binding IsActive, Converter={StaticResource BoolToImageConverter}}" />-->
+                               Source="{Binding IsActive, Converter={StaticResource BoolToImageConverter}}" />
 
                     </StackPanel>
 
@@ -110,7 +112,8 @@
 
                 <!-- Row 1: Browser -->
                 <StackPanel Grid.Row="1"
-                            Orientation="Horizontal">
+                            Orientation="Horizontal"
+                            Margin="0,5,0,0">
 
                     <Image x:Name="image_restarter_agent_Copy"
                            Margin="10,0,0,0"
@@ -141,6 +144,7 @@
 
                 <!-- Row 2: Nutzer -->
                 <StackPanel Grid.Row="2"
+                            Margin="0,5,0,0"
                             Orientation="Horizontal">
 
                     <Image x:Name="image_restarter_agent_Copy1"
@@ -178,6 +182,7 @@
 
                 <!-- Row 3: Status -->
                 <StackPanel Grid.Row="3"
+                            Margin="0,5,0,0"
                         Orientation="Horizontal">
 
                     <Image x:Name="image_restarter_agent_Copy2"
@@ -203,7 +208,7 @@
                                FontSize="16"
                                Width="Auto"
                                Height="22"
-                               Text="-"
+                               Text="{x:Bind ViewModelRestartTask.StatusInfoText, Mode=OneWay}"
                                VerticalAlignment="Center"/>
 
                 </StackPanel>

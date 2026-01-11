@@ -15,7 +15,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     public partial class NetworkTrafficViewModel : ObservableObject, IDisposable
     {
         private readonly IWindowsNetworkInfoService _networkService;
-        private readonly System.Timers.Timer _timer;
+        private readonly Timer _timer;
         private readonly DispatcherQueue _dispatcherQueue;
 
         public ObservableCollection<NetworkCardDisplayModel> NetworkCards { get; } = [];

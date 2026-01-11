@@ -15,15 +15,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
-        private string _importedFilePath = "";
-
-        [ObservableProperty] public partial string ImportedFileName { get; set; } = ""; // Für die Anzeige (z.B. "config.apiaf")
-
-        [ObservableProperty] public partial string FileStatusIcon { get; set; } = "ms-appx:///Assets/Images/Icons/Intersection/AddFileIcon.png"; // Default Icon
-
-        // UI Status
+        public partial string ImportedFilePath { get; set; } =  string.Empty;
+        [ObservableProperty] public partial string ImportedFileName { get; set; } = string.Empty; // Für die Anzeige (z.B. "config.apiaf")
+        [ObservableProperty] public partial string FileStatusIcon { get; set; } = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png"; // Default Icon
         [ObservableProperty] public partial bool IsBusy { get; set; }
-        [ObservableProperty] public partial string StatusMessage { get; set; } = "";
+        [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
         [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent";
 
         public ImportApiViewModel(
@@ -41,7 +37,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 StatusMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
                 StatusColor = "#E40E87"; // Rot
-                FileStatusIcon = "ms-appx:///Assets/Images/Icons/Intersection/wrong_document.png";
+                FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
                 ImportedFilePath = "";
                 ImportedFileName = "";
                 return;
@@ -51,7 +47,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             ImportedFileName = System.IO.Path.GetFileName(filePath);
             StatusMessage = "Datei erkannt. Bereit zum Import.";
             StatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
-            FileStatusIcon = "ms-appx:///Assets/Images/Icons/Intersection/approval.png";
+            FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
         }
 
         public void HandleFileSelect()

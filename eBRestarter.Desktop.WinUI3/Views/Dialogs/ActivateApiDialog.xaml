@@ -27,10 +27,13 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Spacing="15">
-            <Image Source="ms-appx:///Assets/Images/Icons/Intersection/fa_keyaccess.png" 
+
+            <Image Source="ms-appx:///Resources/Visuals/Icons/Intersection/fa_keyaccess.png" 
                    Width="40" Height="40"/>
+            
             <TextBlock Text="Eingabe der API Zugangsdaten" 
-                       VerticalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                       VerticalAlignment="Center"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"/>
         </StackPanel>
 
         <TextBox Grid.Row="1" 
