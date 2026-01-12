@@ -12,7 +12,7 @@ using System.Timers;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class NetworkTrafficViewModel : ObservableObject, IDisposable
+    public partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
     {
         private readonly IWindowsNetworkInfoService _networkService;
         private readonly Timer _timer;
@@ -27,7 +27,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private const string ColorDefault = "#FFFFFF";
         private const string ColorError = "#FF0000";
 
-        public NetworkTrafficViewModel(IWindowsNetworkInfoService networkService)
+        public ViewModelNetworkTraffic(IWindowsNetworkInfoService networkService)
         {
             _networkService = networkService;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();

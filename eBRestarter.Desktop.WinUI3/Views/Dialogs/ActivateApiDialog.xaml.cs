@@ -24,15 +24,15 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs;
 
 public sealed partial class ActivateApiDialog : ContentDialog
 {
-    public ActivateApiViewModel ActivateApiViewModel { get; }
+    public ViewModelActivateApi ViewModelActivateApi { get; }
 
     public ActivateApiDialog()
     {
         InitializeComponent();
 
-        ActivateApiViewModel = App.AppHost!.Services.GetRequiredService<ActivateApiViewModel>();
+        ViewModelActivateApi = App.AppHost!.Services.GetRequiredService<ViewModelActivateApi>();
 
-        this.DataContext = ActivateApiViewModel;
+        this.DataContext = ViewModelActivateApi;
     }
 
     private async void Grid_Drop(object sender, DragEventArgs e)
@@ -42,7 +42,7 @@ public sealed partial class ActivateApiDialog : ContentDialog
             var items = await e.DataView.GetStorageItemsAsync();
             if (items.Count > 0 && items[0] is StorageFile file)
             {
-                ActivateApiViewModel.ImportLegacyFile(file.Path);
+                ViewModelActivateApi.ImportLegacyFile(file.Path);
             }
         }
     }

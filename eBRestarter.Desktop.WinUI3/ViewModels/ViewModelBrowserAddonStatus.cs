@@ -9,7 +9,7 @@ using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class BrowserAddonStatusViewModel : ObservableObject
+    public partial class ViewModelBrowserAddonStatus : ObservableObject
     {
         private readonly IBrowser _browser;
         private readonly DispatcherQueue _dispatcherQueue;
@@ -29,7 +29,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial string ButtonText { get; set; } = "Lade...";
         [ObservableProperty] public partial bool IsButtonEnabled { get; set; } = false;
 
-        public BrowserAddonStatusViewModel(IBrowser browser)
+        public ViewModelBrowserAddonStatus(IBrowser browser)
         {
             _browser = browser;
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ImportApiViewModel : ObservableObject
+    public partial class ViewModelImportApi : ObservableObject
     {
         private readonly IApiAuthenticationService _authService;
         private readonly ICredentialStore _credentialStore;
@@ -22,7 +22,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
         [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent";
 
-        public ImportApiViewModel(
+        public ViewModelImportApi(
             IApiAuthenticationService authService,
             ICredentialStore credentialStore)
         {

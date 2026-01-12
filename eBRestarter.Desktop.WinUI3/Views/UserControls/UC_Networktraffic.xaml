@@ -33,7 +33,7 @@
                 
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
 
-                    <ItemsControl ItemsSource="{x:Bind NetworkTrafficViewModel.NetworkCards, Mode=OneWay}">
+                    <ItemsControl ItemsSource="{x:Bind ViewModelNetworkTraffic.NetworkCards, Mode=OneWay}">
                         
                         <ItemsControl.ItemTemplate>
                             

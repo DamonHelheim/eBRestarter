@@ -6,12 +6,13 @@
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelGeneralOverView}"
     mc:Ignorable="d">
 
     <Grid x:Name="Root"
-      Background="{ThemeResource MenuBackgroundColor_2}"
-          CornerRadius="8,0,0,0"
-          >
+          Background="{ThemeResource MenuBackgroundColor_2}"
+          CornerRadius="8,0,0,0">
 
         <!-- Header + Content -->
         <Grid.RowDefinitions>

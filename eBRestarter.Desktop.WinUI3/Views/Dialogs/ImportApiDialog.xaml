@@ -38,7 +38,7 @@
         <Button Grid.Row="1" Content="Durchsuchen..." 
                 Click="BtnBrowse_Click"
                 HorizontalAlignment="Stretch"
-                IsEnabled="{x:Bind ViewModel.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+                IsEnabled="{x:Bind ViewModelImportApi.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
 
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
@@ -58,10 +58,10 @@
                     DragOver="DropZone_DragOver"
                     Background="Transparent">
                 <StackPanel HorizontalAlignment="Center" Spacing="10">
-                    <Image Source="{x:Bind ViewModel.FileStatusIcon, Mode=OneWay}" 
+                    <Image Source="{x:Bind ViewModelImportApi.FileStatusIcon, Mode=OneWay}" 
                            Width="48" Height="48"/>
 
-                    <TextBlock Text="{x:Bind ViewModel.ImportedFileName, Mode=OneWay, TargetNullValue='Datei hier ablegen'}" 
+                    <TextBlock Text="{x:Bind ViewModelImportApi.ImportedFileName, Mode=OneWay, TargetNullValue='Datei hier ablegen'}" 
                                HorizontalAlignment="Center" FontWeight="SemiBold"/>
                 </StackPanel>
             </Border>
@@ -69,22 +69,22 @@
 
         <TextBox Grid.Row="3" 
                  Header="Dateipfad"
-                 Text="{x:Bind ViewModel.ImportedFilePath, Mode=OneWay}"
+                 Text="{x:Bind ViewModelImportApi.ImportedFilePath, Mode=OneWay}"
                  IsReadOnly="True"
                  IsEnabled="False"/>
 
         <Button Grid.Row="4" 
                 Content="Importieren &amp; Aktivieren"
-                Command="{x:Bind ViewModel.ImportCommand}"
+                Command="{x:Bind ViewModelImportApi.ImportCommand}"
                 HorizontalAlignment="Stretch"
                 Style="{ThemeResource AccentButtonStyle}"/>
 
         <StackPanel Grid.Row="5" Spacing="10">
             <ProgressBar IsIndeterminate="True" 
-                         Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
+                         Visibility="{x:Bind ViewModelImportApi.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
 
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-                       Foreground="{x:Bind ViewModel.StatusColor, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModelImportApi.StatusMessage, Mode=OneWay}"
+                       Foreground="{x:Bind ViewModelImportApi.StatusColor, Mode=OneWay}"
                        HorizontalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap"/>
         </StackPanel>
 

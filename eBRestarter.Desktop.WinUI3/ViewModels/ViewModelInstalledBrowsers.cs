@@ -10,7 +10,7 @@ using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class InstalledBrowsersViewModel : ObservableObject
+    public partial class ViewModelInstalledBrowsers : ObservableObject
     {
         private readonly IBrowserService _browserService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
@@ -19,9 +19,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IDialogService _dialogService;
 
         [ObservableProperty]
-        public partial ObservableCollection<BrowserItemViewModel> Browsers { get; set; } = [];
+        public partial ObservableCollection<ViewModelBrowserItem> Browsers { get; set; } = [];
 
-        public InstalledBrowsersViewModel(
+        public ViewModelInstalledBrowsers(
             IBrowserService browserService,
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,
@@ -45,7 +45,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             foreach (var info in browserInfos)
             {
-                Browsers.Add(new BrowserItemViewModel(info, _downloadService, _os, _eVisitorConfigService, _dialogService));
+                Browsers.Add(new ViewModelBrowserItem(info, _downloadService, _os, _eVisitorConfigService, _dialogService));
             }
         }
     }

@@ -22,17 +22,17 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs;
 
 public sealed partial class InstallAddOnDialog : ContentDialog
 {
-    public InstallAddOnViewModel InstallAddOnViewModel { get; }
+    public ViewModelInstallAddOn ViewModelInstallAddOn { get; }
 
     public InstallAddOnDialog()
     {
         InitializeComponent();
         // ViewModel via DI holen
-        InstallAddOnViewModel = App.AppHost!.Services.GetRequiredService<InstallAddOnViewModel>();
+        ViewModelInstallAddOn = App.AppHost!.Services.GetRequiredService<ViewModelInstallAddOn>();
 
-        this.DataContext = InstallAddOnViewModel;
+        this.DataContext = ViewModelInstallAddOn;
 
         // Wenn Dialog geschlossen wird, Timer stoppen
-        this.Closed += (s, e) => InstallAddOnViewModel.Dispose();
+        this.Closed += (s, e) => ViewModelInstallAddOn.Dispose();
     }
 }

@@ -26,16 +26,16 @@ namespace eBRestarter.Desktop.WinUI3.Views.UserControls;
 
 public sealed partial class UC_Networktraffic : UserControl
 {
-    public NetworkTrafficViewModel NetworkTrafficViewModel { get; }
+    public ViewModelNetworkTraffic ViewModelNetworkTraffic { get; }
 
     public UC_Networktraffic()
     {
         InitializeComponent();
 
         // Dummy-Initialisierung (In echter App via DI Container auflösen!)
-        NetworkTrafficViewModel = App.AppHost!.Services.GetRequiredService<NetworkTrafficViewModel>();
+        ViewModelNetworkTraffic = App.AppHost!.Services.GetRequiredService<ViewModelNetworkTraffic>();
         //Fallback für Design - Time:
-        this.DataContext = NetworkTrafficViewModel;
+        this.DataContext = ViewModelNetworkTraffic;
     }
 }
 

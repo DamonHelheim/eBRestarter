@@ -85,12 +85,12 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddSingleton<IBrowserService, WindowsBrowserService>();
 
             services.AddSingleton<IBrowserDownloadService, HttpClientDownloadService>();
-            // Registrierung des Interfaces mit der Implementierung
+
             services.AddTransient<IRestClientService, RestSharpClientService>();
 
             services.AddSingleton<IPathService, WindowsPathService>();
 
-            services.AddSingleton<IEVisitorConfigService, EVRestarterConfigService>();
+            services.AddSingleton<IEVisitorConfigService, EVisitorConfigService>();
 
             services.AddSingleton<IAppInfoService, AppInfoService>();
 
@@ -100,6 +100,7 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             services.AddSingleton<ICredentialStore, JsonCredentialStore>();
 
+            services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
 
             return services;
         }

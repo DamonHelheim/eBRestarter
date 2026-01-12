@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ActivateApiViewModel : ObservableObject
+    public partial class ViewModelActivateApi : ObservableObject
     {
         private readonly IApiAuthenticationService _authService;
         private readonly ICredentialStore _credentialStore;
@@ -27,7 +27,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
         [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent"; // Hex Code oder Resource Key
 
-        public ActivateApiViewModel(
+        public ViewModelActivateApi(
             IApiAuthenticationService authService,
             ICredentialStore credentialStore)
         {

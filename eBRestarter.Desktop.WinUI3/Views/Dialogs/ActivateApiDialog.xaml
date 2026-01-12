@@ -38,28 +38,28 @@
 
         <TextBox Grid.Row="1" 
                  Header="Nutzername" 
-                 Text="{x:Bind ActivateApiViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{x:Bind ViewModelActivateApi.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  PlaceholderText="eBesucher Nutzername"
-                 IsEnabled="{x:Bind ActivateApiViewModel.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+                 IsEnabled="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
 
         <PasswordBox Grid.Row="2" 
                      Header="API Schlüssel" 
-                     Password="{x:Bind ActivateApiViewModel.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Password="{x:Bind ViewModelActivateApi.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="Ihr API Key"
-                     IsEnabled="{x:Bind ActivateApiViewModel.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+                     IsEnabled="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
 
         <Button Grid.Row="3" 
                 Content="Aktivieren"
-                Command="{x:Bind ActivateApiViewModel.SubmitCommand}"
+                Command="{x:Bind ViewModelActivateApi.SubmitCommand}"
                 HorizontalAlignment="Stretch"
                 Style="{ThemeResource AccentButtonStyle}"/>
 
         <StackPanel Grid.Row="4" Spacing="10">
             <ProgressBar IsIndeterminate="True" 
-                         Visibility="{x:Bind ActivateApiViewModel.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
+                         Visibility="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
 
-            <TextBlock Text="{x:Bind ActivateApiViewModel.StatusMessage, Mode=OneWay}"
-                       Foreground="{x:Bind ActivateApiViewModel.StatusColor, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModelActivateApi.StatusMessage, Mode=OneWay}"
+                       Foreground="{x:Bind ViewModelActivateApi.StatusColor, Mode=OneWay}"
                        HorizontalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap"/>
         </StackPanel>
 

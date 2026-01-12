@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class BrowserItemViewModel : ObservableObject
+    public partial class ViewModelBrowserItem : ObservableObject
     {
         #region Constants
         private const string SetForegroundColorGreen = "#7ED422";
@@ -40,7 +40,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #endregion
 
         #region Constructor
-        public BrowserItemViewModel(
+        public ViewModelBrowserItem(
             BrowserInfo info,
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,

@@ -23,9 +23,9 @@
                    Opacity="0.8"
                    TextWrapping="Wrap"/>
 
-        <ItemsControl Grid.Row="1" ItemsSource="{x:Bind InstallAddOnViewModel.Browsers, Mode=OneWay}">
+        <ItemsControl Grid.Row="1" ItemsSource="{x:Bind ViewModelInstallAddOn.Browsers, Mode=OneWay}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:BrowserAddonStatusViewModel">
+                <DataTemplate x:DataType="vm:ViewModelBrowserAddonStatus">
 
                     <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
