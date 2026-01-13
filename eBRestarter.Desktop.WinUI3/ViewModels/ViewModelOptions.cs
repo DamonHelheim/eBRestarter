@@ -20,6 +20,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     using CommunityToolkit.Mvvm.ComponentModel;
     using CommunityToolkit.Mvvm.Input;
+    using eBRestarter.Core.Application.Interfaces.Update;
+    using eBRestarter.Infrastructure.Constants;
     using System.Collections.ObjectModel;
     using System.DirectoryServices.AccountManagement;
 
@@ -36,6 +38,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IWindowsAutoLogonService _autoLogonService;
         private readonly IOperatingSystemFacade _os;
+        private readonly IUpdateService _updateService;
+
 
         // =========================================================
         // 2. PROPERTIES (Öffentliche Eigenschaften)
@@ -57,6 +61,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool IsRestartSliderVisible { get; set; }
         [ObservableProperty] public partial string RestartStatusText { get; set; } = string.Empty;
 
+        // UI Properties
+        [ObservableProperty] public partial bool IsUpdateAvailable { get; set; }
+        [ObservableProperty] public partial string UpdateMessage { get; set; } = string.Empty;
+
         // =========================================================
         // 3. CONSTRUCTOR
         // =========================================================
@@ -65,11 +73,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IDialogService dialogService,
             IWindowsAutoLogonService autoLogonService,
             IOperatingSystemFacade os,
+            IUpdateService updateService,
             IEVisitorConfigService eVisitorConfigService)
         {
             _dialogService = dialogService;
             _autoLogonService = autoLogonService;
             _os = os;
+            _updateService = updateService;
             _eVisitorConfigService = eVisitorConfigService;
 
             // Config laden
@@ -88,7 +98,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SelectedLanguageOption = LanguageList.FirstOrDefault(x => x.Index == configLanguageIndex) ?? LanguageList[0];
 
             // UI-Status initial berechnen
-            UpdateRestartUiState();
+            //UpdateRestartUiState();
 
             // Async Initialisierung starten (Fire & Forget)
             _ = InitializeAsync();
@@ -97,6 +107,46 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         // 4. COMMANDS
         // =========================================================
+
+        [RelayCommand]
+        private async Task CheckForUpdates()
+        {
+            try
+            {
+                var info = await _updateService.CheckForUpdateAsync();
+
+                if (info.IsUpdateAvailable)
+                {
+                    IsUpdateAvailable = true;
+                    UpdateMessage = $"Version {info.LatestVersion} verfügbar!";
+
+                    // HIER: Trigger für einen Dialog in der View
+                    // In MVVM nutzt man hierfür oft einen Messenger oder einen DialogService.
+                    // Simples Beispiel: Property setzen, UI blendet Button ein.
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error
+            }
+        }
+
+        [RelayCommand]
+        private async Task PerformUpdate()
+        {
+            // Info nochmal holen oder cachen
+            var info = await _updateService.CheckForUpdateAsync();
+            if (info.IsUpdateAvailable)
+            {
+                await _updateService.DownloadAndInstallAsync(info);
+            }
+        }
+
+        [RelayCommand]
+        private async Task OpenSettingsDataFolder()
+        {
+            _os.WindowsProcessControlService.OpenExplorer(SystemPaths.ApplicationDataBasePath);
+        }
 
         [RelayCommand]
         private async Task ShowActivateApiDialog()

@@ -283,6 +283,28 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
             }
         }
 
+        public void OpenExplorer(string folderPath)
+        {
+            try
+            {
+                // Sicherheitshalber Anführungszeichen um den Pfad, falls Leerzeichen enthalten sind.
+                string args = $"\"{folderPath}\"";
+
+                _processWrapper.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = args,
+                    UseShellExecute = true // Wichtig für Explorer-Interaktion
+                });
+
+                _logger.LogInformation("Explorer geöffnet in: {Path}", folderPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fehler beim Öffnen des Explorers: {Path}", folderPath);
+            }
+        }
+
         /// <summary>
         /// Windows Message ID für "Close Window" (0x0010).
         /// </summary>

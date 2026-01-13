@@ -6,12 +6,14 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.RestClient;
+using eBRestarter.Core.Application.Interfaces.Update;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services;
 using eBRestarter.Infrastructure.Services.Authentication;
 using eBRestarter.Infrastructure.Services.Config;
 using eBRestarter.Infrastructure.Services.RestSharp;
+using eBRestarter.Infrastructure.Services.Update;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Infrastructure.Services.WindowsOS.Security;
 using eBRestarter.Infrastructure.Wrapper;
@@ -101,6 +103,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddSingleton<ICredentialStore, JsonCredentialStore>();
 
             services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
+
+            services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
 
             return services;
         }

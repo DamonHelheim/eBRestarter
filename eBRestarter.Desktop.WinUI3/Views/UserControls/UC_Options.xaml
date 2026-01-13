@@ -7,6 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelOptions}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -260,6 +262,7 @@
 
                                     <Button x:Name="BtnCheckForUpdates"
                                             x:Uid="Check_for_updates"
+                                            Command="{Binding CheckForUpdatesCommand}"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FF4DC89E"
@@ -280,6 +283,7 @@
 
                                     <Button x:Name="Btn_go_to_settings_data"
                                             x:Uid="Go_to_storage_location"
+                                            Command="{Binding OpenSettingsDataFolderCommand}"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FF149DAE"
