@@ -144,7 +144,7 @@
 
                             <local:UC_EarningsAmount HeaderTitleEarnings="{Binding CurrentYear}"
                                                      HeaderImageEarnings="{ThemeResource CalendarIcon}"
-                                                     EarningsAmount="{Binding EarningsThisMonthSum}"
+                                                     EarningsAmount="{Binding EarningsThisYearSum}"
                                                      Height="111"
                                                      Width="380"/>
 
@@ -159,13 +159,13 @@
 
                     <!-- Card: IP -->
                     <Border Background="{ThemeResource DashletBackgroundColor_2}"
-                        CornerRadius="12"
-                        BorderThickness="1"
-                        BorderBrush="#22000000"
-                        Padding="12">
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="#22000000"
+                            Padding="12">
 
-                        <local:UC_IPInformation Height="190"
-                                            Width="280"/>
+                        <local:UC_IPInformation Height="280"
+                                                Width="280"/>
                     </Border>
 
                     <!-- Card: Network -->

@@ -10,17 +10,43 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelImportApi : ObservableObject
     {
+        #region Fields (Private Felder OHNE [ObservableProperty])
+
         private readonly IApiAuthenticationService _authService;
         private readonly ICredentialStore _credentialStore;
 
+        #endregion
+
+        #region Observable Properties (Felder MIT [ObservableProperty])
+
+        [ObservableProperty]
+        public partial string FileStatusIcon { get; set; } = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png"; // Default Icon
+
+        [ObservableProperty]
+        public partial string ImportedFileName { get; set; } = string.Empty; // Für die Anzeige (z.B. "config.apiaf")
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
-        public partial string ImportedFilePath { get; set; } =  string.Empty;
-        [ObservableProperty] public partial string ImportedFileName { get; set; } = string.Empty; // Für die Anzeige (z.B. "config.apiaf")
-        [ObservableProperty] public partial string FileStatusIcon { get; set; } = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png"; // Default Icon
-        [ObservableProperty] public partial bool IsBusy { get; set; }
-        [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
-        [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent";
+        public partial string ImportedFilePath { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial bool IsBusy { get; set; }
+
+        [ObservableProperty]
+        public partial string StatusColor { get; set; } = "Transparent";
+
+        [ObservableProperty]
+        public partial string StatusMessage { get; set; } = string.Empty;
+
+        #endregion
+
+        #region Properties (Explizite get; set; Eigenschaften)
+
+        private bool CanImport => !string.IsNullOrEmpty(ImportedFilePath) && !IsBusy;
+
+        #endregion
+
+        #region Constructors
 
         public ViewModelImportApi(
             IApiAuthenticationService authService,
@@ -30,34 +56,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _credentialStore = credentialStore;
         }
 
-        // Wird vom Drop-Event der View aufgerufen
-        public void HandleFileDrop(string filePath)
-        {
-            if (!filePath.EndsWith(".apiaf"))
-            {
-                StatusMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
-                StatusColor = "#E40E87"; // Rot
-                FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
-                ImportedFilePath = "";
-                ImportedFileName = "";
-                return;
-            }
+        #endregion
 
-            ImportedFilePath = filePath;
-            ImportedFileName = System.IO.Path.GetFileName(filePath);
-            StatusMessage = "Datei erkannt. Bereit zum Import.";
-            StatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
-            FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
-        }
-
-        public void HandleFileSelect()
-        {
-            // Hinweis: FilePicker muss eigentlich in der View / Code-Behind aufgerufen werden, 
-            // da er Window-Handle braucht. Das ViewModel verarbeitet dann nur das Ergebnis.
-            // Wir lassen diese Methode hier leer oder delegieren an einen IFilePickerService.
-        }
-
-        private bool CanImport => !string.IsNullOrEmpty(ImportedFilePath) && !IsBusy;
+        #region Commands (Methoden MIT [RelayCommand])
 
         [RelayCommand(CanExecute = nameof(CanImport))]
         private async Task Import()
@@ -96,5 +97,38 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 StatusColor = "#E40E87";
             }
         }
+
+        #endregion
+
+        #region Methods (Restliche Methoden)
+
+        // Wird vom Drop-Event der View aufgerufen
+        public void HandleFileDrop(string filePath)
+        {
+            if (!filePath.EndsWith(".apiaf"))
+            {
+                StatusMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
+                StatusColor = "#E40E87"; // Rot
+                FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
+                ImportedFilePath = "";
+                ImportedFileName = "";
+                return;
+            }
+
+            ImportedFilePath = filePath;
+            ImportedFileName = System.IO.Path.GetFileName(filePath);
+            StatusMessage = "Datei erkannt. Bereit zum Import.";
+            StatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
+            FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
+        }
+
+        public void HandleFileSelect()
+        {
+            // Hinweis: FilePicker muss eigentlich in der View / Code-Behind aufgerufen werden, 
+            // da er Window-Handle braucht. Das ViewModel verarbeitet dann nur das Ergebnis.
+            // Wir lassen diese Methode hier leer oder delegieren an einen IFilePickerService.
+        }
+
+        #endregion
     }
 }

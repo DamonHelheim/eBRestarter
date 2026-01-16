@@ -6,90 +6,124 @@
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelGeneralOverView}"
     mc:Ignorable="d">
 
     <Border x:Name="Border_IP_Information"
-        Background="{ThemeResource DashletBackgroundColor_2}"
-        BorderThickness="1"
-        CornerRadius="2"
-        Padding="0">
+            Background="{ThemeResource DashletBackgroundColor_2}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="0">
 
         <Grid>
-
             <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="60" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- Header-Zeile -->
+            <!-- Header-Zeile (Icon + Titel) -->
             <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="5,5,5,0">
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        Margin="12,8">
 
-                <Image Margin="0,0,0,0"
-                   Height="35"
-                   Width="35"
-                   Source="{ThemeResource IPAddressIcon}" />
+                <Image Height="32" Width="32"
+                       Source="{ThemeResource IPAddressIcon}" 
+                       VerticalAlignment="Center"/>
 
                 <TextBlock x:Name="tbl_IP_Information"
                            x:Uid="IPInformation"
+                           Text="IP Informationen"
                            Foreground="{ThemeResource FontColor_1}"
-                           Margin="10,0,0,0"
+                           Margin="12,0,0,0"
                            TextWrapping="Wrap"
-                           FontSize="20"
+                           FontSize="18"
+                           FontWeight="SemiBold"
                            VerticalAlignment="Center" />
-                
             </StackPanel>
 
             <!-- Inhalt (Expander) -->
             <Expander Grid.Row="1"
-                  Margin="5,5,5,5"
-                  Header="Zeige IP Informationen"
-                  IsExpanded="False">
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      Margin="8,0,8,8"
+                      IsExpanded="False">
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
-
-                    <StackPanel Margin="10,0,0,0"
-                            Spacing="4">
-
-                        <TextBlock x:Name="tbl_IPAdress"
+                <Expander.Header>
+                    <TextBlock Text="Zeige IP Details" 
                                Foreground="{ThemeResource FontColor_1}"
-                               Text="{Binding IpAdress}"
                                FontSize="14"
-                               Width="245"
-                               Margin="0,5,0,0" />
+                               FontWeight="Normal"/>
+                </Expander.Header>
 
-                        <TextBlock x:Name="tbl_host"
-                               Foreground="{ThemeResource FontColor_1}"
-                               Text="{Binding Host}"
-                               FontSize="14"
-                               Width="245"
-                               Margin="0,5,0,0" />
+                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                    <!-- Grid Layout für saubere Tabellenstruktur -->
+                    <Grid Padding="0,4,12,0" ColumnSpacing="12" RowSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <!-- Linke Spalte: Labels (Auto Breite oder feste Breite für exakte Bündigkeit) -->
+                            <ColumnDefinition Width="Auto" MinWidth="80"/>
+                            <!-- Rechte Spalte: Werte (Nimmt den Rest) -->
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                        <TextBlock x:Name="tbl_CountryCode"
-                               Foreground="{ThemeResource FontColor_1}"
-                               Text="{Binding CountryCode}"
-                               FontSize="14"
-                               Width="245"
-                               Margin="0,5,0,0" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <!-- IP -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Host -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Standort -->
+                        </Grid.RowDefinitions>
 
-                        <TextBlock x:Name="tbl_CountryName"
-                               Foreground="{ThemeResource FontColor_1}"
-                               Text="{Binding CountryName}"
-                               FontSize="14"
-                               Width="245"
-                               Margin="0,5,0,5" />
+                        <!-- Zeile 0: IP -->
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="IP Adresse:" 
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   Opacity="0.7"
+                                   VerticalAlignment="Top"/>
 
-                    </StackPanel>
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{Binding IpAddress}" 
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   TextWrapping="Wrap"
+                                   IsTextSelectionEnabled="True"
+                                   FontWeight="SemiBold"/>
 
+                        <!-- Zeile 1: Host -->
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="Host:" 
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   Opacity="0.7"
+                                   VerticalAlignment="Top"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding Host}" 
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   TextWrapping="Wrap"
+                                   IsTextSelectionEnabled="True"/>
+
+                        <!-- Zeile 2: Standort -->
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="Standort:" 
+                                   Foreground="{ThemeResource FontColor_1}"
+                                   Opacity="0.7"
+                                   VerticalAlignment="Top"/>
+
+                        <!-- Standort Name und Code kombiniert -->
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{Binding CountryName}" 
+                                       Foreground="{ThemeResource FontColor_1}"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding CountryCode}"
+                                       Foreground="{ThemeResource FontColor_1}"
+                                       Opacity="0.8"/>
+                        </StackPanel>
+
+                    </Grid>
                 </ScrollViewer>
-
             </Expander>
 
         </Grid>
     </Border>
-
-
 </UserControl>

@@ -18,21 +18,28 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelDeleteBrowserContent : ObservableObject
     {
-        private readonly IBrowserFactory _browserFactory;
-        private readonly IWindowsProcessControlService _processService; // Dein existierender Service
-        private readonly IFileDeletionService _fileDeletionService;
-        private readonly IDialogService _dialogService;
+        #region Fields (Private Felder OHNE [ObservableProperty])
 
-        // Aktueller Browser (Instanz)
-        private IBrowser? _currentBrowser;
+        private readonly IBrowserFactory _browserFactory;
+        private readonly IDialogService _dialogService;
+        private readonly IFileDeletionService _fileDeletionService;
+        private readonly IWindowsProcessControlService _processService; // Dein existierender Service
         private BrowserPaths? _browserPaths; // Record mit Cache/Cookies Pfaden
+        private CancellationTokenSource? _cts;
+        private IBrowser? _currentBrowser;
         private string _processName = ""; // Prozessname für Kill (z.B. "chrome")
 
-        private CancellationTokenSource? _cts;
+        #endregion
 
-        // --- UI Properties ---
+        #region Observable Properties (Felder MIT [ObservableProperty])
+
+        [ObservableProperty] public partial string BrowserIconPath { get; set; } = string.Empty; // WinUI Assets Pfad
         [ObservableProperty] public partial string BrowserName { get; set; } = "Lade...";
-        [ObservableProperty] public partial string BrowserIconPath { get; set; }  = string.Empty; // WinUI Assets Pfad
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
+        [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
+        public partial bool IsBusy { get; set; } = false;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
@@ -42,15 +49,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
         public partial bool IsDeleteInternetCacheChecked { get; set; } = true;
 
-        [ObservableProperty] public partial double ProgressValue { get; set; } = 0;
         [ObservableProperty] public partial double ProgressMaximum { get; set; } = 100;
         [ObservableProperty] public partial string ProgressText { get; set; } = "0 %";
+        [ObservableProperty] public partial double ProgressValue { get; set; } = 0;
         [ObservableProperty] public partial string StatusText { get; set; } = "Bereit.";
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-        [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
-        public partial bool IsBusy { get; set; } = false;
+        #endregion
+
+        #region Properties (Explizite get; set; Eigenschaften)
+
+        private bool CanCancel() => IsBusy;
+        private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
+
+        #endregion
+
+        #region Constructors
 
         public ViewModelDeleteBrowserContent(
             IBrowserFactory browserFactory,
@@ -64,34 +77,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dialogService = dialogService;
         }
 
-        // Diese Methode muss aufgerufen werden (z.B. vom Parent ViewModel), 
-        // und zwar mit dem BrowserType aus der Config.
-        public void Initialize(BrowserType selectedBrowserType)
+        #endregion
+
+        #region Commands (Methoden MIT [RelayCommand])
+
+        [RelayCommand(CanExecute = nameof(CanCancel))]
+        private void CancelCleaning()
         {
-            try
-            {
-                // 1. Browser Instanz über Factory holen
-                _currentBrowser = _browserFactory.Create(selectedBrowserType);
-
-                // 2. UI Daten setzen
-                BrowserName = _currentBrowser.DisplayName;
-                // Achtung: Der IconPath aus IBrowser ist oft "/Resources...", 
-                // für WinUI müssen wir das evtl. auf "ms-appx:///Assets/..." mappen oder im Browser fixen.
-                BrowserIconPath = FixIconPathForWinUI(_currentBrowser.IconPath);
-
-                // 3. Pfade laden (über die neue GetPaths Methode im Browser)
-                _browserPaths = _currentBrowser.GetPaths();
-
-                // 4. Prozessnamen ermitteln (Den brauchen wir für IsProcessAlive)
-                // Leider ist ProcessName in IBrowser nicht public. 
-                // Lösung: Entweder IBrowser erweitern um "ProcessName" Property (Empfohlen!)
-                // Workaround hier: Hardcoding basierend auf Type
-                _processName = GetProcessNameByType(selectedBrowserType);
-            }
-            catch (Exception ex)
-            {
-                StatusText = $"Fehler beim Laden: {ex.Message}";
-            }
+            _cts?.Cancel();
+            StatusText = "Breche ab...";
         }
 
         [RelayCommand(CanExecute = nameof(CanClean))]
@@ -185,15 +179,39 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        [RelayCommand(CanExecute = nameof(CanCancel))]
-        private void CancelCleaning()
-        {
-            _cts?.Cancel();
-            StatusText = "Breche ab...";
-        }
+        #endregion
 
-        private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
-        private bool CanCancel() => IsBusy;
+        #region Methods (Restliche Methoden)
+
+        // Diese Methode muss aufgerufen werden (z.B. vom Parent ViewModel), 
+        // und zwar mit dem BrowserType aus der Config.
+        public void Initialize(BrowserType selectedBrowserType)
+        {
+            try
+            {
+                // 1. Browser Instanz über Factory holen
+                _currentBrowser = _browserFactory.Create(selectedBrowserType);
+
+                // 2. UI Daten setzen
+                BrowserName = _currentBrowser.DisplayName;
+                // Achtung: Der IconPath aus IBrowser ist oft "/Resources...", 
+                // für WinUI müssen wir das evtl. auf "ms-appx:///Assets/..." mappen oder im Browser fixen.
+                BrowserIconPath = FixIconPathForWinUI(_currentBrowser.IconPath);
+
+                // 3. Pfade laden (über die neue GetPaths Methode im Browser)
+                _browserPaths = _currentBrowser.GetPaths();
+
+                // 4. Prozessnamen ermitteln (Den brauchen wir für IsProcessAlive)
+                // Leider ist ProcessName in IBrowser nicht public. 
+                // Lösung: Entweder IBrowser erweitern um "ProcessName" Property (Empfohlen!)
+                // Workaround hier: Hardcoding basierend auf Type
+                _processName = GetProcessNameByType(selectedBrowserType);
+            }
+            catch (Exception ex)
+            {
+                StatusText = $"Fehler beim Laden: {ex.Message}";
+            }
+        }
 
         // Hilfsmethode für Pfadkorrektur (WPF -> WinUI)
         private string FixIconPathForWinUI(string path)
@@ -216,5 +234,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 _ => ""
             };
         }
+
+        #endregion
     }
 }

@@ -23,7 +23,7 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections
             // Hinweis: Pages registriert man oft als Transient, 
             // aber Singleton ist okay, wenn sie den Zustand behalten sollen.
             //services.AddSingleton<P_CommonOverview>();
-            services.AddSingleton<ViewModelGeneralOverView>();
+            services.AddSingleton<ViewModelGeneralOverview>();
 
             services.AddSingleton<ViewModelInstalledBrowsers>();
 

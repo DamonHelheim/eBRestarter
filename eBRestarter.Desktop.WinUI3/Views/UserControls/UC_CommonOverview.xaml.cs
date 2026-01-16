@@ -22,12 +22,12 @@ namespace eBRestarter.Desktop.WinUI3.Views.UserControls;
 
 public sealed partial class UC_CommonOverview : UserControl
 {
-    public ViewModelGeneralOverView ViewModelGeneralOverView { get; }
+    public ViewModelGeneralOverview ViewModelGeneralOverView { get; }
     public UC_CommonOverview()
     {
         InitializeComponent();
 
-        ViewModelGeneralOverView = App.AppHost!.Services.GetRequiredService<ViewModelGeneralOverView>();
+        ViewModelGeneralOverView = App.AppHost!.Services.GetRequiredService<ViewModelGeneralOverview>();
 
         this.DataContext = ViewModelGeneralOverView;
     }

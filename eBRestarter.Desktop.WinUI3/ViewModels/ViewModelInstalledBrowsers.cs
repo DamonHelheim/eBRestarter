@@ -12,15 +12,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelInstalledBrowsers : ObservableObject
     {
+        #region Fields
         private readonly IBrowserService _browserService;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly IBrowserDownloadService _downloadService;
-        private readonly IOperatingSystemFacade _os;
         private readonly IDialogService _dialogService;
+        private readonly IBrowserDownloadService _downloadService;
+        private readonly IEVisitorConfigService _eVisitorConfigService;
+        private readonly IOperatingSystemFacade _os;
+        #endregion
 
+        #region Observable Properties
         [ObservableProperty]
         public partial ObservableCollection<ViewModelBrowserItem> Browsers { get; set; } = [];
+        #endregion
 
+        #region Constructors
         public ViewModelInstalledBrowsers(
             IBrowserService browserService,
             IBrowserDownloadService downloadService,
@@ -36,7 +41,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // Initiale Ladung oder Start eines Timers
             LoadBrowsers();
         }
+        #endregion
 
+        #region Methods
         public async void LoadBrowsers()
         {
             var browserInfos = await _browserService.GetInstalledBrowsersAsync();
@@ -48,5 +55,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 Browsers.Add(new ViewModelBrowserItem(info, _downloadService, _os, _eVisitorConfigService, _dialogService));
             }
         }
+        #endregion
     }
 }

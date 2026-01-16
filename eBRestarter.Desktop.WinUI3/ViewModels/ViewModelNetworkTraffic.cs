@@ -14,19 +14,25 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
     {
-        private readonly IWindowsNetworkInfoService _networkService;
-        private readonly Timer _timer;
-        private readonly DispatcherQueue _dispatcherQueue;
-
-        public ObservableCollection<NetworkCardDisplayModel> NetworkCards { get; } = [];
-
-        // Pfade als Konstanten
+        #region Constants
+        private const string ColorDefault = "#FFFFFF";
+        private const string ColorError = "#FF0000";
         private const string ImgCard = "/Resources/Visuals/Icons/LightTheme/network-interface-card_light_theme.png";
         private const string ImgDown = "/Resources/Visuals/Icons/LightTheme/download_light_theme.png";
         private const string ImgUp = "/Resources/Visuals/Icons/LightTheme/send-data-light_theme.png";
-        private const string ColorDefault = "#FFFFFF";
-        private const string ColorError = "#FF0000";
+        #endregion
 
+        #region Fields
+        private readonly DispatcherQueue _dispatcherQueue;
+        private readonly IWindowsNetworkInfoService _networkService;
+        private readonly Timer _timer;
+        #endregion
+
+        #region Properties
+        public ObservableCollection<NetworkCardDisplayModel> NetworkCards { get; } = [];
+        #endregion
+
+        #region Constructors
         public ViewModelNetworkTraffic(IWindowsNetworkInfoService networkService)
         {
             _networkService = networkService;
@@ -41,43 +47,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // Initiales Update (Fire & Forget im Hintergrund starten)
             System.Threading.Tasks.Task.Run(() => PerformUpdate());
         }
+        #endregion
 
-        private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+        #region Methods
+        public void Dispose()
         {
-            PerformUpdate();
-        }
-
-        private void PerformUpdate()
-        {
-            // ---------------------------------------------------------
-            // SCHRITT 1: DATEN HOLEN (Auf dem Hintergrund-Thread!)
-            // ---------------------------------------------------------
-
-            bool isAvailable = false;
-            // KORREKTUR: Hier den echten Typen 'NetworkStats' statt 'dynamic' verwenden
-            List<NetworkStats>? currentStats = null;
-
-            try
-            {
-                isAvailable = _networkService.IsNetworkAvailable();
-                if (isAvailable)
-                {
-                    // Jetzt passt der Typ: GetActiveInterfaces gibt NetworkStats zurück, und wir speichern es in einer Liste von NetworkStats
-                    currentStats = _networkService.GetActiveInterfaces().ToList();
-                }
-            }
-            catch (Exception)
-            {
-                isAvailable = false;
-            }
-
-            // ---------------------------------------------------------
-            // SCHRITT 2: UI AKTUALISIEREN (Auf dem UI-Thread)
-            // ---------------------------------------------------------
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                ApplyDataToUi(isAvailable, currentStats);
-            });
+            _timer?.Stop();
+            _timer?.Dispose();
         }
 
         // KORREKTUR: Auch hier im Parameter den echten Typen nutzen
@@ -133,6 +109,44 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+        {
+            PerformUpdate();
+        }
+
+        private void PerformUpdate()
+        {
+            // ---------------------------------------------------------
+            // SCHRITT 1: DATEN HOLEN (Auf dem Hintergrund-Thread!)
+            // ---------------------------------------------------------
+
+            bool isAvailable = false;
+            // KORREKTUR: Hier den echten Typen 'NetworkStats' statt 'dynamic' verwenden
+            List<NetworkStats>? currentStats = null;
+
+            try
+            {
+                isAvailable = _networkService.IsNetworkAvailable();
+                if (isAvailable)
+                {
+                    // Jetzt passt der Typ: GetActiveInterfaces gibt NetworkStats zurück, und wir speichern es in einer Liste von NetworkStats
+                    currentStats = _networkService.GetActiveInterfaces().ToList();
+                }
+            }
+            catch (Exception)
+            {
+                isAvailable = false;
+            }
+
+            // ---------------------------------------------------------
+            // SCHRITT 2: UI AKTUALISIEREN (Auf dem UI-Thread)
+            // ---------------------------------------------------------
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                ApplyDataToUi(isAvailable, currentStats);
+            });
+        }
+
         private void ShowOfflineState()
         {
             // Prüfen ob wir schon im Offline State sind, um unnötiges Clear/Add zu vermeiden
@@ -151,11 +165,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 ImagePathSendData = ImgUp
             });
         }
-
-        public void Dispose()
-        {
-            _timer?.Stop();
-            _timer?.Dispose();
-        }
+        #endregion
     }
 }

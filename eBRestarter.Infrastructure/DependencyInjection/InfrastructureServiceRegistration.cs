@@ -12,6 +12,7 @@ using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services;
 using eBRestarter.Infrastructure.Services.Authentication;
 using eBRestarter.Infrastructure.Services.Config;
+using eBRestarter.Infrastructure.Services.EBesucher;
 using eBRestarter.Infrastructure.Services.RestSharp;
 using eBRestarter.Infrastructure.Services.Update;
 using eBRestarter.Infrastructure.Services.WindowsOS;

@@ -11,11 +11,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelInstallAddOn : ObservableObject, IDisposable
     {
+        #region Fields
         private readonly IBrowserFactory _browserFactory;
         private readonly Timer _timer;
+        #endregion
 
+        #region Properties
         public ObservableCollection<ViewModelBrowserAddonStatus> Browsers { get; } = [];
+        #endregion
 
+        #region Constructors
         public ViewModelInstallAddOn(IBrowserFactory browserFactory)
         {
             _browserFactory = browserFactory;
@@ -34,11 +39,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             };
             _timer.Start();
         }
+        #endregion
 
+        #region Methods
         public void Dispose()
         {
             _timer?.Stop();
             _timer?.Dispose();
         }
+        #endregion
     }
 }

@@ -14,24 +14,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelInfocenter : ObservableObject
     {
+        #region Fields
+        private readonly IDialogService _dialogService;
         // Services
         private readonly IHardwareInfoService _hardwareService;
         private readonly IOsEditionService _osEditionService;
         private readonly IWindowsSystemInfoService _systemInfoService; // Dein Registry-Service
-        private readonly IDialogService _dialogService;
+        #endregion
 
-        // Properties für die UI (direkt gebunden)
-        [ObservableProperty] public partial string ProcessorText { get; set; } = "Lade...";
+        #region Observable Properties
+        [ObservableProperty] public partial string BrowserText { get; set; } = "Lade...";
         [ObservableProperty] public partial string GraphicsText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string RamText { get; set; } = "Lade...";
-
+        [ObservableProperty] public partial string OsBuildText { get; set; } = "Lade...";
         [ObservableProperty] public partial string OsEditionText { get; set; } = "Lade...";
         [ObservableProperty] public partial string OsVersionText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string OsBuildText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string BrowserText { get; set; } = "Lade...";
+        [ObservableProperty] public partial string ProcessorText { get; set; } = "Lade...";
+        [ObservableProperty] public partial string RamText { get; set; } = "Lade...";
+        #endregion
 
+        #region Properties
         public string Title { get; } = "Infocenter";
+        #endregion
 
+        #region Constructors
         public ViewModelInfocenter(
             IHardwareInfoService hardwareService,
             IOsEditionService osEditionService,
@@ -45,6 +50,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // Startet das Laden asynchron, ohne den Konstruktor zu blockieren
             _ = LoadDataAsync();
         }
+        #endregion
+
+        #region Commands
+        [RelayCommand]
+        public void OpenSupportWebsite(string? url)
+        {
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                catch {/* Logging könnte hier hin */}
+            }
+        }
 
         [RelayCommand]
         private async Task ShowAboutInfo()
@@ -52,8 +72,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // Der Dialog öffnet sich, Code wartet hier, bis Dialog geschlossen wird
             await _dialogService.ShowAboutDialogAsync();
         }
+        #endregion
 
-
+        #region Methods
         private async Task LoadDataAsync()
         {
             // 1. Hardware Laden (via WMI Service)
@@ -74,18 +95,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             OsBuildText = $"Betriebssystembuild: {_systemInfoService.GetCurrentOsBuildVersion()}";
             BrowserText = $"Standardbrowser: {_systemInfoService.GetCurrentStandardBrowserName()}";
         }
-
-        [RelayCommand]
-        public void OpenSupportWebsite(string? url)
-        {
-            if (!string.IsNullOrWhiteSpace(url))
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                catch {/* Logging könnte hier hin */}
-            }
-        }
+        #endregion
     }
 }
