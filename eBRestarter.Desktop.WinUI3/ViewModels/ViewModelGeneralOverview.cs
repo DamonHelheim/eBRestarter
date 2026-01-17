@@ -27,14 +27,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(XAxes))]
         [NotifyPropertyChangedFor(nameof(ChartTitle))] // Titel hängt auch vom Pivot ab
-        private int _selectedPivotIndex = 0;
+        public partial int SelectedPivotIndex { get; set; } = 0;
 
         // FIX: Series muss ein ObservableProperty sein, damit die UI Änderungen mitbekommt
         [ObservableProperty]
-        private ObservableCollection<ISeries> _series;
+        public partial ObservableCollection<ISeries> Series { get; set; }
 
         // Lokaler Zugriff auf die ColumnSeries, um Daten später zu pushen
-        private ColumnSeries<ObservableValue> _mainColumnSeries;
+        private readonly ColumnSeries<ObservableValue> _mainColumnSeries;
 
         // Deine ObservableCollection für die Werte
         private readonly ObservableCollection<ObservableValue> _chartValues;
@@ -44,7 +44,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             new Axis
             {
                 Name = "Punkte",
-                LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                // 1. Farbe für den TITEL ("Punkte") -> Schwarz
+        NamePaint = new SolidColorPaint(SKColors.DarkGray), 
+        
+        LabelsDensity = 1,
+
+        SeparatorsPaint = new SolidColorPaint(new SKColor(200, 200, 200))
+        {
+            StrokeThickness = 1,
+        },
+
+        // 2. Farbe für die ZAHLEN (0, 100, 200...) -> Schwarz
+        LabelsPaint = new SolidColorPaint(SKColors.Black),
                 MinStep = 100,
                 TextSize = 12
             }
@@ -53,7 +64,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public Axis[] XAxes => GetXAxesForCurrentPivot();
 
         // UI Texte
-        public string ChartTitle => _selectedPivotIndex switch
+        public string ChartTitle => SelectedPivotIndex switch
         {
             0 => $"Stundenübersicht ({DateTime.Now:dd.MM.yyyy})",
             1 => $"Tagesübersicht ({DateTime.Now:MMMM})",
@@ -79,7 +90,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             // 1. Werte initialisieren
-            _chartValues = new ObservableCollection<ObservableValue>();
+            _chartValues = [];
+
             for (int i = 0; i < 24; i++) _chartValues.Add(new ObservableValue(0));
 
             // 2. Series Setup
@@ -87,13 +99,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 Values = _chartValues,
                 Name = "Verdienst",
+
+                // HIER: Ecken abrunden
+                Rx = 200, // Radius in Pixeln (Horizontal)
+                Ry = 200, // Radius in Pixeln (Vertikal)
+
                 Fill = new SolidColorPaint(new SKColor(0, 120, 215)),
                 DataLabelsPaint = new SolidColorPaint(new SKColor(12, 142, 168)),
                 DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Top
             };
 
             // Initialisierung der Property
-            Series = new ObservableCollection<ISeries> { _mainColumnSeries };
+            Series = [_mainColumnSeries];
 
             // 3. Timer Setup
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
@@ -169,12 +186,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             if (_cachedEarnings == null) return;
 
-            double[] sourceData = _selectedPivotIndex switch
+            double[] sourceData = SelectedPivotIndex switch
             {
                 0 => _cachedEarnings.HourlyEarnings,
                 1 => _cachedEarnings.DailyEarnings,
                 2 => _cachedEarnings.MonthlyEarnings,
-                _ => Array.Empty<double>()
+                _ => []
             };
 
             // LiveCharts Performance Optimierung:
@@ -202,12 +219,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             var axis = new Axis
             {
-                LabelsPaint = new SolidColorPaint(SKColors.Gray),
+                NamePaint = new SolidColorPaint(SKColors.DarkGray),
+                LabelsPaint = new SolidColorPaint(SKColors.Black),
                 TextSize = 12,
                 LabelsRotation = 0
             };
 
-            switch (_selectedPivotIndex)
+            switch (SelectedPivotIndex)
             {
                 case 0:
                     axis.Name = "Uhrzeit (0-23h)";
@@ -217,7 +235,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     break;
                 case 2:
                     axis.Name = "Monat";
-                    axis.Labels = new[] { "Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" };
+                    axis.Labels = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
                     break;
             }
 

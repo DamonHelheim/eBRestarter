@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext="{d:DesignInstance Type=VM:ViewModelGeneralOverView}"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelGeneralOverview}"
     mc:Ignorable="d">
 
     <Border x:Name="Border_IP_Information"
@@ -17,9 +17,14 @@
             Padding="0">
 
         <Grid>
+            
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" MinHeight="60" />
+                
+                <RowDefinition Height="Auto"
+                               MinHeight="60" />
+                
                 <RowDefinition Height="*" />
+                
             </Grid.RowDefinitions>
 
             <!-- Header-Zeile (Icon + Titel) -->
@@ -51,28 +56,36 @@
                       IsExpanded="False">
 
                 <Expander.Header>
+                    
                     <TextBlock Text="Zeige IP Details" 
                                Foreground="{ThemeResource FontColor_1}"
                                FontSize="14"
                                FontWeight="Normal"/>
+                    
                 </Expander.Header>
 
                 <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+                    
                     <!-- Grid Layout für saubere Tabellenstruktur -->
                     <Grid Padding="0,4,12,0" ColumnSpacing="12" RowSpacing="8">
+                        
                         <Grid.ColumnDefinitions>
+                            
                             <!-- Linke Spalte: Labels (Auto Breite oder feste Breite für exakte Bündigkeit) -->
                             <ColumnDefinition Width="Auto" MinWidth="80"/>
                             <!-- Rechte Spalte: Werte (Nimmt den Rest) -->
                             <ColumnDefinition Width="*"/>
+                            
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
+                            
                             <RowDefinition Height="Auto"/>
                             <!-- IP -->
                             <RowDefinition Height="Auto"/>
                             <!-- Host -->
                             <RowDefinition Height="Auto"/>
+                            
                             <!-- Standort -->
                         </Grid.RowDefinitions>
 

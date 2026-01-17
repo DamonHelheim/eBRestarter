@@ -16,6 +16,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Resources\Visuals\Icons\Intersection\globe.png" />
+    <None Remove="Resources\Visuals\Icons\LightTheme\globe.png" />
     <None Remove="Views\Dialogs\AboutDialog.xaml" />
     <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
     <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
@@ -173,6 +175,9 @@
     <Content Include="Resources\Visuals\Icons\Intersection\globe-grid.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\globe.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\key.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -255,6 +260,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\LightTheme\fa_whmcs_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\globe.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\LightTheme\ip-address_light_theme.png">

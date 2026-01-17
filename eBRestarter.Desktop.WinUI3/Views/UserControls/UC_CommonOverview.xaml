@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelGeneralOverView}"
+    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelGeneralOverview}"
     mc:Ignorable="d">
 
     <Grid x:Name="Root"
@@ -22,31 +22,30 @@
 
         <!-- HEADER -->
         <Grid Grid.Row="0"
-          Height="40"
-          Background="{ThemeResource MenuBackgroundColor_3}">
+              Height="40"
+              Background="{ThemeResource MenuBackgroundColor_3}">
 
 
-            <StackPanel 
-            Background="{ThemeResource MenuBackgroundColor_3}"
-            Orientation="Horizontal"
-            Height="35"           
-            VerticalAlignment="Center"
-            Spacing="10"
-            Padding="10,0,0,0">
+            <StackPanel Background="{ThemeResource MenuBackgroundColor_3}"
+                        Orientation="Horizontal"
+                        Height="35"           
+                        VerticalAlignment="Center"
+                        Spacing="10"
+                        Padding="10,0,0,0">
 
                 <FontIcon Glyph="&#xE7F4;"
                           FontFamily="Segoe MDL2 Assets"
-              Foreground="{ThemeResource FontColor_1}"
-              FontSize="26"
-              VerticalAlignment="Bottom"/>
+                          Foreground="{ThemeResource FontColor_1}"
+                          FontSize="26"
+                          VerticalAlignment="Bottom"/>
 
                 <TextBlock x:Name="tbl_MainWindowTitle"
                            x:Uid="GeneralOverview"
-               Foreground="{ThemeResource FontColor_1}"
-               Margin="0,6,0,0"
-               VerticalAlignment="Center"
-               FontSize="18"
-               FontWeight="Bold"/>
+                           Foreground="{ThemeResource FontColor_1}"
+                           Margin="0,6,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="18"
+                           FontWeight="Bold"/>
             </StackPanel>
 
         </Grid>
@@ -119,36 +118,44 @@
 
                     <!-- Card: Earnings -->
                     <Border Grid.Row="2"
-                        Background="{ThemeResource DashletBackgroundColor_2}"
-                        CornerRadius="12"
-                        BorderThickness="1"
-                        BorderBrush="#22000000"
-                        Padding="12">
+        Background="{ThemeResource DashletBackgroundColor_2}"
+        CornerRadius="12"
+        BorderThickness="1"
+        BorderBrush="#22000000"
+        Padding="12">
 
-                        <StackPanel Orientation="Horizontal"
-                                    Spacing="12"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center">
+                        <Grid ColumnSpacing="12"
+          VerticalAlignment="Center"
+          HorizontalAlignment="Stretch">
 
-                            <local:UC_EarningsAmount HeaderTitleEarnings="{Binding CurrentDay}"
-                                                     HeaderImageEarnings="{ThemeResource ClockIcon}"
-                                                     EarningsAmount="{Binding EarningsThisDaySum}"
-                                                     Height="111"
-                                                     Width="380"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                            <local:UC_EarningsAmount HeaderTitleEarnings="{Binding CurrentMonth}"
-                                                     HeaderImageEarnings="{ThemeResource CalendarIcon}"
-                                                     EarningsAmount="{Binding EarningsThisMonthSum}"
-                                                     Height="111"
-                                                     Width="380"/>
+                            <local:UC_EarningsAmount Grid.Column="0"
+                                 HeaderTitleEarnings="{Binding CurrentDay}"
+                                 HeaderImageEarnings="{ThemeResource ClockIcon}"
+                                 EarningsAmount="{Binding EarningsThisDaySum}"
+                                 Height="111"
+                                 HorizontalAlignment="Stretch"/>
 
-                            <local:UC_EarningsAmount HeaderTitleEarnings="{Binding CurrentYear}"
-                                                     HeaderImageEarnings="{ThemeResource CalendarIcon}"
-                                                     EarningsAmount="{Binding EarningsThisYearSum}"
-                                                     Height="111"
-                                                     Width="380"/>
+                            <local:UC_EarningsAmount Grid.Column="1"
+                                 HeaderTitleEarnings="{Binding CurrentMonth}"
+                                 HeaderImageEarnings="{ThemeResource CalendarIcon}"
+                                 EarningsAmount="{Binding EarningsThisMonthSum}"
+                                 Height="111"
+                                 HorizontalAlignment="Stretch"/>
 
-                        </StackPanel>
+                            <local:UC_EarningsAmount Grid.Column="2"
+                                 HeaderTitleEarnings="{Binding CurrentYear}"
+                                 HeaderImageEarnings="{ThemeResource GlobeIcon4}"
+                                 EarningsAmount="{Binding EarningsThisYearSum}"
+                                 Height="111"
+                                 HorizontalAlignment="Stretch"/>
+
+                        </Grid>
                     </Border>
                 </Grid>
 

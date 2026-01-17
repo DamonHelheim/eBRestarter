@@ -3,6 +3,7 @@ using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using eBRestarter.Desktop.WinUI3.Views.Pages;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,6 +19,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics;
 using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -73,6 +75,30 @@ namespace eBRestarter.Desktop.WinUI3
             // Initiale Navigation beim Start der App.
             // Wir nutzen den String-Key "CommonOverview", damit das Fenster den konkreten Typ der Page nicht kennen muss.
             _navigationService.NavigateTo("CommonOverview", transitionInfo: new DrillInNavigationTransitionInfo());
+
+            // 1. AppWindow holen (Standard-Prozedur in WinUI 3)
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
+
+            // 2. Den "Presenter" abrufen und maximieren
+            // Der OverlappedPresenter ist der Standard für Desktop-Apps
+            if (appWindow.Presenter is OverlappedPresenter presenter)
+            {
+                presenter.Maximize();
+            }
+
+            //// 1. Fenster-Handle holen
+            //IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+            //// 2. WindowId daraus erstellen
+            //Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+
+            //// 3. Das AppWindow holen
+            //AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
+
+            //// 4. Größe ändern (Breite, Höhe) in Pixeln
+            //appWindow.Resize(new SizeInt32(2300, 2080));
         }
 
         /// <summary>

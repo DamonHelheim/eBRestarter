@@ -15,7 +15,7 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid Background="{ThemeResource MenuBackgroundColor}">
+    <Grid Background="{ThemeResource MenuBackgroundColor}" >
         
         <Grid.RowDefinitions>
             

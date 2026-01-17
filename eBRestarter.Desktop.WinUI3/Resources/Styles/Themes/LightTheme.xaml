@@ -9,6 +9,7 @@
     <BitmapImage x:Key="GlobeIcon"          UriSource="\Resources\Visuals\Icons\LightTheme\fa_globe_light_theme.png"/>
     <BitmapImage x:Key="GlobeIcon2"         UriSource="\Resources\Visuals\Icons\LightTheme\circle_with_globe_light_theme.png"/>
     <BitmapImage x:Key="GlobeIcon3"         UriSource="\Resources\Visuals\Icons\LightTheme\fa_globe_2_light_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon4"         UriSource="\Resources\Visuals\Icons\LightTheme\globe.png"/>
     <BitmapImage x:Key="DashbordIcon"       UriSource="\Resources\Visuals\Icons\LightTheme\fa_flatscreen_light_theme_2.png"/>
     <BitmapImage x:Key="AppIcon"            UriSource="\Resources\Visuals\Icons\LightTheme\fa_arrows-rotate_light_theme.png"/>
     <BitmapImage x:Key="OptionIcon"         UriSource="\Resources\Visuals\Icons\LightTheme\fa_list-ul_light_theme_2.png"/>
