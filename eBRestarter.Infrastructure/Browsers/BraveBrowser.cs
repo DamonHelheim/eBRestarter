@@ -19,7 +19,7 @@ namespace eBRestarter.Infrastructure.Browsers
         protected override string ProgramFilesSubPath => @"BraveSoftware\Brave-Browser\Application";
 
         public override string DisplayName => "Brave";
-        public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_brave.png";
+        public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_brave.png";
         public override string DownloadUrl => WebLinks.BraveDownloadLinkDE;
 
         public override BrowserType Type => BrowserType.Brave;

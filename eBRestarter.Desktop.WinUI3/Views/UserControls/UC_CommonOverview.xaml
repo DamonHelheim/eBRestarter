@@ -105,12 +105,12 @@
 
                     <!-- Card: Chart / Output -->
                     <Border Grid.Row="1"
-                        Background="{ThemeResource DashletBackgroundColor_2}"
-                        CornerRadius="12"
-                        BorderThickness="1"
-                        BorderBrush="#22000000"
-                        Padding="12"
-                        Margin="0,0,0,12">
+                            Background="{ThemeResource DashletBackgroundColor_2}"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="#22000000"
+                            Padding="12"
+                            Margin="0,0,0,12">
 
                         <!-- Control bleibt unverändert, nur Margin rausgenommen -->
                         <local:UC_PointsOutput Margin="0"/>
@@ -118,51 +118,55 @@
 
                     <!-- Card: Earnings -->
                     <Border Grid.Row="2"
-        Background="{ThemeResource DashletBackgroundColor_2}"
-        CornerRadius="12"
-        BorderThickness="1"
-        BorderBrush="#22000000"
-        Padding="12">
+                            Background="{ThemeResource DashletBackgroundColor_2}"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="#22000000"
+                            Padding="12">
 
                         <Grid ColumnSpacing="12"
-          VerticalAlignment="Center"
-          HorizontalAlignment="Stretch">
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Stretch">
 
                             <Grid.ColumnDefinitions>
+                                
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
+                                
                             </Grid.ColumnDefinitions>
 
                             <local:UC_EarningsAmount Grid.Column="0"
-                                 HeaderTitleEarnings="{Binding CurrentDay}"
-                                 HeaderImageEarnings="{ThemeResource ClockIcon}"
-                                 EarningsAmount="{Binding EarningsThisDaySum}"
-                                 Height="111"
-                                 HorizontalAlignment="Stretch"/>
+                                                     HeaderTitleEarnings="{Binding CurrentDay}"
+                                                     HeaderImageEarnings="{ThemeResource ClockIcon}"
+                                                     EarningsAmount="{Binding EarningsThisDaySum}"
+                                                     Height="111"
+                                                     HorizontalAlignment="Stretch"/>
 
                             <local:UC_EarningsAmount Grid.Column="1"
-                                 HeaderTitleEarnings="{Binding CurrentMonth}"
-                                 HeaderImageEarnings="{ThemeResource CalendarIcon}"
-                                 EarningsAmount="{Binding EarningsThisMonthSum}"
-                                 Height="111"
-                                 HorizontalAlignment="Stretch"/>
+                                                     HeaderTitleEarnings="{Binding CurrentMonth}"
+                                                     HeaderImageEarnings="{ThemeResource CalendarIcon}"
+                                                     EarningsAmount="{Binding EarningsThisMonthSum}"
+                                                     Height="111"
+                                                     HorizontalAlignment="Stretch"/>
 
                             <local:UC_EarningsAmount Grid.Column="2"
-                                 HeaderTitleEarnings="{Binding CurrentYear}"
-                                 HeaderImageEarnings="{ThemeResource GlobeIcon4}"
-                                 EarningsAmount="{Binding EarningsThisYearSum}"
-                                 Height="111"
-                                 HorizontalAlignment="Stretch"/>
+                                                     HeaderTitleEarnings="{Binding CurrentYear}"
+                                                     HeaderImageEarnings="{ThemeResource GlobeIcon4}"
+                                                     EarningsAmount="{Binding EarningsThisYearSum}"
+                                                     Height="111"
+                                                     HorizontalAlignment="Stretch"/>
 
                         </Grid>
+                        
                     </Border>
+                    
                 </Grid>
 
                 <!-- RECHTS (Sidebar) -->
                 <StackPanel Grid.Column="2"
-                        HorizontalAlignment="Right"
-                        Spacing="12">
+                            HorizontalAlignment="Right"
+                            Spacing="12">
 
                     <!-- Card: IP -->
                     <Border Background="{ThemeResource DashletBackgroundColor_2}"

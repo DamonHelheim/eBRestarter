@@ -50,8 +50,8 @@ namespace eBRestarter.Infrastructure.Services.EBesucher
                 return new IpInfoData(
                     IpAddress: GetStringSafe(root, "ip"),
                     Hostname: GetStringSafe(root, "host"),
-                    CountryCode: GetStringSafe(root, "country_code"),
-                    CountryName: GetStringSafe(root, "country_name")
+                    CountryCode: GetStringSafe(root, "countryCode"),
+                    CountryName: GetStringSafe(root, "countryName")
                 );
             }
             catch (Exception ex)

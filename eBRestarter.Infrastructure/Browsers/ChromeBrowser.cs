@@ -21,7 +21,7 @@ namespace eBRestarter.Infrastructure.Browsers
 
         public override BrowserType Type => BrowserType.Chrome;
         public override string DisplayName => "Chrome";
-        public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_chrome.png";
+        public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_chrome.png";
         public override string DownloadUrl => WebLinks.ChromeDownloadLinkDE;
         protected override string ProcessName => "chrome";
         // Chrome speichert Version oft unter HKCU\BLBeacon

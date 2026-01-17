@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser; // IBrowserFactory, IBrowser
+using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem; // IWindowsProcessControlService
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Domain.Enums; // BrowserType Enum
 using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using System;
@@ -21,6 +23,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region Fields (Private Felder OHNE [ObservableProperty])
 
         private readonly IBrowserFactory _browserFactory;
+        private readonly IEVisitorConfigService _iEVisitorConfigService;
         private readonly IDialogService _dialogService;
         private readonly IFileDeletionService _fileDeletionService;
         private readonly IWindowsProcessControlService _processService; // Dein existierender Service
@@ -69,12 +72,35 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IBrowserFactory browserFactory,
             IWindowsProcessControlService processService,
             IFileDeletionService fileDeletionService,
+            IEVisitorConfigService iEVisitorConfigService,
             IDialogService dialogService)
         {
             _browserFactory = browserFactory;
+            _iEVisitorConfigService = iEVisitorConfigService;
             _processService = processService;
             _fileDeletionService = fileDeletionService;
             _dialogService = dialogService;
+
+            // 1. Config laden
+            AppConfig config = iEVisitorConfigService.LoadConfig();
+
+            // 2. Den String aus "config.Browser.Selected" holen (z.B. "Chrome")
+            string selectedBrowserString = config.Browser.Selected;
+
+            // 3. String in Enum umwandeln und initialisieren
+            if (Enum.TryParse(typeof(BrowserType), selectedBrowserString, true, out var result))
+            {
+                // Erfolgreich geparst -> Initialisieren
+                var browserType = (BrowserType)result;
+                Initialize(browserType);
+            }
+            else
+            {
+                // Fallback, falls in der Config Quatsch steht oder sie leer ist
+                StatusText = $"Konfiguration fehlerhaft: Unbekannter Browser '{selectedBrowserString}'.";
+                // Optional: Standard laden oder UI deaktivieren
+                // Initialize(BrowserType.Chrome); 
+            }
         }
 
         #endregion
@@ -196,7 +222,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 BrowserName = _currentBrowser.DisplayName;
                 // Achtung: Der IconPath aus IBrowser ist oft "/Resources...", 
                 // für WinUI müssen wir das evtl. auf "ms-appx:///Assets/..." mappen oder im Browser fixen.
-                BrowserIconPath = FixIconPathForWinUI(_currentBrowser.IconPath);
+                BrowserIconPath = _currentBrowser.IconPath;
 
                 // 3. Pfade laden (über die neue GetPaths Methode im Browser)
                 _browserPaths = _currentBrowser.GetPaths();
@@ -214,13 +240,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
 
         // Hilfsmethode für Pfadkorrektur (WPF -> WinUI)
-        private string FixIconPathForWinUI(string path)
-        {
-            // Dein WPF Pfad war "/Resources/Visuals/..."
-            // WinUI will "ms-appx:///Assets/..."
-            // Mappe das hier oder ändere es direkt in den Browser-Klassen (Besser!)
-            return path.Replace("/Resources/Visuals", "ms-appx:///Assets/Visuals");
-        }
+        //private string FixIconPathForWinUI(string path)
+        //{
+        //    // Dein WPF Pfad war "/Resources/Visuals/..."
+        //    // WinUI will "ms-appx:///Assets/..."
+        //    // Mappe das hier oder ändere es direkt in den Browser-Klassen (Besser!)
+        //    return path.Replace("/Resources/Visuals", "ms-appx:///Assets/Visuals");
+        //}
 
         private string GetProcessNameByType(BrowserType type)
         {

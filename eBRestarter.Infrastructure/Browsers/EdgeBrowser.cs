@@ -13,7 +13,7 @@ namespace eBRestarter.Infrastructure.Browsers
     public class EdgeBrowser : ChromiumBrowserBase
     {
         public override string DisplayName => "Edge";
-        public override string IconPath => "/Resources/Visuals/Icons/Intersection/fa_edge.png";
+        public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_edge.png";
         public override string DownloadUrl => WebLinks.EdgeDownloadLinkDE;
 
         public override BrowserType Type => BrowserType.Edge;
