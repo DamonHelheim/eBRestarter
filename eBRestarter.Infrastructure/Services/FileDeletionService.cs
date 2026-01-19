@@ -5,11 +5,9 @@ using System.Text;
 
 namespace eBRestarter.Infrastructure.Services
 {
+
     public class FileDeletionService : IFileDeletionService
     {
-        // Wir nutzen System.IO direkt oder deinen FileSystemService Wrapper, falls vorhanden.
-        // Hier System.IO der Einfachheit halber.
-
         public async Task<int> CountFilesAsync(List<string> directories)
         {
             return await Task.Run(() =>
@@ -23,7 +21,7 @@ namespace eBRestarter.Infrastructure.Services
                         {
                             count += Directory.GetFiles(dir, "*", SearchOption.AllDirectories).Length;
                         }
-                        catch { /* Zugriff verweigert ignorieren */ }
+                        catch { /* Zugriff ignorieren */ }
                     }
                 }
                 return count;
@@ -35,17 +33,16 @@ namespace eBRestarter.Infrastructure.Services
             await Task.Run(() =>
             {
                 int deletedCount = 0;
+                // Variable für das Drosseln der Updates
+                int reportInterval = 10; // Nur alle 50 Dateien die UI updaten
+                int updateCounter = 0;
 
                 foreach (var dir in directories)
                 {
                     if (!Directory.Exists(dir)) continue;
 
-                    // 1. Alle Dateien holen
-
                     string[] files;
-
                     try { files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories); }
-
                     catch { continue; }
 
                     foreach (var file in files)
@@ -54,24 +51,34 @@ namespace eBRestarter.Infrastructure.Services
 
                         try
                         {
-                            // Schutz vor Addons (aus deinem alten Code)
                             if (file.Contains("moz-extension")) continue;
 
                             File.Delete(file);
                             deletedCount++;
+                            updateCounter++;
 
-                            statusReporter.Report($"Gelöscht: {Path.GetFileName(file)}");
-                            valueReporter.Report(deletedCount);
+                            // --- PERFORMANCE FIX: Drosselung ---
+                            // Wir senden den Status nur, wenn 'reportInterval' erreicht ist
+                            // ODER wenn es die allerletzte Datei ist (damit 100% sicher erreicht wird).
+                            if (updateCounter >= reportInterval)
+                            {
+                                statusReporter.Report($"Lösche: {Path.GetFileName(file)}");
+                                valueReporter.Report(deletedCount);
+                                updateCounter = 0; // Reset
+                            }
                         }
-                        catch
-                        {
-                            // Ignorieren (in Benutzung etc.)
-                        }
+                        catch { /* Ignorieren */ }
                     }
 
-                    // 2. Leere Ordner aufräumen (Optional)
-                    // try { Directory.Delete(dir, true); } catch {} 
+                    // Ordner löschen
+                    if (token.IsCancellationRequested) return;
+                    try { Directory.Delete(dir, true); } catch { }
                 }
+
+                // AM ENDE: Einmal final 100% / Fertig melden, falls durch das Intervall was fehlte
+                statusReporter.Report("Abschließe Bereinigung...");
+                valueReporter.Report(deletedCount);
+
             }, token);
         }
 
@@ -84,3 +91,5 @@ namespace eBRestarter.Infrastructure.Services
         }
     }
 }
+
+       

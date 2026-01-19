@@ -123,23 +123,27 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Öffnet eine URL im Standardbrowser des Betriebssystems.
+        /// Startet eine externe Anwendung (.exe) mit optionalen Argumenten.
         /// </summary>
-        /// <param name="url">Die Webadresse (z.B. https://...).</param>
-        public void OpenUrlInBrowser(string url)
+        /// <param name="exeFilePath">Der vollständige Pfad zur ausführbaren Datei.</param>
+        /// <param name="arguments">Optionale Argumente (z.B. eine URL).</param>
+        public void OpenUrlInBrowser(string exeFilePath, string arguments = "")
         {
             try
             {
-                // Windows erkennt durch das Protokoll (http/https) automatisch die Standardanwendung.
-                _processWrapper.Start(new ProcessStartInfo
+                var startInfo = new ProcessStartInfo
                 {
-                    FileName = url,
+                    FileName = exeFilePath,
+                    Arguments = arguments, // HIER: Das Argument (die URL) wird gesetzt
                     UseShellExecute = true
-                });
+                };
+
+                _processWrapper.Start(startInfo);
+                _logger.LogInformation("Executable gestartet: {Path} mit Arguments: {Args}", exeFilePath, arguments);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Fehler beim Öffnen der URL: {Url}", url);
+                _logger.LogError(ex, "Fehler beim Starten der EXE: {Path}", exeFilePath);
             }
         }
 

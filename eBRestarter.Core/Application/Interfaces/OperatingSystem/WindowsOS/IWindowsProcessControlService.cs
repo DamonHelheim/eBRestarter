@@ -15,7 +15,7 @@ namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS
         /// </summary>
         void OpenExplorer(string folderPath);
 
-        void OpenUrlInBrowser(string url);
+        void OpenUrlInBrowser(string exeFilePath, string arguments);
         void CloseApplication(string processName);
         void CloseAllOpenPrograms();
         void ShutdownComputer();

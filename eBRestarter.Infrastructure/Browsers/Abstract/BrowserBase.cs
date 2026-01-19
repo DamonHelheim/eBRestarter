@@ -32,25 +32,26 @@ namespace eBRestarter.Infrastructure.Browsers.Abstract
 
         // --- NEU: Extension Check muss von konkreter Klasse (oder Zwischenklasse) implementiert werden ---
         public abstract bool IsExtensionInstalled(string? extensionId = null);
+
         public virtual void Start(string url, string arguments = "")
         {
             try
             {
                 var exePath = GetExecutablePath();
-                _logger.LogInformation($"Starte {Type}...");
+                _logger.LogInformation($"Starte {Type} mit URL {url}...");
 
-                // Wir nutzen den ProcessControlService der Facade.
-                // Hinweis: Dein Service sollte idealerweise eine Methode Start(path, args) haben.
-                // Hier simuliert:
-                _os.WindowsProcessControlService.StartExecutable(exePath);
-                // Falls du Arguments brauchst, musst du IProcessControlService erweitern 
-                // oder OpenUrlInBrowser nutzen, wenn es nur um URLs geht.
+                // Wir kombinieren die URL und evtl. zusätzliche Argumente
+                // Browser akzeptieren die URL einfach als erstes Argument in der Kommandozeile.
+                string finalArguments = $"{url} {arguments}".Trim();
+
+                // JETZT rufen wir die EXE auf und geben die URL als Argument mit
+                _os.WindowsProcessControlService.OpenUrlInBrowser(exePath, finalArguments);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Fehler beim Starten von {Type}");
             }
-        }
+        }      
 
         public virtual void Close()
         {
