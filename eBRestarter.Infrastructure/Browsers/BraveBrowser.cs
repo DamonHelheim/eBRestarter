@@ -77,11 +77,21 @@ namespace eBRestarter.Infrastructure.Browsers
                 // Service Worker (wie von dir angefordert):
                 cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Service Worker"));
 
+                // Code Cache (JS/Wasm)
+                cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Code Cache"));
+                // GPU Cache (Grafik)
+                cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "GPUCache"));
+
                 // COOKIES: Du wolltest "IndexedDB" (und meistens "Network")
                 // IndexedDB:
                 cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "IndexedDB"));
                 // Network (Hier liegen die echten Cookies in der Datei 'Cookies'):
                 cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Network"));
+
+                // Local Storage (WICHTIG!)
+                cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Local Storage"));
+                // Session Storage
+                cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Session Storage"));
 
                 // EXTENSIONS:
                 extensionsDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Extensions", ExtensionId));
@@ -90,17 +100,9 @@ namespace eBRestarter.Infrastructure.Browsers
             return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
         }
 
-        //public override BrowserPaths GetPaths()
-        //{
-        //    var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
-        //    // Brave User Data liegt in LocalAppData\BraveSoftware\Brave-Browser\User Data\Default
-        //    var baseDir = _os.WindowsFileSystemService.CombinePaths(localAppData, "BraveSoftware", "Brave-Browser", "User Data", "Default");
-
-        //    return new BrowserPaths(
-        //        CacheDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Cache"),
-        //        CookiesDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Network"), // Chromium Standard ist meist Network oder IndexedDB
-        //        ExtensionsDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Extensions", ExtensionId)
-        //    );
-        //}
+        //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\IndexedDB
+        //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Service Worker
+        //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Cache
+        //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Network
     }
 }

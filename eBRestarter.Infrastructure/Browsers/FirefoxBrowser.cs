@@ -123,6 +123,23 @@ namespace eBRestarter.Infrastructure.Browsers
             return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
         }
 
+
+        //Cookie source
+
+        //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\storage\default => Cookies
+        //"C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\cookies.sqlite"
+
+
+        //Internetcache source
+        //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\doomed
+        //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\entries
+        //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\jumpListCache
+
+        //Current open tabs
+        //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\sessionstore-backups
+
+        //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\datareporting
+
         // ---------------------------------------------------------------------------------
         // HELPER: profiles.ini Parsen
         // ---------------------------------------------------------------------------------

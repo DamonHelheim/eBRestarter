@@ -72,11 +72,21 @@ namespace eBRestarter.Infrastructure.Browsers
                 // Service Worker (wie von dir angefordert):
                 cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Service Worker"));
 
+                // Code Cache (JS/Wasm)
+                cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Code Cache"));
+                // GPU Cache (Grafik)
+                cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "GPUCache"));
+
                 // COOKIES: Du wolltest "IndexedDB" (und meistens "Network")
                 // IndexedDB:
                 cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "IndexedDB"));
                 // Network (Hier liegen die echten Cookies in der Datei 'Cookies'):
                 cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Network"));
+
+                // Local Storage (WICHTIG!)
+                cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Local Storage"));
+                // Session Storage
+                cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Session Storage"));
 
                 // EXTENSIONS:
                 extensionsDirs.Add(_os.WindowsFileSystemService.CombinePaths(profilePath, "Extensions", ExtensionId));
@@ -85,16 +95,17 @@ namespace eBRestarter.Infrastructure.Browsers
             return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
         }
 
-        //public override BrowserPaths GetPaths()
-        //{
-        //    var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
-        //    var baseDir = _os.WindowsFileSystemService.CombinePaths(localAppData, @"Google\Chrome\User Data\Default");
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\IndexedDB
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Service Worker
 
-        //    return new BrowserPaths(
-        //        CacheDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Cache"),
-        //        CookiesDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Network"),
-        //        ExtensionsDir: _os.WindowsFileSystemService.CombinePaths(baseDir, "Extensions")
-        //    );
-        //}
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Cache
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Code Cache
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Network
+
+        //Eine SQLite-Datenbank, die alle besuchten URLs enthält.
+        //"C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\History"
+
+        //Hier wird gespeichert, welche Tabs offen sind. Wenn du das löschst, startet der Browser "leer" (keine "Zuletzt geschlossene Tabs wiederherstellen").
+        //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Sessions 
     }
 }
