@@ -17,9 +17,11 @@ namespace eBRestarter.Infrastructure.Services.Authentication
         public JsonCredentialStore(IWindowsFileSystemService fileSystem)
         {
             _fileSystem = fileSystem;
+
             // Pfad idealerweise aus ISystemPaths holen
             var appData = fileSystem.GetEnvironmentPath("LocalAppData");
-            _storagePath = Path.Combine(appData, "eBRestarter", "secrets.json");
+
+            _storagePath = Path.Combine(appData, "Skylar", "eBRestarter", "eBRestarterConfig.json");
         }
 
         public void SaveCredentials(ApiCredentials credentials)

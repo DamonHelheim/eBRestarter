@@ -6,6 +6,7 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.RestClient;
+using eBRestarter.Core.Application.Interfaces.Security;
 using eBRestarter.Core.Application.Interfaces.Update;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
@@ -53,12 +54,14 @@ namespace eBRestarter.Infrastructure.DependencyInjection
             services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
 
             // Registrierung der Wrapper
-            services.AddTransient<IProcessInfoService, ProcessInfoService>(); 
+            services.AddTransient<IProcessInfoService, ProcessInfoService>();
             services.AddTransient<IWindowsRegistryService, WindowsRegistryService>();
             services.AddTransient<IWindowsFileSystemService, WindowsFileSystemService>();
             services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
 
             services.AddTransient<IWindowsAutoLogonService, WindowsAutoLogonService>();
+
+            services.AddTransient<IEncryptionService, WindowsEncryptionService>();
 
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 

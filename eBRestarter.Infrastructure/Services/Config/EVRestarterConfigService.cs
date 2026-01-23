@@ -1,5 +1,6 @@
 ﻿using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Interfaces.Security;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using Microsoft.Extensions.Logging;
 using System;
@@ -20,6 +21,7 @@ namespace eBRestarter.Infrastructure.Services.Config
     public class EVisitorConfigService : IEVisitorConfigService
     {
         private readonly IPathService _pathService;
+        private readonly IEncryptionService _encryptionService;
         private readonly ILogger<EVisitorConfigService> _logger;
 
         // Optionen für die JSON-Serialisierung.
@@ -36,8 +38,9 @@ namespace eBRestarter.Infrastructure.Services.Config
         /// </summary>
         /// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
         /// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
-        public EVisitorConfigService(IPathService pathService, ILogger<EVisitorConfigService> logger)
+        public EVisitorConfigService(IPathService pathService, IEncryptionService encryptionService, ILogger<EVisitorConfigService> logger)
         {
+            _encryptionService = encryptionService;
             _pathService = pathService;
             _logger = logger;
         }
@@ -51,39 +54,56 @@ namespace eBRestarter.Infrastructure.Services.Config
         {
             var filePath = _pathService.GetConfigFilePath();
 
-            // Fall 1: Datei existiert noch nicht (erster Start)
             if (!File.Exists(filePath))
             {
-                _logger.LogInformation("Konfigurationsdatei '{Path}' nicht gefunden. Erstelle Standardwerte.", filePath);
-
                 var defaultConfig = new AppConfig();
-                // Wir speichern direkt ab, damit der User sofort eine Datei zum Bearbeiten hat.
                 SaveConfig(defaultConfig);
-
                 return defaultConfig;
             }
 
-            // Fall 2: Datei lesen und parsen
             try
             {
+                // 1. JSON lesen (Das klappt auch auf einem fremden PC, da nur Text)
                 string jsonString = File.ReadAllText(filePath);
 
-                // Deserialisieren in unser Model. 
-                var config = JsonSerializer.Deserialize<AppConfig>(jsonString, _jsonOptions);
+                // Hier sind alle Einstellungen (Theme, User etc.) geladen!
+                // Der ApiKey enthält jetzt aber noch den verschlüsselten "Müll".
+                var config = JsonSerializer.Deserialize<AppConfig>(jsonString, _jsonOptions) ?? new AppConfig();
 
-                // Falls die Datei leer war (null), geben wir trotzdem ein valides Objekt zurück.
-                return config ?? new AppConfig();
+                // 2. Versuchen zu entschlüsseln
+                if (!string.IsNullOrEmpty(config.Settings.ApiKey))
+                {
+                    // Decrypt fängt intern Fehler ab und gibt string.Empty zurück, 
+                    // wenn es nicht entschlüsselt werden kann (z.B. falscher PC).
+                    var decryptedKey = _encryptionService.Decrypt(config.Settings.ApiKey);
+
+                    // Wenn decryptedKey leer ist (wegen PC-Wechsel), ist das okay. 
+                    // Der User muss ihn dann halt neu eingeben.
+                    // Wir überschreiben den verschlüsselten Wert im RAM mit dem Ergebnis (Klartext oder leer).
+
+                    config = config with
+                    {
+                        Settings = config.Settings with { ApiKey = decryptedKey }
+                    };
+
+                    if (string.IsNullOrEmpty(decryptedKey))
+                    {
+                        _logger.LogWarning("API Key konnte nicht entschlüsselt werden (evtl. PC gewechselt). Der Key muss neu eingegeben werden.");
+                    }
+                }
+
+                // 3. Wir geben die Config zurück – mit allen importierten Settings, 
+                // nur der Key fehlt eventuell.
+                return config;
             }
-            catch (JsonException jsonEx)
+            catch (JsonException)
             {
-                // Spezifischer Catch für defektes JSON (z.B. Syntaxfehler durch manuelles Editieren)
-                _logger.LogError(jsonEx, "Die Konfigurationsdatei ist beschädigt (ungültiges JSON). Nutze Standardwerte.");
+                _logger.LogError("Config-Datei ist kein gültiges JSON.");
                 return new AppConfig();
             }
             catch (Exception ex)
             {
-                // Allgemeiner Catch für Zugriffsprobleme (z.B. Datei gesperrt, keine Rechte)
-                _logger.LogError(ex, "Allgemeiner Fehler beim Laden der Konfiguration.");
+                _logger.LogError(ex, "Kritischer Fehler beim Laden.");
                 return new AppConfig();
             }
         }

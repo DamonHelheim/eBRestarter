@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces.Authentication;
+using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Domain.Models.Records;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region Fields (Private Felder OHNE [ObservableProperty])
 
         private readonly IApiAuthenticationService _authService;
-        private readonly ICredentialStore _credentialStore;
+        //private readonly ICredentialStore _credentialStore;
+        private readonly IEVisitorConfigService _configService;
 
         #endregion
 
@@ -46,18 +48,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         public ViewModelActivateApi(
             IApiAuthenticationService authService,
-            ICredentialStore credentialStore)
+            IEVisitorConfigService configService)
         {
             _authService = authService;
-            _credentialStore = credentialStore;
+            _configService = configService;
 
             // Bestehende Daten laden
-            var saved = _credentialStore.LoadCredentials();
-            if (saved != null)
-            {
-                Username = saved.Username;
-                ApiKey = saved.ApiKey;
-            }
+            // LoadConfig entschlüsselt automatisch, wir bekommen also Klartext für die UI
+            var config = _configService.LoadConfig();
+
+            Username = config.Settings.ApiUsername;
+            ApiKey = config.Settings.ApiKey;
         }
 
         #endregion
@@ -69,24 +70,36 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             IsBusy = true;
             StatusMessage = "Prüfe Zugangsdaten...";
-            StatusColor = "{ThemeResource SystemFillColorCautionBrush}"; // Gelb/Orange
 
-            var result = await _authService.VerifyCredentialsAsync(Username, ApiKey);
+            var (IsValid, Message) = await _authService.VerifyCredentialsAsync(Username, ApiKey);
 
             IsBusy = false;
 
-            if (result.IsValid)
+            if (IsValid)
             {
-                // Speichern
-                _credentialStore.SaveCredentials(new ApiCredentials(Username, ApiKey));
+                // 1. Config laden (um den aktuellen Stand zu haben)
+                var currentConfig = _configService.LoadConfig();
 
-                StatusMessage = "Erfolgreich aktiviert!";
-                StatusColor = "#7ED422"; // Grün
+                // 2. Daten aktualisieren (wir nutzen 'with' um Records zu kopieren/ändern)
+                var newConfig = currentConfig with
+                {
+                    Settings = currentConfig.Settings with
+                    {
+                        ApiUsername = Username,
+                        ApiKey = ApiKey // Hier noch Klartext
+                    }
+                };
+
+                // 3. Speichern (ConfigService übernimmt die Verschlüsselung intern)
+                _configService.SaveConfig(newConfig);
+
+                StatusMessage = "Erfolgreich aktiviert & verschlüsselt gespeichert!";
+                StatusColor = "#7ED422";
             }
             else
             {
-                StatusMessage = result.Message;
-                StatusColor = "#E40E87"; // Rot
+                StatusMessage = Message;
+                StatusColor = "#E40E87";
             }
         }
 
@@ -97,18 +110,43 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // Import-Logik (Legacy File Drag&Drop)
         public void ImportLegacyFile(string filePath)
         {
-            var imported = _credentialStore.ImportFromLegacyFile(filePath);
-            if (imported != null)
+            // Check ob Datei existiert
+            if (!System.IO.File.Exists(filePath))
             {
-                Username = imported.Username;
-                ApiKey = imported.ApiKey;
-                StatusMessage = "Daten aus Datei importiert. Bitte 'Aktivieren' klicken.";
-                StatusColor = "{ThemeResource SystemFillColorSuccessBrush}";
+                StatusMessage = "Datei nicht gefunden.";
+                StatusColor = "#E40E87"; // Rot
+                return;
             }
-            else
+
+            try
             {
-                StatusMessage = "Fehler beim Lesen der Datei.";
-                StatusColor = "#E40E87";
+                // Da der CredentialStore wegfällt, holen wir die Lese-Logik (BinaryReader) hier rein.
+                // Wir öffnen die Datei nur lesend.
+                using var stream = System.IO.File.Open(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                using var reader = new System.IO.BinaryReader(stream);
+
+                // Die alte Struktur war: String Username, String ApiKey
+                var importedUser = reader.ReadString();
+                var importedKey = reader.ReadString();
+
+                // 1. Daten in die UI-Properties laden
+                Username = importedUser;
+                ApiKey = importedKey;
+
+                // 2. Status setzen
+                // WICHTIG: Wir speichern noch NICHT. Der User soll auf "Aktivieren" klicken,
+                // damit dein neuer Submit-Command die Validierung und Verschlüsselung macht.
+                StatusMessage = "Daten importiert. Bitte jetzt 'Aktivieren' klicken.";
+                StatusColor = "{ThemeResource SystemFillColorSuccessBrush}"; // Grün
+            }
+            catch (Exception)
+            {
+                StatusMessage = "Fehler: Die Datei hat ein falsches Format.";
+                StatusColor = "#E40E87"; // Rot
+
+                // Optional: Felder leeren bei Fehler
+                Username = string.Empty;
+                ApiKey = string.Empty;
             }
         }
 
