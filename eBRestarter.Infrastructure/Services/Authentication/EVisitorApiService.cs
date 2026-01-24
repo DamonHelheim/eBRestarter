@@ -2,6 +2,7 @@
 using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models;
+using eBRestarter.Infrastructure.Constants;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +24,7 @@ namespace eBRestarter.Infrastructure.Services.Authentication
             // Die URL muss natürlich zur eBesucher API passen.
             var request = new ApiRequest
             {
-                Url = "https://www.ebesucher.de/api/visitor_exchange.json/account/status", // Beispiel-Endpunkt!
+                Url = ApiWebLinks.HourlyEarnings, // Beispiel-Endpunkt!
                 Username = username,
                 Password = apiKey, // Bei eBesucher ist der API-Key oft das Passwort für Basic Auth
                 TimeoutSeconds = 10

@@ -59,7 +59,7 @@
             <Grid Margin="12">
                 <Grid.ColumnDefinitions>
                     <!-- Links flexibel -->
-                    <ColumnDefinition Width="*" MaxWidth="1200"/>
+                    <ColumnDefinition Width="*"/>
                     <!-- Abstand -->
                     <ColumnDefinition Width="12"/>
                     <!-- Rechts Sidebar fix -->

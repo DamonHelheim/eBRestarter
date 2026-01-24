@@ -21,7 +21,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     using CommunityToolkit.Mvvm.ComponentModel;
     using CommunityToolkit.Mvvm.Input;
     using eBRestarter.Core.Application.Interfaces.Update;
+    using eBRestarter.Core.Domain.Enums;
     using eBRestarter.Infrastructure.Constants;
+    using eBRestarter.Infrastructure.Services.Config;
     using System.Collections.ObjectModel;
     using System.DirectoryServices.AccountManagement;
 
@@ -39,6 +41,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IWindowsAutoLogonService _autoLogonService;
         private readonly IOperatingSystemFacade _os;
         private readonly IUpdateService _updateService;
+        private readonly IThemeService _themeService;
 
 
         // =========================================================
@@ -74,12 +77,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IWindowsAutoLogonService autoLogonService,
             IOperatingSystemFacade os,
             IUpdateService updateService,
+            IThemeService themeService,
             IEVisitorConfigService eVisitorConfigService)
         {
             _dialogService = dialogService;
             _autoLogonService = autoLogonService;
             _os = os;
             _updateService = updateService;
+            _themeService = themeService;
             _eVisitorConfigService = eVisitorConfigService;
 
             // Config laden
@@ -149,6 +154,27 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
 
         [RelayCommand]
+        private void SetLightTheme()
+        {
+            _themeService.SetTheme("Light");
+            SaveThemeConfig("Light");
+        }
+
+        [RelayCommand]
+        private void SetDarkTheme()
+        {
+            _themeService.SetTheme("Dark");
+            SaveThemeConfig("Dark");
+        }
+
+        private void SaveThemeConfig(string theme)
+        {
+            var config = _eVisitorConfigService.LoadConfig();
+            var newConfig = config with { Settings = config.Settings with { Theme = theme } };
+            _eVisitorConfigService.SaveConfig(newConfig);
+        }
+
+        [RelayCommand]
         private async Task ShowActivateApiDialog()
         {
             await _dialogService.ShowActivateApiDialogAsync();
@@ -158,6 +184,26 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task ShowImportApiDialog()
         {
             await _dialogService.ShowImportApiDialogAsync();
+        }
+
+        [RelayCommand]
+        private async Task RemoveAPICredentials()
+        {
+            // 1. Config laden
+            var currentConfig = _eVisitorConfigService.LoadConfig();
+            // 2. Daten entfernen
+            var newConfig = currentConfig with
+            {
+                Settings = currentConfig.Settings with
+                {
+                    ApiUsername = string.Empty,
+                    ApiKey = string.Empty
+                }
+            };
+            // 3. Speichern
+            _eVisitorConfigService.SaveConfig(newConfig);
+
+            await _dialogService.ShowMessageAsync("API Zugang", "Deine API Zugangsdaten wurden entfernt.", DialogIcon.Success);
         }
 
         [RelayCommand]

@@ -15,7 +15,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region Fields (Private Felder OHNE [ObservableProperty])
 
         private readonly IApiAuthenticationService _authService;
-        //private readonly ICredentialStore _credentialStore;
         private readonly IEVisitorConfigService _configService;
 
         #endregion
@@ -25,11 +24,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
         public partial string ApiKey { get; set; } = string.Empty;
-
         [ObservableProperty] public partial bool IsBusy { get; set; }
-
         [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent"; // Hex Code oder Resource Key
-
         [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
 
         [ObservableProperty]
@@ -101,7 +97,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 StatusMessage = Message;
                 StatusColor = "#E40E87";
             }
-        }
+        }      
 
         #endregion
 

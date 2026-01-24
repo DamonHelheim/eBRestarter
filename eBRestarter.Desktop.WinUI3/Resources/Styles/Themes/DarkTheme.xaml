@@ -1,0 +1,287 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <BitmapImage x:Key="UserIcon"           UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/user_dark_theme.png"/>
+    <BitmapImage x:Key="ClockRotateIcon"    UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_clock-rotate-left_dark_theme.png"/>
+    <BitmapImage x:Key="GearIcon"           UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_whmcs_dark_theme.png"/>
+    <BitmapImage x:Key="GearIcon_2"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_gears_dark_theme.png"/>
+    <BitmapImage x:Key="CirclePlusIcon"     UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_circle-plus_dark_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon"          UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_globe_dark_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon2"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/circle_with_globe_dark_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon3"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_globe_2_dark_theme.png"/>
+    <BitmapImage x:Key="GlobeIcon4"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/globe.png"/>
+    <BitmapImage x:Key="DashbordIcon"       UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_flatscreen_dark_theme.png"/>
+    <BitmapImage x:Key="AppIcon"            UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_arrows-rotate_dark_theme.png"/>
+    <BitmapImage x:Key="OptionIcon"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_list-ul_dark_theme.png"/>
+    <BitmapImage x:Key="InfocenterIcon"     UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_servicestack_dark_theme.png"/>
+    <BitmapImage x:Key="DownloadIcon"       UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/download_dark_theme.png"/>
+    <BitmapImage x:Key="NetworkCardIcon"    UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/network-interface-card_dark_theme.png"/>
+    <BitmapImage x:Key="AddFileIcon"        UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/note_dark_theme.png"/>
+    <BitmapImage x:Key="AddFileIcon_2"      UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/add_document_dark_theme.png"/>
+    <BitmapImage x:Key="CleaningBrushIcon"  UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/data-cleaning_dark_theme.png"/>
+    <BitmapImage x:Key="SendDataIcon"       UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/send-data-dark_theme.png"/>
+    <BitmapImage x:Key="StatusIcon"         UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/status_dark_theme.png"/>
+    <BitmapImage x:Key="UserIcon2"          UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/User_2_dark_theme.png"/>
+
+    <BitmapImage x:Key="CalendarIcon"       UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/calendar_dark_theme.png"/>
+    <BitmapImage x:Key="ClockIcon"          UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/clock_dark_theme.png"/>
+    <BitmapImage x:Key="IPAddressIcon"      UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/ip-address_dark_theme.png"/>
+
+    <BitmapImage x:Key="WindowsIcon"        UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/windows_dark_theme.png"/>
+    <BitmapImage x:Key="WorkstationIcon"    UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/workstation_dark_theme.png"/>
+    <BitmapImage x:Key="MaintenanceIcon"    UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/maintenance_dark_theme.png"/>
+
+    <BitmapImage x:Key="AppIconMainMenuIcon"        UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_arrows-rotate_dark_theme.png"/>
+    <BitmapImage x:Key="DashbordIconMainMenuIcon"   UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_flatscreen_dark_theme.png"/>
+    <BitmapImage x:Key="GearIconMainMenuIcon"       UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_gears_dark_theme.png"/>
+    <BitmapImage x:Key="OptionMainIconMainMenuIcon" UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_list-ul_dark_theme.png"/>
+    <BitmapImage x:Key="InfocenterMainMenuIcon"     UriSource="ms-appx:///Resources/Visuals/Icons/DarkTheme/fa_servicestack_dark_theme.png"/>
+
+
+    <SolidColorBrush x:Key="AddeVisitorAddOnHeader" Color="#FF0B4F80"/>
+    <SolidColorBrush x:Key="AppColorBlue"       Color="#191D1F"/>
+    <SolidColorBrush x:Key="AppColorCyanHover"  Color="#22262B"/>
+    <SolidColorBrush x:Key="HeaderColor_2"      Color="#22262B"/>
+
+    <Color x:Key="AppCyanColor">#22262B</Color>
+    <Color x:Key="AppCyanHoverColor">#22262B</Color>
+    <Color x:Key="AppWhiteColor">#A2ABB3</Color>
+    <SolidColorBrush x:Key = "CostumBackgroundColor" Color = "#121212"/>
+
+    <SolidColorBrush x:Key = "FontColor_1" Color = "#A2ABB3"/>
+    <SolidColorBrush x:Key = "FontColor_2" Color = "#A2ABB3"/>
+    <SolidColorBrush x:Key = "FontColor_3" Color = "#6d8ea8"/>
+    <SolidColorBrush x:Key = "FontColor_4" Color = "#d2d5d9"/>
+
+    <SolidColorBrush x:Key = "MenuBackgroundColor" Color = "#121212"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor_2" Color = "#121212"/>
+    <SolidColorBrush x:Key = "MenuBackgroundColor_3" Color = "#22262B"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_1" Color = "#191D1F"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_2" Color = "#191D1F"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_3" Color = "#191D1F"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_4" Color = "#2b2b2b"/>
+    <SolidColorBrush x:Key = "DashletBackgroundColor_5" Color = "#0e3e5c"/>
+
+    <SolidColorBrush x:Key = "MenuHeaderBackgroundColor" Color = "#121212"/>
+    <SolidColorBrush x:Key = "ButtonBackgroundColor" Color = "#283036"/>
+    <SolidColorBrush x:Key = "TextBoxBackgroundColor" Color = "#283036"/>
+    <SolidColorBrush x:Key = "TextBoxBottumBorderBrushBackgroundColor" Color = "#A2ABB3"/>
+
+
+    <SolidColorBrush x:Key="ToggleSwitchFillOff"                Color="#121212" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver"     Color="#A2ABB3" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOffPressed"         Color="#A2ABB3" />
+
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOff"            Color="#A2ABB3" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPointerOver" Color="Black" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPressed"     Color="#808080" />
+
+    <SolidColorBrush x:Key="ToggleSwitchFillOn"                 Color="#00B894" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"      Color="#1ED3AE" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"          Color="#009973" />
+
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOn"             Color="White" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver"  Color="White" />
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed"      Color="White" />
+
+
+    <SolidColorBrush x:Key="ToggleSwitchBackgroundFillOff"      Color="#A2ABB3" />
+
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOff"              Color="#A2ABB3" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOffPointerOver"   Color="#A2ABB3" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOffPressed"       Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOn"               Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver"    Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed"        Color="Transparent" />
+    <SolidColorBrush x:Key="AppTitleBarForegroundBrush" Color="White" />
+
+    <SolidColorBrush x:Key="AppTealButtonBackgroundBrush" Color="#00B894" />
+    <SolidColorBrush x:Key="AppTealButtonForegroundBrush" Color="#FFFFFF" />
+
+    <Style x:Key="CustomPaneToggleButtonStyle"
+       TargetType="Button"
+       BasedOn="{StaticResource PaneToggleButtonStyle}">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <SolidColorBrush x:Key="NavigationViewItemForeground"
+                      Color="{ThemeResource FontColor_1}" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver"
+                      Color="White" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected"
+                      Color="White" />
+
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver"
+                  Color="White" />
+    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed"
+                  Color="Black" />
+
+    <SolidColorBrush x:Key="NavigationViewItemBackground"
+                      Color="Transparent" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver"
+                      Color="#2c6bd1" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed"
+                      Color="#2A3245" />
+
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected"
+                      Color="#2c6bd1" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver"
+                      Color="#5384d4" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed"
+                      Color="White" />
+
+    <Style TargetType="NavigationViewItem">
+        <Setter Property="Foreground"
+                Value="#A2ABB3" />
+        <Setter Property="FontSize"
+                Value="14" />
+    </Style>
+
+    <Style TargetType="StackPanel" x:Key="StackPanelColorStandardThemeSideMenu">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop   Color="#191D1F" Offset="1"/>
+                    <GradientStop   Color="#191D1F"  Offset="0"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <SolidColorBrush x:Key="AppGrayButtonBackgroundBrush" Color="#283036" />
+    <SolidColorBrush x:Key="AppGrayButtonForegroundBrush" Color="#A2ABB3" />
+
+    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#303940" />
+    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="#FFFFFF" />
+
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#191D1F" />
+    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="#FFFFFF" />
+
+    <Style x:Key="ButtonCustomStyle_1"
+           TargetType="Button"
+           BasedOn="{StaticResource DefaultButtonStyle}">
+
+        <Setter Property="Background"
+                Value="{ThemeResource AppGrayButtonBackgroundBrush}" />
+
+        <Setter Property="Foreground"
+                Value="{ThemeResource AppGrayButtonForegroundBrush}" />
+
+        <Setter Property="Width" Value="295" />
+        <Setter Property="Height" Value="50" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+
+    </Style>
+
+    <Style x:Key="ButtonChooseBrowser"
+           TargetType="Button"
+           BasedOn="{StaticResource DefaultButtonStyle}">
+
+        <Setter Property="Background"
+                Value="{ThemeResource AppTealButtonBackgroundBrush}" />
+
+        <Setter Property="Foreground"
+                Value="{ThemeResource AppTealButtonForegroundBrush}" />
+
+        <Setter Property="Width" Value="295" />
+        <Setter Property="Height" Value="50" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+
+    </Style>
+
+    <Style x:Key="DownloadBrowserToggleButton" TargetType="Button">
+        <Setter Property="Background" Value="#0681ba"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="0">
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                     Content="{TemplateBinding Content}"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     AutomationProperties.AccessibilityView="Raw"/>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#0f83d1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#0A5A82"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#333333"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="#AAAAAA"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DownloadBrowserToggleButtonRed" TargetType="Button">
+        <Setter Property="Background" Value="#BA224D"/>
+        <Setter Property="Foreground" Value="White"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="0">
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                     Content="{TemplateBinding Content}"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#9e2044"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#7A1632"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="#333333"/>
+                                        <Setter Target="ContentPresenter.Foreground" Value="#AAAAAA"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

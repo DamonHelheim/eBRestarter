@@ -303,6 +303,7 @@
 
                                     <Button x:Name="BtnSetStandardTheme"
                                             x:Uid="Standard"
+                                            Command="{Binding SetLightThemeCommand}"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
                                             Background="#FFD5D5D5"
@@ -311,6 +312,7 @@
 
                                     <Button x:Name="BtnSetDarkTheme"
                                             x:Uid="Dark"
+                                            Command="{Binding SetDarkThemeCommand}"
                                             Margin="0"
                                             VerticalAlignment="Stretch"
                                             HorizontalAlignment="Stretch"
@@ -415,7 +417,7 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Border Grid.Column="0"
+                        <!--<Border Grid.Column="0"
                                 Background="#FFF5F5F5"
                                 CornerRadius="6"
                                 Padding="16"
@@ -423,7 +425,7 @@
 
                             <StackPanel Orientation="Vertical">
 
-                                <!-- Header -->
+                                --><!-- Header --><!--
                                 <StackPanel Orientation="Horizontal"
                                             Margin="0,0,0,12">
 
@@ -439,7 +441,7 @@
                                                FontSize="16" />
                                 </StackPanel>
 
-                                <!-- „Karte“ mit Username / Key -->
+                                --><!-- „Karte“ mit Username / Key --><!--
                                 <Border x:Name="sp_Options_API_Information"
                                         Background="{ThemeResource DashletBackgroundColor_2}"
                                         CornerRadius="6"
@@ -484,10 +486,10 @@
 
                             </StackPanel>
 
-                        </Border>
+                        </Border>-->
 
 
-                        <Border Grid.Column="1"
+                        <Border Grid.Column="0"
                                 Background="#FFEFEFEF"
                                 CornerRadius="6"
                                 Padding="16">
@@ -530,7 +532,19 @@
                                                 Foreground="White"
                                                 BorderBrush="{x:Null}"/>
 
-                                        <Button x:Name="BtnImportAPIFile"
+                                        <Button x:Name="BtnRemoveAPIFile"
+                                                x:Uid="Deactivate_API_interface"
+                                                Command="{Binding RemoveAPICredentialsCommand}"
+                                                Margin="0,0,0,0"
+                                                Width="330"
+                                                FontSize="16"
+                                                Height="40"
+                                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
+                                                Background="#FF1598C9"
+                                                Foreground="White"
+                                                BorderBrush="{x:Null}"/>
+
+                                        <!--<Button x:Name="BtnImportAPIFile"
                                                 x:Uid="Establish_API_connection_with_file_import"
                                                 Command="{Binding ShowImportApiDialogCommand}"
                                                 Margin="0,0,0,0"
@@ -539,14 +553,14 @@
                                                 FontSize="16"
                                                 Background="#FF1598C9"
                                                 Foreground="White"
-                                                BorderBrush="{x:Null}"/>
+                                                BorderBrush="{x:Null}"/>-->
 
                                     </StackPanel>
 
                                 </Border>
 
                                 <!-- Karte: Export / Entfernen -->
-                                <Border x:Name="sp_Options_API_2"
+                                <!--<Border x:Name="sp_Options_API_2"
                                         Background="{ThemeResource DashletBackgroundColor_2}"
                                         CornerRadius="6"
                                         Padding="10">
@@ -577,7 +591,7 @@
 
                                     </StackPanel>
 
-                                </Border>
+                                </Border>-->
 
                             </StackPanel>
 

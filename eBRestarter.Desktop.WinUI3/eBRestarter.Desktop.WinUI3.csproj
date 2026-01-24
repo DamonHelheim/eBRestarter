@@ -46,6 +46,13 @@
     <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
     <None Remove="Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Resources\Styles\Themes\DarkTheme - Kopieren.xaml" />
+    <Page Remove="Resources\Styles\Themes\DarkTheme.xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme - Kopieren (2).xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme - Kopieren.xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="appsettings.json">
@@ -58,6 +65,13 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Resources\Styles\Themes\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Styles\Themes\LightTheme.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Visuals\Icons\DarkTheme\add_document_dark_theme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

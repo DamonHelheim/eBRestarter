@@ -120,22 +120,29 @@ namespace eBRestarter.Infrastructure.Services.Config
                 var filePath = _pathService.GetConfigFilePath();
                 var directory = Path.GetDirectoryName(filePath);
 
-                // Self-Healing: Wenn der Ordner (z.B. %AppData%/eBRestarter) gelöscht wurde, erstellen wir ihn neu.
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
 
-                string jsonString = JsonSerializer.Serialize(config, _jsonOptions);
+                // --- VERSCHLÜSSELUNG ---
+                // Wir wollen den Klartext-Key aus dem RAM nicht direkt speichern.
+                // Wir erstellen eine Kopie des Config-Objekts nur für den Speichervorgang.
+                var encryptedKey = _encryptionService.Encrypt(config.Settings.ApiKey);
 
-                // Überschreibt die Datei vollständig mit dem neuen Inhalt.
+                var configToSave = config with
+                {
+                    Settings = config.Settings with { ApiKey = encryptedKey }
+                };
+
+                string jsonString = JsonSerializer.Serialize(configToSave, _jsonOptions);
                 File.WriteAllText(filePath, jsonString);
 
-                _logger.LogInformation("Konfiguration erfolgreich unter '{Path}' gespeichert.", filePath);
+                _logger.LogInformation("Konfiguration gespeichert.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Kritischer Fehler beim Speichern der Konfiguration. Änderungen gingen verloren.");
+                _logger.LogError(ex, "Fehler beim Speichern der Konfiguration.");
             }
         }
 
