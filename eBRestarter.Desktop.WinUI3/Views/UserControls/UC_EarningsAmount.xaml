@@ -10,15 +10,17 @@
 
     <Border x:Name              ="border_sum_points_todday"
             BorderThickness     ="1"
-            Background          ="{ThemeResource DashletBackgroundColor_1}"
+            Background          ="{ThemeResource DashletBackgroundColor_3}"
             CornerRadius        ="5"
             Padding             ="0"           
-            VerticalAlignment   ="Top">
+            VerticalAlignment   ="Top"
+            HorizontalAlignment ="Stretch">
 
         <StackPanel Height="130"
-                 Width="340">
+                    Width="340"
+                    HorizontalAlignment="Left">
 
-            <Grid>
+            <Grid HorizontalAlignment="Left">
 
                 <Grid.RowDefinitions>
 
@@ -50,14 +52,14 @@
             </StackPanel>
 
             <StackPanel Grid.Row    ="1"
-                     Orientation ="Horizontal">
+                        Orientation ="Horizontal">
 
                 <TextBlock x:Name       ="tbl_EarningsDay"
-                        Foreground   ="{ThemeResource FontColor_1}"
-                        Margin       ="10,20,0,0"
-                        Text         ="{Binding EarningsAmount}"
-                        FontSize     ="24"
-                        FontWeight   ="Light"/>
+                           Foreground   ="{ThemeResource FontColor_1}"
+                           Margin       ="10,20,0,0"
+                           Text         ="{Binding EarningsAmount}"
+                           FontSize     ="24"
+                           FontWeight   ="Light"/>
 
             </StackPanel>
 

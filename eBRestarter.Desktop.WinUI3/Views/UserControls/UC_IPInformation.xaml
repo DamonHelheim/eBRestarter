@@ -11,7 +11,7 @@
     mc:Ignorable="d">
 
     <Border x:Name="Border_IP_Information"
-            Background="{ThemeResource DashletBackgroundColor_2}"
+            Background="{ThemeResource MenuBackgroundColor}"
             BorderThickness="1"
             CornerRadius="4"
             Padding="0">

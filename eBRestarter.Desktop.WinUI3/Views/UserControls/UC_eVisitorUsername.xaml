@@ -48,8 +48,7 @@
             <StackPanel Grid.Row="1">
                 
                 <Button x:Name              ="BtneVisitorRegistration"
-                        x:Uid               ="RegisterWitheVisitor"
-                        Style               ="{ThemeResource ButtonCustomStyle_1}"
+                        x:Uid               ="RegisterWitheVisitor"                        
                         Margin              ="20,5,0,0"
                         BorderBrush         ="Transparent"
                         Height              ="35"

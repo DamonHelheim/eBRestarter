@@ -28,21 +28,24 @@
 
         <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
-                    Background="{ThemeResource MenuBackgroundColor_3}"
+                    Background="{ThemeResource MenuBackgroundColor}"
                     Orientation="Horizontal"
-                    Height="35"           
+                    Height="35"
+                    Margin="5"
+                    CornerRadius="8"
                     VerticalAlignment="Center"
                     Spacing="10"
                     Padding="10,0,0,0">
 
             <FontIcon Glyph="&#xF2C7;"
+                      Margin="0,0,0,3"
                       Foreground="{ThemeResource FontColor_1}"
                       FontSize="26"
                       VerticalAlignment="Bottom"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
                        Foreground="{ThemeResource FontColor_1}"
-                       Margin="0,6,0,0"
+                       Margin="0,6,0,9"
                        Text="Optionen"
                        VerticalAlignment="Center"
                        FontSize="18"
@@ -67,11 +70,12 @@
                         <!-- optional: Icon -->
                         <FontIcon Glyph="&#xE713;"
                                   Width="20"
-                                  Foreground="Black"/>
+                                  Foreground="{ThemeResource FontColor_1}"/>
 
                         <TextBlock x:Uid="General"
                                    FontSize="14"
-                                   VerticalAlignment="Center" Foreground="Black"/>
+                                   VerticalAlignment="Center" 
+                                   Foreground="{ThemeResource FontColor_1}"/>
                     </StackPanel>
 
                 </PivotItem.Header>
@@ -93,7 +97,7 @@
 
 
                         <Border Grid.Column="0"
-                                Background="#FFF5F5F5"
+                                Background="{ThemeResource DashletBackgroundColor_2}"
                                 CornerRadius="6"
                                 Padding="16"
                                 Margin="0,0,24,0">
@@ -142,31 +146,30 @@
 
                                 <ComboBox x:Name="ComboboxComputerRestartOptions"
                                           FontSize="16"
-                                          BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
-                                          Foreground="{ThemeResource FontColor_1}"
+                                          RequestedTheme="{ThemeResource GeneralRequestedTheme}"
                                           Margin="10,0,10,12"
                                           Width="300"
                                           DisplayMemberPath="DisplayText"
                                           ItemsSource="{Binding ComputerRestartList}"
                                           SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                    <ComboBox.Resources>
-                                        <!-- Normal -->
+                                    <!--<ComboBox.Resources>
+                                        --><!-- Normal --><!--
                                         <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
                                         <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
 
-                                        <!-- Hover -->
+                                        --><!-- Hover --><!--
                                         <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
                                         <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
 
-                                        <!-- Pressed -->
+                                        --><!-- Pressed --><!--
                                         <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
                                         <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
 
-                                    </ComboBox.Resources>
+                                    </ComboBox.Resources>-->
 
                                 </ComboBox>
 
@@ -236,7 +239,7 @@
                         </Border>
 
                         <Border Grid.Column="1"
-                                Background="#FFEFEFEF"
+                                Background="{ThemeResource DashletBackgroundColor_2}"
                                 CornerRadius="6"
                                 Padding="16"
                                 Margin="0,0,24,0">
@@ -335,31 +338,30 @@
                                                FontWeight="Bold" />
 
                                     <ComboBox FontSize="16"
-                                              BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
-                                              Foreground="{ThemeResource FontColor_1}"
+                                              RequestedTheme="{ThemeResource GeneralRequestedTheme}"
                                               Margin="0,0,10,12"
                                               Width="300"
                                               DisplayMemberPath="DisplayText"
                                               ItemsSource="{Binding LanguageList}"
                                               SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                        <ComboBox.Resources>
-                                            <!-- Normal -->
+                                        <!--<ComboBox.Resources>
+                                            --><!-- Normal --><!--
                                             <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
                                             <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
                                             <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
 
-                                            <!-- Hover -->
+                                            --><!-- Hover --><!--
                                             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
                                             <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
                                             <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
 
-                                            <!-- Pressed -->
+                                            --><!-- Pressed --><!--
                                             <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
                                             <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
                                             <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
 
-                                        </ComboBox.Resources>
+                                        </ComboBox.Resources>-->
 
                                         <ComboBoxItem Content="Deutsch" />
                                         <ComboBoxItem Content="Englisch" />
@@ -390,12 +392,12 @@
 
                         <FontIcon Glyph="&#xE8B8;"
                                   Width="20"
-                                  Foreground="Black"/>
+                                  Foreground="{ThemeResource FontColor_1}"/>
 
                         <TextBlock x:Uid="API_access"
                                    FontSize="14"
                                    VerticalAlignment="Center"
-                                   Foreground="Black"/>
+                                   Foreground="{ThemeResource FontColor_1}"/>
 
                     </StackPanel>
 
@@ -490,7 +492,7 @@
 
 
                         <Border Grid.Column="0"
-                                Background="#FFEFEFEF"
+                                Background="{ThemeResource DashletBackgroundColor_2}"
                                 CornerRadius="6"
                                 Padding="16">
 
@@ -514,7 +516,7 @@
 
                                 <!-- Karte: Verbindung herstellen -->
                                 <Border x:Name="sp_Options_API_1"
-                                        Background="{ThemeResource DashletBackgroundColor_2}"
+                                        Background="{ThemeResource DashletBackgroundColor_5}"
                                         CornerRadius="6"
                                         Padding="10"
                                         Margin="0,0,0,10">

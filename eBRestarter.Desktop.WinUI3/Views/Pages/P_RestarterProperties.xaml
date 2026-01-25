@@ -12,7 +12,8 @@
     mc:Ignorable="d">
 
     <Grid x:Name="MainGrid"
-          CornerRadius="8,0,0,0">
+          CornerRadius="8,0,0,0"
+          Background="{ThemeResource MenuBackgroundColor_2}">
 
         <!-- 2 Zeilen: oben Titel, unten Inhalt -->
         <Grid.RowDefinitions>
@@ -22,28 +23,29 @@
 
         <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
-            Background="{ThemeResource MenuBackgroundColor_3}"
-            Orientation="Horizontal"
-            Height="35"
-                   
-            VerticalAlignment="Center"
-            Spacing="10"
-            Padding="10,0,0,0">
+                    Background="{ThemeResource MenuBackgroundColor}"
+                    Orientation="Horizontal"
+                    Height="35"
+                    Margin="5,5,5,0"
+                    CornerRadius="8"
+                    VerticalAlignment="Center"
+                    Spacing="10"
+                    Padding="10,0,0,0">
 
             <FontIcon Glyph="&#xECA5;"
-              FontFamily="Segoe MDL2 Assets"
-              Foreground="{ThemeResource FontColor_1}"
-              FontSize="28"
-              VerticalAlignment="Center"/>
+                      FontFamily="Segoe MDL2 Assets"
+                      Foreground="{ThemeResource FontColor_1}"
+                      FontSize="28"
+                      VerticalAlignment="Center"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
                        x:Uid="Properties"
-               Foreground="{ThemeResource FontColor_1}"
+                       Foreground="{ThemeResource FontColor_1}"
                        Margin="0,-3,0,0"
-               Text="Einstellungen"
-               VerticalAlignment="Center"
-               FontSize="18"
-               FontWeight="Bold"/>
+                       Text="Einstellungen"
+                       VerticalAlignment="Center"
+                       FontSize="18"
+                       FontWeight="Bold"/>
             
         </StackPanel>
 
@@ -70,7 +72,7 @@
                     <ItemsPanelTemplate>
 
                         <controls:ItemsWrapGrid Orientation="Horizontal"
-                                                    />
+                                                Background="{ThemeResource MenuBackgroundColor_2}"/>
                     </ItemsPanelTemplate>
 
                 </GridView.ItemsPanel>
@@ -79,35 +81,36 @@
 
                     <Style TargetType="GridViewItem">
 
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="Margin" Value="20,20,0,0" />
+                        <Setter Property="Padding" Value="5,0,0,0" />
+                        <Setter Property="Margin" Value="0,20,0,0" />
 
                     </Style>
 
                 </GridView.ItemContainerStyle>
 
                 <userControls:UC_eVisitorUsername Width="320"
-                                                      Height="220"/>
+                                                  Height="220"/>
 
                 <userControls:UC_RestartAndRuntimeOptions Width="320"
-                                                              Height="220"/>
+                                                          Height="220"/>
 
                 <userControls:UC_AutomatedTasks Width="320"
-                                                    Height="220"/>
+                                                Height="220"/>
 
                 <userControls:UC_AdditionalOptions Width="320"
-                                                       Height="220"/>
+                                                   Height="220"/>
             </GridView>
 
             <!--RECHTE SPALTE: InstalledBrowsers rechtsbündig-->
             <ScrollViewer Grid.Column="1"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled"
-                              HorizontalAlignment="Stretch">
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          HorizontalAlignment="Stretch"
+                          Background="{ThemeResource MenuBackgroundColor_2}">
 
                     <userControls:UC_InstalledBrowsers Width="270"
-                                                           Height="Auto"
-                                                           Margin="0,20,10,10" />
+                                                       Height="Auto"
+                                                       Margin="0,20,10,10" />
                
             </ScrollViewer>
 

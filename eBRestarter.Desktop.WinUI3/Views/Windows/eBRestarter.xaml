@@ -30,7 +30,7 @@
         <controls:TitleBar x:Name="AppTitleBar"
                            x:Uid="AppTitleBar"
                            Grid.Row="0"
-                           Foreground="Black"
+                           Foreground="{ThemeResource FontColor_1}"
                            IsBackButtonVisible="false"
                            IsBackButtonEnabled="{x:Bind NavigationFrame.CanGoBack, Mode=OneWay}"
                            BackRequested="AppTitleBar_BackRequested"
@@ -68,12 +68,12 @@
                         
                         <Border Height="1"
                                 Margin="0,0,0,8"
-                                Background="Black" />
+                                Background="{ThemeResource FontColor_1}" />
                         
                         <TextBlock Text="v1.0.0"
                                    Opacity="0.6"
                                    FontSize="12"
-                                   Foreground="Black" />
+                                   Foreground="{ThemeResource FontColor_1}" />
                         
                     </StackPanel>
                     
@@ -149,7 +149,7 @@
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Stretch"
-                            Background="White">
+                            Background="{ThemeResource MenuBackgroundColor}">
                     
                     <usercontrol:UC_RestartTask Margin="5" />
                     

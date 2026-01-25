@@ -43,16 +43,20 @@
 
         </Grid>
 
-        <ScrollViewer Grid.Row="1" 
+        <ScrollViewer Grid.Row="1"
+                      BorderThickness="0"
                       VerticalScrollBarVisibility="Auto" 
                       HorizontalScrollBarVisibility="Disabled"
                       HorizontalAlignment="Left">
 
             <ItemsControl ItemsSource="{Binding Browsers}">
+                
                 <ItemsControl.ItemTemplate>
+                    
                     <DataTemplate>
                         <userControls:UC_Browser DataContext="{Binding}"/>
                     </DataTemplate>
+                    
                 </ItemsControl.ItemTemplate>
 
                 <ItemsControl.ItemsPanel>

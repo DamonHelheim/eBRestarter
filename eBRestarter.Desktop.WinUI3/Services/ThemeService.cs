@@ -1,5 +1,7 @@
 ﻿using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using LiveChartsCore;
 using Microsoft.UI.Xaml;
+using LiveChartsCore.SkiaSharpView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,18 @@ namespace eBRestarter.Desktop.WinUI3.Services
 
                 // Auch die TitleBar anpassen (optional, falls du custom TitleBar hast)
                 // UpdateTitleBar(themeName); 
+            }
+
+            // --- NEU: LiveCharts2 Theme aktualisieren ---
+            if (themeName == "Dark")
+            {
+                // Setzt globale Standardwerte für Achsen, Tooltips und Legenden auf Dunkel (weißer Text)
+                LiveCharts.Configure(config => config.AddDarkTheme());
+            }
+            else
+            {
+                // Setzt globale Standardwerte auf Hell (schwarzer Text)
+                LiveCharts.Configure(config => config.AddLightTheme());
             }
 
             CurrentTheme = themeName;

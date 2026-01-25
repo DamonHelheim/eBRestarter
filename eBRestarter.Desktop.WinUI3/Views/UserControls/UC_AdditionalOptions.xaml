@@ -64,31 +64,28 @@
 
 
             <Button Grid.Row="2"
-                x:Name="BtnDeleteBrowserContent"
-                x:Uid="Delete_browser_content"
-                Style="{ThemeResource ButtonCustomStyle_1}"
-                Command="{Binding ShowBrowserDeleteContentCommand}"
-                Margin="0,4,0,0"
-                Height="40"
-                FontSize="16"
-                HorizontalAlignment="Stretch"
-                IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
+                    x:Name="BtnDeleteBrowserContent"
+                    x:Uid="Delete_browser_content"
+                    Command="{Binding ShowBrowserDeleteContentCommand}"
+                    Margin="0,4,0,0"
+                    Height="40"
+                    FontSize="16"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
 
             <Button Grid.Row="3"
-                x:Name="BtnInstalleBesucherAddOn"
-                x:Uid="Install_eVisitor_add_on"
-                Command="{Binding ShowInstallAddOnDialogCommand}"
-                Style="{ThemeResource ButtonCustomStyle_1}"
-                Margin="0,8,0,0"
-                Height="40"
-                FontSize="16"
-                HorizontalAlignment="Stretch"
-                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+                    x:Name="BtnInstalleBesucherAddOn"
+                    x:Uid="Install_eVisitor_add_on"
+                    Command="{Binding ShowInstallAddOnDialogCommand}"
+                    Margin="0,8,0,0"
+                    Height="40"
+                    FontSize="16"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
 
         <Button Grid.Row="4"
                 x:Name="BtnInfoeVisitorAddOn"
                 x:Uid="Important_information_about_the_add_on"
-                Style="{ThemeResource ButtonCustomStyle_1}"
                 Margin="0,8,0,0"
                 Height="30"
                 FontSize="12"

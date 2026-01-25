@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Border BorderThickness="1"
-            Background="{ThemeResource DashletBackgroundColor_2}"
+            Background="{ThemeResource MenuBackgroundColor}"
             CornerRadius="2"
             Padding="0">
 
@@ -50,9 +50,12 @@
                                     </Grid.RowDefinitions>
 
                                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,5">
-                                        
-                                        <Image Source="{x:Bind ImagePathNetworkCard}" Width="23" Height="23" Margin="5,0,0,0"/>
-                                        
+
+                                        <Image Source="{ThemeResource NetworkCardIcon}" 
+                                               Width="23"
+                                               Height="23"
+                                               Margin="5,0,0,0"/>
+
                                         <TextBlock Text="{x:Bind AdapterName, Mode=OneWay}"
                                                    Foreground="{ThemeResource FontColor_1}"
                                                    Margin="5,0,0,0" FontSize="15"/>
@@ -60,8 +63,8 @@
                                     </StackPanel>
 
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,5">
-                                        
-                                        <Image Source="{x:Bind ImagePathReceivedData}" Width="23" Height="23" Margin="5,0,0,0"/>
+
+                                        <Image Source="{ThemeResource DownloadIcon}" Width="23" Height="23" Margin="5,0,0,0"/>
                                         
                                         <TextBlock Text="{x:Bind ReceivedData, Mode=OneWay}"
                                                    Foreground="{ThemeResource FontColor_1}"
@@ -70,8 +73,8 @@
                                     </StackPanel>
 
                                     <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                        
-                                        <Image Source="{x:Bind ImagePathSendData}" Width="23" Height="23" Margin="5,0,0,0"/>
+
+                                        <Image Source="{ThemeResource SendDataIcon}" Width="23" Height="23" Margin="5,0,0,0"/>
                                         
                                         <TextBlock Text="{x:Bind SentData, Mode=OneWay}"
                                                    Foreground="{ThemeResource FontColor_1}"

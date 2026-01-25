@@ -45,7 +45,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 Name = "Punkte",
                 // 1. Farbe für den TITEL ("Punkte") -> Schwarz
-        NamePaint = new SolidColorPaint(SKColors.DarkGray), 
+        //NamePaint = new SolidColorPaint(SKColors.DarkGray), 
         
         LabelsDensity = 1,
 
@@ -55,7 +55,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         },
 
         // 2. Farbe für die ZAHLEN (0, 100, 200...) -> Schwarz
-        LabelsPaint = new SolidColorPaint(SKColors.Black),
+        //LabelsPaint = new SolidColorPaint(SKColors.Black),
                 MinStep = 100,
                 TextSize = 12
             }
@@ -219,8 +219,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             var axis = new Axis
             {
-                NamePaint = new SolidColorPaint(SKColors.DarkGray),
-                LabelsPaint = new SolidColorPaint(SKColors.Black),
+                //NamePaint = new SolidColorPaint(SKColors.DarkGray),
+                //LabelsPaint = new SolidColorPaint(SKColors.Black),
                 TextSize = 12,
                 LabelsRotation = 0
             };

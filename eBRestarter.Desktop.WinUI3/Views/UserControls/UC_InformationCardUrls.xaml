@@ -35,7 +35,7 @@
                                FontSize="16"
                                Margin="10,0,0,0"
                                VerticalAlignment="Center"
-                               Foreground="{ThemeResource FontColor_4}" />
+                               Foreground="{ThemeResource FontColor_1}" />
                     
                 </StackPanel>
 
@@ -43,7 +43,7 @@
                 <HyperlinkButton Content="Chrome Download"
                              Command="{Binding OpenSupportWebsiteCommand}"
                              CommandParameter="https://www.google.com/chrome/"
-                             Foreground="{ThemeResource FontColor_4}"
+                             Foreground="{ThemeResource FontColor_1}"
                              Background="Transparent"
                              HorizontalAlignment="Left"
                              Margin="15,7,0,0"
@@ -52,7 +52,7 @@
                 <HyperlinkButton Content="Firefox Download"
                              Command="{Binding OpenSupportWebsiteCommand}"
                              CommandParameter="https://www.mozilla.org/de/firefox/new/"
-                             Foreground="{ThemeResource FontColor_4}"
+                             Foreground="{ThemeResource FontColor_1}"
                              Background="Transparent"
                              HorizontalAlignment="Left"
                              Margin="15,7,0,0"
@@ -61,7 +61,7 @@
                 <HyperlinkButton Content="Edge Download"
                              Command="{Binding OpenSupportWebsiteCommand}"
                              CommandParameter="https://www.microsoft.com/de-de/edge"
-                             Foreground="{ThemeResource FontColor_4}"
+                             Foreground="{ThemeResource FontColor_1}"
                              Background="Transparent"
                              HorizontalAlignment="Left"
                              Margin="15,10,0,0"
