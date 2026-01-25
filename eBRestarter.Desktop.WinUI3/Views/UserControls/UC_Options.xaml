@@ -345,27 +345,6 @@
                                               ItemsSource="{Binding LanguageList}"
                                               SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
-                                        <!--<ComboBox.Resources>
-                                            --><!-- Normal --><!--
-                                            <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
-                                            <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
-                                            <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
-
-                                            --><!-- Hover --><!--
-                                            <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
-                                            <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
-                                            <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
-
-                                            --><!-- Pressed --><!--
-                                            <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
-                                            <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
-                                            <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
-
-                                        </ComboBox.Resources>-->
-
-                                        <ComboBoxItem Content="Deutsch" />
-                                        <ComboBoxItem Content="Englisch" />
-
                                     </ComboBox>
 
                                 </StackPanel>
@@ -379,6 +358,30 @@
                 </ScrollViewer>
 
             </PivotItem>
+
+            <!--<ComboBox.Resources>
+                                            -->
+            <!-- Normal -->
+            <!--
+                                            <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
+                                            <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
+                                            <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
+
+                                            -->
+            <!-- Hover -->
+            <!--
+                                            <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
+                                            <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
+                                            <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
+
+                                            -->
+            <!-- Pressed -->
+            <!--
+                                            <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
+                                            <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
+                                            <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
+
+                                        </ComboBox.Resources>-->
 
             <!-- ========================================
              PIVOT 2: API ZUGANG

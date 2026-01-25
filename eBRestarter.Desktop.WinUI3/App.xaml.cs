@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.Globalization;
 using System;
 
 namespace eBRestarter.Desktop.WinUI3
@@ -30,10 +31,6 @@ namespace eBRestarter.Desktop.WinUI3
             InitializeComponent();
 
             AppHost = CreateHostBuilder().Build();
-
-            // Tipp: Die Sprache würde ich idealerweise auch aus der Config laden, 
-            // aber für den Start ist das hier okay.
-            // ApplicationLanguages.PrimaryLanguageOverride = "en-US"; 
         }
 
         private static IHostBuilder CreateHostBuilder() => Host.CreateDefaultBuilder()
@@ -55,6 +52,7 @@ namespace eBRestarter.Desktop.WinUI3
                  // WICHTIG: Sicherstellen, dass der ThemeService registriert ist
                  // Entweder hier direkt oder in einer deiner Extension-Methoden (z.B. AddApplicationServices)
                  services.AddSingleton<IThemeService, ThemeService>();
+                 services.AddSingleton<ILanguageService, LanguageService>();
              });
 
         /// <summary>
@@ -68,6 +66,30 @@ namespace eBRestarter.Desktop.WinUI3
 
             // 2. Dispatcher Queue speichern
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
+
+            // --- SPRACHE INITIALISIEREN ---
+            try
+            {
+                // 1. Config-Service aus dem Dependency Injection Container holen
+                // (Benötigt: using Microsoft.Extensions.DependencyInjection;)
+                var configService = AppHost.Services.GetRequiredService<IEVisitorConfigService>();
+
+                // 2. Aktuelle Konfiguration laden
+                var config = configService.LoadConfig();
+
+                // 3. Sprachcode ermitteln (Mapping: 0 = Deutsch, 1 = Englisch)
+                // Sollte mit deiner Logik im ViewModelOptions übereinstimmen
+                string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
+
+                // 4. Sprache global für die App setzen
+                ApplicationLanguages.PrimaryLanguageOverride = languageCode;
+            }
+            catch (Exception)
+            {
+                // Fallback: Falls die Config nicht geladen werden kann (z.B. erster Start oder Fehler),
+                // setzen wir einen sicheren Standard (z.B. Englisch oder Systemstandard).
+                ApplicationLanguages.PrimaryLanguageOverride = "en-US";
+            }
 
             // =========================================================================
             // THEME INITIALISIERUNG

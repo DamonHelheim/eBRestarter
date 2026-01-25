@@ -4,9 +4,13 @@ using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.Update;
+using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Infrastructure.Constants;
+using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,15 +22,6 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    using CommunityToolkit.Mvvm.ComponentModel;
-    using CommunityToolkit.Mvvm.Input;
-    using eBRestarter.Core.Application.Interfaces.Update;
-    using eBRestarter.Core.Domain.Enums;
-    using eBRestarter.Infrastructure.Constants;
-    using eBRestarter.Infrastructure.Services.Config;
-    using System.Collections.ObjectModel;
-    using System.DirectoryServices.AccountManagement;
-
     public partial class ViewModelOptions : ObservableObject
     {
         // =========================================================
@@ -42,6 +37,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IOperatingSystemFacade _os;
         private readonly IUpdateService _updateService;
         private readonly IThemeService _themeService;
+        private readonly ILanguageService _languageService;
 
 
         // =========================================================
@@ -78,14 +74,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IOperatingSystemFacade os,
             IUpdateService updateService,
             IThemeService themeService,
-            IEVisitorConfigService eVisitorConfigService)
+            IEVisitorConfigService eVisitorConfigService,
+            ILanguageService languageService)
         {
+            // 1. Initialisierungsschutz aktivieren
+            _isInitializing = true;
+
             _dialogService = dialogService;
             _autoLogonService = autoLogonService;
             _os = os;
             _updateService = updateService;
             _themeService = themeService;
             _eVisitorConfigService = eVisitorConfigService;
+            _languageService = languageService;
 
             // Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();
@@ -95,18 +96,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             ComputerRestartClockTimeMax = 23;
             ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
 
-            // ComboBox Vorbelegung (WICHTIG!)
+            // ComboBox Vorbelegung
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
             var configLanguageIndex = _currentConfig.Settings.Language;
 
             SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(x => x.Days == configDays) ?? ComputerRestartList[0];
+
+            // HIER passierte der Fehler: Das Setzen feuert das Event. 
+            // Durch _isInitializing = true wird der Code im Handler jetzt aber übersprungen.
             SelectedLanguageOption = LanguageList.FirstOrDefault(x => x.Index == configLanguageIndex) ?? LanguageList[0];
 
-            // UI-Status initial berechnen
-            //UpdateRestartUiState();
+            // 2. Initialisierungsschutz deaktivieren (WICHTIG!)
+            _isInitializing = false;
 
             // Async Initialisierung starten (Fire & Forget)
+            // Hinweis: InitializeAsync setzt _isInitializing intern ggf. wieder kurz auf true, das ist okay.
             _ = InitializeAsync();
+
         }
 
         // =========================================================
@@ -285,10 +291,40 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        partial void OnSelectedLanguageOptionChanged(LanguageOption value)
+        async partial void OnSelectedLanguageOptionChanged(LanguageOption value)
         {
-            _currentConfig.Settings.Language = value.Index;
-            SaveSettings();
+            if (value == null || _isInitializing) return;
+
+            // 1. Config speichern
+            if (_currentConfig.Settings.Language != value.Index)
+            {
+                _currentConfig.Settings.Language = value.Index;
+                SaveSettings();
+            }
+
+            // 2. Mapping: Index zu Sprachcode
+            string newLanguageCode = value.Index == 0 ? "de-DE" : "en-US";
+
+            // 3. Wenn sich die Sprache geändert hat
+            if (_languageService.CurrentLanguageCode != newLanguageCode)
+            {
+                _languageService.SetLanguage(newLanguageCode);
+
+                // 4. FRAGE STELLEN: Neustart?
+                bool restartNow = await _dialogService.ShowConfirmationAsync(
+                    "Neustart erforderlich / Restart required",
+                    "Die Sprache wurde geändert. Damit alle Texte aktualisiert werden, muss die Anwendung neu gestartet werden.\n\nMöchten Sie die Anwendung jetzt neustarten?\n\n(The language has been changed. Restart now to apply all changes?)",
+                    "Ja / Yes",   // Button für Ja
+                    "Nein / No"   // Button für Nein
+                );
+
+                // 5. NEUSTART DURCHFÜHREN
+                if (restartNow)
+                {
+                    // Startet die App neu und registriert sie für den Neustart
+                    AppInstance.Restart(string.Empty);
+                }
+            }
         }
 
         partial void OnStartWithWindowsChanged(bool value)

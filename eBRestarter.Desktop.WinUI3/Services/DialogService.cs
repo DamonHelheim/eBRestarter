@@ -41,6 +41,28 @@ namespace eBRestarter.Desktop.WinUI3.Services
         // STANDARD DIALOGS (Manual instantiation required for Title/Content)
         // =========================================================
 
+        public async Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein")
+        {
+            if (App.MainWindoweBRestarter?.Content is FrameworkElement element)
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = title,
+                    Content = message,
+                    PrimaryButtonText = yesButtonText,
+                    CloseButtonText = noButtonText,
+                    XamlRoot = element.XamlRoot,
+                    DefaultButton = ContentDialogButton.Primary
+                };
+
+                var result = await dialog.ShowAsync();
+
+                // Rückgabe: true wenn "Ja" (Primary) geklickt wurde
+                return result == ContentDialogResult.Primary;
+            }
+            return false;
+        }
+
         public async Task ShowMessageAsync(string title, string message, DialogIcon icon = DialogIcon.None)
         {
             var dialog = new ContentDialog
