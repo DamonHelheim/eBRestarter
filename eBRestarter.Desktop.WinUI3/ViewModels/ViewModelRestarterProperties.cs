@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Facade;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Models.Records;
@@ -25,6 +26,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly AppConfig _currentConfig;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
+        private readonly ILocalizationService _localizationService;
 
         // Nur noch EINE Abhängigkeit
         private readonly IOperatingSystemFacade _operatingSystemFacade;
@@ -49,7 +51,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         #region Properties
         // Die Liste für die Combobox (readonly, da sich die Optionen nicht ändern)
-        public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList => BrowserCacheConstants.Options;
+        public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList { get; }
 
         public int BrowserRuntimeHoursMax { get; init; }
         public int BrowserRuntimeHoursMin { get; init; }
@@ -62,12 +64,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ViewModelRestarterProperties(
             IOperatingSystemFacade operatingSystemFacade,
             IEVisitorConfigService eVisitorConfigService,
+            ILocalizationService localizationService,
             IDialogService dialogService)
         {
             _operatingSystemFacade = operatingSystemFacade;
             _eVisitorConfigService = eVisitorConfigService;
             _dialogService = dialogService;
-
+            _localizationService = localizationService;
             // 1. Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
@@ -91,6 +94,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             // Wir suchen den Eintrag in der Liste, der den Tagen aus der Config entspricht.
             // Fallback auf Index 0, falls nichts gefunden (z.B. bei neuer Config).
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
+            BrowserDeleteCacheOptionList = new ReadOnlyCollection<BrowserCacheDeleteOption>(
+            localizationService.GetBrowserCacheOptions().ToList()
+        );
+            //SelectedDeleteBrowserCacheOption = BrowserDeleteCacheOptionList.FirstOrDefault(x => x.Days == configDays) ?? BrowserDeleteCacheOptionList[0];
 
             SelectedDeleteBrowserCacheOption = BrowserDeleteCacheOptionList.FirstOrDefault(x => x.Days == configDays) ?? BrowserDeleteCacheOptionList[0];
         }

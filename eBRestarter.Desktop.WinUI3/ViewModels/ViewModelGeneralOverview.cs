@@ -18,6 +18,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     public partial class ViewModelGeneralOverview : ObservableObject
     {
         private readonly IEVisitorApiService _apiService;
+        private readonly ILocalizationService _localizationService; // <--- NEU
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly DispatcherTimer _timer;
         private EarningsData? _cachedEarnings;
@@ -26,56 +27,36 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(XAxes))]
-        [NotifyPropertyChangedFor(nameof(ChartTitle))] // Titel hängt auch vom Pivot ab
+        [NotifyPropertyChangedFor(nameof(ChartTitle))]
         public partial int SelectedPivotIndex { get; set; } = 0;
 
-        // FIX: Series muss ein ObservableProperty sein, damit die UI Änderungen mitbekommt
         [ObservableProperty]
         public partial ObservableCollection<ISeries> Series { get; set; }
 
-        // Lokaler Zugriff auf die ColumnSeries, um Daten später zu pushen
         private readonly ColumnSeries<ObservableValue> _mainColumnSeries;
-
-        // Deine ObservableCollection für die Werte
         private readonly ObservableCollection<ObservableValue> _chartValues;
 
-        public Axis[] YAxes { get; set; } =
-        {
-            new Axis
-            {
-                Name = "Punkte",
-                // 1. Farbe für den TITEL ("Punkte") -> Schwarz
-        //NamePaint = new SolidColorPaint(SKColors.DarkGray), 
-        
-        LabelsDensity = 1,
+        // Keine direkte Initialisierung mehr hier, sondern im Konstruktor!
+        public Axis[] YAxes { get; set; }
 
-        SeparatorsPaint = new SolidColorPaint(new SKColor(200, 200, 200))
-        {
-            StrokeThickness = 1,
-        },
-
-        // 2. Farbe für die ZAHLEN (0, 100, 200...) -> Schwarz
-        //LabelsPaint = new SolidColorPaint(SKColors.Black),
-                MinStep = 100,
-                TextSize = 12
-            }
-        };
-
+        // Ruft die Methode auf, die jetzt lokalisierte Strings verwendet
         public Axis[] XAxes => GetXAxesForCurrentPivot();
 
-        // UI Texte
+        // UI Texte dynamisch formatieren
         public string ChartTitle => SelectedPivotIndex switch
         {
-            0 => $"Stundenübersicht ({DateTime.Now:dd.MM.yyyy})",
-            1 => $"Tagesübersicht ({DateTime.Now:MMMM})",
-            2 => $"Jahresübersicht ({DateTime.Now:yyyy})",
-            _ => "Übersicht"
+            0 => string.Format(_localizationService.GetString("Chart_TitleHourly"), DateTime.Now.ToString("dd.MM.yyyy")),
+            1 => string.Format(_localizationService.GetString("Chart_TitleDaily"), DateTime.Now.ToString("MMMM")),
+            2 => string.Format(_localizationService.GetString("Chart_TitleYearly"), DateTime.Now.ToString("yyyy")),
+            _ => _localizationService.GetString("Chart_TitleOverview")
         };
 
         [ObservableProperty] public partial string EarningsThisDaySum { get; set; } = "-";
         [ObservableProperty] public partial string EarningsThisMonthSum { get; set; } = "-";
         [ObservableProperty] public partial string EarningsThisYearSum { get; set; } = "-";
-        [ObservableProperty] public partial string CurrentDay { get; set; } = "Heute";
+
+        // Initialwert wird im Konstruktor gesetzt
+        [ObservableProperty] public partial string CurrentDay { get; set; }
         [ObservableProperty] public partial string CurrentMonth { get; set; } = DateTime.Now.ToString("MMMM");
         [ObservableProperty] public partial string CurrentYear { get; set; } = DateTime.Now.ToString("yyyy");
         [ObservableProperty] public partial string ClockNextEarningsRefresh { get; set; } = "-";
@@ -84,35 +65,53 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial string CountryCode { get; set; } = "-";
         [ObservableProperty] public partial string CountryName { get; set; } = "-";
 
-        public ViewModelGeneralOverview(IEVisitorApiService apiService)
+        // Konstruktor mit LocalizationService
+        public ViewModelGeneralOverview(
+            IEVisitorApiService apiService,
+            ILocalizationService localizationService)
         {
             _apiService = apiService;
+            _localizationService = localizationService; // <--- Zuweisen
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            // 1. Werte initialisieren
-            _chartValues = [];
+            // Initiale Texte setzen
+            CurrentDay = _localizationService.GetString("General_Today");
 
+            // 1. YAxes initialisieren (jetzt mit lokalisiertem Namen)
+            YAxes = new Axis[]
+            {
+                new Axis
+                {
+                    Name = _localizationService.GetString("Chart_YAxisPoints"), // "Punkte" / "Points"
+                    LabelsDensity = 1,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(200, 200, 200))
+                    {
+                        StrokeThickness = 1,
+                    },
+                    MinStep = 100,
+                    TextSize = 12
+                }
+            };
+
+            // 2. Werte initialisieren
+            _chartValues = [];
             for (int i = 0; i < 24; i++) _chartValues.Add(new ObservableValue(0));
 
-            // 2. Series Setup
+            // 3. Series Setup (mit lokalisiertem Namen)
             _mainColumnSeries = new ColumnSeries<ObservableValue>
             {
                 Values = _chartValues,
-                Name = "Verdienst",
-
-                // HIER: Ecken abrunden
-                Rx = 200, // Radius in Pixeln (Horizontal)
-                Ry = 200, // Radius in Pixeln (Vertikal)
-
+                Name = _localizationService.GetString("Chart_SeriesEarnings"), // "Verdienst" / "Earnings"
+                Rx = 200,
+                Ry = 200,
                 Fill = new SolidColorPaint(new SKColor(0, 120, 215)),
                 DataLabelsPaint = new SolidColorPaint(new SKColor(12, 142, 168)),
                 DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Top
             };
 
-            // Initialisierung der Property
             Series = [_mainColumnSeries];
 
-            // 3. Timer Setup
+            // 4. Timer Setup
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _timer.Tick += OnTimerTick;
             _timer.Start();
@@ -152,12 +151,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                     var now = DateTime.Now;
                     var nextRefresh = now.AddMinutes(60 - now.Minute + 5);
-                    ClockNextEarningsRefresh = $"Nächste Aktualisierung: {nextRefresh:HH:mm}";
+
+                    // Lokalisierter Formatstring
+                    var format = _localizationService.GetString("General_NextRefresh"); // "Nächste Aktualisierung: {0}"
+                    ClockNextEarningsRefresh = string.Format(format, nextRefresh.ToString("HH:mm"));
                 });
             }
             catch (Exception ex)
             {
-                // Fehlerbehandlung hier wichtig, falls API failt
                 System.Diagnostics.Debug.WriteLine($"Error loading data: {ex.Message}");
             }
         }
@@ -194,18 +195,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 _ => []
             };
 
-            // LiveCharts Performance Optimierung:
-            // Statt Clear() und Add(), was die Animationen manchmal stört,
-            // gleichen wir die Anzahl der Elemente an und updaten die Werte.
-
-            // 1. Sicherstellen, dass wir genug ObservableValues haben
             while (_chartValues.Count < sourceData.Length)
                 _chartValues.Add(new ObservableValue(0));
 
             while (_chartValues.Count > sourceData.Length)
                 _chartValues.RemoveAt(_chartValues.Count - 1);
 
-            // 2. Werte updaten (löst Notification pro Wert aus, was LiveCharts animiert)
             for (int i = 0; i < sourceData.Length; i++)
             {
                 if (_chartValues[i].Value != sourceData[i])
@@ -219,8 +214,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             var axis = new Axis
             {
-                //NamePaint = new SolidColorPaint(SKColors.DarkGray),
-                //LabelsPaint = new SolidColorPaint(SKColors.Black),
                 TextSize = 12,
                 LabelsRotation = 0
             };
@@ -228,14 +221,25 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             switch (SelectedPivotIndex)
             {
                 case 0:
-                    axis.Name = "Uhrzeit (0-23h)";
+                    axis.Name = _localizationService.GetString("Chart_XAxisTime"); // "Uhrzeit (0-23h)"
                     break;
                 case 1:
-                    axis.Name = "Tag im Monat";
+                    axis.Name = _localizationService.GetString("Chart_XAxisDay"); // "Tag im Monat"
                     break;
                 case 2:
-                    axis.Name = "Monat";
-                    axis.Labels = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+                    axis.Name = _localizationService.GetString("Chart_XAxisMonth"); // "Monat"
+
+                    // Monatsnamen aus der Resource laden (Kommagetrennter String)
+                    string monthsString = _localizationService.GetString("Chart_MonthsShort");
+                    if (!string.IsNullOrEmpty(monthsString))
+                    {
+                        axis.Labels = monthsString.Split(',');
+                    }
+                    else
+                    {
+                        // Fallback
+                        axis.Labels = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+                    }
                     break;
             }
 

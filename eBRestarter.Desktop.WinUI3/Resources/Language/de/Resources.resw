@@ -324,4 +324,88 @@
   <data name="Set_the_time.Text" xml:space="preserve">
     <value>Lege die Uhrzeit fest:</value>
   </data>
+  <data name="Lang_German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>Englisch</value>
+  </data>
+  <data name="RestartOption_0" xml:space="preserve">
+    <value>Computer nicht neustarten</value>
+  </data>
+  <data name="RestartOption_1" xml:space="preserve">
+    <value>Computer jeden Tag neustarten</value>
+  </data>
+  <data name="RestartOption_3" xml:space="preserve">
+    <value>Computer alle 3 Tage neustarten</value>
+  </data>
+  <data name="RestartOption_7" xml:space="preserve">
+    <value>Computer alle 7 Tage neustarten</value>
+  </data>
+  <data name="RestartOption_14" xml:space="preserve">
+    <value>Computer alle 14 Tage neustarten</value>
+  </data>
+  <data name="BrowserCacheOption_0" xml:space="preserve">
+    <value>Cache und Cookies nicht löschen</value>
+  </data>
+  <data name="BrowserCacheOption_1" xml:space="preserve">
+    <value>Cache und Cookies jeden Tag löschen</value>
+  </data>
+  <data name="BrowserCacheOption_3" xml:space="preserve">
+    <value>Cache und Cookies alle 3 Tage löschen</value>
+  </data>
+  <data name="BrowserCacheOption_7" xml:space="preserve">
+    <value>Cache und Cookies alle 7 Tage löschen</value>
+  </data>
+  <data name="BrowserCacheOption_14" xml:space="preserve">
+    <value>Cache und Cookies alle 14 Tage löschen</value>
+  </data>
+  <data name="Network_CardPrefix" xml:space="preserve">
+    <value>Netzwerkkarte</value>
+  </data>
+  <data name="Network_Received" xml:space="preserve">
+    <value>Empfangen</value>
+  </data>
+  <data name="Network_Sent" xml:space="preserve">
+    <value>Gesendet</value>
+  </data>
+  <data name="Network_NotAvailable" xml:space="preserve">
+    <value>nicht verfügbar</value>
+  </data>
+  <data name="Chart_YAxisPoints" xml:space="preserve">
+    <value>Punkte</value>
+  </data>
+  <data name="Chart_TitleHourly" xml:space="preserve">
+    <value>Stundenübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleDaily" xml:space="preserve">
+    <value>Tagesübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleYearly" xml:space="preserve">
+    <value>Jahresübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleOverview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="Chart_SeriesEarnings" xml:space="preserve">
+    <value>Verdienst</value>
+  </data>
+  <data name="Chart_XAxisTime" xml:space="preserve">
+    <value>Uhrzeit (0-23h)</value>
+  </data>
+  <data name="Chart_XAxisDay" xml:space="preserve">
+    <value>Tag im Monat</value>
+  </data>
+  <data name="Chart_XAxisMonth" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="Chart_MonthsShort" xml:space="preserve">
+    <value>Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez</value>
+  </data>
+  <data name="General_Today" xml:space="preserve">
+    <value>Heute</value>
+  </data>
+  <data name="General_NextRefresh" xml:space="preserve">
+    <value>Nächste Aktualisierung: {0}</value>
+  </data>
 </root>

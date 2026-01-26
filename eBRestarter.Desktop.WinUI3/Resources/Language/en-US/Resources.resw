@@ -324,4 +324,88 @@
   <data name="Set_the_time.Text" xml:space="preserve">
     <value>Set the time:</value>
   </data>
+  <data name="Lang_German" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="RestartOption_0" xml:space="preserve">
+    <value>Do not restart computer</value>
+  </data>
+  <data name="RestartOption_1" xml:space="preserve">
+    <value>Restart computer every day</value>
+  </data>
+  <data name="RestartOption_3" xml:space="preserve">
+    <value>Restart computer every 3 days</value>
+  </data>
+  <data name="RestartOption_7" xml:space="preserve">
+    <value>Restart computer every 7 days</value>
+  </data>
+  <data name="RestartOption_14" xml:space="preserve">
+    <value>Restart computer every 14 days</value>
+  </data>
+  <data name="BrowserCacheOption_0" xml:space="preserve">
+    <value>Do not delete cache and cookies</value>
+  </data>
+  <data name="BrowserCacheOption_1" xml:space="preserve">
+    <value>Delete cache and cookies every day</value>
+  </data>
+  <data name="BrowserCacheOption_3" xml:space="preserve">
+    <value>Delete cache and cookies every 3 days</value>
+  </data>
+  <data name="BrowserCacheOption_7" xml:space="preserve">
+    <value>Delete cache and cookies every 7 days</value>
+  </data>
+  <data name="BrowserCacheOption_14" xml:space="preserve">
+    <value>Delete cache and cookies every 14 days</value>
+  </data>
+  <data name="Network_CardPrefix" xml:space="preserve">
+    <value>Network Interface</value>
+  </data>
+  <data name="Network_Received" xml:space="preserve">
+    <value>Received</value>
+  </data>
+  <data name="Network_Sent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="Network_NotAvailable" xml:space="preserve">
+    <value>not available</value>
+  </data>
+  <data name="Chart_YAxisPoints" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="Chart_TitleHourly" xml:space="preserve">
+    <value>Hourly Overview ({0})</value>
+  </data>
+  <data name="Chart_TitleDaily" xml:space="preserve">
+    <value>Daily Overview ({0})</value>
+  </data>
+  <data name="Chart_TitleYearly" xml:space="preserve">
+    <value>Yearly Overview ({0})</value>
+  </data>
+  <data name="Chart_TitleOverview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Chart_SeriesEarnings" xml:space="preserve">
+    <value>Earnings</value>
+  </data>
+  <data name="Chart_XAxisTime" xml:space="preserve">
+    <value>Time (0-23h)</value>
+  </data>
+  <data name="Chart_XAxisDay" xml:space="preserve">
+    <value>Day of month</value>
+  </data>
+  <data name="Chart_XAxisMonth" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="Chart_MonthsShort" xml:space="preserve">
+    <value>Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec</value>
+  </data>
+  <data name="General_Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="General_NextRefresh" xml:space="preserve">
+    <value>Next refresh: {0}</value>
+  </data>
 </root>

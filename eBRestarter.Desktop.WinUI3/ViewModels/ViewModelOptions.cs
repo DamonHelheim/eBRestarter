@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
@@ -10,6 +11,7 @@ using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.Constants;
+using Microsoft.Windows.ApplicationModel.Resources; // <--- HIER wichtig
 using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IUpdateService _updateService;
         private readonly IThemeService _themeService;
         private readonly ILanguageService _languageService;
+        private readonly ILocalizationService _localizationService;
 
 
         // =========================================================
@@ -45,9 +48,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
 
         // Konstante Listen & Limits
-        public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList => ComputerRestartConstants.Options;
-        public ReadOnlyCollection<LanguageOption> LanguageList => LanguageSelectionConstants.Options;
-
+        //public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList => ComputerRestartConstants.Options;
+        //public ReadOnlyCollection<LanguageOption> LanguageList => LanguageSelectionConstants.Options;
+        public ReadOnlyCollection<LanguageOption> LanguageList { get; private set; }
+        public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList { get; }
         public int ComputerRestartClockTimeMin { get; init; }
         public int ComputerRestartClockTimeMax { get; init; }
 
@@ -75,7 +79,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IUpdateService updateService,
             IThemeService themeService,
             IEVisitorConfigService eVisitorConfigService,
-            ILanguageService languageService)
+            ILanguageService languageService,
+            ILocalizationService localizationService)
         {
             // 1. Initialisierungsschutz aktivieren
             _isInitializing = true;
@@ -87,6 +92,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _themeService = themeService;
             _eVisitorConfigService = eVisitorConfigService;
             _languageService = languageService;
+            _localizationService = localizationService;
+
+            ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>(
+            [.. localizationService.GetComputerRestartOptions()]
+        );
+            // 1. Liste direkt vom Service holen (eine Zeile!)
+            // Das ViewModel muss nicht wissen, woher die Texte kommen (Resx, Datenbank, API...)
+            LanguageList = new ReadOnlyCollection<LanguageOption>(
+                [.. localizationService.GetAvailableLanguages()]
+            );
 
             // Config laden
             _currentConfig = _eVisitorConfigService.LoadConfig();

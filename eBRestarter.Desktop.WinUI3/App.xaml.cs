@@ -1,4 +1,5 @@
 ﻿using eBRestarter.Core.Application.DependencyInjections;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config; // Namespace für IEVisitorConfigService anpassen
 using eBRestarter.Desktop.WinUI3.DependencyInjections;
 using eBRestarter.Desktop.WinUI3.Services;
@@ -53,6 +54,7 @@ namespace eBRestarter.Desktop.WinUI3
                  // Entweder hier direkt oder in einer deiner Extension-Methoden (z.B. AddApplicationServices)
                  services.AddSingleton<IThemeService, ThemeService>();
                  services.AddSingleton<ILanguageService, LanguageService>();
+                 services.AddSingleton<ILocalizationService, LocalizationService>();
              });
 
         /// <summary>
