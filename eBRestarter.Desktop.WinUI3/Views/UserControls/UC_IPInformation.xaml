@@ -57,7 +57,7 @@
 
                 <Expander.Header>
                     
-                    <TextBlock Text="Zeige IP Details" 
+                    <TextBlock x:Uid="ShowIPDetails"
                                Foreground="{ThemeResource FontColor_1}"
                                FontSize="14"
                                FontWeight="Normal"/>
@@ -91,7 +91,7 @@
 
                         <!-- Zeile 0: IP -->
                         <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="IP Adresse:" 
+                                   x:Uid="IPAddress"
                                    Foreground="{ThemeResource FontColor_1}"
                                    Opacity="0.7"
                                    VerticalAlignment="Top"/>
@@ -105,7 +105,7 @@
 
                         <!-- Zeile 1: Host -->
                         <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="Host:" 
+                                   x:Uid="Host"
                                    Foreground="{ThemeResource FontColor_1}"
                                    Opacity="0.7"
                                    VerticalAlignment="Top"/>
@@ -118,7 +118,7 @@
 
                         <!-- Zeile 2: Standort -->
                         <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="Standort:" 
+                                   x:Uid="Location"
                                    Foreground="{ThemeResource FontColor_1}"
                                    Opacity="0.7"
                                    VerticalAlignment="Top"/>

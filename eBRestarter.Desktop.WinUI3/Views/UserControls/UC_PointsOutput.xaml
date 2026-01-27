@@ -42,7 +42,8 @@
                                       FontSize="16"
                                       Foreground="{ThemeResource FontColor_1}"/>
                             
-                            <TextBlock Text="Heute"
+                            <TextBlock 
+                                       x:Uid="Today"
                                        FontSize="14"
                                        Foreground="{ThemeResource FontColor_1}"
                                        VerticalAlignment="Center"/>
@@ -63,7 +64,7 @@
                                       FontSize="16"
                                       Foreground="{ThemeResource FontColor_1}"/>
                             
-                            <TextBlock Text="Monat"
+                            <TextBlock x:Uid="Month"
                                        FontSize="14"
                                        Foreground="{ThemeResource FontColor_1}"
                                        VerticalAlignment="Center"/>
@@ -83,8 +84,8 @@
                             <FontIcon Glyph="&#xE909;"
                                       FontSize="16"
                                       Foreground="{ThemeResource FontColor_1}"/>
-                            
-                            <TextBlock Text="Jahr"
+
+                            <TextBlock x:Uid="Year"
                                        FontSize="14"
                                        Foreground="{ThemeResource FontColor_1}"
                                        VerticalAlignment="Center"/>

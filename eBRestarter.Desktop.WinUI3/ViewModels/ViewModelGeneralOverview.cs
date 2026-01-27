@@ -78,8 +78,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             CurrentDay = _localizationService.GetString("General_Today");
 
             // 1. YAxes initialisieren (jetzt mit lokalisiertem Namen)
-            YAxes = new Axis[]
-            {
+            YAxes =
+            [
                 new Axis
                 {
                     Name = _localizationService.GetString("Chart_YAxisPoints"), // "Punkte" / "Points"
@@ -91,7 +91,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     MinStep = 100,
                     TextSize = 12
                 }
-            };
+            ];
 
             // 2. Werte initialisieren
             _chartValues = [];
@@ -243,7 +243,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     break;
             }
 
-            return new[] { axis };
+            return [axis];
         }
     }
 }

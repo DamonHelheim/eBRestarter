@@ -405,7 +405,130 @@
   <data name="General_Today" xml:space="preserve">
     <value>Heute</value>
   </data>
+  <data name="Year.Text" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="Month.Text" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="Today.Text" xml:space="preserve">
+    <value>Heute</value>
+  </data>
   <data name="General_NextRefresh" xml:space="preserve">
     <value>Nächste Aktualisierung: {0}</value>
+  </data>
+  <data name="ShowIPDetails.Text" xml:space="preserve">
+    <value>Zeige IP Details</value>
+  </data>
+  <data name="IPAddress.Text" xml:space="preserve">
+    <value>IP Adresse:</value>
+  </data>
+  <data name="Host.Text" xml:space="preserve">
+    <value>Host:</value>
+  </data>
+  <data name="Location.Text" xml:space="preserve">
+    <value>Standort:</value>
+  </data>
+  <data name="Select.Content" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="Browser_NotInstalled" xml:space="preserve">
+    <value>Nicht installiert</value>
+  </data>
+  <data name="Browser_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="General_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="General_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Install_DialogTitle" xml:space="preserve">
+    <value>Installation</value>
+  </data>
+  <data name="Install_DialogQuestion" xml:space="preserve">
+    <value>Möchtest du installieren?</value>
+  </data>
+  <data name="Install_FinishedTitle" xml:space="preserve">
+    <value>Installation beendet</value>
+  </data>
+  <data name="Install_FinishedMessage" xml:space="preserve">
+    <value>Der Browser wurde installiert.</value>
+  </data>
+  <data name="Cleanup_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Cleanup_Ready" xml:space="preserve">
+    <value>Bereit.</value>
+  </data>
+  <data name="Cleanup_ConfigError" xml:space="preserve">
+    <value>Konfiguration fehlerhaft: Unbekannter Browser '{0}'.</value>
+  </data>
+  <data name="Cleanup_Canceling" xml:space="preserve">
+    <value>Breche ab...</value>
+  </data>
+  <data name="Cleanup_BrowserRunning" xml:space="preserve">
+    <value>Browser läuft noch. Bitte Aktion wählen.</value>
+  </data>
+  <data name="Cleanup_ClosingBrowser" xml:space="preserve">
+    <value>Beende Browser...</value>
+  </data>
+  <data name="Cleanup_CloseFailed" xml:space="preserve">
+    <value>Konnte Browser nicht beenden. Bitte manuell schließen.</value>
+  </data>
+  <data name="Cleanup_CanceledByUser" xml:space="preserve">
+    <value>Abbruch durch Benutzer.</value>
+  </data>
+  <data name="Cleanup_NoPaths" xml:space="preserve">
+    <value>Keine gültigen Pfade gefunden.</value>
+  </data>
+  <data name="Cleanup_Analyzing" xml:space="preserve">
+    <value>Analysiere Dateien...</value>
+  </data>
+  <data name="Cleanup_Finished" xml:space="preserve">
+    <value>Bereinigung abgeschlossen.</value>
+  </data>
+  <data name="General_ErrorPrefix" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="General_LoadErrorPrefix" xml:space="preserve">
+    <value>Fehler beim Laden: {0}</value>
+  </data>
+  <data name="DeleteDialog_HeaderOptions.Text" xml:space="preserve">
+    <value>Verfügbare Optionen</value>
+  </data>
+  <data name="DeleteDialog_CheckCookies.Content" xml:space="preserve">
+    <value>Lösche Cookies</value>
+  </data>
+  <data name="DeleteDialog_CheckCache.Content" xml:space="preserve">
+    <value>Lösche Internetcache</value>
+  </data>
+  <data name="DeleteDialog_HeaderProgress.Text" xml:space="preserve">
+    <value>Löschfortschritt</value>
+  </data>
+  <data name="DeleteDialog_BtnStart.Content" xml:space="preserve">
+    <value>Ausgewählte Inhalte löschen</value>
+  </data>
+  <data name="DeleteDialog_BtnCancel.Content" xml:space="preserve">
+    <value>Löschvorgang stoppen</value>
+  </data>
+  <data name="DeleteDialog_ConflictTitle.Text" xml:space="preserve">
+    <value>Browser läuft noch!</value>
+  </data>
+  <data name="DeleteDialog_ConflictMessage.Text" xml:space="preserve">
+    <value>Der Browser muss beendet werden, um die Dateien sicher zu löschen. Soll er jetzt geschlossen werden?</value>
+  </data>
+  <data name="DeleteDialog_BtnForceClose.Content" xml:space="preserve">
+    <value>Ja, beenden &amp; löschen</value>
+  </data>
+  <data name="DeleteDialog.Title" xml:space="preserve">
+    <value>Browser Daten bereinigen</value>
+  </data>
+  <data name="DeleteDialog_BtnAbort.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DeleteDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
   </data>
 </root>

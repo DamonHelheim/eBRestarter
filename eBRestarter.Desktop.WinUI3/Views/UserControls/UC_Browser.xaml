@@ -44,7 +44,7 @@
                     Command             ="{Binding ChooseBrowserCommand}"
                     Style               ="{StaticResource ButtonChooseBrowser}"
                     Visibility          ="{Binding IsChooseButtonVisible, Converter={StaticResource BoolToVisConverter}}"
-                    Content             ="Auswählen"
+                    x:Uid="Select"
                     FontSize            ="11"
                     Width               ="80"
                     Height              ="83"

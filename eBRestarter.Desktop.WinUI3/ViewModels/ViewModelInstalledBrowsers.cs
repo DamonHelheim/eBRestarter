@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IBrowserDownloadService _downloadService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
         private readonly IOperatingSystemFacade _os;
+        private readonly ILocalizationService _localizationService;
         #endregion
 
         #region Observable Properties
@@ -31,12 +34,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,
             IDialogService dialogService,
-            IEVisitorConfigService eVisitorConfigService)
+            ILocalizationService localizationService,
+            IEVisitorConfigService eVisitorConfigService
+            )
         {
             _downloadService = downloadService;
             _os = os;
             _browserService = browserService;
             _dialogService = dialogService;
+            _localizationService = localizationService;
             _eVisitorConfigService = eVisitorConfigService;
             // Initiale Ladung oder Start eines Timers
             LoadBrowsers();
@@ -52,7 +58,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             foreach (var info in browserInfos)
             {
-                Browsers.Add(new ViewModelBrowserItem(info, _downloadService, _os, _eVisitorConfigService, _dialogService));
+                Browsers.Add(new ViewModelBrowserItem(info, _downloadService, _os, _eVisitorConfigService, _dialogService, _localizationService));
             }
         }
         #endregion
