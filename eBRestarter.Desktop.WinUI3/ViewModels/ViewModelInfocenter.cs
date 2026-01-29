@@ -16,24 +16,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         #region Fields
         private readonly IDialogService _dialogService;
+        private readonly ILocalizationService _localizationService; // <--- NEU: Service Feld
+
         // Services
         private readonly IHardwareInfoService _hardwareService;
         private readonly IOsEditionService _osEditionService;
-        private readonly IWindowsSystemInfoService _systemInfoService; // Dein Registry-Service
+        private readonly IWindowsSystemInfoService _systemInfoService;
         #endregion
 
         #region Observable Properties
-        [ObservableProperty] public partial string BrowserText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string GraphicsText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string OsBuildText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string OsEditionText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string OsVersionText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string ProcessorText { get; set; } = "Lade...";
-        [ObservableProperty] public partial string RamText { get; set; } = "Lade...";
+
+        // Initialwerte entfernen wir hier, da wir sie im Konstruktor setzen
+        [ObservableProperty] public partial string BrowserText { get; set; }
+        [ObservableProperty] public partial string GraphicsText { get; set; }
+        [ObservableProperty] public partial string OsBuildText { get; set; }
+        [ObservableProperty] public partial string OsEditionText { get; set; }
+        [ObservableProperty] public partial string OsVersionText { get; set; }
+        [ObservableProperty] public partial string ProcessorText { get; set; }
+        [ObservableProperty] public partial string RamText { get; set; }
         #endregion
 
         #region Properties
-        public string Title { get; } = "Infocenter";
+        // Titel dynamisch machen (kein ObservableProperty nötig, da er sich nach Start nicht ändert)
+        public string Title { get; private set; }
         #endregion
 
         #region Constructors
@@ -41,13 +46,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IHardwareInfoService hardwareService,
             IOsEditionService osEditionService,
             IWindowsSystemInfoService systemInfoService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            ILocalizationService localizationService) // <--- Injizieren
         {
             _hardwareService = hardwareService;
             _osEditionService = osEditionService;
             _systemInfoService = systemInfoService;
             _dialogService = dialogService;
-            // Startet das Laden asynchron, ohne den Konstruktor zu blockieren
+            _localizationService = localizationService; // <--- Zuweisen
+
+            // Lokalisierte Standardwerte setzen ("Lade..." / "Loading...")
+            string loading = _localizationService.GetString("Infocenter_Loading");
+
+            BrowserText = loading;
+            GraphicsText = loading;
+            OsBuildText = loading;
+            OsEditionText = loading;
+            OsVersionText = loading;
+            ProcessorText = loading;
+            RamText = loading;
+
+            Title = _localizationService.GetString("Infocenter_Title"); // "Infocenter"
+
+            // Startet das Laden asynchron
             _ = LoadDataAsync();
         }
         #endregion
@@ -69,7 +90,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private async Task ShowAboutInfo()
         {
-            // Der Dialog öffnet sich, Code wartet hier, bis Dialog geschlossen wird
             await _dialogService.ShowAboutDialogAsync();
         }
         #endregion
@@ -77,23 +97,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region Methods
         private async Task LoadDataAsync()
         {
-            // 1. Hardware Laden (via WMI Service)
+            // 1. Hardware Laden
             var hardware = await _hardwareService.GetHardwareInfoAsync();
 
-            ProcessorText = $"Prozessor: {hardware.ProcessorName}";
-            GraphicsText = $"Grafikkarte: {hardware.GraphicsCardName}";
-            RamText = $"Installierter RAM: {hardware.InstalledRam}";
+            ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {hardware.ProcessorName}";
+            GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {hardware.GraphicsCardName}";
+            RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {hardware.InstalledRam}";
 
-            // 2. OS Edition Laden (via WMI Service - "Caption")
+            // 2. OS Edition Laden
             var edition = await _osEditionService.GetOsEditionAsync();
-            OsEditionText = $"Edition: {edition}";
+            OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {edition}";
 
-            // 3. System Details Laden (via deinem Registry Service)
-            // Hinweis: Da dein Service synchron ist, wrappen wir ihn hier ggf. in einen Task 
-            // oder rufen ihn direkt auf, da Registry sehr schnell ist.
-            OsVersionText = $"Version: {_systemInfoService.GetCurrentOsDisplayVersion()}";
-            OsBuildText = $"Betriebssystembuild: {_systemInfoService.GetCurrentOsBuildVersion()}";
-            BrowserText = $"Standardbrowser: {_systemInfoService.GetCurrentStandardBrowserName()}";
+            // 3. System Details Laden
+            OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {_systemInfoService.GetCurrentOsDisplayVersion()}";
+            OsBuildText = $"{_localizationService.GetString("Infocenter_BuildPrefix")} {_systemInfoService.GetCurrentOsBuildVersion()}";
+            BrowserText = $"{_localizationService.GetString("Infocenter_BrowserPrefix")} {_systemInfoService.GetCurrentStandardBrowserName()}";
         }
         #endregion
     }

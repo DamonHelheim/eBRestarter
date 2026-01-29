@@ -6,8 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:eBRestarter.Desktop.WinUI3.ViewModels"
     mc:Ignorable="d"
-    Title="Ebesucher Add-on verwalten"
-    CloseButtonText="Schließen"
+    x:Uid="InstallAddOnDialog"
     DefaultButton="Close"
     Style="{StaticResource DefaultContentDialogStyle}"
     RequestedTheme="Dark">
@@ -18,7 +17,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Wähle einen Browser aus, um das Add-on zu installieren oder zu verwalten."
+        <TextBlock x:Uid="InstallAddOnDialog_Instruction"
                    Style="{ThemeResource BodyTextBlockStyle}"
                    Opacity="0.8"
                    TextWrapping="Wrap"/>

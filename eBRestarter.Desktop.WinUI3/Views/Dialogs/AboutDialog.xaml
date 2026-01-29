@@ -10,42 +10,46 @@
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelAbout}"
     mc:Ignorable="d"
-    Title="Über eBRestarter"
-    CloseButtonText="Schließen"
+    x:Uid="AboutDialog"
     DefaultButton="Close">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="10">
 
-            <TextBlock Text="Version" 
+            <TextBlock x:Uid="AboutDialog_VersionHeader"
                        HorizontalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+
             <TextBlock Text="{Binding AppVersion}" 
                        HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Credits" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
+            <TextBlock x:Uid="AboutDialog_CreditsHeader"
+                       HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
 
-            <TextBlock Text="Fullstack Development" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Text="Dein Name / Test" HorizontalAlignment="Center"/>
+            <TextBlock x:Uid="AboutDialog_DevRole" 
+                       HorizontalAlignment="Center" FontWeight="Bold"/>
 
-            <TextBlock Text="Icons and Assets" 
+            <TextBlock x:Uid="AboutDialog_DevName" 
+                       HorizontalAlignment="Center"/>
+
+            <TextBlock x:Uid="AboutDialog_AssetsHeader"
                        HorizontalAlignment="Center" 
                        FontWeight="Bold" 
                        FontSize="16" 
                        Margin="0,20,0,10"/>
 
             <ItemsControl ItemsSource="{Binding IconCredits}">
-                
+
                 <ItemsControl.ItemTemplate>
-                    
+
                     <DataTemplate x:DataType="models:IconCredit">
-                        
+
                         <Grid Margin="0,5">
-                            
+
                             <Grid.ColumnDefinitions>
-                                
+
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
-                                
+
                             </Grid.ColumnDefinitions>
 
                             <Image Source="{x:Bind IconImageSource}" 
@@ -66,17 +70,17 @@
                                                  HorizontalAlignment="Left"
                                                  Margin="0"/>
                             </StackPanel>
-                            
+
                         </Grid>
-                        
+
                     </DataTemplate>
-                    
+
                 </ItemsControl.ItemTemplate>
-                
+
             </ItemsControl>
 
         </StackPanel>
-        
+
     </ScrollViewer>
-    
+
 </ContentDialog>

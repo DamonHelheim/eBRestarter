@@ -6,50 +6,43 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Automatische Anmeldung konfigurieren"
-    PrimaryButtonText="Speichern"
-    SecondaryButtonText="Deaktivieren"
-    CloseButtonText="Abbrechen"
+    x:Uid="AutoLogonDialog"
     DefaultButton="Primary"
     Style="{StaticResource DefaultContentDialogStyle}">
 
     <ContentDialog.Resources>
-        
+
         <Style TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
             <Setter Property="Margin" Value="0,0,0,16"/>
         </Style>
-        
+
         <Style TargetType="PasswordBox" BasedOn="{StaticResource DefaultPasswordBoxStyle}">
             <Setter Property="Margin" Value="0,0,0,16"/>
         </Style>
-        
+
     </ContentDialog.Resources>
 
     <Grid MinWidth="350">
-        
+
         <StackPanel Spacing="0">
-            
-            <InfoBar Severity="Warning" 
+
+            <InfoBar x:Uid="AutoLogon_InfoSecurity"
+                     Severity="Warning" 
                      IsOpen="True" 
                      IsClosable="False"
-                     Title="Sicherheitshinweis"
-                     Message="Das Kennwort wird verschlüsselt gespeichert. Der PC wird beim Starten jedoch nicht gesperrt sein."
                      Margin="0,0,0,20"/>
 
             <TextBox x:Name="TxtUsername" 
-                     Header="Benutzername" 
-                     PlaceholderText="Nutzername eingeben"/>
+                     x:Uid="AutoLogon_InputUser" />
 
             <TextBox x:Name="TxtDomain" 
-                     Header="Domäne (Optional)" 
-                     PlaceholderText="Leer lassen für lokalen User"/>
+                     x:Uid="AutoLogon_InputDomain" />
 
             <PasswordBox x:Name="PbPassword"
-                         Header="Kennwort"
-                         PlaceholderText="Windows Kennwort eingeben"
+                         x:Uid="AutoLogon_InputPassword"
                          PasswordRevealMode="Peek"/>
         </StackPanel>
-        
+
     </Grid>
-    
+
 </ContentDialog>

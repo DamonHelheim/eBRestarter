@@ -13,28 +13,36 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region Fields (Private Felder OHNE [ObservableProperty])
 
         private readonly IAppInfoService _appInfoService;
+        private readonly ILocalizationService _localizationService; // <--- NEU: Service Feld
 
         #endregion
 
         #region Observable Properties (Felder MIT [ObservableProperty])
 
+        // Initialwert entfernen wir hier, da wir ihn im Konstruktor setzen
         [ObservableProperty]
-        public partial string AppVersion { get; set; } = "Lade...";
+        public partial string AppVersion { get; set; }
 
         #endregion
 
         #region Properties (Explizite get; set; Eigenschaften)
 
-        // Statt SP_Icon_Container.Children.Add nutzen wir DataBinding an eine Liste
         public ObservableCollection<IconCredit> IconCredits { get; } = [];
 
         #endregion
 
         #region Constructors
 
-        public ViewModelAbout(IAppInfoService appInfoService)
+        public ViewModelAbout(
+            IAppInfoService appInfoService,
+            ILocalizationService localizationService) // <--- Injizieren
         {
             _appInfoService = appInfoService;
+            _localizationService = localizationService; // <--- Zuweisen
+
+            // Lokalisierter Startwert
+            AppVersion = _localizationService.GetString("About_Loading"); // "Lade..."
+
             LoadData();
         }
 
@@ -44,7 +52,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private void LoadData()
         {
-            AppVersion = $"Version: {_appInfoService.GetAppVersion()}";
+            string prefix = _localizationService.GetString("About_VersionPrefix"); // "Version:"
+            AppVersion = $"{prefix} {_appInfoService.GetAppVersion()}";
 
             var credits = _appInfoService.GetIconCredits();
             IconCredits.Clear();

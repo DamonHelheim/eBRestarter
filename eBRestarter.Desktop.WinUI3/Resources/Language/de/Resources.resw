@@ -531,4 +531,220 @@
   <data name="DeleteDialog.CloseButtonText" xml:space="preserve">
     <value>Schließen</value>
   </data>
+  <data name="Addon_StatusChecking" xml:space="preserve">
+    <value>Prüfe...</value>
+  </data>
+  <data name="Addon_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Addon_BrowserInstalled" xml:space="preserve">
+    <value>{0} ist installiert</value>
+  </data>
+  <data name="Addon_BrowserNotInstalled" xml:space="preserve">
+    <value>{0} ist nicht installiert</value>
+  </data>
+  <data name="Addon_ExtensionInstalled" xml:space="preserve">
+    <value>Add-on ist installiert</value>
+  </data>
+  <data name="Addon_ExtensionNotInstalled" xml:space="preserve">
+    <value>Add-on ist nicht installiert</value>
+  </data>
+  <data name="Addon_BtnManage" xml:space="preserve">
+    <value>Add-on verwalten</value>
+  </data>
+  <data name="Addon_BtnInstall" xml:space="preserve">
+    <value>Add-on installieren</value>
+  </data>
+  <data name="Addon_BtnBrowserMissing" xml:space="preserve">
+    <value>Browser fehlt</value>
+  </data>
+  <data name="InstallAddOnDialog.Title" xml:space="preserve">
+    <value>Ebesucher Add-on verwalten</value>
+  </data>
+  <data name="InstallAddOnDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="InstallAddOnDialog_Instruction.Text" xml:space="preserve">
+    <value>Wähle einen Browser aus, um das Add-on zu installieren oder zu verwalten.</value>
+  </data>
+  <data name="AutoLogonDialog.Title" xml:space="preserve">
+    <value>Automatische Anmeldung konfigurieren</value>
+  </data>
+  <data name="AutoLogonDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="AutoLogonDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="AutoLogonDialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Title" xml:space="preserve">
+    <value>Sicherheitshinweis</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Message" xml:space="preserve">
+    <value>Das Kennwort wird verschlüsselt gespeichert. Der PC wird beim Starten jedoch nicht gesperrt sein.</value>
+  </data>
+  <data name="AutoLogon_InputUser.Header" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="AutoLogon_InputUser.PlaceholderText" xml:space="preserve">
+    <value>Nutzername eingeben</value>
+  </data>
+  <data name="AutoLogon_InputDomain.Header" xml:space="preserve">
+    <value>Domäne (Optional)</value>
+  </data>
+  <data name="AutoLogon_InputDomain.PlaceholderText" xml:space="preserve">
+    <value>Leer lassen für lokalen User</value>
+  </data>
+  <data name="AutoLogon_InputPassword.Header" xml:space="preserve">
+    <value>Kennwort</value>
+  </data>
+  <data name="AutoLogon_InputPassword.PlaceholderText" xml:space="preserve">
+    <value>Windows Kennwort eingeben</value>
+  </data>
+  <data name="ActivateApi_Checking" xml:space="preserve">
+    <value>Prüfe Zugangsdaten...</value>
+  </data>
+  <data name="ActivateApi_Success" xml:space="preserve">
+    <value>Erfolgreich aktiviert &amp; verschlüsselt gespeichert!</value>
+  </data>
+  <data name="ActivateApi_FileNotFound" xml:space="preserve">
+    <value>Datei nicht gefunden.</value>
+  </data>
+  <data name="ActivateApi_ImportSuccess" xml:space="preserve">
+    <value>Daten importiert. Bitte jetzt 'Aktivieren' klicken.</value>
+  </data>
+  <data name="ActivateApi_ImportError" xml:space="preserve">
+    <value>Fehler: Die Datei hat ein falsches Format.</value>
+  </data>
+  <data name="ActivateApiDialog.Title" xml:space="preserve">
+    <value>API Zugang aktivieren</value>
+  </data>
+  <data name="ActivateApiDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="ActivateApiDialog_Header.Text" xml:space="preserve">
+    <value>Eingabe der API Zugangsdaten</value>
+  </data>
+  <data name="ActivateApiDialog_Username.Header" xml:space="preserve">
+    <value>Nutzername</value>
+  </data>
+  <data name="ActivateApiDialog_Username.PlaceholderText" xml:space="preserve">
+    <value>eBesucher Nutzername</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.Header" xml:space="preserve">
+    <value>API Schlüssel</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.PlaceholderText" xml:space="preserve">
+    <value>Ihr API Key</value>
+  </data>
+  <data name="ActivateApiDialog_SubmitBtn.Content" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="Infocenter_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Infocenter_ProcessorPrefix" xml:space="preserve">
+    <value>Prozessor:</value>
+  </data>
+  <data name="Infocenter_GraphicsPrefix" xml:space="preserve">
+    <value>Grafikkarte:</value>
+  </data>
+  <data name="Infocenter_RamPrefix" xml:space="preserve">
+    <value>Installierter RAM:</value>
+  </data>
+  <data name="Infocenter_EditionPrefix" xml:space="preserve">
+    <value>Edition:</value>
+  </data>
+  <data name="Infocenter_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="Infocenter_BuildPrefix" xml:space="preserve">
+    <value>Betriebssystembuild:</value>
+  </data>
+  <data name="Infocenter_BrowserPrefix" xml:space="preserve">
+    <value>Standardbrowser:</value>
+  </data>
+  <data name="Infocenter_Title.Text" xml:space="preserve">
+    <value>Infocenter</value>
+  </data>
+  <data name="Infocenter_CardHardware.HeaderTitle" xml:space="preserve">
+    <value>Hardwarespezifikation</value>
+  </data>
+  <data name="Infocenter_CardWindows.HeaderTitle" xml:space="preserve">
+    <value>Windows-Spezifikation</value>
+  </data>
+  <data name="Infocenter_BtnAbout.Text" xml:space="preserve">
+    <value>Über eB Restarter</value>
+  </data>
+  <data name="About_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="About_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="AboutDialog.Title" xml:space="preserve">
+    <value>Über eBRestarter</value>
+  </data>
+  <data name="AboutDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AboutDialog_VersionHeader.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutDialog_CreditsHeader.Text" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="AboutDialog_DevRole.Text" xml:space="preserve">
+    <value>Fullstack Entwicklung</value>
+  </data>
+  <data name="AboutDialog_DevName.Text" xml:space="preserve">
+    <value>Dein Name / Test</value>
+  </data>
+  <data name="AboutDialog_AssetsHeader.Text" xml:space="preserve">
+    <value>Icons und Assets</value>
+  </data>
+  <data name="Options_RestartStatus_None" xml:space="preserve">
+    <value>Computer wird nicht neugestartet</value>
+  </data>
+  <data name="Options_RestartStatus_Scheduled" xml:space="preserve">
+    <value>Computer wird am {0} um {1} Uhr neugestartet</value>
+  </data>
+  <data name="Options_UpdateAvailable" xml:space="preserve">
+    <value>Version {0} verfügbar!</value>
+  </data>
+  <data name="Options_RemoveCreds_Title" xml:space="preserve">
+    <value>API Zugang</value>
+  </data>
+  <data name="Options_RemoveCreds_Message" xml:space="preserve">
+    <value>Deine API Zugangsdaten wurden entfernt.</value>
+  </data>
+  <data name="Options_AutoLogon_Deactivated" xml:space="preserve">
+    <value>Die automatische Anmeldung wurde deaktiviert.</value>
+  </data>
+  <data name="Options_AutoLogon_DomainError" xml:space="preserve">
+    <value>Der Domänen-Controller konnte zur Überprüfung nicht erreicht werden.</value>
+  </data>
+  <data name="General_UnexpectedError" xml:space="preserve">
+    <value>Ein unerwarteter Fehler ist aufgetreten: {0}</value>
+  </data>
+  <data name="Task_DefaultBrowser" xml:space="preserve">
+    <value>Nicht gewählt</value>
+  </data>
+  <data name="Task_StatusReady" xml:space="preserve">
+    <value>Bereit.</value>
+  </data>
+  <data name="Task_StatusStopped" xml:space="preserve">
+    <value>Restarter gestoppt.</value>
+  </data>
+  <data name="Task_StatusRunning" xml:space="preserve">
+    <value>Browser läuft.</value>
+  </data>
+  <data name="Task_StatusStartIn" xml:space="preserve">
+    <value>Start in {0}s...</value>
+  </data>
+  <data name="Task_StatusRestartIn" xml:space="preserve">
+    <value>Neustart in {0}s...</value>
+  </data>
 </root>

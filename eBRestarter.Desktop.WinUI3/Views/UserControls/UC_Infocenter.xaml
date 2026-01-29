@@ -13,13 +13,10 @@
       CornerRadius="8,0,0,0">
 
         <Grid.RowDefinitions>
-            <!-- Top-Bar -->
             <RowDefinition Height="Auto" />
-            <!-- Inhalt -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- OBERER BALKEN -->
         <StackPanel Grid.Row="0"
                     Background="{ThemeResource MenuBackgroundColor}"
                     Orientation="Horizontal"
@@ -37,16 +34,15 @@
                       VerticalAlignment="Bottom"/>
 
             <TextBlock x:Name="tbl_MainWindowTitle"
+                       x:Uid="Infocenter_Title"
                        Foreground="{ThemeResource FontColor_1}"
                        Margin="0,7,0,9"
-                       Text="Infocenter"
                        VerticalAlignment="Center"
                        FontSize="18"
                        FontWeight="Bold"/>
 
         </StackPanel>
 
-        <!-- INHALT -->
         <ScrollViewer Grid.Row="1"
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
@@ -59,13 +55,12 @@
                     <RowDefinition Height="160" />
                 </Grid.RowDefinitions>
 
-                <!-- ROW 0: zwei Info-Karten nebeneinander -->
                 <StackPanel Grid.Row="0"
                             Orientation="Horizontal"
                             HorizontalAlignment="Left"
                             Width="995">
 
-                    <local:UC_InformationsCard HeaderTitle="Hardwarespezifiktion"
+                    <local:UC_InformationsCard x:Uid="Infocenter_CardHardware"
                                                TitleForeground="{ThemeResource FontColor_1}"
                                                HeaderImage="{ThemeResource WorkstationIcon}"
                                                ImageHeight="40"
@@ -75,11 +70,10 @@
                                                InformationRow2="{Binding GraphicsText,  Mode=OneWay}"
                                                InformationRow3="{Binding RamText,       Mode=OneWay}"
                                                InformationRowForeground="{ThemeResource FontColor_1}"
-                                               
                                                Width="480"
                                                Margin="25,0,10,0" />
 
-                    <local:UC_InformationsCard HeaderTitle="Windows-Spezifikation"
+                    <local:UC_InformationsCard x:Uid="Infocenter_CardWindows"
                                                TitleForeground="{ThemeResource FontColor_1}"
                                                HeaderImage="{ThemeResource WindowsIcon}"
                                                ImageHeight="25"
@@ -92,15 +86,13 @@
                                                Width="480"/>
                 </StackPanel>
 
-                <!-- ROW 1: URL-Karte -->
                 <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
 
                     <local:UC_InformationCardUrls Width="970"
-                                          Margin="25,0,10,0" />
+                                      Margin="25,0,10,0" />
                 </StackPanel>
 
-                <!-- ROW 2: "Über eB Restarter"-Button -->
                 <StackPanel Grid.Row="2"
                             Orientation="Vertical"
                             HorizontalAlignment="Left"
@@ -117,13 +109,12 @@
                                     VerticalAlignment="Center"
                                     Margin="-5,0,0,0">
 
-                            <!-- Info-Icon (statt MD:PackIcon) -->
                             <FontIcon Glyph="&#xE946;"
                                       FontSize="20"
                                       Width="35"
                                       Height="30" />
 
-                            <TextBlock x:Uid="About_eV_Restarter"
+                            <TextBlock x:Uid="Infocenter_BtnAbout"
                                        FontSize="16"
                                        Margin="10,0,0,0"
                                        VerticalAlignment="Center" />

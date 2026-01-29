@@ -121,7 +121,7 @@
     <value>General Overview</value>
   </data>
   <data name="Infocenter.Text" xml:space="preserve">
-    <value>Infocenter</value>
+    <value>Info Center</value>
   </data>
   <data name="Options.Text" xml:space="preserve">
     <value>Options</value>
@@ -280,7 +280,7 @@
     <value>Options</value>
   </data>
   <data name="InfocenterNavigation.Content" xml:space="preserve">
-    <value>Infocenter</value>
+    <value>Info Center</value>
   </data>
   <data name="PropertiesNavigation.Content" xml:space="preserve">
     <value>Properties</value>
@@ -530,5 +530,221 @@
   </data>
   <data name="DeleteDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
+  </data>
+  <data name="Addon_StatusChecking" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="Addon_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Addon_BrowserInstalled" xml:space="preserve">
+    <value>{0} is installed</value>
+  </data>
+  <data name="Addon_BrowserNotInstalled" xml:space="preserve">
+    <value>{0} is not installed</value>
+  </data>
+  <data name="Addon_ExtensionInstalled" xml:space="preserve">
+    <value>Add-on is installed</value>
+  </data>
+  <data name="Addon_ExtensionNotInstalled" xml:space="preserve">
+    <value>Add-on is not installed</value>
+  </data>
+  <data name="Addon_BtnManage" xml:space="preserve">
+    <value>Manage Add-on</value>
+  </data>
+  <data name="Addon_BtnInstall" xml:space="preserve">
+    <value>Install Add-on</value>
+  </data>
+  <data name="Addon_BtnBrowserMissing" xml:space="preserve">
+    <value>Browser missing</value>
+  </data>
+  <data name="InstallAddOnDialog.Title" xml:space="preserve">
+    <value>Manage eBesucher Add-on</value>
+  </data>
+  <data name="InstallAddOnDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="InstallAddOnDialog_Instruction.Text" xml:space="preserve">
+    <value>Select a browser to install or manage the add-on.</value>
+  </data>
+  <data name="AutoLogonDialog.Title" xml:space="preserve">
+    <value>Configure Automatic Logon</value>
+  </data>
+  <data name="AutoLogonDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="AutoLogonDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="AutoLogonDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Title" xml:space="preserve">
+    <value>Security Warning</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Message" xml:space="preserve">
+    <value>The password is saved encrypted. However, the PC will not be locked upon startup.</value>
+  </data>
+  <data name="AutoLogon_InputUser.Header" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="AutoLogon_InputUser.PlaceholderText" xml:space="preserve">
+    <value>Enter username</value>
+  </data>
+  <data name="AutoLogon_InputDomain.Header" xml:space="preserve">
+    <value>Domain (Optional)</value>
+  </data>
+  <data name="AutoLogon_InputDomain.PlaceholderText" xml:space="preserve">
+    <value>Leave empty for local user</value>
+  </data>
+  <data name="AutoLogon_InputPassword.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="AutoLogon_InputPassword.PlaceholderText" xml:space="preserve">
+    <value>Enter Windows password</value>
+  </data>
+  <data name="ActivateApi_Checking" xml:space="preserve">
+    <value>Checking credentials...</value>
+  </data>
+  <data name="ActivateApi_Success" xml:space="preserve">
+    <value>Successfully activated &amp; saved encrypted!</value>
+  </data>
+  <data name="ActivateApi_FileNotFound" xml:space="preserve">
+    <value>File not found.</value>
+  </data>
+  <data name="ActivateApi_ImportSuccess" xml:space="preserve">
+    <value>Data imported. Please click 'Activate' now.</value>
+  </data>
+  <data name="ActivateApi_ImportError" xml:space="preserve">
+    <value>Error: Invalid file format.</value>
+  </data>
+  <data name="ActivateApiDialog.Title" xml:space="preserve">
+    <value>Activate API Access</value>
+  </data>
+  <data name="ActivateApiDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ActivateApiDialog_Header.Text" xml:space="preserve">
+    <value>Enter API credentials</value>
+  </data>
+  <data name="ActivateApiDialog_Username.Header" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ActivateApiDialog_Username.PlaceholderText" xml:space="preserve">
+    <value>eBesucher Username</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.Header" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.PlaceholderText" xml:space="preserve">
+    <value>Your API Key</value>
+  </data>
+  <data name="ActivateApiDialog_SubmitBtn.Content" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="Infocenter_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Infocenter_ProcessorPrefix" xml:space="preserve">
+    <value>Processor:</value>
+  </data>
+  <data name="Infocenter_GraphicsPrefix" xml:space="preserve">
+    <value>Graphics Card:</value>
+  </data>
+  <data name="Infocenter_RamPrefix" xml:space="preserve">
+    <value>Installed RAM:</value>
+  </data>
+  <data name="Infocenter_EditionPrefix" xml:space="preserve">
+    <value>Edition:</value>
+  </data>
+  <data name="Infocenter_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="Infocenter_BuildPrefix" xml:space="preserve">
+    <value>OS Build:</value>
+  </data>
+  <data name="Infocenter_BrowserPrefix" xml:space="preserve">
+    <value>Default Browser:</value>
+  </data>
+  <data name="Infocenter_Title.Text" xml:space="preserve">
+    <value>Info Center</value>
+  </data>
+  <data name="Infocenter_CardHardware.HeaderTitle" xml:space="preserve">
+    <value>Hardware Specification</value>
+  </data>
+  <data name="Infocenter_CardWindows.HeaderTitle" xml:space="preserve">
+    <value>Windows Specification</value>
+  </data>
+  <data name="Infocenter_BtnAbout.Text" xml:space="preserve">
+    <value>About eB Restarter</value>
+  </data>
+  <data name="About_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="About_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="AboutDialog.Title" xml:space="preserve">
+    <value>About eBRestarter</value>
+  </data>
+  <data name="AboutDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="AboutDialog_VersionHeader.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutDialog_CreditsHeader.Text" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="AboutDialog_DevRole.Text" xml:space="preserve">
+    <value>Fullstack Development</value>
+  </data>
+  <data name="AboutDialog_DevName.Text" xml:space="preserve">
+    <value>Your Name / Test</value>
+  </data>
+  <data name="AboutDialog_AssetsHeader.Text" xml:space="preserve">
+    <value>Icons and Assets</value>
+  </data>
+  <data name="Options_RestartStatus_None" xml:space="preserve">
+    <value>Computer will not restart</value>
+  </data>
+  <data name="Options_RestartStatus_Scheduled" xml:space="preserve">
+    <value>Computer will restart on {0} at {1}:00</value>
+  </data>
+  <data name="Options_UpdateAvailable" xml:space="preserve">
+    <value>Version {0} available!</value>
+  </data>
+  <data name="Options_RemoveCreds_Title" xml:space="preserve">
+    <value>API Access</value>
+  </data>
+  <data name="Options_RemoveCreds_Message" xml:space="preserve">
+    <value>Your API credentials have been removed.</value>
+  </data>
+  <data name="Options_AutoLogon_Deactivated" xml:space="preserve">
+    <value>Automatic logon has been deactivated</value>
+  </data>
+  <data name="Options_AutoLogon_DomainError" xml:space="preserve">
+    <value>The domain controller could not be reached for validation.</value>
+  </data>
+  <data name="General_UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred: {0}</value>
+  </data>
+  <data name="Task_DefaultBrowser" xml:space="preserve">
+    <value>Not selected</value>
+  </data>
+  <data name="Task_StatusReady" xml:space="preserve">
+    <value>Ready.</value>
+  </data>
+  <data name="Task_StatusStopped" xml:space="preserve">
+    <value>Restarter stopped.</value>
+  </data>
+  <data name="Task_StatusRunning" xml:space="preserve">
+    <value>Browser is running.</value>
+  </data>
+  <data name="Task_StatusStartIn" xml:space="preserve">
+    <value>Starting in {0}s...</value>
+  </data>
+  <data name="Task_StatusRestartIn" xml:space="preserve">
+    <value>Restarting in {0}s...</value>
   </data>
 </root>
