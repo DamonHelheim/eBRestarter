@@ -3,16 +3,16 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using Microsoft.UI.Xaml; // WICHTIG: Für DispatcherTimer in WinUI 3
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Linq; // Wichtig für FirstOrDefault
+using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ViewModelInstalledBrowsers : ObservableObject
+    public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
     {
         #region Fields
         private readonly IBrowserService _browserService;
@@ -21,6 +21,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IEVisitorConfigService _eVisitorConfigService;
         private readonly IOperatingSystemFacade _os;
         private readonly ILocalizationService _localizationService;
+
+        // Timer für regelmäßige Updates
+        private readonly DispatcherTimer _refreshTimer;
         #endregion
 
         #region Observable Properties
@@ -44,23 +47,79 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dialogService = dialogService;
             _localizationService = localizationService;
             _eVisitorConfigService = eVisitorConfigService;
-            // Initiale Ladung oder Start eines Timers
-            LoadBrowsers();
+
+            // 1. Timer initialisieren
+            _refreshTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2) // Alle 5 Sekunden prüfen
+            };
+
+            _refreshTimer.Tick += async (s, e) => await LoadBrowsersSmartAsync();
+
+            // 2. Initial laden (Fire & Forget)
+            _ = LoadBrowsersSmartAsync();
+
+            // 3. Timer starten
+            _refreshTimer.Start();
         }
         #endregion
 
         #region Methods
-        public async void LoadBrowsers()
+
+        /// <summary>
+        /// Lädt Browser-Informationen und aktualisiert die bestehende Liste, 
+        /// anstatt sie zu löschen. Verhindert UI-Flackern.
+        /// </summary>
+        public async Task LoadBrowsersSmartAsync()
         {
-            var browserInfos = await _browserService.GetInstalledBrowsersAsync();
+            // Daten abrufen (Registry-Checks, läuft schnell)
+            var freshBrowserInfos = await _browserService.GetInstalledBrowsersAsync();
 
-            Browsers.Clear();
-
-            foreach (var info in browserInfos)
+            // Wir iterieren über die neuen Daten
+            foreach (var freshInfo in freshBrowserInfos)
             {
-                Browsers.Add(new ViewModelBrowserItem(info, _downloadService, _os, _eVisitorConfigService, _dialogService, _localizationService));
+                // Versuchen, das existierende ViewModel für diesen Browser-Typ zu finden
+                var existingItem = Browsers.FirstOrDefault(vm => vm.BrowserType == freshInfo.Type);
+
+                if (existingItem != null)
+                {
+                    // FALL A: Item existiert -> Update aufrufen
+                    // Die Update-Methode im Item kümmert sich darum, nur PropertyChanged zu feuern, wenn nötig.
+                    existingItem.Update(freshInfo);
+                }
+                else
+                {
+                    // FALL B: Item existiert noch nicht -> Neu hinzufügen
+                    var newItem = new ViewModelBrowserItem(
+                        freshInfo,
+                        _downloadService,
+                        _os,
+                        _eVisitorConfigService,
+                        _dialogService,
+                        _localizationService);
+
+                    Browsers.Add(newItem);
+                }
             }
+
+            // Optional: Entfernen von Browsern, die nicht mehr in der Liste sind (bei Enums selten nötig, aber sauber)
+            // Wir prüfen, ob es Items in 'Browsers' gibt, deren Typ NICHT in 'freshBrowserInfos' vorkommt.
+            //for (int i = Browsers.Count - 1; i >= 0; i--)
+            //{
+            //    var currentItem = Browsers[i];
+            //    if (!freshBrowserInfos.Any(info => info.Type == currentItem.BrowserType))
+            //    {
+            //        Browsers.RemoveAt(i);
+            //    }
+            //}
         }
+
+        public void Dispose()
+        {
+            _refreshTimer?.Stop();
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
     }
 }

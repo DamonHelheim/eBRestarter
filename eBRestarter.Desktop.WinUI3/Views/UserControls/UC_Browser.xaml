@@ -5,6 +5,8 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+             d:DataContext="{d:DesignInstance Type=VM:ViewModelBrowserItem}"
              mc:Ignorable="d"
              xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
              xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters">
@@ -70,12 +72,13 @@
                        HorizontalAlignment  ="Left"
                        VerticalAlignment    ="Center"/>
 
+
+            
             <TextBlock x:Name       ="tbl_BrowserVersion"
                        Foreground   ="{ThemeResource FontColor_1}"
-                       Visibility="{Binding IsBrowserVersionVisible, Converter={StaticResource BoolToVisConverter}}"
                        Canvas.Left  ="86"
                        TextWrapping ="Wrap"
-                       Text         ="{Binding BrowserVersion}"
+                       Text         ="{Binding BrowserVersionText}"
                        Canvas.Top   ="57"
                        FontSize     ="14"/>
 
@@ -88,7 +91,7 @@
                            Canvas.Top   ="-1"/>
 
             <ProgressBar x:Name="progressBarDownload"
-                         Value="{Binding DownloadProgressValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Value="{Binding DownloadProgressValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                          Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}"
                          Background="Black"
                          Height="14" Width="168"
@@ -96,7 +99,7 @@
                          Canvas.Top="41"/>
 
             <TextBlock x:Name="tbl_DownloadSize"
-                       Text="{Binding DownloadSizeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Text="{Binding DownloadSizeText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                        Visibility="{Binding IsDownloadSizeTextVisible, Converter={StaticResource BoolToVisConverter}}"
                        Canvas.Left="86" Canvas.Top="57" FontSize="14" Foreground="{ThemeResource FontColor_1}"/>
 

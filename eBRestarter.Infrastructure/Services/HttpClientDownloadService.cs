@@ -14,6 +14,11 @@ namespace eBRestarter.Infrastructure.Services
         public HttpClientDownloadService()
         {
             _httpClient = new HttpClient();
+            // --- FIX START ---
+            // Wir täuschen dem Server vor, dass wir ein normaler Chrome-Browser auf Windows 10 sind.
+            // Ohne das liefert der Brave-Server nur eine HTML-Seite (80KB) statt der EXE (1.2MB).
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36");
+
         }
 
         public async Task DownloadFileAsync(string url, string destinationPath, IProgress<DownloadProgressStatus> progress, CancellationToken cancellationToken)
