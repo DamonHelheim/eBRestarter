@@ -45,6 +45,7 @@
     <None Remove="Views\UserControls\UC_Networktraffic.xaml" />
     <None Remove="Views\UserControls\UC_Options.xaml" />
     <None Remove="Views\UserControls\UC_PointsOutput.xaml" />
+    <None Remove="Views\UserControls\UC_RestartAgent.xaml" />
     <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
     <None Remove="Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
@@ -354,6 +355,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartAgent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\ImportApiDialog.xaml">

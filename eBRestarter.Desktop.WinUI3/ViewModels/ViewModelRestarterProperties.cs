@@ -197,10 +197,60 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // Wenn sich die Auswahl ändert, kannst du hier reagieren
         partial void OnSelectedDeleteBrowserCacheOptionChanged(BrowserCacheDeleteOption value)
         {
-            // Beispiel: Speichern des Integer-Wertes in die Config
+            // 1. Intervall in Config übernehmen
             _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
+
+            // 2. Prüfung: Ist das Intervall gültig (1, 3, 7, 14)?
+            if (IsIntervalAllowed(value.Days))
+            {
+                // A) Datum berechnen (Heute + Tage)
+                DateTime nextDate = DateTime.Today.AddDays(value.Days);
+
+                // B) Config speichern
+                _currentConfig.Browser.NextBrowserDeleteCacheDate = nextDate;
+
+                // --- C) LOKALISIERUNG ---
+
+                // 1. Format-String aus der Ressource holen 
+                // (z.B. "am {0:dd.MM.yyyy} um 0 Uhr" ODER "on {0:MM/dd/yyyy} at 12 AM")
+                string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
+
+                // 2. String formatieren
+                // Wir übergeben das DateTime Objekt. Die Ressource kümmert sich um das Format (dd.MM vs MM/dd).
+                string formattedDateString = string.Format(formatPattern, nextDate);
+
+                // ------------------------
+
+                // D) Nachrichten senden
+                WeakReferenceMessenger.Default.Send(new NextDeletionProcess(_localizationService.GetString("NextDeletionProcess")));
+                WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(formattedDateString));
+                WeakReferenceMessenger.Default.Send(new DeleteBrowserContentActivateMessage(_localizationService.GetString("Activate")));
+                WeakReferenceMessenger.Default.Send(new DeleteBrowserContentIsActive(true));
+            }
+            else
+            {
+                // Fall: Deaktiviert (z.B. bei 0 Tagen)
+                // Optional: Datum in Config zurücksetzen (null oder MinValue, je nach deinem Model)
+                _currentConfig.Browser.NextBrowserDeleteCacheDate = DateTime.MinValue;
+
+                // Nachrichten senden (Deaktiviert-Status)
+                WeakReferenceMessenger.Default.Send(new NextDeletionProcess(string.Empty));
+                WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(string.Empty));
+                WeakReferenceMessenger.Default.Send(new DeleteBrowserContentActivateMessage(_localizationService.GetString("Disabled")));
+                WeakReferenceMessenger.Default.Send(new DeleteBrowserContentIsActive(false));
+            }
+
+            // 3. Erst jetzt speichern, damit Intervall UND Datum persistiert werden
             SaveSettings();
         }
+
+        // Deine Prüf-Methode (bleibt unverändert, ist gut so)
+        public bool IsIntervalAllowed(int days) => days switch
+        {
+            1 or 3 or 7 or 14 => true,
+            _ => false
+        };
+
 
         partial void OnStartBrowserWithProgrammStartIsChanged(bool value)
         {

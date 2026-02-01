@@ -747,4 +747,16 @@
   <data name="Task_StatusRestartIn" xml:space="preserve">
     <value>Neustart in {0}s...</value>
   </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="NextDeletionProcess" xml:space="preserve">
+    <value>Nächster Löschvorgang:</value>
+  </data>
+  <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
+    <value>am {0:dd.MM.yyyy} um 0 Uhr</value>
+  </data>
 </root>

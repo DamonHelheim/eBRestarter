@@ -5,9 +5,7 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-             d:DataContext  ="{d:DesignInstance Type=VM:ViewModelRestartTask}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"            
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -17,6 +15,7 @@
                                          ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/tasks.png" />
 
         <converters:TimerStateToTextConverter x:Key="TextConverter"/>
+        
         <converters:TimerStateToColorConverter x:Key="ColorConverter"/>
 
         <converters:SecondsToTimeFormatConverter x:Key="TimeConverter"/>
@@ -88,8 +87,8 @@
                                 Width="203">
 
                         <StackPanel Width="166"
-                                VerticalAlignment="Center"
-                                Height="26">
+                                    VerticalAlignment="Center"
+                                    Height="26">
 
                             <TextBlock x:Name="tbl_Timer"
                                         Foreground="{ThemeResource FontColor_1}"
@@ -97,8 +96,9 @@
                                         FontSize="20"
                                         Width="Auto"
                                         Height="26"
-                                        Text="{x:Bind ViewModelRestartTask.SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}"
+                                        Text="{Binding SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}"
                                         HorizontalAlignment="Right" />
+                            
                         </StackPanel>
 
                         <Image x:Name="tbl_CurrentStatusIcon"
@@ -183,7 +183,7 @@
                 <!-- Row 3: Status -->
                 <StackPanel Grid.Row="3"
                             Margin="0,5,0,0"
-                        Orientation="Horizontal">
+                            Orientation="Horizontal">
 
                     <Image x:Name="image_restarter_agent_Copy2"
                            Height="22"
@@ -208,7 +208,7 @@
                                FontSize="16"
                                Width="Auto"
                                Height="22"
-                               Text="{x:Bind ViewModelRestartTask.StatusInfoText, Mode=OneWay}"
+                               Text="{Binding StatusInfoText, Mode=OneWay}"
                                VerticalAlignment="Center"/>
 
                 </StackPanel>
@@ -218,7 +218,7 @@
             <!-- LINKE SEITE: ToggleButton -->
             <ToggleButton x:Name="tbtn_StartTimerSchudeler"
                           Grid.Column="0"
-                          Content="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"                 
+                          Content="{Binding IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"                 
                           Command="{Binding ExecuteStartTimerSchedulerCommand}"
                           CommandParameter="{Binding ElementName=tbtn_StartTimerSchudeler, Path=IsChecked}"
                           Background="#FF0DB290"

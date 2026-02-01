@@ -20,10 +20,14 @@ using Windows.Foundation.Collections;
 
 namespace eBRestarter.Desktop.WinUI3.Views.UserControls;
 
-public sealed partial class UC_RestartTask : UserControl
+public sealed partial class UC_RestartAgent : UserControl
 {
-    public UC_RestartTask()
+    public ViewModelRestartTask ViewModelRestartTask { get; }
+    public UC_RestartAgent()
     {
         InitializeComponent();
+
+        ViewModelRestartTask = App.AppHost!.Services.GetRequiredService<ViewModelRestartTask>();
+        this.DataContext = ViewModelRestartTask;
     }
 }

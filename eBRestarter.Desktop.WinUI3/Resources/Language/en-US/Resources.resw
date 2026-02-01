@@ -199,7 +199,7 @@
     <value>Additional options</value>
   </data>
   <data name="No_Browsers_Installed.Text" xml:space="preserve">
-    <value>No browsers installed</value>
+    <value>No browsers installed:</value>
   </data>
   <data name="Delete_browser_content.Content" xml:space="preserve">
     <value>Delete browser content</value>
@@ -746,5 +746,17 @@
   </data>
   <data name="Task_StatusRestartIn" xml:space="preserve">
     <value>Restarting in {0}s...</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Activate</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="NextDeletionProcess" xml:space="preserve">
+    <value>Next deletion process:</value>
+  </data>
+  <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
+    <value>on {0:MM/dd/yyyy} at 12 AM</value>
   </data>
 </root>

@@ -146,7 +146,17 @@
                 <Frame Grid.Row="0"
                        x:Name="NavigationFrame" />
 
-                <StackPanel Grid.Row="1"
+                <usercontrol:UC_RestartAgent Grid.Row="1"/>
+
+            </Grid>
+
+        </NavigationView>
+                 
+    </Grid>
+
+</Window>
+
+<!--<StackPanel Grid.Row="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Stretch"
                             Background="{ThemeResource MenuBackgroundColor}">
@@ -155,12 +165,4 @@
                     
                     <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
                     
-                </StackPanel>
-                
-            </Grid>
-
-        </NavigationView>
-                 
-    </Grid>
-
-</Window>
+                </StackPanel>-->

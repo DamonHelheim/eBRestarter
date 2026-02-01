@@ -96,7 +96,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
 
-        //public bool IsBrowserVersionVisible => _browserInfo.IsInstalled;
 
         public bool IsChooseButtonVisible => _browserInfo.IsInstalled;
 

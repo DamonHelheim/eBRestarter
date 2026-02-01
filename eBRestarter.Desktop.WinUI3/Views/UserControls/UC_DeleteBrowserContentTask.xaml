@@ -5,7 +5,18 @@
              xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
+             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+             d:DataContext  ="{d:DesignInstance Type=VM:ViewModelRestartTask}"
              mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <converters:BoolToImageConverter x:Key="BoolToImageConverter"
+                                         ImagePathWhenFalse="ms-appx:///Resources/Visuals/Icons/Intersection/deactivate.png"
+                                         ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/plus.png" />
+
+    </UserControl.Resources>
 
     <Border x:Name          ="Border_Browser_Cleaning"
             Background      ="{ThemeResource DashletBackgroundColor_3}"
@@ -40,7 +51,7 @@
             <Image x:Name                          ="image_restarter_agent_Copy"
                    Height                          ="25"
                    Width                           ="25"
-                   Source                          ="{Binding ImagePath}"
+                   Source                          ="{Binding DeleteBrowserContentIsActive, Converter={StaticResource BoolToImageConverter}}" 
                    VerticalAlignment               ="Top"
                    Canvas.Left                     ="370"
                    HorizontalAlignment             ="Left"
@@ -49,17 +60,18 @@
             <TextBlock x:Name                       ="tbl_DateOfNextCleaning"
                        Foreground                   ="{ThemeResource FontColor_1}"
                        Canvas.Left                  ="10"
-                       Text                         ="{Binding TextInfo}"
+                       Text                         ="{Binding NextDeletionProcessMessage, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
                        Canvas.Top                   ="49"
                        FontSize                     ="16"
                        HorizontalAlignment          ="Center"
                        VerticalAlignment            ="Top"/>
 
+            <!--Text                                ="{Binding DeleteDate}"-->
             <TextBlock x:Name                       ="tbl_txtCleaningInfo"
                        Foreground                   ="{ThemeResource FontColor_1}"
                        Canvas.Left                  ="10"
-                       Text                         ="{Binding DeleteDate}"
                        Canvas.Top                   ="87"
+                       Text                         ="{Binding NextDeletionProcessDateMessage, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
                        FontSize                     ="16"
                        HorizontalAlignment          ="Left"
                        VerticalAlignment            ="Center"/>
@@ -75,7 +87,7 @@
                            Foreground                   ="{ThemeResource FontColor_1}"
                            HorizontalAlignment          ="Right"
                            TextWrapping                 ="Wrap"
-                           Text                         ="{Binding IsActivated, UpdateSourceTrigger=PropertyChanged}"
+                           Text                         ="{Binding DeleteIsActivatedMessage, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                            Canvas.Top                   ="18"
                            FontSize                     ="16"/>
 

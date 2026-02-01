@@ -372,6 +372,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                 // Format: "Computer wird am {0} um {1} Uhr neugestartet"
                 string format = _localizationService.GetString("Options_RestartStatus_Scheduled");
+
                 RestartStatusText = string.Format(format, targetDate.ToString("dd.MM.yyyy"), targetDate.ToString("HH"));
             }
         }
