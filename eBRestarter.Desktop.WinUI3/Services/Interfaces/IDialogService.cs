@@ -11,18 +11,29 @@ namespace eBRestarter.Desktop.WinUI3.Services.Interfaces
 
     public interface IDialogService
     {
-        // Standard dialogs (with optional icon)
+        // =========================================================
+        // STANDARD DIALOGS (Message, Question, Confirmation)
+        // =========================================================
         Task ShowMessageAsync(string title, string message, DialogIcon icon = DialogIcon.None);
         Task<bool> ShowYesNoDialogAsync(string title, string message, DialogIcon icon = DialogIcon.Question);
+        Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein");
 
-        // Custom dialogs (simplified signatures)
+        // =========================================================
+        // CUSTOM DIALOGS (Specific ViewModels/Views)
+        // =========================================================
+
+        // AutoLogon mit Rückgabewert
         Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null, string defaultDomain = null);
+
+        // Einfache Dialoge ohne Rückgabewert
         Task ShowAboutDialogAsync();
-        Task ShowBrowserDeleteContentDialogAsync();
         Task ShowInstallAddOnDialogAsync();
+        Task ShowInstallAddOnInfoDialogAsync();
         Task ShowActivateApiDialogAsync();
         Task ShowImportApiDialogAsync();
-        Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein");
+
+        // --- NEU: Browser Lösch-Dialog mit Auto-Start Option ---
+        Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false);
     }
 
 

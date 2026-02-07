@@ -86,6 +86,7 @@
         <Button Grid.Row="4"
                 x:Name="BtnInfoeVisitorAddOn"
                 x:Uid="Important_information_about_the_add_on"
+                Command="{Binding ShowInstallAddOnInfoDialogCommand}"
                 Margin="0,8,0,0"
                 Height="30"
                 FontSize="12"

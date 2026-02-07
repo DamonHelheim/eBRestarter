@@ -32,6 +32,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private IBrowser? _currentBrowser;
         private string _processName = "";
 
+        // NEU: Ein Event, um dem Dialog (View) zu sagen, dass er sich schließen soll
+        public event Action? RequestCloseDialog;
+
+        private bool _isAutoMode = false;
+
         #endregion
 
         #region Observable Properties
@@ -160,6 +165,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             IsProcessConflict = false;
             StatusText = _localizationService.GetString("Cleanup_CanceledByUser"); // "Abbruch durch Benutzer."
+        }       
+
+        #endregion
+
+        #region Methods
+
+        // --- NEU: Methode für den Auto-Start ---
+        public async Task RunAutoSequenceAsync()
+        {
+            _isAutoMode = true;
+
+            // Kurze Verzögerung, damit der Dialog sauber gerendert ist, bevor es losgeht
+            await Task.Delay(500);
+
+            await StartCleaning();
         }
 
         private async Task ExecuteCleaningLogic()
@@ -180,6 +200,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             IsBusy = true;
             _cts = new CancellationTokenSource();
+            bool success = false; // Flag um zu prüfen, ob wir sauber durchlaufen
 
             try
             {
@@ -198,23 +219,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                 await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, valueProgress, _cts.Token);
 
-                StatusText = _localizationService.GetString("Cleanup_Finished"); // "Bereinigung abgeschlossen."
+                StatusText = _localizationService.GetString("Cleanup_Finished");
+                success = true; // Markieren als erfolgreich
             }
             catch (Exception ex)
             {
                 string errorFormat = _localizationService.GetString("General_ErrorPrefix");
                 StatusText = string.Format(errorFormat, ex.Message);
+                success = false;
             }
             finally
             {
                 IsBusy = false;
                 _cts = null;
+
+                // NEU: Wenn Auto-Modus UND erfolgreich (kein Abbruch/Fehler), dann Dialog schließen
+                if (_isAutoMode && success && !IsProcessConflict)
+                {
+                    // Kurze Pause, damit der Nutzer "100%" und "Fertig" kurz sieht
+                    await Task.Delay(1000);
+                    RequestCloseDialog?.Invoke(); // Trigger für die View
+                }
             }
         }
-
-        #endregion
-
-        #region Methods
 
         public void Initialize(BrowserType selectedBrowserType)
         {

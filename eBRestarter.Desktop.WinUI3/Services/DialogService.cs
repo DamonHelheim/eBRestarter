@@ -14,10 +14,11 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.Services
 {
-
     public class DialogService : IDialogService
     {
         // Access to the main window's XamlRoot
+        // WICHTIG: Stelle sicher, dass 'MainWindoweBRestarter' korrekt ist. 
+        // Falls du App.MainWindow nutzt, passe es hier an.
         private XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
 
         // =========================================================
@@ -31,7 +32,7 @@ namespace eBRestarter.Desktop.WinUI3.Services
                 XamlRoot = XamlRoot // Set centrally here
             };
 
-            // Apply optional configuration (e.g., SetDefaults for AutoLogon)
+            // Apply optional configuration (e.g., SetDefaults for AutoLogon or AutoStart logic)
             configure?.Invoke(dialog);
 
             return await dialog.ShowAsync();
@@ -94,14 +95,40 @@ namespace eBRestarter.Desktop.WinUI3.Services
         }
 
         // =========================================================
-        // CUSTOM DIALOGS (Now using the generic helper)
+        // CUSTOM DIALOGS (Using the generic helper)
         // =========================================================
 
         public async Task ShowAboutDialogAsync() => await ShowDialogInternalAsync<AboutDialog>();
-        public async Task ShowBrowserDeleteContentDialogAsync() => await ShowDialogInternalAsync<DeleteBrowserContentDialog>();
+
         public async Task ShowInstallAddOnDialogAsync() => await ShowDialogInternalAsync<InstallAddOnDialog>();
+
+        public async Task ShowInstallAddOnInfoDialogAsync() => await ShowDialogInternalAsync<InstallAddOnInfoDialog>();
+
         public async Task ShowActivateApiDialogAsync() => await ShowDialogInternalAsync<ActivateApiDialog>();
+
         public async Task ShowImportApiDialogAsync() => await ShowDialogInternalAsync<ImportApiDialog>();
+
+        // --- NEU & ANGEPASST: Browser Lösch-Dialog ---
+        public async Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false)
+        {
+            // Wir nutzen die generische Methode und konfigurieren den Dialog via Lambda
+            await ShowDialogInternalAsync<DeleteBrowserContentDialog>(dialog =>
+            {
+                if (autoStart)
+                {
+                    // Wir abonnieren das "Opened"-Event, um den Prozess zu starten, sobald der Dialog sichtbar ist.
+                    // Das ist sicherer als es direkt im Konstruktor zu machen.
+                    dialog.Opened += async (s, e) =>
+                    {
+                        // Zugriff auf das ViewModel über die Property im Code-Behind des Dialogs
+                        if (dialog.ViewModelDeleteBrowserContent != null)
+                        {
+                            await dialog.ViewModelDeleteBrowserContent.RunAutoSequenceAsync();
+                        }
+                    };
+                }
+            });
+        }
 
         public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null, string defaultDomain = null)
         {
@@ -186,6 +213,7 @@ namespace eBRestarter.Desktop.WinUI3.Services
             return stackPanel;
         }
     }
+}
 
     //public class DialogService : IDialogService
     //{
@@ -351,4 +379,4 @@ namespace eBRestarter.Desktop.WinUI3.Services
     //        await dialog.ShowAsync();
     //    }
     //}
-}
+

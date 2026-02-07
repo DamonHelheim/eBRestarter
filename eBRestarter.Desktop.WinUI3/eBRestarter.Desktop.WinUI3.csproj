@@ -20,11 +20,13 @@
     <None Remove="Resources\Visuals\Icons\Intersection\globe.png" />
     <None Remove="Resources\Visuals\Icons\LightTheme\globe.png" />
     <None Remove="Resources\Visuals\Icons\LightTheme\globe_light_theme.png" />
+    <None Remove="Resources\Visuals\Images\EVisitorAddOnInfo.png" />
     <None Remove="Views\Dialogs\AboutDialog.xaml" />
     <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
     <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
     <None Remove="Views\Dialogs\ImportApiDialog.xaml" />
+    <None Remove="Views\Dialogs\InstallAddOnInfoDialog.xaml" />
     <None Remove="Views\Pages\P_CommonOverview.xaml" />
     <None Remove="Views\Pages\P_Infocenter.xaml" />
     <None Remove="Views\Pages\P_Options.xaml" />
@@ -321,6 +323,9 @@
     <Content Include="Resources\Visuals\Icons\LightTheme\workstation_light_theme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Visuals\Images\EVisitorAddOnInfo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -351,10 +356,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images\" />
-    <Folder Include="Resources\Visuals\Images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\InstallAddOnInfoDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\UserControls\UC_RestartAgent.xaml">

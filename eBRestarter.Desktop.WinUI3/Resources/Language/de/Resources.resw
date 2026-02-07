@@ -759,4 +759,19 @@
   <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
     <value>am {0:dd.MM.yyyy} um 0 Uhr</value>
   </data>
+  <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AddOnInfo_HeaderMain.Text" xml:space="preserve">
+    <value>Info zum eBesucher Add-on</value>
+  </data>
+  <data name="AddOnInfo_BodyMain.Text" xml:space="preserve">
+    <value>Du musst zwingend das eBesucher Add-on installieren, damit die Surfbar automatisch mit deinem Nutzernamen startet. Ohne die Installation startet die Surfbar nicht automatisch, wenn der Restarter aktiv ist.</value>
+  </data>
+  <data name="AddOnInfo_HeaderSettings.Text" xml:space="preserve">
+    <value>Add-on Einstellungen</value>
+  </data>
+  <data name="AddOnInfo_BodySettings.Text" xml:space="preserve">
+    <value>Wenn du magst, setze ein Häkchen bei der Privatsphäre und gib im Add-on deinen Nutzernamen ein (keine Pflicht).</value>
+  </data>
 </root>
