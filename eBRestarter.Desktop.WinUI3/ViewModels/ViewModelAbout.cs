@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Domain.Models.Records;
 using System;
@@ -10,57 +10,64 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelAbout : ObservableObject
     {
-        #region Fields (Private Felder OHNE [ObservableProperty])
+        // =========================================================
+        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
 
         private readonly IAppInfoService _appInfoService;
-        private readonly ILocalizationService _localizationService; // <--- NEU: Service Feld
+        private readonly ILocalizationService _localizationService;
 
         #endregion
 
-        #region Observable Properties (Felder MIT [ObservableProperty])
+        // =========================================================
+        // 2. OBSERVABLE PROPERTIES (MVVM State)
+        // =========================================================
+        #region ObservableProperties
 
-        // Initialwert entfernen wir hier, da wir ihn im Konstruktor setzen
-        [ObservableProperty]
-        public partial string AppVersion { get; set; }
+        [ObservableProperty] public partial string AppVersion { get; set; }
 
         #endregion
 
-        #region Properties (Explizite get; set; Eigenschaften)
+        // =========================================================
+        // 3. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
 
         public ObservableCollection<IconCredit> IconCredits { get; } = [];
 
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 4. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
 
         public ViewModelAbout(
             IAppInfoService appInfoService,
-            ILocalizationService localizationService) // <--- Injizieren
+            ILocalizationService localizationService)
         {
             _appInfoService = appInfoService;
-            _localizationService = localizationService; // <--- Zuweisen
-
-            // Lokalisierter Startwert
-            AppVersion = _localizationService.GetString("About_Loading"); // "Lade..."
-
+            _localizationService = localizationService;
+            AppVersion = _localizationService.GetString("About_Loading");
             LoadData();
         }
 
         #endregion
 
-        #region Methods (Restliche Methoden)
+        // =========================================================
+        // 5. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // =========================================================
+        #region PrivateHelperMethods
 
         private void LoadData()
         {
-            string prefix = _localizationService.GetString("About_VersionPrefix"); // "Version:"
+            string prefix = _localizationService.GetString("About_VersionPrefix");
             AppVersion = $"{prefix} {_appInfoService.GetAppVersion()}";
-
             var credits = _appInfoService.GetIconCredits();
             IconCredits.Clear();
             foreach (var credit in credits)
-            {
                 IconCredits.Add(credit);
-            }
         }
 
         #endregion

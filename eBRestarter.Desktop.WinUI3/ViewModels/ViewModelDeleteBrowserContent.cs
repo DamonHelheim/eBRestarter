@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
@@ -18,65 +18,64 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelDeleteBrowserContent : ObservableObject
     {
-        #region Fields
+        // =========================================================
+        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
 
         private readonly IBrowserFactory _browserFactory;
         private readonly IEVisitorConfigService _iEVisitorConfigService;
         private readonly IDialogService _dialogService;
         private readonly IFileDeletionService _fileDeletionService;
         private readonly IWindowsProcessControlService _processService;
-        private readonly ILocalizationService _localizationService; // <--- NEU: Service Feld
+        private readonly ILocalizationService _localizationService;
 
         private BrowserPaths? _browserPaths;
         private CancellationTokenSource? _cts;
         private IBrowser? _currentBrowser;
         private string _processName = "";
-
-        // NEU: Ein Event, um dem Dialog (View) zu sagen, dass er sich schließen soll
-        public event Action? RequestCloseDialog;
-
         private bool _isAutoMode = false;
 
         #endregion
 
-        #region Observable Properties
+        // =========================================================
+        // 2. OBSERVABLE PROPERTIES (MVVM State)
+        // =========================================================
+        #region ObservableProperties
 
         [ObservableProperty] public partial string BrowserIconPath { get; set; } = string.Empty;
-
-        // Initialwert entfernen wir hier, da wir ihn im Konstruktor übersetzt setzen
         [ObservableProperty] public partial string BrowserName { get; set; }
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
         [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
         public partial bool IsBusy { get; set; } = false;
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
         public partial bool IsDeleteCookiesChecked { get; set; } = true;
-
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
         public partial bool IsDeleteInternetCacheChecked { get; set; } = true;
-
         [ObservableProperty] public partial bool IsProcessConflict { get; set; } = false;
         [ObservableProperty] public partial double ProgressMaximum { get; set; } = 100;
         [ObservableProperty] public partial string ProgressText { get; set; } = "0 %";
-
-        // Initialwert entfernen wir hier, da wir ihn im Konstruktor übersetzt setzen
         [ObservableProperty] public partial double ProgressValue { get; set; } = 0;
         [ObservableProperty] public partial string StatusText { get; set; }
 
         #endregion
 
-        #region Properties
+        // =========================================================
+        // 3. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
 
-        private bool CanCancel() => IsBusy;
-        private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
+        public event Action? RequestCloseDialog;
 
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 4. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
 
         public ViewModelDeleteBrowserContent(
             IBrowserFactory browserFactory,
@@ -84,23 +83,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IFileDeletionService fileDeletionService,
             IEVisitorConfigService iEVisitorConfigService,
             IDialogService dialogService,
-            ILocalizationService localizationService) // <--- Injizieren
+            ILocalizationService localizationService)
         {
             _browserFactory = browserFactory;
             _iEVisitorConfigService = iEVisitorConfigService;
             _processService = processService;
             _fileDeletionService = fileDeletionService;
             _dialogService = dialogService;
-            _localizationService = localizationService; // <--- Zuweisen
+            _localizationService = localizationService;
 
-            // Lokalisierte Standardwerte setzen
-            BrowserName = _localizationService.GetString("Cleanup_Loading"); // "Lade..."
-            StatusText = _localizationService.GetString("Cleanup_Ready");    // "Bereit."
+            BrowserName = _localizationService.GetString("Cleanup_Loading");
+            StatusText = _localizationService.GetString("Cleanup_Ready");
 
-            // 1. Config laden
             AppConfig config = iEVisitorConfigService.LoadConfig();
-
-            // 2. Browser wählen
             string selectedBrowserString = config.Browser.Selected;
 
             if (Enum.TryParse(typeof(BrowserType), selectedBrowserString, true, out var result))
@@ -110,7 +105,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
             else
             {
-                // Fehlertext lokalisiert formatieren
                 string errorFormat = _localizationService.GetString("Cleanup_ConfigError");
                 StatusText = string.Format(errorFormat, selectedBrowserString);
             }
@@ -118,27 +112,28 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         #endregion
 
+        // =========================================================
+        // 5. COMMANDS (MVVM Actions)
+        // =========================================================
         #region Commands
 
         [RelayCommand(CanExecute = nameof(CanCancel))]
         private void CancelCleaning()
         {
             _cts?.Cancel();
-            StatusText = _localizationService.GetString("Cleanup_Canceling"); // "Breche ab..."
+            StatusText = _localizationService.GetString("Cleanup_Canceling");
         }
 
         [RelayCommand(CanExecute = nameof(CanClean))]
         private async Task StartCleaning()
         {
             if (IsBusy || _currentBrowser == null || _browserPaths == null) return;
-
             if (_processService.IsProcessAlive(_processName))
             {
                 IsProcessConflict = true;
-                StatusText = _localizationService.GetString("Cleanup_BrowserRunning"); // "Browser läuft noch..."
+                StatusText = _localizationService.GetString("Cleanup_BrowserRunning");
                 return;
             }
-
             await ExecuteCleaningLogic();
         }
 
@@ -146,17 +141,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task ForceCloseAndContinue()
         {
             IsProcessConflict = false;
-
             _processService.CloseApplication(_processName);
-            StatusText = _localizationService.GetString("Cleanup_ClosingBrowser"); // "Beende Browser..."
+            StatusText = _localizationService.GetString("Cleanup_ClosingBrowser");
             await Task.Delay(1000);
-
             if (_processService.IsProcessAlive(_processName))
             {
-                StatusText = _localizationService.GetString("Cleanup_CloseFailed"); // "Konnte nicht beenden..."
+                StatusText = _localizationService.GetString("Cleanup_CloseFailed");
                 return;
             }
-
             await ExecuteCleaningLogic();
         }
 
@@ -164,48 +156,71 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void CancelConflict()
         {
             IsProcessConflict = false;
-            StatusText = _localizationService.GetString("Cleanup_CanceledByUser"); // "Abbruch durch Benutzer."
-        }       
+            StatusText = _localizationService.GetString("Cleanup_CanceledByUser");
+        }
 
         #endregion
 
-        #region Methods
+        // =========================================================
+        // 6. PUBLIC & PROTECTED METHODS (API)
+        // =========================================================
+        #region PublicAndProtectedMethods
 
-        // --- NEU: Methode für den Auto-Start ---
         public async Task RunAutoSequenceAsync()
         {
             _isAutoMode = true;
-
-            // Kurze Verzögerung, damit der Dialog sauber gerendert ist, bevor es losgeht
             await Task.Delay(500);
-
             await StartCleaning();
         }
+
+        public void Initialize(BrowserType selectedBrowserType)
+        {
+            try
+            {
+                _currentBrowser = _browserFactory.Create(selectedBrowserType);
+                BrowserName = _currentBrowser.DisplayName;
+                BrowserIconPath = _currentBrowser.IconPath;
+                _browserPaths = _currentBrowser.GetPaths();
+                _processName = GetProcessNameByType(selectedBrowserType);
+            }
+            catch (Exception ex)
+            {
+                string errorFormat = _localizationService.GetString("General_LoadErrorPrefix");
+                StatusText = string.Format(errorFormat, ex.Message);
+            }
+        }
+
+        #endregion
+
+        // =========================================================
+        // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // =========================================================
+        #region PrivateHelperMethods
+
+        private bool CanCancel() => IsBusy;
+        private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
 
         private async Task ExecuteCleaningLogic()
         {
             var directoriesToDelete = new List<string>();
-
-            if (IsDeleteInternetCacheChecked && _browserPaths.CacheDirs != null && _browserPaths.CacheDirs.Count > 0)
+            if (IsDeleteInternetCacheChecked && _browserPaths!.CacheDirs != null && _browserPaths.CacheDirs.Count > 0)
                 directoriesToDelete.AddRange(_browserPaths.CacheDirs);
-
-            if (IsDeleteCookiesChecked && _browserPaths.CookiesDirs != null && _browserPaths.CookiesDirs.Count > 0)
+            if (IsDeleteCookiesChecked && _browserPaths!.CookiesDirs != null && _browserPaths.CookiesDirs.Count > 0)
                 directoriesToDelete.AddRange(_browserPaths.CookiesDirs);
 
             if (directoriesToDelete.Count == 0)
             {
-                StatusText = _localizationService.GetString("Cleanup_NoPaths"); // "Keine gültigen Pfade..."
+                StatusText = _localizationService.GetString("Cleanup_NoPaths");
                 return;
             }
 
             IsBusy = true;
             _cts = new CancellationTokenSource();
-            bool success = false; // Flag um zu prüfen, ob wir sauber durchlaufen
+            bool success = false;
 
             try
             {
-                StatusText = _localizationService.GetString("Cleanup_Analyzing"); // "Analysiere Dateien..."
-
+                StatusText = _localizationService.GetString("Cleanup_Analyzing");
                 int totalFiles = await _fileDeletionService.CountFilesAsync(directoriesToDelete);
                 ProgressMaximum = totalFiles > 0 ? totalFiles : 1;
                 ProgressValue = 0;
@@ -218,47 +233,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 });
 
                 await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, valueProgress, _cts.Token);
-
                 StatusText = _localizationService.GetString("Cleanup_Finished");
-                success = true; // Markieren als erfolgreich
+                success = true;
             }
             catch (Exception ex)
             {
                 string errorFormat = _localizationService.GetString("General_ErrorPrefix");
                 StatusText = string.Format(errorFormat, ex.Message);
-                success = false;
             }
             finally
             {
                 IsBusy = false;
                 _cts = null;
-
-                // NEU: Wenn Auto-Modus UND erfolgreich (kein Abbruch/Fehler), dann Dialog schließen
                 if (_isAutoMode && success && !IsProcessConflict)
                 {
-                    // Kurze Pause, damit der Nutzer "100%" und "Fertig" kurz sieht
                     await Task.Delay(1000);
-                    RequestCloseDialog?.Invoke(); // Trigger für die View
+                    RequestCloseDialog?.Invoke();
                 }
-            }
-        }
-
-        public void Initialize(BrowserType selectedBrowserType)
-        {
-            try
-            {
-                _currentBrowser = _browserFactory.Create(selectedBrowserType);
-
-                BrowserName = _currentBrowser.DisplayName;
-                BrowserIconPath = _currentBrowser.IconPath;
-
-                _browserPaths = _currentBrowser.GetPaths();
-                _processName = GetProcessNameByType(selectedBrowserType);
-            }
-            catch (Exception ex)
-            {
-                string errorFormat = _localizationService.GetString("General_LoadErrorPrefix");
-                StatusText = string.Format(errorFormat, ex.Message);
             }
         }
 

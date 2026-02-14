@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
@@ -22,16 +22,28 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                                                 IRecipient<NextDeletionProcess>,
                                                 IRecipient<NextDeletionProcessDate>
     {
-        #region Constants
+        // =========================================================
+        // 1. CONSTANTS & STATICS (Konstanten)
+        // =========================================================
+        #region ConstantsAndStatics
+
         private const string _baseUrl = "https://www.ebesucher.com/surfbar/";
         private const int _initialDelaySeconds = 5;
+
         #endregion
 
-        #region Fields
+        // =========================================================
+        // 2. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
+
         private readonly IBrowserFactory _browserFactory;
         private readonly IEVisitorConfigService _configService;
         private readonly IDialogService _dialogService;
         private readonly ILocalizationService _localizationService;
+        private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
+        private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService;
+        private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver;
         private readonly DispatcherQueue _dispatcherQueue;
 
         private IBrowser? _currentBrowser;
@@ -40,16 +52,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private int _runtimeSeconds = 3600;
         private DispatcherTimer? _uiTimer;
 
-        // --- TEST MODUS VARIABLEN (Hardcoded) ---
-        // Setze dies auf 'true', um kurze Laufzeiten zu erzwingen
         private bool _isTestMode = false;
         private int _testRuntimeSeconds = 20;
-        // ----------------------------------------
+
         #endregion
 
-        #region Observable Properties
+        // =========================================================
+        // 3. OBSERVABLE PROPERTIES (MVVM State)
+        // =========================================================
+        #region ObservableProperties
 
-        // Initialwerte entfernen wir hier, da wir sie im Konstruktor setzen
         [ObservableProperty] public partial string ChoosenBrowser { get; set; }
         [ObservableProperty] public partial bool IsActive { get; set; } = false;
         [ObservableProperty] public partial bool DeleteBrowserContentIsActive { get; set; } = false;
@@ -64,29 +76,43 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 4. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
+
         public ViewModelRestartTask(
             IEVisitorConfigService configService,
             IBrowserFactory browserFactory,
             IDialogService dialogService,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IRestartTaskDisplayStateService restartTaskDisplayStateService,
+            IBrowserCleanupScheduleService browserCleanupScheduleService,
+            IBrowserDisplayNameResolver browserDisplayNameResolver)
         {
             _configService = configService;
             _browserFactory = browserFactory;
             _dialogService = dialogService;
             _localizationService = localizationService;
+            _restartTaskDisplayStateService = restartTaskDisplayStateService;
+            _browserCleanupScheduleService = browserCleanupScheduleService;
+            _browserDisplayNameResolver = browserDisplayNameResolver;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            // Lokalisierte Standardwerte
-            ChoosenBrowser = _localizationService.GetString("Task_DefaultBrowser"); // "Nicht gewählt"
-            StatusInfoText = _localizationService.GetString("Task_StatusReady");    // "Bereit."
+            ChoosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
+            StatusInfoText = _localizationService.GetString("Task_StatusReady");
 
             LoadInitialData();
             WeakReferenceMessenger.Default.RegisterAll(this);
         }
+
         #endregion
 
+        // =========================================================
+        // 5. COMMANDS (MVVM Actions)
+        // =========================================================
         #region Commands
+
         [RelayCommand]
         private void ExecuteStartTimerScheduler(bool? isChecked)
         {
@@ -102,15 +128,27 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 StopLoop();
             }
         }
+
         #endregion
 
-        #region Methods
+        // =========================================================
+        // 6. PUBLIC & PROTECTED METHODS (API / Messenger Receive)
+        // =========================================================
+        #region PublicAndProtectedMethods
+
         public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChoosenBrowser = message.BrowserName ?? "-");
         public void Receive(UsernameChangedMessage message) => _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
         public void Receive(DeleteBrowserContentActivateMessage message) => _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? "-");
         public void Receive(DeleteBrowserContentIsActive message) => _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
         public void Receive(NextDeletionProcess message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.NextDeletionProcessMessage ?? "-");
         public void Receive(NextDeletionProcessDate message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? "-");
+
+        #endregion
+
+        // =========================================================
+        // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // =========================================================
+        #region PrivateHelperMethods
 
         private void CloseCurrentBrowser()
         {
@@ -120,21 +158,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private BrowserType GetBrowserTypeFromString(string browserName)
         {
-            // Prüfung gegen den lokalisierten String oder leer
             string defaultText = _localizationService.GetString("Task_DefaultBrowser");
-
-            if (string.IsNullOrWhiteSpace(browserName) || browserName == defaultText || browserName == "Nicht gewählt") // Fallback für Legacy
-                return BrowserType.Chrome;
-
-            if (Enum.TryParse(browserName, true, out BrowserType type))
-            {
-                return type;
-            }
-
-            return BrowserType.Chrome;
+            return _browserDisplayNameResolver.GetBrowserTypeFromDisplayName(browserName, defaultText);
         }
 
-        private async void HandleStateTransition() // Async void ist hier okay, da es von einem Timer-Event kommt
+        private async void HandleStateTransition()
         {
             switch (_currentState)
             {
@@ -143,10 +171,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     break;
 
                 case RestartTaskState.Running:
-                    // --- HIER IST DER TRIGGER ---
-                    // Bevor wir in den Cooldown gehen, prüfen wir die Reinigungs-Logik
                     await CheckAndExecuteBrowserCleanup();
-
                     SwitchState(RestartTaskState.Cooldown);
                     break;
 
@@ -156,38 +181,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        // --- NEUE LOGIK METHODE ---
         private async Task CheckAndExecuteBrowserCleanup()
         {
-            // 1. Config laden (um sicherzugehen, dass wir die neuesten Werte haben)
             var config = _configService.LoadConfig();
+            if (!_browserCleanupScheduleService.ShouldRunCleanupNow(config))
+                return;
 
-            // 2. Prüfen: Ist Feature an? (Interval > 0)
-            if (config.Browser.DeleteBrowserCacheIntervalDays > 0)
-            {
-                // 3. Prüfen: Ist das Datum erreicht oder überschritten?
-                // DateTime.Today ist besser als Now, um Uhrzeit-Probleme zu vermeiden (00:00:00 Uhr)
-                if (DateTime.Today >= config.Browser.NextBrowserDeleteCacheDate)
-                {
-                    // A) Browser schließen (Sicherheitshalber, falls er noch offen ist)
-                    CloseCurrentBrowser();
-                    // Kleiner Puffer, damit der Prozess wirklich weg ist, bevor Cleaner startet
-                    await Task.Delay(1000);
+            CloseCurrentBrowser();
+            await Task.Delay(1000);
 
-                    // B) Dialog anzeigen und Auto-Starten
-                    // Der Code wartet hier (await), bis der Dialog geschlossen wird (durch Auto-Close oder User)
-                    await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
+            await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
 
-                    // C) Nächstes Datum berechnen und speichern
-                    var newDate = DateTime.Today.AddDays(config.Browser.DeleteBrowserCacheIntervalDays);
-                    config.Browser.NextBrowserDeleteCacheDate = newDate;
-                    _configService.SaveConfig(config);
+            var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(DateTime.Today, config.Browser.DeleteBrowserCacheIntervalDays);
+            config.Browser.NextBrowserDeleteCacheDate = newDate;
+            _configService.SaveConfig(config);
 
-                    // D) UI im RestartTask aktualisieren (neues Datum anzeigen)
-                    // Wir nutzen einfach unsere LoadInitialData Logik oder setzen die Properties direkt
-                    LoadInitialData();
-                }
-            }
+            LoadInitialData();
         }
 
         private void LaunchBrowser()
@@ -210,66 +219,28 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void LoadInitialData()
         {
             var config = _configService.LoadConfig();
-            Username = config.Username ?? "-";
+            var state = _restartTaskDisplayStateService.GetInitialState(config);
 
-            // Wenn in der Config nichts steht, den lokalisierten "Nicht gewählt" Text nehmen
-            ChoosenBrowser = config.Browser?.Selected ?? _localizationService.GetString("Task_DefaultBrowser");
+            Username = state.Username;
+            ChoosenBrowser = state.ChoosenBrowser;
 
-            // --- TEST MODUS LOGIK ---
             if (_isTestMode)
             {
                 _runtimeSeconds = _testRuntimeSeconds;
-                _pauseSeconds = 5; // Kurze Pause im Testmodus
-
-                // Optional: Status Text anpassen, damit man sieht, dass Testmodus an ist
-                // (Kannst du auskommentieren, wenn du es nicht willst)
+                _pauseSeconds = 5;
                 StatusInfoText = $"[TEST] Runtime: {_runtimeSeconds}s";
             }
             else
             {
-                _runtimeSeconds = config.Browser.RuntimeHours * 3600;
-                _pauseSeconds = config.Browser.RuntimePauseSeconds;
+                _runtimeSeconds = state.RuntimeSeconds;
+                _pauseSeconds = state.PauseSeconds;
             }
-            // ------------------------
 
-            // ---------------------------------------------------------
-            // 2. Cache-Löschung Status wiederherstellen
-            // ---------------------------------------------------------
-            int intervalDays = config.Browser.DeleteBrowserCacheIntervalDays; // Wert aus Config
-            DateTime nextDate = config.Browser.NextBrowserDeleteCacheDate;    // Datum aus Config
-
-            // Wir prüfen, ob der gespeicherte Tag-Wert gültig (aktiv) ist
-            if (IsIntervalAllowed(intervalDays))
-            {
-                // A) Status setzen
-                DeleteBrowserContentIsActive = true;
-                DeleteIsActivatedMessage = _localizationService.GetString("Activate"); // Resource laden
-                NextDeletionProcessMessage = _localizationService.GetString("NextDeletionProcess");
-
-                // B) Datum formatieren (Gleiche Logik wie im Settings-ViewModel!)
-                // Resource String: "am {0:dd.MM.yyyy} um 0 Uhr"
-                string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
-
-                // Falls das Datum in der Config leer/Minvalue ist (Fehlerfall), nehmen wir heute als Fallback
-                if (nextDate == DateTime.MinValue) nextDate = DateTime.Today.AddDays(intervalDays);
-
-                NextDeletionProcessDateMessage = string.Format(formatPattern, nextDate);
-            }
-            else
-            {
-                // Deaktiviert-Status wiederherstellen
-                DeleteBrowserContentIsActive = false;
-                DeleteIsActivatedMessage = _localizationService.GetString("Disabled");
-                NextDeletionProcessMessage = string.Empty;
-                NextDeletionProcessDateMessage = string.Empty;
-            }
+            DeleteBrowserContentIsActive = state.DeleteBrowserContentIsActive;
+            DeleteIsActivatedMessage = state.DeleteIsActivatedMessage;
+            NextDeletionProcessMessage = state.NextDeletionProcessMessage;
+            NextDeletionProcessDateMessage = state.NextDeletionProcessDateMessage;
         }
-
-        private bool IsIntervalAllowed(int days) => days switch
-        {
-            1 or 3 or 7 or 14 => true,
-            _ => false
-        };
 
         private void OnTimerTick(object? sender, object e)
         {
@@ -289,7 +260,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             if (_uiTimer == null)
             {
                 _uiTimer = new DispatcherTimer();
-                // 1000ms = 1 Sekunde (reicht für einen Sekunden-Countdown)
                 _uiTimer.Interval = TimeSpan.FromMilliseconds(1000);
                 _uiTimer.Tick += OnTimerTick;
             }
@@ -318,7 +288,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             switch (_currentState)
             {
                 case RestartTaskState.Idle:
-                    StatusInfoText = _localizationService.GetString("Task_StatusStopped"); // "Restarter gestoppt."
+                    StatusInfoText = _localizationService.GetString("Task_StatusStopped");
                     SecondsRemaining = 0;
                     break;
 
@@ -330,7 +300,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 case RestartTaskState.Running:
                     LaunchBrowser();
                     SecondsRemaining = _runtimeSeconds;
-                    StatusInfoText = _localizationService.GetString("Task_StatusRunning"); // "Browser läuft."
+                    StatusInfoText = _localizationService.GetString("Task_StatusRunning");
                     break;
 
                 case RestartTaskState.Cooldown:
@@ -345,17 +315,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             if (_currentState == RestartTaskState.InitialDelay)
             {
-                // Format: "Start in {0}s..."
                 string format = _localizationService.GetString("Task_StatusStartIn");
                 StatusInfoText = string.Format(format, SecondsRemaining);
             }
             else if (_currentState == RestartTaskState.Cooldown)
             {
-                // Format: "Neustart in {0}s..."
                 string format = _localizationService.GetString("Task_StatusRestartIn");
                 StatusInfoText = string.Format(format, SecondsRemaining);
             }
         }
+
         #endregion
     }
 }

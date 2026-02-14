@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Domain.Enums;
@@ -12,27 +12,39 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelInstallAddOn : ObservableObject, IDisposable
     {
-        #region Fields
+        // =========================================================
+        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
+
         private readonly IBrowserFactory _browserFactory;
         private readonly Timer _timer;
+
         #endregion
 
-        #region Properties
+        // =========================================================
+        // 2. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
+
         public ObservableCollection<ViewModelBrowserAddonStatus> Browsers { get; } = [];
+
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 3. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
+
         public ViewModelInstallAddOn(IBrowserFactory browserFactory, ILocalizationService localizationService)
         {
             _browserFactory = browserFactory;
 
-            // Liste initialisieren (Reihenfolge wie gewünscht)
             Browsers.Add(new ViewModelBrowserAddonStatus(_browserFactory.Create(BrowserType.Chrome), localizationService));
             Browsers.Add(new ViewModelBrowserAddonStatus(_browserFactory.Create(BrowserType.Firefox), localizationService));
             Browsers.Add(new ViewModelBrowserAddonStatus(_browserFactory.Create(BrowserType.Edge), localizationService));
             Browsers.Add(new ViewModelBrowserAddonStatus(_browserFactory.Create(BrowserType.Brave), localizationService));
 
-            // Timer für Auto-Refresh (alle 2 Sekunden)
             _timer = new Timer(2000);
             _timer.Elapsed += (s, e) =>
             {
@@ -40,14 +52,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             };
             _timer.Start();
         }
+
         #endregion
 
-        #region Methods
+        // =========================================================
+        // 4. PUBLIC & PROTECTED METHODS (API)
+        // =========================================================
+        #region PublicAndProtectedMethods
+
         public void Dispose()
         {
             _timer?.Stop();
             _timer?.Dispose();
         }
+
         #endregion
     }
 }

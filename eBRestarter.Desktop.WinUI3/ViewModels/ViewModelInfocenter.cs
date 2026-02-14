@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
@@ -14,19 +14,24 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelInfocenter : ObservableObject
     {
-        #region Fields
-        private readonly IDialogService _dialogService;
-        private readonly ILocalizationService _localizationService; // <--- NEU: Service Feld
+        // =========================================================
+        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
 
-        // Services
+        private readonly IDialogService _dialogService;
+        private readonly ILocalizationService _localizationService;
         private readonly IHardwareInfoService _hardwareService;
         private readonly IOsEditionService _osEditionService;
         private readonly IWindowsSystemInfoService _systemInfoService;
+
         #endregion
 
-        #region Observable Properties
+        // =========================================================
+        // 2. OBSERVABLE PROPERTIES (MVVM State)
+        // =========================================================
+        #region ObservableProperties
 
-        // Initialwerte entfernen wir hier, da wir sie im Konstruktor setzen
         [ObservableProperty] public partial string BrowserText { get; set; }
         [ObservableProperty] public partial string GraphicsText { get; set; }
         [ObservableProperty] public partial string OsBuildText { get; set; }
@@ -34,30 +39,37 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial string OsVersionText { get; set; }
         [ObservableProperty] public partial string ProcessorText { get; set; }
         [ObservableProperty] public partial string RamText { get; set; }
+
         #endregion
 
-        #region Properties
-        // Titel dynamisch machen (kein ObservableProperty nötig, da er sich nach Start nicht ändert)
+        // =========================================================
+        // 3. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
+
         public string Title { get; private set; }
+
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 4. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
+
         public ViewModelInfocenter(
             IHardwareInfoService hardwareService,
             IOsEditionService osEditionService,
             IWindowsSystemInfoService systemInfoService,
             IDialogService dialogService,
-            ILocalizationService localizationService) // <--- Injizieren
+            ILocalizationService localizationService)
         {
             _hardwareService = hardwareService;
             _osEditionService = osEditionService;
             _systemInfoService = systemInfoService;
             _dialogService = dialogService;
-            _localizationService = localizationService; // <--- Zuweisen
+            _localizationService = localizationService;
 
-            // Lokalisierte Standardwerte setzen ("Lade..." / "Loading...")
             string loading = _localizationService.GetString("Infocenter_Loading");
-
             BrowserText = loading;
             GraphicsText = loading;
             OsBuildText = loading;
@@ -65,15 +77,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             OsVersionText = loading;
             ProcessorText = loading;
             RamText = loading;
+            Title = _localizationService.GetString("Infocenter_Title");
 
-            Title = _localizationService.GetString("Infocenter_Title"); // "Infocenter"
-
-            // Startet das Laden asynchron
             _ = LoadDataAsync();
         }
+
         #endregion
 
+        // =========================================================
+        // 5. COMMANDS (MVVM Actions)
+        // =========================================================
         #region Commands
+
         [RelayCommand]
         public void OpenSupportWebsite(string? url)
         {
@@ -83,7 +98,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 }
-                catch {/* Logging könnte hier hin */}
+                catch { }
             }
         }
 
@@ -92,27 +107,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             await _dialogService.ShowAboutDialogAsync();
         }
+
         #endregion
 
-        #region Methods
+        // =========================================================
+        // 6. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // =========================================================
+        #region PrivateHelperMethods
+
         private async Task LoadDataAsync()
         {
-            // 1. Hardware Laden
             var hardware = await _hardwareService.GetHardwareInfoAsync();
-
             ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {hardware.ProcessorName}";
             GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {hardware.GraphicsCardName}";
             RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {hardware.InstalledRam}";
 
-            // 2. OS Edition Laden
             var edition = await _osEditionService.GetOsEditionAsync();
             OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {edition}";
 
-            // 3. System Details Laden
             OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {_systemInfoService.GetCurrentOsDisplayVersion()}";
             OsBuildText = $"{_localizationService.GetString("Infocenter_BuildPrefix")} {_systemInfoService.GetCurrentOsBuildVersion()}";
             BrowserText = $"{_localizationService.GetString("Infocenter_BrowserPrefix")} {_systemInfoService.GetCurrentStandardBrowserName()}";
         }
+
         #endregion
     }
 }

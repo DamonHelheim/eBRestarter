@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums; // Wichtig für BrowserType
+using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
@@ -19,18 +19,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public partial class ViewModelBrowserItem : ObservableObject
     {
-        #region Constants
+        // =========================================================
+        // 1. CONSTANTS & STATICS (Konstanten)
+        // =========================================================
+        #region ConstantsAndStatics
 
         private const string SetForegroundColorGreen = "#7ED422";
         private const string SetForegroundColorRed = "#E40E87";
 
         #endregion
 
-        #region Fields
+        // =========================================================
+        // 2. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // =========================================================
+        #region FieldsAndInjectedServices
 
-        // NICHT mehr readonly, damit wir es updaten können
         private BrowserInfo _browserInfo;
-
         private readonly AppConfig _currentConfig;
         private readonly IDialogService _dialogService;
         private readonly IBrowserDownloadService _downloadService;
@@ -41,77 +45,59 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         #endregion
 
-        #region Observable Properties
+        // =========================================================
+        // 3. OBSERVABLE PROPERTIES (MVVM State)
+        // =========================================================
+        #region ObservableProperties
 
-        [ObservableProperty]
-        public partial double DownloadProgressValue { get; set; }
-
-        [ObservableProperty]
-        public partial string DownloadSizeText { get; set; } = string.Empty;
-
+        [ObservableProperty] public partial double DownloadProgressValue { get; set; }
+        [ObservableProperty] public partial string DownloadSizeText { get; set; } = string.Empty;
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(DownloadButtonContent))]
         [NotifyPropertyChangedFor(nameof(DownloadButtonStyleKey))]
         [NotifyPropertyChangedFor(nameof(IsDownloading))]
         [NotifyPropertyChangedFor(nameof(IsNotDownloading))]
         public partial bool IsDownloadActive { get; set; }
-
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotInstalling))]
         public partial bool IsInstalling { get; set; }
-
-        [ObservableProperty]
-        public partial string BrowserVersionText { get; set; } = string.Empty;
+        [ObservableProperty] public partial string BrowserVersionText { get; set; } = string.Empty;
 
         #endregion
 
-        #region Properties (Computed)
+        // =========================================================
+        // 4. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
 
-        // WICHTIG: Damit die Parent-Liste das Item zuordnen kann
         public BrowserType BrowserType => _browserInfo.Type;
-
         public string BrowserExist => _browserInfo.IsInstalled ? "✓" : "✘";
-
         public SolidColorBrush BrowserExistTextForground => _browserInfo.IsInstalled
             ? new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorGreen))
             : new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorRed));
-
-        //public string BrowserVersion => _browserInfo.IsInstalled
-        //    ? $"{_localizationService.GetString("Browser_VersionPrefix")} {_browserInfo.Version}"
-        //    : _localizationService.GetString("Browser_NotInstalled");
-
         public string DownloadButtonContent => IsDownloadActive
             ? _localizationService.GetString("General_Cancel")
             : _localizationService.GetString("General_Download");
-
         public string DownloadButtonStyleKey => IsDownloadActive
             ? "DownloadBrowserToggleButtonRed"
             : "DownloadBrowserToggleButton";
-
         public string HeaderImageBrowser => _browserInfo.IconPath;
-
         public string HeaderTitleBrowser => _browserInfo.Name;
-
         public string ImageSizeHeightBrowser => _browserInfo.IconHeight;
-
         public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
-
-
         public bool IsChooseButtonVisible => _browserInfo.IsInstalled;
-
         public bool IsDownloadButtonVisible => !_browserInfo.IsInstalled;
-
         public bool IsDownloadSizeTextVisible => !_browserInfo.IsInstalled;
-
         public bool IsDownloading => IsDownloadActive;
-
         public bool IsNotDownloading => !IsDownloadActive;
-
         public bool IsNotInstalling => !IsInstalling;
 
         #endregion
 
-        #region Constructors
+        // =========================================================
+        // 5. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
 
         public ViewModelBrowserItem(
             BrowserInfo info,
@@ -127,49 +113,65 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _eVisitorConfigService = eVisitorConfigService;
             _dialogService = dialogService;
             _localizationService = localizationService;
-            
             _currentConfig = _eVisitorConfigService.LoadConfig();
-
             RefreshBrowserVersionText();
         }
 
         #endregion
 
-        #region Methods (Update Logic)
+        // =========================================================
+        // 6. COMMANDS (MVVM Actions)
+        // =========================================================
+        #region Commands
 
-        /// <summary>
-        /// Aktualisiert die Daten dieses Items, ohne das Objekt neu zu erstellen.
-        /// Feuert PropertyChanged Events für alle abhängigen UI-Elemente.
-        /// </summary>
+        [RelayCommand]
+        private void ChooseBrowser()
+        {
+            _currentConfig.Browser.Selected = HeaderTitleBrowser;
+            WeakReferenceMessenger.Default.Send(new BrowserChangedMessage(HeaderTitleBrowser));
+            SaveSettings();
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = true)]
+        private async Task ToggleDownload()
+        {
+            if (IsDownloadActive)
+                CancelDownload();
+            else
+                await StartDownloadAsync();
+        }
+
+        #endregion
+
+        // =========================================================
+        // 7. PUBLIC & PROTECTED METHODS (API)
+        // =========================================================
+        #region PublicAndProtectedMethods
+
         public void Update(BrowserInfo newInfo)
         {
-            // Performance-Check: Haben sich relevante Daten wirklich geändert?
-            if (_browserInfo.IsInstalled == newInfo.IsInstalled &&
-                _browserInfo.Version == newInfo.Version)
-            {
-                return; // Nichts zu tun
-            }
+            if (_browserInfo.IsInstalled == newInfo.IsInstalled && _browserInfo.Version == newInfo.Version)
+                return;
 
-            // Daten aktualisieren
             _browserInfo = newInfo;
-
-            // UI benachrichtigen, dass sich die berechneten Properties geändert haben könnten
             OnPropertyChanged(nameof(BrowserExist));
             OnPropertyChanged(nameof(BrowserExistTextForground));
-            //OnPropertyChanged(nameof(BrowserVersion));
             RefreshBrowserVersionText();
-            //OnPropertyChanged(nameof(IsBrowserVersionVisible));
             OnPropertyChanged(nameof(IsChooseButtonVisible));
             OnPropertyChanged(nameof(IsDownloadButtonVisible));
             OnPropertyChanged(nameof(IsDownloadSizeTextVisible));
-
-            // Falls sich der Installationsstatus geändert hat, müssen auch Buttons aktualisiert werden
             OnPropertyChanged(nameof(DownloadButtonContent));
         }
 
+        #endregion
+
+        // =========================================================
+        // 8. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // =========================================================
+        #region PrivateHelperMethods
+
         private void RefreshBrowserVersionText()
         {
-            // Hier kommt deine ursprüngliche Logik rein:
             if (_browserInfo.IsInstalled && IsDownloading is false)
             {
                 string prefix = _localizationService.GetString("Browser_VersionPrefix");
@@ -185,44 +187,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        #endregion
-
-        #region Commands
-
-        [RelayCommand]
-        private void ChooseBrowser()
-        {
-            _currentConfig.Browser.Selected = HeaderTitleBrowser;
-            WeakReferenceMessenger.Default.Send(new BrowserChangedMessage(HeaderTitleBrowser));
-            SaveSettings();
-        }
-
-        [RelayCommand(AllowConcurrentExecutions = true)]
-        private async Task ToggleDownload()
-        {
-            if (IsDownloadActive)
-            {
-                CancelDownload();
-            }
-            else
-            {
-                await StartDownloadAsync();
-            }
-        }
-
-        #endregion
-
-        #region Methods (Internal Logic)
         private async Task AskToInstall(string path)
         {
             bool installNow = await _dialogService.ShowYesNoDialogAsync(
-               _localizationService.GetString("Install_DialogTitle"),
-               _localizationService.GetString("Install_DialogQuestion"));
+                _localizationService.GetString("Install_DialogTitle"),
+                _localizationService.GetString("Install_DialogQuestion"));
 
             if (installNow)
             {
                 await _os.WindowsProcessControlService.StartExecutableAsync(path);
-
                 await _dialogService.ShowMessageAsync(
                     _localizationService.GetString("Install_FinishedTitle"),
                     _localizationService.GetString("Install_FinishedMessage"));
@@ -240,9 +213,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             try
             {
                 if (_os.WindowsFileSystemService.FileExists(path))
-                {
                     _os.WindowsFileSystemService.DeleteFile(path);
-                }
             }
             catch (Exception) { }
         }
