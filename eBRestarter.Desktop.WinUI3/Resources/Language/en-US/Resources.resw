@@ -774,4 +774,55 @@
   <data name="AddOnInfo_BodySettings.Text" xml:space="preserve">
     <value>Optionally, check the privacy box and enter your username in the add-on (not mandatory).</value>
   </data>
+  <data name="StartupBoostDialog_Title" xml:space="preserve">
+    <value>Disable Edge Startup Boost</value>
+  </data>
+  <data name="StartupBoostDialog_BtnAuto" xml:space="preserve">
+    <value>Disable now</value>
+  </data>
+  <data name="StartupBoostDialog_LinkText" xml:space="preserve">
+    <value>edge://settings/?search=Startup-Boost</value>
+  </data>
+  <data name="StartupBoostDialog_BtnCopy" xml:space="preserve">
+    <value>Copy Link &amp; Open Edge</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessTitle" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessMessage" xml:space="preserve">
+    <value>Startup Boost has been disabled. Please restart your PC or Edge to apply changes.</value>
+  </data>
+  <data name="StartupBoostDialog_CopyMessage" xml:space="preserve">
+    <value>Link copied! Paste it into Edge to find the setting.</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.Header" xml:space="preserve">
+    <value>Startup Boost Status</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.OnContent" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.OffContent" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessStatus_Activated" xml:space="preserve">
+    <value>Startup Boost has been enabled.</value>
+  </data>
+  <data name="StartupBoostDialog_ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="StartupBoostDialog_InfoText.Text" xml:space="preserve">
+    <value>If you want to disable Startup Boost, you have two options.</value>
+  </data>
+  <data name="StartupBoostDialog_OptionAuto_Header.Text" xml:space="preserve">
+    <value>1. Automatic (Registry)</value>
+  </data>
+  <data name="StartupBoostDialog_OptionAuto_Desc.Text" xml:space="preserve">
+    <value>Toggles the feature directly via Windows policies</value>
+  </data>
+  <data name="StartupBoostDialog_OptionManual_Header.Text" xml:space="preserve">
+    <value>2. Manual</value>
+  </data>
+  <data name="StartupBoostDialog_OptionManual_Desc.Text" xml:space="preserve">
+    <value>Link kopieren, Edge öffnen und in die Adressleiste einfügen.</value>
+  </data>
 </root>

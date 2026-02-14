@@ -27,6 +27,7 @@
     <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
     <None Remove="Views\Dialogs\ImportApiDialog.xaml" />
     <None Remove="Views\Dialogs\InstallAddOnInfoDialog.xaml" />
+    <None Remove="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml" />
     <None Remove="Views\Pages\P_CommonOverview.xaml" />
     <None Remove="Views\Pages\P_Infocenter.xaml" />
     <None Remove="Views\Pages\P_Options.xaml" />
@@ -359,6 +360,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Dialogs\InstallAddOnInfoDialog.xaml">

@@ -31,9 +31,9 @@ namespace eBRestarter.Desktop.WinUI3.Services.Interfaces
         Task ShowInstallAddOnInfoDialogAsync();
         Task ShowActivateApiDialogAsync();
         Task ShowImportApiDialogAsync();
-
-        // --- NEU: Browser Lösch-Dialog mit Auto-Start Option ---
         Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false);
+
+        Task ShowTurnOffEdgeStartupBoostDialogAsync();
     }
 
 

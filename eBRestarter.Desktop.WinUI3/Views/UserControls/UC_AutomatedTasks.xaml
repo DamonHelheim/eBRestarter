@@ -97,15 +97,21 @@
                               IsOn            ="{Binding CheckBrowserIsAliveIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               Margin          ="10 0 0 0" />
 
-                <TextBlock x:Name       ="tbl_info_startup_boost_edge"
-                           x:Uid        ="StartupEdgeBoost_Info"
-                           FontSize     ="10"
-                           Margin       ="0,0,0,0"
-                           Width        ="286"
-                           Foreground   ="#FF008CD5"
-                           TextWrapping ="Wrap"
-                           Height       ="40"/>
-                
+                <HyperlinkButton Command="{Binding OpenStartupBoostDialogCommand}"
+                                 Margin="0,0,0,0"
+                                 Padding="0"
+                                 HorizontalContentAlignment="Left">
+
+                    <TextBlock x:Name="tbl_info_startup_boost_edge"
+                               x:Uid="StartupEdgeBoost_Info"
+                               FontSize="10"
+                               Width="286"
+                               Foreground="#FF008CD5"
+                               TextWrapping="Wrap"
+                               Height="40"/>
+
+                </HyperlinkButton>
+
             </StackPanel>
 
             <ComboBox x:Name="ComboboxDeleteBrowserCache"

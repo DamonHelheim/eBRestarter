@@ -108,6 +108,8 @@ namespace eBRestarter.Desktop.WinUI3.Services
 
         public async Task ShowImportApiDialogAsync() => await ShowDialogInternalAsync<ImportApiDialog>();
 
+        public async Task ShowTurnOffEdgeStartupBoostDialogAsync() => await ShowDialogInternalAsync<TurnOffEdgeStartupBoostDialog>();
+
         // --- NEU & ANGEPASST: Browser Lösch-Dialog ---
         public async Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false)
         {

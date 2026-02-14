@@ -145,6 +145,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             await _dialogService.ShowInstallAddOnInfoDialogAsync();
         }
 
+        [RelayCommand]
+        private async Task OpenStartupBoostDialog()
+        {
+            // Ruft den neuen Dialog auf, den wir vorhin erstellt haben
+            await _dialogService.ShowTurnOffEdgeStartupBoostDialogAsync();
+        }
+
 
         #endregion
 
