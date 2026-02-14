@@ -98,7 +98,7 @@
                               Margin          ="10 0 0 0" />
 
                 <HyperlinkButton Command="{Binding OpenStartupBoostDialogCommand}"
-                                 Margin="0,0,0,0"
+                                 Margin="10,0,0,0"
                                  Padding="0"
                                  HorizontalContentAlignment="Left">
 

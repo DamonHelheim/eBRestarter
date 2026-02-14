@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     mc:Ignorable="d"
-    x:Uid="StartupBoostDialog_Title"
-    CloseButtonText="Schließen"
+    x:Uid="StartupBoostDialog"
     DefaultButton="Close"
     Style="{StaticResource DefaultContentDialogStyle}"
     RequestedTheme="Dark">
@@ -36,7 +35,6 @@
                 </StackPanel>
 
                 <TextBlock x:Uid="StartupBoostDialog_OptionAuto_Desc" 
-                           Text="Schaltet die Funktion direkt über die Windows-Richtlinien an oder aus." 
                            Opacity="0.7" TextWrapping="Wrap" FontSize="12" Margin="0,0,0,5"/>
 
                 <ToggleSwitch x:Uid="StartupBoostDialog_SwitchStatus"
@@ -59,7 +57,7 @@
                 </StackPanel>
 
                 <TextBlock x:Uid="StartupBoostDialog_OptionManual_Desc" 
-                           Text="Link kopieren und einfügen..." 
+                           
                            Opacity="0.7" TextWrapping="Wrap" FontSize="12"/>
 
                 <TextBox x:Uid="StartupBoostDialog_LinkText"
@@ -69,8 +67,9 @@
 
                 <Button x:Uid="StartupBoostDialog_BtnCopy"
                         Command="{Binding CopyAndOpenEdgeCommand}"
-                        Content="Link kopieren &amp; Edge öffnen"
+                        
                         HorizontalAlignment="Stretch"/>
+                
             </StackPanel>
 
         </StackPanel>
