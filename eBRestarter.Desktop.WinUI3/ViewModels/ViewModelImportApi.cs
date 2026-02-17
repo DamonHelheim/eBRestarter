@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Import API" dialog. Lets the user select or drop a .apiaf file;
+    /// imports credentials via <see cref="ICredentialStore"/> and validates them with
+    /// <see cref="IApiAuthenticationService"/> before saving so only valid credentials are stored.
+    /// </summary>
     public partial class ViewModelImportApi : ObservableObject
     {
         // =========================================================
@@ -41,6 +46,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the import VM with authentication and credential-store services.
+        /// No pre-filled path; the user selects or drops a file.
+        /// </summary>
         public ViewModelImportApi(
             IApiAuthenticationService authService,
             ICredentialStore credentialStore)
@@ -56,6 +65,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Reads credentials from <see cref="ImportedFilePath"/> via the credential store,
+        /// verifies them with the API, and on success saves and shows a green message;
+        /// on failure shows a red message. File must be .apiaf format expected by the store.
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanImport))]
         private async Task Import()
         {
@@ -91,10 +105,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #endregion
 
         // =========================================================
-        // 5. PUBLIC & PROTECTED METHODS (API)
+        // 5. PUBLIC METHODS
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Handles a dropped or selected file path. Only .apiaf is accepted; otherwise sets an error
+        /// message and clears path/file name. On success, sets path and file name and a ready message/icon.
+        /// </summary>
+        /// <param name="filePath">Full path to the file. If not .apiaf, status is set to error and path is cleared.</param>
         public void HandleFileDrop(string filePath)
         {
             if (!filePath.EndsWith(".apiaf"))
@@ -113,6 +132,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
         }
 
+        /// <summary>Reserved for future use (e.g. open file picker). Currently no-op.</summary>
         public void HandleFileSelect()
         {
         }
@@ -120,10 +140,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #endregion
 
         // =========================================================
-        // 6. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // 6. PRIVATE HELPER METHODS
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Import is allowed only when a file path is set and the VM is not busy.</summary>
         private bool CanImport => !string.IsNullOrEmpty(ImportedFilePath) && !IsBusy;
 
         #endregion

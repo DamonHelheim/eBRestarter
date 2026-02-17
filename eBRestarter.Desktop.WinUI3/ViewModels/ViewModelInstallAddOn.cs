@@ -10,10 +10,15 @@ using System.Timers;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Install Add-on" dialog. Holds a fixed list of browser add-on status
+    /// view models (Chrome, Firefox, Edge, Brave) and refreshes their install/extension state
+    /// on a timer so the user sees up-to-date status without manually refreshing.
+    /// </summary>
     public partial class ViewModelInstallAddOn : ObservableObject, IDisposable
     {
         // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // 1. FIELDS & INJECTED SERVICES (Backing-Fields an DI)
         // =========================================================
         #region FieldsAndInjectedServices
 
@@ -27,6 +32,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>One entry per supported browser (Chrome, Firefox, Edge, Brave), each showing install and extension status.</summary>
         public ObservableCollection<ViewModelBrowserAddonStatus> Browsers { get; } = [];
 
         #endregion
@@ -36,6 +42,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Creates browser instances for all supported types, wraps each in a
+        /// <see cref="ViewModelBrowserAddonStatus"/>, and starts a 2-second timer that refreshes
+        /// each entry so install/extension state stays current (e.g. after user installs the add-on).
+        /// </summary>
+        /// <param name="browserFactory">Used to create browser instances for status checks. Must not be null.</param>
+        /// <param name="localizationService">Passed to each ViewModelBrowserAddonStatus for localized strings. Must not be null.</param>
         public ViewModelInstallAddOn(IBrowserFactory browserFactory, ILocalizationService localizationService)
         {
             _browserFactory = browserFactory;
@@ -60,6 +73,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>Stops and disposes the refresh timer so the dialog can close without background updates.</summary>
         public void Dispose()
         {
             _timer?.Stop();

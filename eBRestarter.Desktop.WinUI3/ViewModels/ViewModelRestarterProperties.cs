@@ -20,6 +20,12 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Restarter properties" / task configuration page. Manages runtime hours,
+    /// pause seconds, browser-alive check, start-with-program, cache-delete interval, and username.
+    /// Persists via <see cref="IEVisitorConfigService"/> and broadcasts changes with
+    /// <see cref="WeakReferenceMessenger"/> so the restart task and other pages stay in sync.
+    /// </summary>
     public partial class ViewModelRestarterProperties : ObservableObject
     {
         // =========================================================
@@ -57,10 +63,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Read-only list of cache-delete interval options (e.g. daily, weekly) from localization.</summary>
         public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList { get; }
+        /// <summary>Maximum allowed browser runtime in hours.</summary>
         public int BrowserRuntimeHoursMax { get; init; }
+        /// <summary>Minimum allowed browser runtime in hours.</summary>
         public int BrowserRuntimeHoursMin { get; init; }
+        /// <summary>Maximum allowed pause between runs in seconds.</summary>
         public int RuntimePauseSecondsMax { get; init; }
+        /// <summary>Minimum allowed pause between runs in seconds.</summary>
         public int RuntimePauseSecondsMin { get; init; }
 
         #endregion
@@ -70,6 +81,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Loads config and populates bounds and options from localization. Binds observable properties
+        /// to saved values (runtime, pause, cache interval, start-with-program, browser-alive check).
+        /// Does not send messages yet; property change handlers do that when the user edits.
+        /// </summary>
         public ViewModelRestarterProperties(
             IOperatingSystemFacade operatingSystemFacade,
             IEVisitorConfigService eVisitorConfigService,
@@ -105,6 +121,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Saves the current <see cref="Username"/> to config, sends <see cref="UsernameChangedMessage"/> so
+        /// the restart task and other UIs update, then clears the username field for the next entry.
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanAddUsername))]
         private void AddeVVisitorUsername()
         {
@@ -114,30 +134,35 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             Username = string.Empty;
         }
 
+        /// <summary>Opens the eBesucher registration URL in the default browser.</summary>
         [RelayCommand]
         public void RegisterToEVisitor()
         {
             _operatingSystemFacade.WindowsProcessControlService.OpenUrlInBrowser(WebLinks.RegistrationLink, string.Empty);
         }
 
+        /// <summary>Opens the delete-browser-content dialog in manual mode (no auto-start after completion).</summary>
         [RelayCommand]
         private async Task ShowBrowserDeleteContent()
         {
             await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: false);
         }
 
+        /// <summary>Opens the install add-on dialog so the user can install the extension in supported browsers.</summary>
         [RelayCommand]
         private async Task ShowInstallAddOnDialog()
         {
             await _dialogService.ShowInstallAddOnDialogAsync();
         }
 
+        /// <summary>Opens the informational dialog about the add-on (what it does, why it is needed).</summary>
         [RelayCommand]
         private async Task ShowInstallAddOnInfoDialog()
         {
             await _dialogService.ShowInstallAddOnInfoDialogAsync();
         }
 
+        /// <summary>Opens the Edge Startup Boost dialog so the user can disable Startup Boost to reduce background usage.</summary>
         [RelayCommand]
         private async Task OpenStartupBoostDialog()
         {
@@ -151,6 +176,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Returns whether the given interval (in days) is allowed for cache deletion. Used to decide
+        /// if a next-deletion date is shown and messages are sent.
+        /// </summary>
+        /// <param name="days">Interval in days (e.g. 1, 3, 7, 14). Only these values return true.</param>
+        /// <returns>True if days is 1, 3, 7, or 14; otherwise false.</returns>
         public bool IsIntervalAllowed(int days) => days switch
         {
             1 or 3 or 7 or 14 => true,
@@ -200,6 +231,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Persists cache interval, computes next deletion date when interval is allowed, and sends messages so restart task and UI show the new state.</summary>
         partial void OnSelectedDeleteBrowserCacheOptionChanged(BrowserCacheDeleteOption value)
         {
             _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
@@ -241,6 +273,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Username can be added only when the field is non-empty.</summary>
         private bool CanAddUsername() => !string.IsNullOrWhiteSpace(Username);
 
         private void SaveSettings()

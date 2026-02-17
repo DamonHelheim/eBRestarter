@@ -12,10 +12,16 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the Infocenter / system info page. Loads hardware and OS information
+    /// from <see cref="IHardwareInfoService"/>, <see cref="IOsEditionService"/>, and
+    /// <see cref="IWindowsSystemInfoService"/> and exposes them as localized text for display.
+    /// Also provides commands to open the support website and the About dialog.
+    /// </summary>
     public partial class ViewModelInfocenter : ObservableObject
     {
         // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // 1. FIELDS & INJECTED SERVICES (Backing-Fields and DI)
         // =========================================================
         #region FieldsAndInjectedServices
 
@@ -47,6 +53,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Localized title for the Infocenter page.</summary>
         public string Title { get; private set; }
 
         #endregion
@@ -56,6 +63,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the VM with hardware, OS, and dialog services; sets all info fields to a
+        /// loading placeholder and starts async load so the page shows data as it becomes available.
+        /// </summary>
         public ViewModelInfocenter(
             IHardwareInfoService hardwareService,
             IOsEditionService osEditionService,
@@ -89,6 +100,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Opens the given URL in the default browser via the shell. No-op if url is null or whitespace.
+        /// </summary>
+        /// <param name="url">Full URL to open (e.g. support or registration). If null or empty, nothing happens.</param>
         [RelayCommand]
         public void OpenSupportWebsite(string? url)
         {
@@ -102,6 +117,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Opens the About dialog (version and credits) via the dialog service.</summary>
         [RelayCommand]
         private async Task ShowAboutInfo()
         {
@@ -115,14 +131,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Loads hardware and OS info from services and assigns localized strings to the observable properties.</summary>
         private async Task LoadDataAsync()
         {
             var hardware = await _hardwareService.GetHardwareInfoAsync();
+
             ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {hardware.ProcessorName}";
             GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {hardware.GraphicsCardName}";
             RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {hardware.InstalledRam}";
 
             var edition = await _osEditionService.GetOsEditionAsync();
+
             OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {edition}";
 
             OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {_systemInfoService.GetCurrentOsDisplayVersion()}";

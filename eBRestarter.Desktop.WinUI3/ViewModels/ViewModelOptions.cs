@@ -20,6 +20,11 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the options/settings page. Manages theme, language, restart schedule,
+    /// auto-login, API credentials, and update checks. Persists changes through
+    /// <see cref="IEVisitorConfigService"/> and coordinates with OS services for startup and theme.
+    /// </summary>
     public partial class ViewModelOptions : ObservableObject
     {
         // =========================================================
@@ -66,9 +71,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Read-only list of available languages from localization; used to bind the language picker.</summary>
         public ReadOnlyCollection<LanguageOption> LanguageList { get; private set; }
+        /// <summary>Read-only list of computer restart intervals (e.g. daily, weekly) from localization.</summary>
         public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList { get; }
+        /// <summary>Minimum allowed hour (0–23) for scheduled restart.</summary>
         public int ComputerRestartClockTimeMin { get; init; }
+        /// <summary>Maximum allowed hour (0–23) for scheduled restart.</summary>
         public int ComputerRestartClockTimeMax { get; init; }
 
         #endregion
@@ -78,6 +87,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Builds the options VM from config and services, populates dropdowns from localization,
+        /// applies saved theme/language/restart settings, and kicks off async init (e.g. startup-with-Windows state).
+        /// </summary>
         public ViewModelOptions(
             IDialogService dialogService,
             IWindowsAutoLogonService autoLogonService,
@@ -135,6 +148,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Checks for application updates via <see cref="IUpdateService"/>. If an update is available,
+        /// sets <see cref="IsUpdateAvailable"/> and <see cref="UpdateMessage"/> for the UI.
+        /// </summary>
         [RelayCommand]
         private async Task CheckForUpdates()
         {
@@ -151,10 +168,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
             catch (Exception ex)
             {
-                // Log error
             }
         }
 
+        /// <summary>
+        /// Re-checks for updates and, if available, downloads and starts the installer via
+        /// <see cref="IUpdateService.DownloadAndInstallAsync"/>.
+        /// </summary>
         [RelayCommand]
         private async Task PerformUpdate()
         {
@@ -165,12 +185,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Opens the application data folder in Windows Explorer using the configured base path.</summary>
         [RelayCommand]
         private async Task OpenSettingsDataFolder()
         {
             _os.WindowsProcessControlService.OpenExplorer(SystemPaths.ApplicationDataBasePath);
         }
 
+        /// <summary>Applies the light theme via <see cref="IThemeService"/> and persists the choice in config.</summary>
         [RelayCommand]
         private void SetLightTheme()
         {
@@ -178,6 +200,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SaveThemeConfig("Light");
         }
 
+        /// <summary>Applies the dark theme via <see cref="IThemeService"/> and persists the choice in config.</summary>
         [RelayCommand]
         private void SetDarkTheme()
         {
@@ -185,18 +208,24 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SaveThemeConfig("Dark");
         }
 
+        /// <summary>Opens the dialog to activate API credentials (username/key).</summary>
         [RelayCommand]
         private async Task ShowActivateApiDialog()
         {
             await _dialogService.ShowActivateApiDialogAsync();
         }
 
+        /// <summary>Opens the dialog to import API credentials from a file.</summary>
         [RelayCommand]
         private async Task ShowImportApiDialog()
         {
             await _dialogService.ShowImportApiDialogAsync();
         }
 
+        /// <summary>
+        /// Clears stored API username and key from config and shows a success message.
+        /// Does not validate or revoke on the server; only local storage is cleared.
+        /// </summary>
         [RelayCommand]
         private async Task RemoveAPICredentials()
         {
@@ -217,6 +246,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 DialogIcon.Success);
         }
 
+        /// <summary>
+        /// Opens the auto-logon configuration dialog. If the user confirms, enables or disables
+        /// Windows auto-logon via <see cref="IWindowsAutoLogonService"/> after validating credentials.
+        /// </summary>
         [RelayCommand]
         private async Task ConfigureAutoLogon()
         {
@@ -349,6 +382,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _eVisitorConfigService.SaveConfig(newConfig);
         }
 
+        /// <summary>Syncs StartWithWindows with the OS startup manager and, if config says start-with-Windows but OS was off, enables it.</summary>
         private async Task InitializeAsync()
         {
             _isInitializing = true;
@@ -367,6 +401,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Shows or hides the restart-time slider and sets RestartStatusText from next restart date or "none".</summary>
         private void UpdateRestartUiState()
         {
             int days = SelectedComputerRestartOption?.Days ?? 0;
@@ -392,6 +427,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Computes the next restart date from interval days and clock time and stores it in config.</summary>
         private void RecalculateNextRestartDate()
         {
             int days = _currentConfig.Computer.ComputerRestartIntervalDays;

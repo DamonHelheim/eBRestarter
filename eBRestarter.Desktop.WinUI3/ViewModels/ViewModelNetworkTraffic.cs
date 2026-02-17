@@ -13,6 +13,12 @@ using System.Timers;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the network traffic / network cards page. Polls
+    /// <see cref="IWindowsNetworkInfoService"/> on a 1-second timer for active interfaces and
+    /// bytes sent/received, then updates <see cref="NetworkCards"/> on the UI thread. Shows a
+    /// single "not available" entry when the network is offline or an error occurs.
+    /// </summary>
     public partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
     {
         // =========================================================
@@ -45,6 +51,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Collection of network adapters with localized names and sent/received data (human-readable size).</summary>
         public ObservableCollection<NetworkCardDisplayModel> NetworkCards { get; } = [];
 
         #endregion
@@ -54,6 +61,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the VM with network and localization services, captures the current
+        /// dispatcher queue for UI updates, and starts a 1-second timer that polls network stats
+        /// and applies results on the UI thread. Runs the first update immediately on a background thread.
+        /// </summary>
         public ViewModelNetworkTraffic(
             IWindowsNetworkInfoService networkService,
             ILocalizationService localizationService)
@@ -77,6 +89,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>Stops and disposes the timer so the page can unload without further background updates.</summary>
         public void Dispose()
         {
             _timer?.Stop();
@@ -90,6 +103,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>
+        /// Updates the NetworkCards collection on the UI thread: removes adapters no longer in stats,
+        /// updates or adds entries for each active interface with localized labels and formatted byte counts.
+        /// If offline or stats null, switches to the single "not available" state.
+        /// </summary>
         private void ApplyDataToUi(bool isNetworkAvailable, IEnumerable<NetworkStats>? stats)
         {
             if (!isNetworkAvailable || stats == null)
@@ -141,6 +159,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             PerformUpdate();
         }
 
+        /// <summary>Reads network availability and active interface stats (may throw), then marshals result to UI thread for ApplyDataToUi.</summary>
         private void PerformUpdate()
         {
             bool isAvailable = false;
@@ -158,6 +177,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dispatcherQueue.TryEnqueue(() => ApplyDataToUi(isAvailable, currentStats));
         }
 
+        /// <summary>Replaces the list with a single entry indicating network is not available, using error color, unless that state is already shown to avoid flicker.</summary>
         private void ShowOfflineState()
         {
             string prefixCard = _localizationService.GetString("Network_CardPrefix");

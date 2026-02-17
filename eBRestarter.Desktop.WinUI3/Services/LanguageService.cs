@@ -1,4 +1,4 @@
-﻿using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.Windows.Globalization;
 using System;
 using System.Collections.Generic;
@@ -8,13 +8,25 @@ namespace eBRestarter.Desktop.WinUI3.Services
 {
     public class LanguageService : ILanguageService
     {
+        // =========================================================
+        // 1. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
+
         public string CurrentLanguageCode => ApplicationLanguages.PrimaryLanguageOverride;
+
+        #endregion
+
+        // =========================================================
+        // 2. PUBLIC METHODS
+        // =========================================================
+        #region PublicMethods
 
         public void SetLanguage(string languageCode)
         {
-            // Diese Zeile sorgt dafür, dass beim nächsten Laden von Ressourcen 
-            // (z.B. beim Neustart oder Laden einer neuen Page) die neue Sprache gewählt wird.
             ApplicationLanguages.PrimaryLanguageOverride = languageCode;
         }
+
+        #endregion
     }
 }

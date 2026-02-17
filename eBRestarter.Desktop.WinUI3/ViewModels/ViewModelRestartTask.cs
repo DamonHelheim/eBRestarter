@@ -14,6 +14,12 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the restart task page. Drives the cyclic workflow: initial delay → launch browser
+    /// with eBesucher surfbar URL → run for configured runtime → cooldown → repeat. Listens to app-wide
+    /// messages (username, browser, delete-content state) and optionally triggers browser cache cleanup
+    /// when the schedule demands it.
+    /// </summary>
     public partial class ViewModelRestartTask : ObservableObject,
                                                 IRecipient<UsernameChangedMessage>,
                                                 IRecipient<BrowserChangedMessage>,
@@ -81,6 +87,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the restart task view model with config and services, loads initial display state
+        /// from <see cref="IRestartTaskDisplayStateService"/>, and registers as recipient for app-wide
+        /// messages so the UI stays in sync when username, browser, or delete-content settings change.
+        /// </summary>
         public ViewModelRestartTask(
             IEVisitorConfigService configService,
             IBrowserFactory browserFactory,
@@ -113,6 +124,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Invoked when the user toggles the task on or off. Starts the delay→run→cooldown loop
+        /// when checked; stops the timer and closes the browser when unchecked.
+        /// </summary>
+        /// <param name="isChecked">True to start the scheduler, false to stop. Null is treated as false.</param>
         [RelayCommand]
         private void ExecuteStartTimerScheduler(bool? isChecked)
         {
@@ -132,21 +148,27 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #endregion
 
         // =========================================================
-        // 6. PUBLIC & PROTECTED METHODS (API / Messenger Receive)
+        // 6. PUBLIC METHODS (Messenger Receive)
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>Updates the chosen browser name on the UI thread when a <see cref="BrowserChangedMessage"/> is received.</summary>
         public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChoosenBrowser = message.BrowserName ?? "-");
+        /// <summary>Updates the displayed username on the UI thread when a <see cref="UsernameChangedMessage"/> is received.</summary>
         public void Receive(UsernameChangedMessage message) => _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
+        /// <summary>Updates the delete-activation label when a <see cref="DeleteBrowserContentActivateMessage"/> is received.</summary>
         public void Receive(DeleteBrowserContentActivateMessage message) => _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? "-");
+        /// <summary>Updates whether delete-content is active when a <see cref="DeleteBrowserContentIsActive"/> message is received.</summary>
         public void Receive(DeleteBrowserContentIsActive message) => _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
+        /// <summary>Updates the next deletion process text when a <see cref="NextDeletionProcess"/> message is received.</summary>
         public void Receive(NextDeletionProcess message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.NextDeletionProcessMessage ?? "-");
+        /// <summary>Updates the next deletion date text when a <see cref="NextDeletionProcessDate"/> message is received.</summary>
         public void Receive(NextDeletionProcessDate message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? "-");
 
         #endregion
 
         // =========================================================
-        // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
+        // 7. PRIVATE HELPER METHODS
         // =========================================================
         #region PrivateHelperMethods
 
@@ -156,12 +178,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _currentBrowser = null;
         }
 
+        /// <summary>Maps the display name (e.g. from combo) to <see cref="BrowserType"/> using the resolver; uses default text for "no selection".</summary>
         private BrowserType GetBrowserTypeFromString(string browserName)
         {
             string defaultText = _localizationService.GetString("Task_DefaultBrowser");
             return _browserDisplayNameResolver.GetBrowserTypeFromDisplayName(browserName, defaultText);
         }
 
+        /// <summary>Advances the state machine: InitialDelay→Running, Running→Cooldown (after optional cleanup), Cooldown→Running.</summary>
         private async void HandleStateTransition()
         {
             switch (_currentState)
@@ -181,6 +205,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>If the cleanup schedule says it's time, closes the browser, shows the delete-content dialog (auto-start),
+        /// then persists the next cleanup date so the UI and schedule stay consistent.</summary>
         private async Task CheckAndExecuteBrowserCleanup()
         {
             var config = _configService.LoadConfig();
@@ -199,6 +225,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             LoadInitialData();
         }
 
+        /// <summary>Starts the selected browser with the eBesucher surfbar URL for the current username. On failure, sets status text and deactivates the task.</summary>
         private void LaunchBrowser()
         {
             try
@@ -216,6 +243,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Loads username, browser, runtime/pause, and delete-content state from config and display-state service so the UI matches saved settings.</summary>
         private void LoadInitialData()
         {
             var config = _configService.LoadConfig();
@@ -255,6 +283,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Creates the 1-second UI timer if needed and starts the state machine from InitialDelay.</summary>
         private void StartLoop()
         {
             if (_uiTimer == null)
@@ -268,6 +297,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _uiTimer.Start();
         }
 
+        /// <summary>Stops the timer, unsubscribes from Tick, disposes the browser, and sets state to Idle.</summary>
         private void StopLoop()
         {
             if (_uiTimer != null)
@@ -281,6 +311,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SwitchState(RestartTaskState.Idle);
         }
 
+        /// <summary>Sets current state and updates status text, remaining seconds, and starts/stops browser or cooldown as required.</summary>
         private void SwitchState(RestartTaskState newState)
         {
             _currentState = newState;
@@ -311,6 +342,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Updates status text for InitialDelay or Cooldown using localized "start in" / "restart in" format and current seconds.</summary>
         private void UpdateDynamicStatusText()
         {
             if (_currentState == RestartTaskState.InitialDelay)

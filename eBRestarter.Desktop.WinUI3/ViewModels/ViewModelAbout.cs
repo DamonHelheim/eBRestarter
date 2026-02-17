@@ -8,6 +8,10 @@ using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the About page. Displays the application version from
+    /// <see cref="IAppInfoService"/> and a list of icon credits, both localized where applicable.
+    /// </summary>
     public partial class ViewModelAbout : ObservableObject
     {
         // =========================================================
@@ -34,6 +38,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Collection of icon credit entries shown on the About page (e.g. author and license).</summary>
         public ObservableCollection<IconCredit> IconCredits { get; } = [];
 
         #endregion
@@ -43,6 +48,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the About VM with app-info and localization services, sets a loading placeholder
+        /// for version, and loads version plus icon credits so the UI can bind immediately.
+        /// </summary>
+        /// <param name="appInfoService">Provides app version and icon credit data. Must not be null.</param>
+        /// <param name="localizationService">Used for version prefix and other strings. Must not be null.</param>
         public ViewModelAbout(
             IAppInfoService appInfoService,
             ILocalizationService localizationService)
@@ -60,6 +71,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Fetches version from app info and icon credits, then updates AppVersion and IconCredits for binding.</summary>
         private void LoadData()
         {
             string prefix = _localizationService.GetString("About_VersionPrefix");

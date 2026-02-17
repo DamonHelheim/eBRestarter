@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -7,10 +7,24 @@ using System.Text.RegularExpressions;
 
 namespace eBRestarter.Desktop.WinUI3.Behaviors
 {
+    /// <summary>
+    /// Attached behavior that restricts a <see cref="TextBox"/> to numeric input only.
+    /// </summary>
     public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
     {
-        // Regex für "Nur Zahlen"
+        // =========================================================
+        // 1. CONSTANTS & STATICS (Shared regex for non-digit stripping)
+        // =========================================================
+        #region ConstantsAndStatics
+
         private static readonly Regex _regex = new("[^0-9]+");
+
+        #endregion
+
+        // =========================================================
+        // 2. PROTECTED METHODS (Behavior lifecycle overrides)
+        // =========================================================
+        #region ProtectedMethods
 
         protected override void OnAttached()
         {
@@ -24,17 +38,23 @@ namespace eBRestarter.Desktop.WinUI3.Behaviors
             AssociatedObject.TextChanging -= OnTextChanging;
         }
 
+        #endregion
+
+        // =========================================================
+        // 3. PRIVATE HELPER METHODS (Event handlers and helpers)
+        // =========================================================
+        #region PrivateHelperMethods
+
         private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
         {
-            // Wenn der neue Text keine Zahl ist, verwerfen wir die Änderung
             if (_regex.IsMatch(sender.Text))
             {
-                // Setze den Text auf den alten Wert zurück oder entferne ungültige Zeichen
-                // Einfache Variante: Cursor-Position merken und ungültige Zeichen entfernen
                 int pos = sender.SelectionStart;
                 sender.Text = _regex.Replace(sender.Text, "");
                 sender.SelectionStart = System.Math.Min(pos, sender.Text.Length);
             }
         }
+
+        #endregion
     }
 }

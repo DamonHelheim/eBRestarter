@@ -1,4 +1,4 @@
-﻿using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
@@ -8,34 +8,50 @@ using System.Text;
 namespace eBRestarter.Desktop.WinUI3.Services
 {
     /// <summary>
-    /// Eine Wrapper-Klasse (Adapter), die das <see cref="INavigationFrame"/>-Interface implementiert
-    /// und die Aufrufe an einen echten WinUI-<see cref="Frame"/> weiterleitet.
-    /// <br/>
-    /// Diese Klasse wird zur Laufzeit der App verwendet.
+    /// Adapter that implements <see cref="INavigationFrame"/> and delegates to a WinUI <see cref="Frame"/>.
     /// </summary>
     public class WinUIFrameAdapter : INavigationFrame
     {
+        // =========================================================
+        // 1. FIELDS & INJECTED SERVICES (Backing state)
+        // =========================================================
+        #region FieldsAndInjectedServices
+
         private readonly Frame _frame;
 
-        /// <summary>
-        /// Initialisiert eine neue Instanz des <see cref="WinUIFrameAdapter"/>.
-        /// </summary>
-        /// <param name="frame">Der echte WinUI-Frame, der gekapselt werden soll.</param>
+        #endregion
+
+        // =========================================================
+        // 2. CONSTRUCTOR & FINALIZER (Ctor)
+        // =========================================================
+        #region ConstructorAndFinalizer
+
         public WinUIFrameAdapter(Frame frame) => _frame = frame;
 
-        /// <inheritdoc />
-        public bool CanGoBack => _frame.CanGoBack;
+        #endregion
 
-        /// <inheritdoc />
+        // =========================================================
+        // 3. PUBLIC PROPERTIES (Data & State)
+        // =========================================================
+        #region PublicProperties
+
+        public bool CanGoBack => _frame.CanGoBack;
         public object Content => _frame.Content;
 
-        /// <inheritdoc />
+        #endregion
+
+        // =========================================================
+        // 4. PUBLIC METHODS (API)
+        // =========================================================
+        #region PublicMethods
+
         public void GoBack() => _frame.GoBack();
 
-        /// <inheritdoc />
         public bool Navigate(Type sourcePageType, object parameter, NavigationTransitionInfo infoOverride)
         {
             return _frame.Navigate(sourcePageType, parameter, infoOverride);
         }
+
+        #endregion
     }
 }

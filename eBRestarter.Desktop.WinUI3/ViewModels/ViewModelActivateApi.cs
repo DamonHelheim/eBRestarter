@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Activate API" dialog. Lets the user enter or import eBesucher API
+    /// credentials; validates them via <see cref="IApiAuthenticationService"/> and persists
+    /// to config when valid.
+    /// </summary>
     public partial class ViewModelActivateApi : ObservableObject
     {
         // =========================================================
@@ -47,6 +52,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Builds the VM with auth, config, and localization services and pre-fills
+        /// <see cref="Username"/> and <see cref="ApiKey"/> from saved config if present.
+        /// </summary>
         public ViewModelActivateApi(
             IApiAuthenticationService authService,
             IEVisitorConfigService configService,
@@ -68,6 +77,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Verifies the current <see cref="Username"/> and <see cref="ApiKey"/> with the API.
+        /// On success, saves them to config and sets a green success message; on failure, sets
+        /// a red status message without changing config.
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanSubmit))]
         private async Task Submit()
         {
@@ -102,6 +116,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Imports username and API key from a legacy binary file (e.g. old eBesucher format).
+        /// Expects two length-prefixed strings. On success, sets Username and ApiKey and a success message;
+        /// on missing file or read error, sets an error message and clears credentials.
+        /// </summary>
+        /// <param name="filePath">Full path to the import file. If null or missing, sets file-not-found message.</param>
         public void ImportLegacyFile(string filePath)
         {
             if (!System.IO.File.Exists(filePath))
@@ -137,6 +157,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Submit is allowed only when both username and API key are non-empty and the VM is not busy.</summary>
         private bool CanSubmit => !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(ApiKey) && !IsBusy;
 
         #endregion

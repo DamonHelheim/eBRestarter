@@ -10,6 +10,11 @@ using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for a single browser's row in the "Install Add-on" dialog. Shows whether the
+    /// browser is installed and whether the eBesucher extension is present; exposes a command to
+    /// open the store/extension page. Status is updated by the parent via <see cref="RefreshStatus"/>.
+    /// </summary>
     public partial class ViewModelBrowserAddonStatus : ObservableObject
     {
         // =========================================================
@@ -45,6 +50,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the row with a browser instance and localization, sets display name and icon path
+        /// (adjusted for WinUI asset path), and runs an initial <see cref="RefreshStatus"/> so the first
+        /// paint shows install/extension state.
+        /// </summary>
         public ViewModelBrowserAddonStatus(
             IBrowser browser,
             ILocalizationService localizationService)
@@ -69,6 +79,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>Opens the browser's extension/store URL in the browser if the URL is set (e.g. Chrome Web Store).</summary>
         [RelayCommand]
         private void OpenStore()
         {
@@ -85,6 +96,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Re-queries the browser instance for install and extension state on the UI thread, then
+        /// updates all status text, colors, and button state so the row reflects current state
+        /// (installed/not installed, extension installed/not installed, button open store or manage).
+        /// </summary>
         public void RefreshStatus()
         {
             _dispatcherQueue.TryEnqueue(() =>

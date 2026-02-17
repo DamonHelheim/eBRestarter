@@ -17,6 +17,11 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for a single browser entry on the "Installed Browsers" page. Handles display of
+    /// install state, version, download progress, and actions: choose as default or download/install
+    /// via <see cref="IBrowserDownloadService"/>. Sends <see cref="BrowserChangedMessage"/> when chosen.
+    /// </summary>
     public partial class ViewModelBrowserItem : ObservableObject
     {
         // =========================================================
@@ -70,26 +75,41 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Browser type (Chrome, Firefox, Edge, Brave) for this item.</summary>
         public BrowserType BrowserType => _browserInfo.Type;
+        /// <summary>Display symbol for install state: ✓ if installed, ✘ otherwise.</summary>
         public string BrowserExist => _browserInfo.IsInstalled ? "✓" : "✘";
+        /// <summary>Green brush when installed, red when not; used for the install-state indicator.</summary>
         public SolidColorBrush BrowserExistTextForground => _browserInfo.IsInstalled
             ? new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorGreen))
             : new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorRed));
+        /// <summary>Localized "Cancel" while downloading, "Download" otherwise.</summary>
         public string DownloadButtonContent => IsDownloadActive
             ? _localizationService.GetString("General_Cancel")
             : _localizationService.GetString("General_Download");
+        /// <summary>Style key for the download button (red when active for cancel).</summary>
         public string DownloadButtonStyleKey => IsDownloadActive
             ? "DownloadBrowserToggleButtonRed"
             : "DownloadBrowserToggleButton";
+        /// <summary>Path to the browser icon asset.</summary>
         public string HeaderImageBrowser => _browserInfo.IconPath;
+        /// <summary>Display name of the browser.</summary>
         public string HeaderTitleBrowser => _browserInfo.Name;
+        /// <summary>Icon height for layout.</summary>
         public string ImageSizeHeightBrowser => _browserInfo.IconHeight;
+        /// <summary>Icon width for layout.</summary>
         public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
+        /// <summary>True when the browser is installed so the user can choose it as default.</summary>
         public bool IsChooseButtonVisible => _browserInfo.IsInstalled;
+        /// <summary>True when the browser is not installed so the user can start a download.</summary>
         public bool IsDownloadButtonVisible => !_browserInfo.IsInstalled;
+        /// <summary>True when not installed, to show download size/progress.</summary>
         public bool IsDownloadSizeTextVisible => !_browserInfo.IsInstalled;
+        /// <summary>True while a download is in progress.</summary>
         public bool IsDownloading => IsDownloadActive;
+        /// <summary>True when no download is in progress.</summary>
         public bool IsNotDownloading => !IsDownloadActive;
+        /// <summary>True when not in the post-download install phase.</summary>
         public bool IsNotInstalling => !IsInstalling;
 
         #endregion
@@ -99,6 +119,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the item with a snapshot of browser info and services; loads config for
+        /// selected-browser persistence and refreshes the version text for display.
+        /// </summary>
         public ViewModelBrowserItem(
             BrowserInfo info,
             IBrowserDownloadService downloadService,
@@ -124,6 +148,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Sets this browser as the selected one in config, sends <see cref="BrowserChangedMessage"/>
+        /// so the restarter and other pages update, and persists settings.
+        /// </summary>
         [RelayCommand]
         private void ChooseBrowser()
         {
@@ -132,6 +160,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             SaveSettings();
         }
 
+        /// <summary>
+        /// If a download is active, cancels it and resets UI state. Otherwise starts the download
+        /// and, when done, prompts to run the installer. Allows concurrent executions so rapid clicks don't block.
+        /// </summary>
         [RelayCommand(AllowConcurrentExecutions = true)]
         private async Task ToggleDownload()
         {
@@ -148,6 +180,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Updates this item when the underlying <see cref="BrowserInfo"/> changes (e.g. after install
+        /// or version check). Only applies when install state or version actually changed; then
+        /// refreshes version text and notifies dependent properties so the UI updates.
+        /// </summary>
+        /// <param name="newInfo">New snapshot from <see cref="IBrowserService"/>. If null, behavior is undefined.</param>
         public void Update(BrowserInfo newInfo)
         {
             if (_browserInfo.IsInstalled == newInfo.IsInstalled && _browserInfo.Version == newInfo.Version)
@@ -170,6 +208,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>Sets BrowserVersionText to localized version string, "not installed", or empty while downloading.</summary>
         private void RefreshBrowserVersionText()
         {
             if (_browserInfo.IsInstalled && IsDownloading is false)
@@ -187,6 +226,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Asks the user whether to run the installer now; if yes, starts the executable and shows a finished message.</summary>
         private async Task AskToInstall(string path)
         {
             bool installNow = await _dialogService.ShowYesNoDialogAsync(
@@ -208,6 +248,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _ = ResetDownloadState();
         }
 
+        /// <summary>Removes a partially downloaded file so a retry starts clean. Swallows errors to avoid breaking the flow.</summary>
         private void CleanupPartialFile(string path)
         {
             try
@@ -232,6 +273,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _eVisitorConfigService.SaveConfig(_currentConfig);
         }
 
+        /// <summary>Downloads the browser installer to the user's Downloads folder, reports progress, then prompts for install. On cancel or error, cleans up and resets state.</summary>
         private async Task StartDownloadAsync()
         {
             _cts = new CancellationTokenSource();

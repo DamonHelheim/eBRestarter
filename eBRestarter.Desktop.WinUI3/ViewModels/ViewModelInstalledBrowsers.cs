@@ -12,10 +12,16 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Installed Browsers" page. Keeps a list of <see cref="ViewModelBrowserItem"/>
+    /// in sync with <see cref="IBrowserService.GetInstalledBrowsersAsync"/>: updates existing items
+    /// when install state or version changes and adds new items when a new browser type appears.
+    /// Refreshes on a 2-second timer so the list stays current (e.g. after download/install).
+    /// </summary>
     public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
     {
         // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // 1. FIELDS & INJECTED SERVICES (Backing-Fields und DI)
         // =========================================================
         #region FieldsAndInjectedServices
 
@@ -44,6 +50,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Wires up services and a 2-second dispatcher timer that repeatedly calls
+        /// <see cref="LoadBrowsersSmartAsync"/> so the browser list stays in sync with
+        /// installed browsers and versions. Kicks off the first load immediately.
+        /// </summary>
         public ViewModelInstalledBrowsers(
             IBrowserService browserService,
             IBrowserDownloadService downloadService,
@@ -72,6 +83,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Fetches the current list of installed browsers from the service. For each result,
+        /// either updates the matching existing <see cref="ViewModelBrowserItem"/> (by browser type)
+        /// or creates a new one and adds it, so the UI list reflects current install state and versions.
+        /// </summary>
         public async Task LoadBrowsersSmartAsync()
         {
             var freshBrowserInfos = await _browserService.GetInstalledBrowsersAsync();
@@ -98,6 +114,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Stops the refresh timer. Call when leaving the page or disposing the VM to avoid leaks.</summary>
         public void Dispose()
         {
             _refreshTimer?.Stop();

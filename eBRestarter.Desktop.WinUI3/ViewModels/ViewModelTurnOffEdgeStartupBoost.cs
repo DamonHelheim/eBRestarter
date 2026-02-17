@@ -7,13 +7,17 @@ using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Turn off Edge Startup Boost" dialog. Reads and toggles the Edge
+    /// Startup Boost setting via <see cref="IWindowsStartupManagerService"/> and shows success/error
+    /// in an InfoBar. Provides a command to copy the settings URL and open Edge for users who
+    /// prefer to change it manually.
+    /// </summary>
     public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     {
         // =========================================================
@@ -47,6 +51,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the VM with startup and dialog services and reads the current Edge Startup Boost
+        /// state so the toggle reflects the actual setting when the dialog opens.
+        /// </summary>
         public ViewModelTurnOffEdgeStartupBoost(
             IWindowsStartupManagerService startupService,
             IBrowserFactory browserFactory,
@@ -67,6 +75,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>
+        /// Copies the Edge settings URL (Startup Boost) to the clipboard and shows an info message.
+        /// If Edge is not installed, shows an error instead. Lets the user open Edge manually to change the setting.
+        /// </summary>
         [RelayCommand]
         private async Task CopyAndOpenEdge()
         {
@@ -97,6 +109,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PropertyChangeHandlers
 
+        /// <summary>
+        /// When the user toggles the switch, applies the new value via the startup service and shows
+        /// success or error in the InfoBar. On failure, reverts the toggle so the UI matches the actual state.
+        /// </summary>
         async partial void OnIsStartupBoostEnabledChanged(bool value)
         {
             if (_isRevertingState) return;

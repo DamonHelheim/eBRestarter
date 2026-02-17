@@ -16,6 +16,12 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the "Delete browser content" (cache/cookies cleanup) dialog. Resolves the
+    /// selected browser via <see cref="IBrowserFactory"/>, collects paths from the browser implementation,
+    /// and runs file deletion through <see cref="IFileDeletionService"/> with progress reporting.
+    /// Can be run manually or as an auto-step from the restart task when cleanup is due.
+    /// </summary>
     public partial class ViewModelDeleteBrowserContent : ObservableObject
     {
         // =========================================================
@@ -68,6 +74,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Raised when the dialog should close (e.g. after successful auto-run cleanup). Subscribers typically close the window.</summary>
         public event Action? RequestCloseDialog;
 
         #endregion
@@ -77,6 +84,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Initializes the VM with factory and services, loads the selected browser from config,
+        /// and calls <see cref="Initialize"/> with the parsed browser type so paths and display name are ready.
+        /// If the config value is not a valid <see cref="BrowserType"/>, sets an error message instead.
+        /// </summary>
         public ViewModelDeleteBrowserContent(
             IBrowserFactory browserFactory,
             IWindowsProcessControlService processService,
@@ -117,6 +129,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
+        /// <summary>Cancels the current cleanup run and sets status to "Canceling".</summary>
         [RelayCommand(CanExecute = nameof(CanCancel))]
         private void CancelCleaning()
         {
@@ -124,6 +137,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             StatusText = _localizationService.GetString("Cleanup_Canceling");
         }
 
+        /// <summary>
+        /// Starts cleanup if not busy and browser paths are loaded. If the browser process is still running,
+        /// sets <see cref="IsProcessConflict"/> and asks the user to close it or force-close; otherwise runs deletion.
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanClean))]
         private async Task StartCleaning()
         {
@@ -137,6 +154,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             await ExecuteCleaningLogic();
         }
 
+        /// <summary>Force-closes the browser process, waits briefly, then runs cleanup if the process is gone.</summary>
         [RelayCommand]
         private async Task ForceCloseAndContinue()
         {
@@ -152,6 +170,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             await ExecuteCleaningLogic();
         }
 
+        /// <summary>Dismisses the process-conflict state and sets status to user-canceled.</summary>
         [RelayCommand]
         private void CancelConflict()
         {
@@ -166,6 +185,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
+        /// <summary>
+        /// Used when the dialog is opened in auto mode (e.g. from the restart task). Sets internal flag
+        /// so that on successful cleanup the dialog can request to close itself.
+        /// </summary>
         public async Task RunAutoSequenceAsync()
         {
             _isAutoMode = true;
@@ -173,6 +196,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             await StartCleaning();
         }
 
+        /// <summary>
+        /// Loads browser instance and paths for the given type, and sets display name and icon.
+        /// On failure (e.g. browser not found), sets a localized error message in StatusText.
+        /// </summary>
+        /// <param name="selectedBrowserType">Which browser to clean (Chrome, Firefox, Edge, Brave).</param>
         public void Initialize(BrowserType selectedBrowserType)
         {
             try
@@ -200,6 +228,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private bool CanCancel() => IsBusy;
         private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
 
+        /// <summary>
+        /// Builds the list of directories to delete from cache/cookie paths based on checkboxes,
+        /// counts files, then runs <see cref="IFileDeletionService.DeleteFilesAsync"/> with progress.
+        /// In auto mode, invokes RequestCloseDialog after a short delay on success.
+        /// </summary>
         private async Task ExecuteCleaningLogic()
         {
             var directoriesToDelete = new List<string>();

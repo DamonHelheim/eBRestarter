@@ -9,12 +9,15 @@ using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.DependencyInjections
 {
+    /// <summary>
+    /// Extension methods to register ViewModels and main window with the DI container.
+    /// </summary>
     public static class ViewModelServiceExtensions
     {
         // =========================================================
-        // 1. PUBLIC & PROTECTED METHODS (API / Extension)
+        // 1. PUBLIC METHODS (API / Extension)
         // =========================================================
-        #region PublicAndProtectedMethods
+        #region PublicMethods
 
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {

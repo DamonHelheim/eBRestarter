@@ -15,6 +15,12 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
+    /// <summary>
+    /// View model for the general overview / dashboard page. Loads earnings and IP info from
+    /// <see cref="IEVisitorApiService"/>, displays BTP sums for day/month/year and a chart that
+    /// can pivot by hour, day, or month. Refreshes data on a timer (e.g. at minute 5) and keeps
+    /// chart and labels in sync on the UI thread via <see cref="DispatcherQueue"/>.
+    /// </summary>
     public partial class ViewModelGeneralOverview : ObservableObject
     {
         // =========================================================
@@ -65,8 +71,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicProperties
 
+        /// <summary>Y-axis configuration for the chart (e.g. points label and separators).</summary>
         public Axis[] YAxes { get; set; }
+        /// <summary>X-axis depends on pivot: hour, day, or month labels.</summary>
         public Axis[] XAxes => GetXAxesForCurrentPivot();
+        /// <summary>Localized chart title based on selected pivot (hourly/daily/yearly) and current date.</summary>
         public string ChartTitle => SelectedPivotIndex switch
         {
             0 => string.Format(_localizationService.GetString("Chart_TitleHourly"), DateTime.Now.ToString("dd.MM.yyyy")),
@@ -82,6 +91,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstructorAndFinalizer
 
+        /// <summary>
+        /// Sets up API and localization, creates the chart series and 24-slot value collection,
+        /// starts a 1-second timer to trigger refresh at minute 5, and kicks off the first async load
+        /// so the UI gets earnings and IP data as soon as possible.
+        /// </summary>
         public ViewModelGeneralOverview(
             IEVisitorApiService apiService,
             ILocalizationService localizationService)
@@ -146,6 +160,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
+        /// <summary>
+        /// Fetches earnings and IP info in parallel from the API, then on the UI thread updates
+        /// IP fields, BTP sums, chart data, and the next-refresh time. Keeps chart updates on the
+        /// dispatcher so LiveCharts and bindings stay consistent.
+        /// </summary>
         private async Task LoadDataAsync()
         {
             try
@@ -188,6 +207,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>At minute 5 and second 0, refreshes data; at 00:05 also resets chart values for the new day.</summary>
         private void OnTimerTick(object? sender, object e)
         {
             var now = DateTime.Now;
@@ -203,6 +223,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             foreach (var val in _chartValues) val.Value = 0;
         }
 
+        /// <summary>Maps cached earnings to the chart series for the current pivot (hourly/daily/monthly); resizes collection if needed and only updates changed values.</summary>
         private void UpdateChartData()
         {
             if (_cachedEarnings == null) return;
@@ -228,6 +249,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        /// <summary>Returns X-axis configuration and labels for the selected pivot (time of day, day of month, or month names).</summary>
         private Axis[] GetXAxesForCurrentPivot()
         {
             var axis = new Axis { TextSize = 12, LabelsRotation = 0 };
