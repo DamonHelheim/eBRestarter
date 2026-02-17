@@ -78,8 +78,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             AppVersion = $"{prefix} {_appInfoService.GetAppVersion()}";
             var credits = _appInfoService.GetIconCredits();
             IconCredits.Clear();
-            foreach (var credit in credits)
-                IconCredits.Add(credit);
+            foreach (var iconCredit in credits)
+                IconCredits.Add(iconCredit);
         }
 
         #endregion

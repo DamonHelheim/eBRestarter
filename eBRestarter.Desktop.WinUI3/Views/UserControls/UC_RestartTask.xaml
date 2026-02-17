@@ -134,7 +134,7 @@
                     <TextBlock x:Name="tbl_SelectedBrowser"
                                Foreground="{ThemeResource FontColor_1}"
                                Margin="16,0,0,0"
-                               Text="{Binding ChoosenBrowser}"
+                               Text="{Binding ChosenBrowser}"
                                Width="Auto"
                                FontSize="16"
                                VerticalAlignment="Center"

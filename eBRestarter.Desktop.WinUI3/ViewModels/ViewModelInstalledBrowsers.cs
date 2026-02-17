@@ -26,11 +26,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region FieldsAndInjectedServices
 
         private readonly IBrowserService _browserService;
-        private readonly IDialogService _dialogService;
         private readonly IBrowserDownloadService _downloadService;
+        private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly IOperatingSystemFacade _os;
         private readonly ILocalizationService _localizationService;
+        private readonly IOperatingSystemFacade _os;
         private readonly DispatcherTimer _refreshTimer;
 
         #endregion
@@ -94,22 +94,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             foreach (var freshInfo in freshBrowserInfos)
             {
-                var existingItem = Browsers.FirstOrDefault(vm => vm.BrowserType == freshInfo.Type);
+                var existingBrowserItem = Browsers.FirstOrDefault(browserItem => browserItem.BrowserType == freshInfo.Type);
 
-                if (existingItem != null)
+                if (existingBrowserItem != null)
                 {
-                    existingItem.Update(freshInfo);
+                    existingBrowserItem.Update(freshInfo);
                 }
                 else
                 {
-                    var newItem = new ViewModelBrowserItem(
+                    var newBrowserItem = new ViewModelBrowserItem(
                         freshInfo,
                         _downloadService,
                         _os,
                         _eVisitorConfigService,
                         _dialogService,
                         _localizationService);
-                    Browsers.Add(newItem);
+                    Browsers.Add(newBrowserItem);
                 }
             }
         }

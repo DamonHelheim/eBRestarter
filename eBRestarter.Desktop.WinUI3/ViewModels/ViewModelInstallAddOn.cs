@@ -61,7 +61,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _timer = new Timer(2000);
             _timer.Elapsed += (s, e) =>
             {
-                foreach (var b in Browsers) b.RefreshStatus();
+                foreach (var browserAddonStatus in Browsers) browserAddonStatus.RefreshStatus();
             };
             _timer.Start();
         }

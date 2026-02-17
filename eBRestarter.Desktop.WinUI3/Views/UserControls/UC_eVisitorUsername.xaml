@@ -77,7 +77,7 @@
 
                     <interactivity:Interaction.Behaviors>
                         <behaviors:KeyDownTriggerBehavior Key="Enter">
-                            <interactivity:InvokeCommandAction Command="{Binding AddeVVisitorUsernameCommand}" />
+                            <interactivity:InvokeCommandAction Command="{Binding AddEVisitorUsernameCommand}" />
                         </behaviors:KeyDownTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
 
@@ -88,7 +88,7 @@
                         x:Uid               ="Add"
                         Style               ="{ThemeResource ButtonCustomStyle_1}"
                         Margin              ="21,10,0,0"
-                        Command             ="{Binding AddeVVisitorUsernameCommand}"
+                        Command             ="{Binding AddEVisitorUsernameCommand}"
                         BorderBrush         ="Transparent"
                         HorizontalAlignment ="Left"
                         Width               ="278"

@@ -40,13 +40,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region FieldsAndInjectedServices
 
         private BrowserInfo _browserInfo;
+        private CancellationTokenSource? _cts;
         private readonly AppConfig _currentConfig;
         private readonly IDialogService _dialogService;
         private readonly IBrowserDownloadService _downloadService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly IOperatingSystemFacade _os;
         private readonly ILocalizationService _localizationService;
-        private CancellationTokenSource? _cts;
+        private readonly IOperatingSystemFacade _os;
 
         #endregion
 
@@ -80,7 +80,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>Display symbol for install state: ✓ if installed, ✘ otherwise.</summary>
         public string BrowserExist => _browserInfo.IsInstalled ? "✓" : "✘";
         /// <summary>Green brush when installed, red when not; used for the install-state indicator.</summary>
-        public SolidColorBrush BrowserExistTextForground => _browserInfo.IsInstalled
+        public SolidColorBrush BrowserExistTextForeground => _browserInfo.IsInstalled
             ? new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorGreen))
             : new SolidColorBrush(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(SetForegroundColorRed));
         /// <summary>Localized "Cancel" while downloading, "Download" otherwise.</summary>
@@ -124,14 +124,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// selected-browser persistence and refreshes the version text for display.
         /// </summary>
         public ViewModelBrowserItem(
-            BrowserInfo info,
+            BrowserInfo browserInfo,
             IBrowserDownloadService downloadService,
             IOperatingSystemFacade os,
             IEVisitorConfigService eVisitorConfigService,
             IDialogService dialogService,
             ILocalizationService localizationService)
         {
-            _browserInfo = info;
+            _browserInfo = browserInfo;
             _downloadService = downloadService;
             _os = os;
             _eVisitorConfigService = eVisitorConfigService;
@@ -193,7 +193,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             _browserInfo = newInfo;
             OnPropertyChanged(nameof(BrowserExist));
-            OnPropertyChanged(nameof(BrowserExistTextForground));
+            OnPropertyChanged(nameof(BrowserExistTextForeground));
             RefreshBrowserVersionText();
             OnPropertyChanged(nameof(IsChooseButtonVisible));
             OnPropertyChanged(nameof(IsDownloadButtonVisible));

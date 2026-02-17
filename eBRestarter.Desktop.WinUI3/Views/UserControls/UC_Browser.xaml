@@ -86,7 +86,7 @@
                            Canvas.Left  ="234"
                            TextWrapping ="Wrap"
                            Text         ="{Binding BrowserExist}"
-                           Foreground   ="{Binding BrowserExistTextForground}"
+                           Foreground   ="{Binding BrowserExistTextForeground}"
                            FontSize     ="25"
                            Canvas.Top   ="-1"/>
 

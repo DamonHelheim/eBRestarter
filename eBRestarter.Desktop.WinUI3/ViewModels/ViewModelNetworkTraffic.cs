@@ -120,23 +120,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string prefixRec = _localizationService.GetString("Network_Received");
             string prefixSent = _localizationService.GetString("Network_Sent");
 
-            var activeIds = stats.Select(x => $"{prefixCard}: {x.Name}").ToList();
-            var itemsToRemove = NetworkCards.Where(x => !activeIds.Contains(x.AdapterName)).ToList();
-            foreach (var item in itemsToRemove)
-                NetworkCards.Remove(item);
+            var activeIds = stats.Select(networkStat => $"{prefixCard}: {networkStat.Name}").ToList();
+            var cardsToRemove = NetworkCards.Where(card => !activeIds.Contains(card.AdapterName)).ToList();
+            foreach (var cardToRemove in cardsToRemove)
+                NetworkCards.Remove(cardToRemove);
 
             foreach (var stat in stats)
             {
                 string name = $"{prefixCard}: {stat.Name}";
-                var existingItem = NetworkCards.FirstOrDefault(x => x.AdapterName == name);
+                var existingCard = NetworkCards.FirstOrDefault(card => card.AdapterName == name);
                 string received = $"{prefixRec}: {FormatExtensions.ToSizeSuffix(stat.BytesReceived)}";
                 string sent = $"{prefixSent}: {FormatExtensions.ToSizeSuffix(stat.BytesSent)}";
 
-                if (existingItem != null)
+                if (existingCard != null)
                 {
-                    existingItem.ReceivedData = received;
-                    existingItem.SentData = sent;
-                    existingItem.ForegroundColor = ColorDefault;
+                    existingCard.ReceivedData = received;
+                    existingCard.SentData = sent;
+                    existingCard.ForegroundColor = ColorDefault;
                 }
                 else
                 {

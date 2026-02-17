@@ -197,8 +197,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                     var now = DateTime.Now;
                     var nextRefresh = now.AddMinutes(60 - now.Minute + 5);
-                    var format = _localizationService.GetString("General_NextRefresh");
-                    ClockNextEarningsRefresh = string.Format(format, nextRefresh.ToString("HH:mm"));
+                    var nextRefreshTimeFormat = _localizationService.GetString("General_NextRefresh");
+                    ClockNextEarningsRefresh = string.Format(nextRefreshTimeFormat, nextRefresh.ToString("HH:mm"));
                 });
             }
             catch (Exception ex)
@@ -220,7 +220,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private void ResetChart()
         {
-            foreach (var val in _chartValues) val.Value = 0;
+            foreach (var chartValue in _chartValues) chartValue.Value = 0;
         }
 
         /// <summary>Maps cached earnings to the chart series for the current pivot (hourly/daily/monthly); resizes collection if needed and only updates changed values.</summary>
@@ -252,26 +252,26 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>Returns X-axis configuration and labels for the selected pivot (time of day, day of month, or month names).</summary>
         private Axis[] GetXAxesForCurrentPivot()
         {
-            var axis = new Axis { TextSize = 12, LabelsRotation = 0 };
+            var xAxis = new Axis { TextSize = 12, LabelsRotation = 0 };
 
             switch (SelectedPivotIndex)
             {
                 case 0:
-                    axis.Name = _localizationService.GetString("Chart_XAxisTime");
+                    xAxis.Name = _localizationService.GetString("Chart_XAxisTime");
                     break;
                 case 1:
-                    axis.Name = _localizationService.GetString("Chart_XAxisDay");
+                    xAxis.Name = _localizationService.GetString("Chart_XAxisDay");
                     break;
                 case 2:
-                    axis.Name = _localizationService.GetString("Chart_XAxisMonth");
+                    xAxis.Name = _localizationService.GetString("Chart_XAxisMonth");
                     string monthsString = _localizationService.GetString("Chart_MonthsShort");
-                    axis.Labels = !string.IsNullOrEmpty(monthsString)
+                    xAxis.Labels = !string.IsNullOrEmpty(monthsString)
                         ? monthsString.Split(',')
                         : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
                     break;
             }
 
-            return [axis];
+            return [xAxis];
         }
 
         #endregion

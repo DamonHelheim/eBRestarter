@@ -32,19 +32,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region FieldsAndInjectedServices
 
-        private bool _isInitializing = false;
-
-        private readonly AppConfig _currentConfig;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly IDialogService _dialogService;
         private readonly IWindowsAutoLogonService _autoLogonService;
-        private readonly IOperatingSystemFacade _os;
-        private readonly IUpdateService _updateService;
-        private readonly IThemeService _themeService;
+        private readonly ICredentialValidationService _credentialValidationService;
+        private readonly AppConfig _currentConfig;
+        private readonly IDialogService _dialogService;
+        private readonly IEVisitorConfigService _eVisitorConfigService;
+        private bool _isInitializing = false;
         private readonly ILanguageService _languageService;
         private readonly ILocalizationService _localizationService;
+        private readonly IOperatingSystemFacade _os;
         private readonly IRestartCalculationService _restartCalculationService;
-        private readonly ICredentialValidationService _credentialValidationService;
+        private readonly IThemeService _themeService;
+        private readonly IUpdateService _updateService;
 
         #endregion
 
@@ -133,8 +132,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
             var configLanguageIndex = _currentConfig.Settings.Language;
 
-            SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(x => x.Days == configDays) ?? ComputerRestartList[0];
-            SelectedLanguageOption = LanguageList.FirstOrDefault(x => x.Index == configLanguageIndex) ?? LanguageList[0];
+            SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(option => option.Days == configDays) ?? ComputerRestartList[0];
+            SelectedLanguageOption = LanguageList.FirstOrDefault(option => option.Index == configLanguageIndex) ?? LanguageList[0];
 
             _isInitializing = false;
 
@@ -157,13 +156,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                var info = await _updateService.CheckForUpdateAsync();
+                var updateInfo = await _updateService.CheckForUpdateAsync();
 
-                if (info.IsUpdateAvailable)
+                if (updateInfo.IsUpdateAvailable)
                 {
                     IsUpdateAvailable = true;
-                    string format = _localizationService.GetString("Options_UpdateAvailable");
-                    UpdateMessage = string.Format(format, info.LatestVersion);
+                    string messageFormat = _localizationService.GetString("Options_UpdateAvailable");
+                    UpdateMessage = string.Format(messageFormat, updateInfo.LatestVersion);
                 }
             }
             catch (Exception ex)
@@ -178,10 +177,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private async Task PerformUpdate()
         {
-            var info = await _updateService.CheckForUpdateAsync();
-            if (info.IsUpdateAvailable)
+            var updateInfo = await _updateService.CheckForUpdateAsync();
+            if (updateInfo.IsUpdateAvailable)
             {
-                await _updateService.DownloadAndInstallAsync(info);
+                await _updateService.DownloadAndInstallAsync(updateInfo);
             }
         }
 
@@ -421,9 +420,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     targetDate = DateTime.Today.AddDays(days).AddHours(ComputerRestartClockTime);
                 }
 
-                string format = _localizationService.GetString("Options_RestartStatus_Scheduled");
+                string messageFormat = _localizationService.GetString("Options_RestartStatus_Scheduled");
 
-                RestartStatusText = string.Format(format, targetDate.ToString("dd.MM.yyyy"), targetDate.ToString("HH"));
+                RestartStatusText = string.Format(messageFormat, targetDate.ToString("dd.MM.yyyy"), targetDate.ToString("HH"));
             }
         }
 

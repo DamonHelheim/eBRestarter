@@ -33,8 +33,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ConstantsAndStatics
 
-        private const string _baseUrl = "https://www.ebesucher.com/surfbar/";
-        private const int _initialDelaySeconds = 5;
+        private const string BaseUrl = "https://www.ebesucher.com/surfbar/";
+        private const int InitialDelaySeconds = 5;
 
         #endregion
 
@@ -43,23 +43,21 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region FieldsAndInjectedServices
 
+        private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService;
+        private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver;
         private readonly IBrowserFactory _browserFactory;
         private readonly IEVisitorConfigService _configService;
         private readonly IDialogService _dialogService;
+        private readonly DispatcherQueue _dispatcherQueue;
         private readonly ILocalizationService _localizationService;
         private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
-        private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService;
-        private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver;
-        private readonly DispatcherQueue _dispatcherQueue;
-
         private IBrowser? _currentBrowser;
         private RestartTaskState _currentState = RestartTaskState.Idle;
+        private bool _isTestMode = false;
         private int _pauseSeconds = 20;
         private int _runtimeSeconds = 3600;
-        private DispatcherTimer? _uiTimer;
-
-        private bool _isTestMode = false;
         private int _testRuntimeSeconds = 20;
+        private DispatcherTimer? _uiTimer;
 
         #endregion
 
@@ -68,17 +66,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region ObservableProperties
 
-        [ObservableProperty] public partial string ChoosenBrowser { get; set; }
-        [ObservableProperty] public partial bool IsActive { get; set; } = false;
+        [ObservableProperty] public partial string ChosenBrowser { get; set; }
         [ObservableProperty] public partial bool DeleteBrowserContentIsActive { get; set; } = false;
-
-        [ObservableProperty] public partial string NextDeletionProcessMessage { get; set; }
+        [ObservableProperty] public partial string DeleteIsActivatedMessage { get; set; } = "Disable";
+        [ObservableProperty] public partial bool IsActive { get; set; } = false;
         [ObservableProperty] public partial string NextDeletionProcessDateMessage { get; set; }
-
+        [ObservableProperty] public partial string NextDeletionProcessMessage { get; set; }
         [ObservableProperty] public partial int SecondsRemaining { get; set; }
         [ObservableProperty] public partial string StatusInfoText { get; set; }
         [ObservableProperty] public partial string Username { get; set; } = "-";
-        [ObservableProperty] public partial string DeleteIsActivatedMessage { get; set; } = "Disable";
 
         #endregion
 
@@ -110,7 +106,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _browserDisplayNameResolver = browserDisplayNameResolver;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            ChoosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
+            ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
             StatusInfoText = _localizationService.GetString("Task_StatusReady");
 
             LoadInitialData();
@@ -153,7 +149,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region PublicAndProtectedMethods
 
         /// <summary>Updates the chosen browser name on the UI thread when a <see cref="BrowserChangedMessage"/> is received.</summary>
-        public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChoosenBrowser = message.BrowserName ?? "-");
+        public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChosenBrowser = message.BrowserName ?? "-");
         /// <summary>Updates the displayed username on the UI thread when a <see cref="UsernameChangedMessage"/> is received.</summary>
         public void Receive(UsernameChangedMessage message) => _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
         /// <summary>Updates the delete-activation label when a <see cref="DeleteBrowserContentActivateMessage"/> is received.</summary>
@@ -209,8 +205,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// then persists the next cleanup date so the UI and schedule stay consistent.</summary>
         private async Task CheckAndExecuteBrowserCleanup()
         {
-            var config = _configService.LoadConfig();
-            if (!_browserCleanupScheduleService.ShouldRunCleanupNow(config))
+            var appConfig = _configService.LoadConfig();
+            if (!_browserCleanupScheduleService.ShouldRunCleanupNow(appConfig))
                 return;
 
             CloseCurrentBrowser();
@@ -218,9 +214,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
 
-            var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(DateTime.Today, config.Browser.DeleteBrowserCacheIntervalDays);
-            config.Browser.NextBrowserDeleteCacheDate = newDate;
-            _configService.SaveConfig(config);
+            var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(DateTime.Today, appConfig.Browser.DeleteBrowserCacheIntervalDays);
+            appConfig.Browser.NextBrowserDeleteCacheDate = newDate;
+            _configService.SaveConfig(appConfig);
 
             LoadInitialData();
         }
@@ -230,9 +226,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                var browserType = GetBrowserTypeFromString(ChoosenBrowser);
+                var browserType = GetBrowserTypeFromString(ChosenBrowser);
                 _currentBrowser = _browserFactory.Create(browserType);
-                string url = $"{_baseUrl}{Username}";
+                string url = $"{BaseUrl}{Username}";
                 _currentBrowser.Start(url);
             }
             catch (Exception ex)
@@ -246,11 +242,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>Loads username, browser, runtime/pause, and delete-content state from config and display-state service so the UI matches saved settings.</summary>
         private void LoadInitialData()
         {
-            var config = _configService.LoadConfig();
-            var state = _restartTaskDisplayStateService.GetInitialState(config);
+            var appConfig = _configService.LoadConfig();
+            var state = _restartTaskDisplayStateService.GetInitialState(appConfig);
 
             Username = state.Username;
-            ChoosenBrowser = state.ChoosenBrowser;
+            ChosenBrowser = state.ChoosenBrowser;
 
             if (_isTestMode)
             {
@@ -324,7 +320,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     break;
 
                 case RestartTaskState.InitialDelay:
-                    SecondsRemaining = _initialDelaySeconds;
+                    SecondsRemaining = InitialDelaySeconds;
                     UpdateDynamicStatusText();
                     break;
 
@@ -347,13 +343,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             if (_currentState == RestartTaskState.InitialDelay)
             {
-                string format = _localizationService.GetString("Task_StatusStartIn");
-                StatusInfoText = string.Format(format, SecondsRemaining);
+                string statusFormat = _localizationService.GetString("Task_StatusStartIn");
+                StatusInfoText = string.Format(statusFormat, SecondsRemaining);
             }
             else if (_currentState == RestartTaskState.Cooldown)
             {
-                string format = _localizationService.GetString("Task_StatusRestartIn");
-                StatusInfoText = string.Format(format, SecondsRemaining);
+                string statusFormat = _localizationService.GetString("Task_StatusRestartIn");
+                StatusInfoText = string.Format(statusFormat, SecondsRemaining);
             }
         }
 
