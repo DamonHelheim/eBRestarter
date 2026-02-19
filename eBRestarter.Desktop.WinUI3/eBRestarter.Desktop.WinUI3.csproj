@@ -18,6 +18,7 @@
     <None Remove="appsettings.json" />
     <None Remove="Resources\Visuals\Icons\DarkTheme\globe_dark_theme.png" />
     <None Remove="Resources\Visuals\Icons\Intersection\globe.png" />
+    <None Remove="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png" />
     <None Remove="Resources\Visuals\Icons\LightTheme\globe.png" />
     <None Remove="Resources\Visuals\Icons\LightTheme\globe_light_theme.png" />
     <None Remove="Resources\Visuals\Images\EVisitorAddOnInfo.png" />
@@ -199,6 +200,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\globe.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\key.png">

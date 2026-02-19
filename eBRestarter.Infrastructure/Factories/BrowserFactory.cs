@@ -25,6 +25,7 @@ namespace eBRestarter.Infrastructure.Factories
                 BrowserType.Firefox => _serviceProvider.GetRequiredService<FirefoxBrowser>(),
                 BrowserType.Edge => _serviceProvider.GetRequiredService<EdgeBrowser>(),
                 BrowserType.Brave => _serviceProvider.GetRequiredService<BraveBrowser>(),
+                BrowserType.Vivaldi => _serviceProvider.GetRequiredService<VivaldiBrowser>(),
                 _ => throw new NotSupportedException($"Browser {type} ist noch nicht implementiert.")
             };
         }

@@ -64,7 +64,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             BrowserName = _browser.DisplayName;
-            IconPath = browser.IconPath.Replace("/Resources/Visuals", "ms-appx:///Assets/Visuals");
+            IconPath = browser.IconPath;
             AddonStatusText = _localizationService.GetString("Addon_StatusChecking");
             InstallStatusText = _localizationService.GetString("Addon_StatusChecking");
             ButtonText = _localizationService.GetString("Addon_Loading");
