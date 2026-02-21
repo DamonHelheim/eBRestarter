@@ -11,7 +11,7 @@
   <Identity
     Name="a0d1796d-6f1d-4fb0-b22a-5ad475e5293a"
     Publisher="CN=Workstation"
-    Version="1.0.0.0" />
+    Version="2.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="a0d1796d-6f1d-4fb0-b22a-5ad475e5293a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

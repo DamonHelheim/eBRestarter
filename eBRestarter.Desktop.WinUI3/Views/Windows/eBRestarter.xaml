@@ -70,7 +70,8 @@
                                 Margin="0,0,0,8"
                                 Background="{ThemeResource FontColor_1}" />
                         
-                        <TextBlock Text="v1.0.0"
+                        <TextBlock x:Name="TxbVersion"
+                                   Text="v1.0.0"
                                    Opacity="0.6"
                                    FontSize="12"
                                    Foreground="{ThemeResource FontColor_1}" />

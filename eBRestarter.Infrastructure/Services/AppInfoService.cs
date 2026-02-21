@@ -74,10 +74,10 @@ namespace eBRestarter.Infrastructure.Services
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Maxim Basinski Premium from www.flaticon.com",
+                    IconCreator = "Icon made by Shuvo.Das from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/LightTheme/clock_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/clock_9229215",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/clock_9229215"
+                    IconHyperLink = "https://www.flaticon.com/free-icon/watch_13927704",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/watch_13927704"
                 },
                 new IconCredit()
                 {
@@ -88,59 +88,38 @@ namespace eBRestarter.Infrastructure.Services
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by See Icons from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/Intersection/key.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/key_11229372",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/key_11229372"
+                    IconCreator = "Icon made by Pixel perfect Icons from www.flaticon.com",
+                    IconImageSource = "/Resources/Visuals/Icons/Intersection/fa_keyaccess.png",
+                    IconHyperLink = "https://www.flaticon.com/free-icon/target_2891501",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/target_2891501"
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Freepik from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/Intersection/file_information.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/test_3672470",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/test_3672470"
-                },
-                new IconCredit()
-                {
-                    IconCreator = "Icon made by Freepik from www.flaticon.com",
+                    IconCreator = "Icon made by heisenberg_jr from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/Intersection/globe-grid.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/globe-grid_3719350",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/globe-grid_3719350"
+                    IconHyperLink = "https://www.flaticon.com/free-icon/internet_10438779",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/internet_10438779"
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Royyan Wijaya from www.flaticon.com",
+                    IconCreator = "Icon made by Bharat Icons from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/LightTheme/download_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/download_3018413",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/download_3018413"
+                    IconHyperLink = "https://www.flaticon.com/free-icon/downloads_7268609",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/downloads_7268609"
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Freepik from www.flaticon.com",
+                    IconCreator = "Icon made by Hexagon075 from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/LightTheme/network-interface-card_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/network-interface-card_1176920",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/network-interface-card_1176920"
+                    IconHyperLink = "https://www.flaticon.com/free-icon/line-card-leed_16319453",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/line-card-leed_16319453"
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by rukanicon from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/Intersection/file.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/file_8096501",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/file_8096501"
-                },
-                new IconCredit()
-                {
-                    IconCreator = "Icon made by Senapedia from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/LightTheme/add_document_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/document_6053089",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/document_6053089"
-                },
-                new IconCredit()
-                {
-                    IconCreator = "Icon made by Good Ware from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/Intersection/wrong_document.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/document_685201",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/document_685201"
+                    IconCreator = "Icon made by Saepul Nahwan from www.flaticon.com",
+                    IconImageSource = "/Resources/Visuals/Icons/Intersection/globe.png",
+                    IconHyperLink = "https://www.flaticon.com/free-icon/globe_14627027",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/globe_14627027"
                 },
                 new IconCredit()
                 {
@@ -158,24 +137,10 @@ namespace eBRestarter.Infrastructure.Services
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Uniconlabs from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/LightTheme/circle_with_globe_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/web_3178162",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/web_3178162"
-                },
-                new IconCredit()
-                {
                     IconCreator = "Icon made by manshagraphics from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/Intersection/api.png",
                     IconHyperLink = "https://www.flaticon.com/free-icon/api_9002406",
                     IconHyperLinkContent = "https://www.flaticon.com/free-icon/api_9002406"
-                },
-                new IconCredit()
-                {
-                    IconCreator = "Icon made by Freepik from www.flaticon.com",
-                    IconImageSource = "/Resources/Visuals/Icons/Intersection/approval.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/approval_1292921",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/approval_1292921"
                 },
                 new IconCredit()
                 {
@@ -186,10 +151,10 @@ namespace eBRestarter.Infrastructure.Services
                 },
                 new IconCredit()
                 {
-                    IconCreator = "Icon made by Ranksol Graphics from www.flaticon.com",
+                    IconCreator = "Icon made by apien from www.flaticon.com",
                     IconImageSource = "/Resources/Visuals/Icons/LightTheme/calendar_light_theme.png",
-                    IconHyperLink = "https://www.flaticon.com/free-icon/calendar_9371643",
-                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/calendar_9371643"
+                    IconHyperLink = "https://www.flaticon.com/free-icon/calendar_18349418",
+                    IconHyperLinkContent = "https://www.flaticon.com/free-icon/calendar_18349418"
                 },
                 new IconCredit()
                 {
@@ -218,6 +183,13 @@ namespace eBRestarter.Infrastructure.Services
                     IconImageSource = "/Resources/Visuals/Icons/LightTheme/windows_light_theme.png",
                     IconHyperLink = "https://www.flaticon.com/free-icon/window_3494371",
                     IconHyperLinkContent = "https://www.flaticon.com/free-icon/window_3494371"
+                },
+                new IconCredit()
+                {
+                    IconCreator = "Icon made by Icons8 from www.icons8.com",
+                    IconImageSource = "/Resources/Visuals/Icons/Intersection/icons8_vivaldi.png",
+                    IconHyperLink = "https://icons8.com/icon/qopg2DkQyGsl/vivaldi-web-browser",
+                    IconHyperLinkContent = "https://icons8.com/icon/qopg2DkQyGsl/vivaldi-web-browser"
                 }
             ];
         }

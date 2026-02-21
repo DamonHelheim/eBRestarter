@@ -20,7 +20,7 @@ namespace eBRestarter.Core.Application.Contstants
 
         public const string BraveDownloadLinkDE = "https://laptop-updates.brave.com/download/BRV010";
 
-        public const string VivaldiDownloadLinkDE = "https://downloads.vivaldi.com/stable/Vivaldi.7.8.3925.70.x64.exe";
+        public const string VivaldiDownloadLinkDE = "https://vivaldi.com/download/Vivaldi.x64.exe";
 
         public const string FirefoxEVisitorAddOnLink = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/";
         public const string ChromeEVisitorAddOnLink = "https://chromewebstore.google.com/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";

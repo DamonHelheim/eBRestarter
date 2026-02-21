@@ -1,7 +1,9 @@
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using eBRestarter.Desktop.WinUI3.Views.Pages;
+using eBRestarter.Infrastructure.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -40,6 +42,8 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private readonly INavigationService _navigationService;
 
+        private readonly IAppVersionInfoService _iAppVersionInfoService;
+
         /// <summary>
         /// Die Standard-Animation f�r Seiten�berg�nge (hier: "DrillIn" Effekt).
         /// </summary>
@@ -50,7 +54,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         /// <param name="navigationService">Der injizierte Navigationsdienst (Dependency Injection).</param>
         /// <param name="mainViewModel">Das ViewModel f�r das Hauptfenster (f�r Binding von Men�elementen etc.).</param>
-        public EBRestarter(INavigationService navigationService, MainViewModel mainViewModel)
+        public EBRestarter(INavigationService navigationService, IAppVersionInfoService iAppVersionInfoService, MainViewModel mainViewModel)
         {
             InitializeComponent();
 
@@ -63,6 +67,8 @@ namespace eBRestarter.Desktop.WinUI3
             NavigationFrame.CacheSize = 10;
 
             _navigationService = navigationService;
+
+            _iAppVersionInfoService = iAppVersionInfoService;
 
             // WICHTIG: Verbindung von UI (View) und Logik (Service).
             // Wir �bergeben den XAML-Frame an den Service, damit dieser navigieren kann.
@@ -95,6 +101,8 @@ namespace eBRestarter.Desktop.WinUI3
             {
                 presenter.Maximize();
             }
+
+            TxbVersion.Text = "v" + _iAppVersionInfoService?.GetAppVersion();
 
             //// 1. Fenster-Handle holen
             //IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);

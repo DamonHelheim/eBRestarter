@@ -101,6 +101,8 @@ namespace eBRestarter.Infrastructure.DependencyInjection
 
             services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
 
+            services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();
+
             return services;
         }
 

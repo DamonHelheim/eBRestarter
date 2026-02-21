@@ -17,6 +17,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
+    <None Remove="Resources\Visuals\Icons\DarkTheme\download_dark_theme_old.png" />
     <None Remove="Resources\Visuals\Icons\DarkTheme\globe_dark_theme.png" />
     <None Remove="Resources\Visuals\Icons\Intersection\globe.png" />
     <None Remove="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png" />
@@ -181,9 +182,6 @@
     <Content Include="Resources\Visuals\Icons\Intersection\api.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Visuals\Icons\Intersection\approval.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\deactivate.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -205,12 +203,6 @@
     <Content Include="Resources\Visuals\Icons\Intersection\fa_keyaccess.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Visuals\Icons\Intersection\file.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Visuals\Icons\Intersection\file_information.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\globe-grid.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -218,9 +210,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Visuals\Icons\Intersection\key.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\play.png">
@@ -239,9 +228,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\Intersection\user.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Visuals\Icons\Intersection\wrong_document.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Visuals\Icons\LightTheme\add_document_light_theme.png">
@@ -561,5 +547,7 @@
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
     <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
   </PropertyGroup>
 </Project>
