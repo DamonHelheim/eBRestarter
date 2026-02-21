@@ -30,18 +30,18 @@ namespace eBRestarter.Desktop.WinUI3
     /// <summary>
     /// Das Hauptfenster der Anwendung.
     /// <br/>
-    /// <b>Verantwortlichkeit:</b> Dient als "Shell" (Hülle), die das grundlegende Layout (NavigationView, TitleBar) bereitstellt
-    /// und den <see cref="Frame"/> für den Navigationsdienst hostet.
+    /// <b>Verantwortlichkeit:</b> Dient als "Shell" (Hï¿½lle), die das grundlegende Layout (NavigationView, TitleBar) bereitstellt
+    /// und den <see cref="Frame"/> fï¿½r den Navigationsdienst hostet.
     /// </summary>
     public sealed partial class EBRestarter : Window
     {
         /// <summary>
-        /// Der Navigationsdienst, der die Logik für Seitenwechsel kapselt.
+        /// Der Navigationsdienst, der die Logik fï¿½r Seitenwechsel kapselt.
         /// </summary>
         private readonly INavigationService _navigationService;
 
         /// <summary>
-        /// Die Standard-Animation für Seitenübergänge (hier: "DrillIn" Effekt).
+        /// Die Standard-Animation fï¿½r Seitenï¿½bergï¿½nge (hier: "DrillIn" Effekt).
         /// </summary>
         private readonly NavigationTransitionInfo _defaultTransition = new DrillInNavigationTransitionInfo();
 
@@ -49,7 +49,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// Initialisiert eine neue Instanz des Hauptfensters.
         /// </summary>
         /// <param name="navigationService">Der injizierte Navigationsdienst (Dependency Injection).</param>
-        /// <param name="mainViewModel">Das ViewModel für das Hauptfenster (für Binding von Menüelementen etc.).</param>
+        /// <param name="mainViewModel">Das ViewModel fï¿½r das Hauptfenster (fï¿½r Binding von Menï¿½elementen etc.).</param>
         public EBRestarter(INavigationService navigationService, MainViewModel mainViewModel)
         {
             InitializeComponent();
@@ -59,17 +59,17 @@ namespace eBRestarter.Desktop.WinUI3
             // um den Code-Behind dieser Klasse sauber zu halten.
             this.ConfigureTitleBarColors();
 
-            // Performance-Optimierung: Hält die letzten 10 Seiten im Speicher, um schnelles "Zurück" zu ermöglichen.
+            // Performance-Optimierung: Hï¿½lt die letzten 10 Seiten im Speicher, um schnelles "Zurï¿½ck" zu ermï¿½glichen.
             NavigationFrame.CacheSize = 10;
 
             _navigationService = navigationService;
 
             // WICHTIG: Verbindung von UI (View) und Logik (Service).
-            // Wir übergeben den XAML-Frame an den Service, damit dieser navigieren kann.
+            // Wir ï¿½bergeben den XAML-Frame an den Service, damit dieser navigieren kann.
             _navigationService.AttachFrame(NavigationFrame);
 
-            // MVVM-Binding: Setzt den DataContext für das XAML (Window.Content).
-            // Ermöglicht DataBinding im XAML (z.B. {Binding CurrentPageTitle}).
+            // MVVM-Binding: Setzt den DataContext fï¿½r das XAML (Window.Content).
+            // Ermï¿½glicht DataBinding im XAML (z.B. {Binding CurrentPageTitle}).
             (this.Content as FrameworkElement)!.DataContext = mainViewModel;
 
             // Initiale Navigation beim Start der App.
@@ -81,8 +81,16 @@ namespace eBRestarter.Desktop.WinUI3
             Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
+            // Fenster- und Taskleisten-Icon setzen (in WinUI 3 zur Laufzeit erforderlich)
+            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "eB Restarter.ico");
+
+            if (File.Exists(iconPath))
+            {
+                appWindow.SetIcon(iconPath);
+            }
+
             // 2. Den "Presenter" abrufen und maximieren
-            // Der OverlappedPresenter ist der Standard für Desktop-Apps
+            // Der OverlappedPresenter ist der Standard fï¿½r Desktop-Apps
             if (appWindow.Presenter is OverlappedPresenter presenter)
             {
                 presenter.Maximize();
@@ -97,16 +105,16 @@ namespace eBRestarter.Desktop.WinUI3
             //// 3. Das AppWindow holen
             //AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-            //// 4. Größe ändern (Breite, Höhe) in Pixeln
+            //// 4. Grï¿½ï¿½e ï¿½ndern (Breite, Hï¿½he) in Pixeln
             //appWindow.Resize(new SizeInt32(2300, 2080));
         }
 
         /// <summary>
-        /// Event-Handler für den "Zurück"-Button in der benutzerdefinierten Titelleiste.
+        /// Event-Handler fï¿½r den "Zurï¿½ck"-Button in der benutzerdefinierten Titelleiste.
         /// </summary>
         private void AppTitleBar_BackRequested(TitleBar sender, object args)
         {
-            // Prüft direkt am Frame, ob eine Rückwärtsnavigation möglich ist.
+            // Prï¿½ft direkt am Frame, ob eine Rï¿½ckwï¿½rtsnavigation mï¿½glich ist.
             if (NavigationFrame.CanGoBack)
             {
                 NavigationFrame.GoBack();
@@ -114,16 +122,16 @@ namespace eBRestarter.Desktop.WinUI3
         }
 
         /// <summary>
-        /// Event-Handler für den "Hamburger"-Button (Menü umschalten) in der Titelleiste.
+        /// Event-Handler fï¿½r den "Hamburger"-Button (Menï¿½ umschalten) in der Titelleiste.
         /// </summary>
         private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
         {
-            // Klappt das Navigationsmenü auf oder zu.
+            // Klappt das Navigationsmenï¿½ auf oder zu.
             NavView.IsPaneOpen = !NavView.IsPaneOpen;
         }
 
         /// <summary>
-        /// Zentraler Handler für Klicks auf Menü-Einträge im NavigationView.
+        /// Zentraler Handler fï¿½r Klicks auf Menï¿½-Eintrï¿½ge im NavigationView.
         /// <br/>
         /// Vereint die Logik von SelectionChanged und ItemInvoked.
         /// </summary>
@@ -132,19 +140,19 @@ namespace eBRestarter.Desktop.WinUI3
             // Spezialfall: Der Benutzer hat auf "Einstellungen" (Zahnrad unten) geklickt.
             if (args.IsSettingsInvoked)
             {
-                // Hier könnte später die Navigation zur Einstellungsseite erfolgen.
+                // Hier kï¿½nnte spï¿½ter die Navigation zur Einstellungsseite erfolgen.
                 _navigationService.NavigateTo("Settings", transitionInfo: _defaultTransition);
                 return;
             }
 
-            // Standardfall: Ein normales Menü-Item wurde geklickt.
+            // Standardfall: Ein normales Menï¿½-Item wurde geklickt.
             // Wir extrahieren den "Tag" aus dem XAML (z.B. Tag="Options").
             if (args.InvokedItemContainer is NavigationViewItem nvi
                 && nvi.Tag is string tag)
             {
                 // 2. DIP (Dependency Inversion Principle):
                 // Das Fenster entscheidet nicht, welche Klasse geladen wird.
-                // Es übergibt nur den Befehl "Navigiere zu Tag X" an den Service.
+                // Es ï¿½bergibt nur den Befehl "Navigiere zu Tag X" an den Service.
                 _navigationService.NavigateTo(
                     tag,
                     parameter: null,
