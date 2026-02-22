@@ -1,20 +1,16 @@
 ﻿using eBRestarter.Core.Domain.Models.Records;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace eBRestarter.Core.Application.Interfaces
+namespace eBRestarter.Core.Application.Interfaces;
+
+public interface ILocalizationService
 {
-    public interface ILocalizationService
-    {
-        // Liefert einen einzelnen übersetzten String
-        string GetString(string key);
+    // Liefert einen einzelnen übersetzten String
+    string GetString(string key);
 
-        // Liefert direkt die fertige Liste für die ComboBox
-        IEnumerable<LanguageOption> GetAvailableLanguages();
+    // Liefert direkt die fertige Liste für die ComboBox
+    IEnumerable<LanguageOption> GetAvailableLanguages();
 
-        IEnumerable<ComputerRestartOption> GetComputerRestartOptions();
+    IEnumerable<ComputerRestartOption> GetComputerRestartOptions();
 
-        IEnumerable<BrowserCacheDeleteOption> GetBrowserCacheOptions();
-    }
+    IEnumerable<BrowserCacheDeleteOption> GetBrowserCacheOptions();
 }

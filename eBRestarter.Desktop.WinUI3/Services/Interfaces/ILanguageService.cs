@@ -1,27 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+namespace eBRestarter.Desktop.WinUI3.Services.Interfaces;
 
-namespace eBRestarter.Desktop.WinUI3.Services.Interfaces
+public interface ILanguageService
 {
-    public interface ILanguageService
-    {
-        // =========================================================
-        // 1. PUBLIC PROPERTIES (Contract)
-        // =========================================================
-        #region PublicProperties
+    // =========================================================
+    // 1. PUBLIC PROPERTIES (Contract)
+    // =========================================================
+    #region PublicProperties
 
-        string CurrentLanguageCode { get; }
+    string CurrentLanguageCode { get; }
 
-        #endregion
+    #endregion
 
-        // =========================================================
-        // 2. PUBLIC METHODS (API / Contract)
-        // =========================================================
-        #region PublicMethods
+    // =========================================================
+    // 2. PUBLIC METHODS (API / Contract)
+    // =========================================================
+    #region PublicMethods
 
-        void SetLanguage(string languageCode);
+    void SetLanguage(string languageCode);
 
-        #endregion
-    }
+    #endregion
 }

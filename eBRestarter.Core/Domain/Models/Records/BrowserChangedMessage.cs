@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Domain.Models.Records;
 
-namespace eBRestarter.Core.Domain.Models.Records
-{
-    public record BrowserChangedMessage(string BrowserName);
-}
+public record BrowserChangedMessage(string BrowserName);

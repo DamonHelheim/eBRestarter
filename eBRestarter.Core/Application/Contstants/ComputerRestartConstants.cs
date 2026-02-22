@@ -1,12 +1,9 @@
 ﻿using eBRestarter.Core.Domain.Models.Records;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace eBRestarter.Core.Application.Contstants
 {
-    public class ComputerRestartConstants
+    public static class ComputerRestartConstants
     {
         // Statische ReadOnly Liste für die Auswahl
         public static readonly ReadOnlyCollection<ComputerRestartOption> Options = new(

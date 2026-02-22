@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Domain.Enums;
 
-namespace eBRestarter.Core.Domain.Enums
+public enum HttpMethod
 {
-    public enum HttpMethod
-    {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        PATCH
-    }
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    PATCH
 }

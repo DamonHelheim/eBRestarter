@@ -3,9 +3,6 @@ using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models.Records;
 using Microsoft.Extensions.Logging;
 using System.Management;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace eBRestarter.Infrastructure.Services
 {

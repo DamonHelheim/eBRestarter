@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Application
     x:Class="eBRestarter.Desktop.WinUI3.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -14,13 +14,13 @@
 
                 <ResourceDictionary x:Key="Light">
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="ms-appx:///Resources/Styles/Themes/LightTheme.xaml"/>
+                        <ResourceDictionary Source="ms-appx:///Resources/Styles/Themes/LightTheme.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
 
                 <ResourceDictionary x:Key="Dark">
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="ms-appx:///Resources/Styles/Themes/DarkTheme.xaml"/>
+                        <ResourceDictionary Source="ms-appx:///Resources/Styles/Themes/DarkTheme.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
 

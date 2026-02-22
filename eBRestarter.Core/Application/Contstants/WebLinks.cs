@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Application.Contstants;
 
-namespace eBRestarter.Core.Application.Contstants
-{
     public static class WebLinks
     {
         public const string EVisitorSurflink = "https://www.ebesucher.de/surfbar/";
@@ -33,4 +29,4 @@ namespace eBRestarter.Core.Application.Contstants
 
         public const string GoogleLink = "http://www.google.com";
     }
-}
+

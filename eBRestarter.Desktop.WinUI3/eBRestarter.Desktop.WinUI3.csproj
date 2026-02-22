@@ -359,6 +359,7 @@
 	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc6.1" />
 	<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
 	<PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.1" />
+	<PackageReference Include="WinUI3XamlPreview" Version="0.8.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images\" />

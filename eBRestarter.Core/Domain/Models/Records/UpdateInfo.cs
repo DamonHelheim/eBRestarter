@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Domain.Models.Records;
 
-namespace eBRestarter.Core.Domain.Models.Records
+public record UpdateInfo
 {
-    public record UpdateInfo
-    {
-        public bool IsUpdateAvailable { get; init; }
-        public string LatestVersion { get; init; } = string.Empty;
-        public string CurrentVersion { get; init; } = string.Empty;
-        public string DownloadUrl { get; init; } = string.Empty;
-        public string Changelog { get; init; } = string.Empty;
-        public DateTime PublishedAt { get; init; }
-    }
+    public bool IsUpdateAvailable { get; init; }
+    public string LatestVersion { get; init; } = string.Empty;
+    public string CurrentVersion { get; init; } = string.Empty;
+    public string DownloadUrl { get; init; } = string.Empty;
+    public string Changelog { get; init; } = string.Empty;
+    public DateTime PublishedAt { get; init; }
 }

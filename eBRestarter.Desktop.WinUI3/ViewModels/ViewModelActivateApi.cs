@@ -3,10 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Domain.Models.Records;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -41,6 +38,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool IsBusy { get; set; }
         [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent";
         [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
         public partial string Username { get; set; } = string.Empty;

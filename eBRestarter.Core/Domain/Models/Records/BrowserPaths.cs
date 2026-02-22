@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Domain.Models.Records;
 
-namespace eBRestarter.Core.Domain.Models.Records
-{
-    public record BrowserPaths(
-        List<string> CacheDirs,
-        List<string> CookiesDirs,
-        List<string> ExtensionsDirs
-    );
-}
+public record BrowserPaths(
+    List<string> CacheDirs,
+    List<string> CookiesDirs,
+    List<string> ExtensionsDirs
+);

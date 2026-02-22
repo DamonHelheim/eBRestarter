@@ -1,107 +1,123 @@
-<?xml version="1.0" encoding="utf-8"?>
-<UserControl x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_Browser"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-             d:DataContext="{d:DesignInstance Type=VM:ViewModelBrowserItem}"
-             mc:Ignorable="d"
-             xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
-             xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters">
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_Browser"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
+    xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelBrowserItem}"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
 
-        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
-        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisInverted" TrueValue="Collapsed" FalseValue="Visible"/>
-        <converters:StringKeyToStyleConverter x:Key="StringKeyToStyleConverter"/>
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+        <convertersNuget:BoolToVisibilityConverter
+            x:Key="BoolToVisInverted"
+            FalseValue="Visible"
+            TrueValue="Collapsed" />
+        <converters:StringKeyToStyleConverter x:Key="StringKeyToStyleConverter" />
 
     </UserControl.Resources>
 
-    <Border x:Name          ="Border_Browser"
-            Background      ="{ThemeResource DashletBackgroundColor_4}"              
-            Margin          ="0, 0 ,0, 0"
-            Height          ="85"
-            Width           ="260"
-            BorderThickness ="1"
-            CornerRadius    ="5"
-            Padding         ="0">
+    <Border
+        x:Name="Border_Browser"
+        Width="260"
+        Height="85"
+        Margin="0,0,0,0"
+        Padding="0"
+        Background="{ThemeResource DashletBackgroundColor_4}"
+        BorderThickness="1"
+        CornerRadius="5">
 
         <Canvas>
 
-            <Button x:Name="BtnDownloadBrowser"
-                    Command="{Binding ToggleDownloadCommand}"
-                    Content="{Binding DownloadButtonContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{Binding DownloadButtonStyleKey, Converter={StaticResource StringKeyToStyleConverter}}"
-                    Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}"
-                    Width="80"
-                    Height="83"
-                    HorizontalAlignment="Left"
-                    Canvas.Top="0" Canvas.Left="0">
+            <Button
+                x:Name="BtnDownloadBrowser"
+                Canvas.Left="0"
+                Canvas.Top="0"
+                Width="80"
+                Height="83"
+                HorizontalAlignment="Left"
+                Command="{Binding ToggleDownloadCommand}"
+                Content="{Binding DownloadButtonContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                Style="{Binding DownloadButtonStyleKey, Converter={StaticResource StringKeyToStyleConverter}}"
+                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}" />
 
-            </Button>
+            <Button
+                x:Name="BtnChooseBrowser"
+                x:Uid="Select"
+                Canvas.Left="0"
+                Canvas.Top="0"
+                Width="80"
+                Height="83"
+                Command="{Binding ChooseBrowserCommand}"
+                FontSize="11"
+                Style="{StaticResource ButtonChooseBrowser}"
+                Visibility="{Binding IsChooseButtonVisible, Converter={StaticResource BoolToVisConverter}}" />
 
-            <Button x:Name              ="BtnChooseBrowser"
-                    Command             ="{Binding ChooseBrowserCommand}"
-                    Style               ="{StaticResource ButtonChooseBrowser}"
-                    Visibility          ="{Binding IsChooseButtonVisible, Converter={StaticResource BoolToVisConverter}}"
-                    x:Uid="Select"
-                    FontSize            ="11"
-                    Width               ="80"
-                    Height              ="83"
-                    Canvas.Top          ="0"
-                    Canvas.Left         ="0"/>
+            <Image
+                Name="uc_browser_image"
+                Canvas.Left="85"
+                Canvas.Top="5"
+                Width="{Binding ImageSizeWidthBrowser}"
+                Height="{Binding ImageSizeHeightBrowser}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Source="{Binding HeaderImageBrowser}" />
 
-            <Image Name                            ="uc_browser_image"
-                   Source                          ="{Binding HeaderImageBrowser}"
-                   Height                          ="{Binding ImageSizeHeightBrowser}"
-                   Width                           ="{Binding ImageSizeWidthBrowser}"
-                   Canvas.Left                     ="85"
-                   Canvas.Top                      ="5"
-                   HorizontalAlignment             ="Left"
-                   VerticalAlignment               ="Center"/>
-
-            <TextBlock x:Name               ="tbl_Browser_name"
-                       Foreground           ="{ThemeResource FontColor_1}"                         
-                       TextWrapping         ="Wrap"
-                       Text                 ="{Binding HeaderTitleBrowser}"
-                       Canvas.Left          ="122"
-                       Canvas.Top           ="6"
-                       FontSize             ="16" 
-                       HorizontalAlignment  ="Left"
-                       VerticalAlignment    ="Center"/>
+            <TextBlock
+                x:Name="tbl_Browser_name"
+                Canvas.Left="122"
+                Canvas.Top="6"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="16"
+                Foreground="{ThemeResource FontColor_1}"
+                Text="{Binding HeaderTitleBrowser}"
+                TextWrapping="Wrap" />
 
 
-            
-            <TextBlock x:Name       ="tbl_BrowserVersion"
-                       Foreground   ="{ThemeResource FontColor_1}"
-                       Canvas.Left  ="86"
-                       TextWrapping ="Wrap"
-                       Text         ="{Binding BrowserVersionText}"
-                       Canvas.Top   ="57"
-                       FontSize     ="14"/>
 
-                <TextBlock x:Name       ="tbl_BrowserExist"
-                           Canvas.Left  ="234"
-                           TextWrapping ="Wrap"
-                           Text         ="{Binding BrowserExist}"
-                           Foreground   ="{Binding BrowserExistTextForeground}"
-                           FontSize     ="25"
-                           Canvas.Top   ="-1"/>
+            <TextBlock
+                x:Name="tbl_BrowserVersion"
+                Canvas.Left="86"
+                Canvas.Top="57"
+                FontSize="14"
+                Foreground="{ThemeResource FontColor_1}"
+                Text="{Binding BrowserVersionText}"
+                TextWrapping="Wrap" />
 
-            <ProgressBar x:Name="progressBarDownload"
-                         Value="{Binding DownloadProgressValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                         Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}"
-                         Background="Black"
-                         Height="14" Width="168"
-                         Canvas.Left="85"
-                         Canvas.Top="41"/>
+            <TextBlock
+                x:Name="tbl_BrowserExist"
+                Canvas.Left="234"
+                Canvas.Top="-1"
+                FontSize="25"
+                Foreground="{Binding BrowserExistTextForeground}"
+                Text="{Binding BrowserExist}"
+                TextWrapping="Wrap" />
 
-            <TextBlock x:Name="tbl_DownloadSize"
-                       Text="{Binding DownloadSizeText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                       Visibility="{Binding IsDownloadSizeTextVisible, Converter={StaticResource BoolToVisConverter}}"
-                       Canvas.Left="86" Canvas.Top="57" FontSize="14" Foreground="{ThemeResource FontColor_1}"/>
+            <ProgressBar
+                x:Name="progressBarDownload"
+                Canvas.Left="85"
+                Canvas.Top="41"
+                Width="168"
+                Height="14"
+                Background="Black"
+                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}"
+                Value="{Binding DownloadProgressValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                x:Name="tbl_DownloadSize"
+                Canvas.Left="86"
+                Canvas.Top="57"
+                FontSize="14"
+                Foreground="{ThemeResource FontColor_1}"
+                Text="{Binding DownloadSizeText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{Binding IsDownloadSizeTextVisible, Converter={StaticResource BoolToVisConverter}}" />
 
         </Canvas>
 

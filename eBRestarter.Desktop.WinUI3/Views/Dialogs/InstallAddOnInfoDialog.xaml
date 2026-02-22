@@ -1,69 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentDialog
     x:Class="eBRestarter.Desktop.WinUI3.Views.Dialogs.InstallAddOnInfoDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
     x:Uid="AddOnInfoDialog"
     CloseButtonText="Schließen"
     DefaultButton="Close"
+    RequestedTheme="Dark"
     Style="{StaticResource DefaultContentDialogStyle}"
-    RequestedTheme="Dark">
+    mc:Ignorable="d">
 
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            
-            <StackPanel Spacing="15"
-                        MaxWidth="500">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+
+            <StackPanel MaxWidth="500" Spacing="15">
 
                 <StackPanel Spacing="8">
-                    
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="10">
-                        
-                        <FontIcon Glyph="&#xE946;"
-                                  FontSize="20"
-                                  Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"/>
-                        
-                        <TextBlock x:Uid="AddOnInfo_HeaderMain"
-                                   Text="Info zum eBesucher Add-on"
-                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+
+                        <FontIcon
+                            FontSize="20"
+                            Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
+                            Glyph="&#xE946;" />
+
+                        <TextBlock
+                            x:Uid="AddOnInfo_HeaderMain"
+                            Style="{StaticResource SubtitleTextBlockStyle}"
+                            Text="Info zum eBesucher Add-on" />
                     </StackPanel>
 
-                    <TextBlock x:Uid="AddOnInfo_BodyMain"
-                               Text="Du musst zwingend das eBesucher Add-on installieren..."
-                               TextWrapping="Wrap"
-                               Opacity="0.8"/>
+                    <TextBlock
+                        x:Uid="AddOnInfo_BodyMain"
+                        Opacity="0.8"
+                        Text="Du musst zwingend das eBesucher Add-on installieren..."
+                        TextWrapping="Wrap" />
                 </StackPanel>
 
-                <MenuFlyoutSeparator/>
+                <MenuFlyoutSeparator />
 
                 <StackPanel Spacing="8">
-                    
-                    <TextBlock x:Uid="AddOnInfo_HeaderSettings"
-                               Text="Add-on Einstellungen"
-                               Style="{StaticResource SubtitleTextBlockStyle}"/>
 
-                    <TextBlock x:Uid="AddOnInfo_BodySettings"
-                               Text="Wenn du magst, setzte ein Häkchen bei der Privatsphäre..."
-                               TextWrapping="Wrap"
-                               Opacity="0.8"/>
+                    <TextBlock
+                        x:Uid="AddOnInfo_HeaderSettings"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        Text="Add-on Einstellungen" />
 
-                    <Image Source="ms-appx:///Resources/Visuals/Images/EVisitorAddOnInfo.png"
-                           HorizontalAlignment="Center"
-                           Margin="0,10,0,0"
-                           Stretch="Uniform"
-                           MaxHeight="330"/>
-                    
+                    <TextBlock
+                        x:Uid="AddOnInfo_BodySettings"
+                        Opacity="0.8"
+                        Text="Wenn du magst, setzte ein Häkchen bei der Privatsphäre..."
+                        TextWrapping="Wrap" />
+
+                    <Image
+                        MaxHeight="330"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Center"
+                        Source="ms-appx:///Resources/Visuals/Images/EVisitorAddOnInfo.png"
+                        Stretch="Uniform" />
+
                 </StackPanel>
 
             </StackPanel>
-            
+
         </ScrollViewer>
-        
+
     </Grid>
-    
+
 </ContentDialog>

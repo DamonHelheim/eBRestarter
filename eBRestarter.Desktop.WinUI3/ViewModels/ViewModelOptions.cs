@@ -13,8 +13,8 @@ using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.Constants;
 using Microsoft.Windows.AppLifecycle;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -115,13 +115,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _restartCalculationService = restartCalculationService;
             _credentialValidationService = credentialValidationService;
 
-            ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>(
-                [.. localizationService.GetComputerRestartOptions()]
-            );
+            ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>([.. localizationService.GetComputerRestartOptions()]);
 
-            LanguageList = new ReadOnlyCollection<LanguageOption>(
-                [.. localizationService.GetAvailableLanguages()]
-            );
+            LanguageList = new ReadOnlyCollection<LanguageOption>([.. localizationService.GetAvailableLanguages()]);
 
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
@@ -165,9 +161,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     UpdateMessage = string.Format(messageFormat, updateInfo.LatestVersion);
                 }
             }
-            catch (Exception ex)
-            {
-            }
+            catch (Exception ex) { Debug.WriteLine(ex); }
         }
 
         /// <summary>
@@ -178,6 +172,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task PerformUpdate()
         {
             var updateInfo = await _updateService.CheckForUpdateAsync();
+
             if (updateInfo.IsUpdateAvailable)
             {
                 await _updateService.DownloadAndInstallAsync(updateInfo);
@@ -229,6 +224,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task RemoveAPICredentials()
         {
             var currentConfig = _eVisitorConfigService.LoadConfig();
+
             var newConfig = currentConfig with
             {
                 Settings = currentConfig.Settings with
@@ -237,6 +233,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     ApiKey = string.Empty
                 }
             };
+
             _eVisitorConfigService.SaveConfig(newConfig);
 
             await _dialogService.ShowMessageAsync(
@@ -264,6 +261,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (dialogResult.IsDeactivateAction)
                 {
                     _autoLogonService.DisableAutoLogon();
+
                     await _dialogService.ShowMessageAsync("Info",
                         _localizationService.GetString("Options_AutoLogon_Deactivated"));
                 }
@@ -279,10 +277,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     {
                         await _dialogService.ShowMessageAsync("Fehler",
                             _localizationService.GetString("Options_AutoLogon_ValidationError"));
+
                         return;
                     }
 
                     _autoLogonService.EnableAutoLogon(user, domain, pass);
+
                     await _dialogService.ShowMessageAsync("Erfolg",
                         _localizationService.GetString("Options_AutoLogon_Success"));
                 }
@@ -309,6 +309,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
         {
             _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
+
             RecalculateNextRestartDate();
             UpdateRestartUiState();
             SaveSettings();
@@ -317,6 +318,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         partial void OnComputerRestartClockTimeChanged(int value)
         {
             int clampedValue = Math.Clamp(value, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
+
             if (value != clampedValue)
             {
                 ComputerRestartClockTime = clampedValue;
@@ -326,6 +328,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             if (_currentConfig.Computer.RestartClockTime != value)
             {
                 _currentConfig.Computer.RestartClockTime = value;
+
                 RecalculateNextRestartDate();
                 UpdateRestartUiState();
                 SaveSettings();
@@ -378,6 +381,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             var config = _eVisitorConfigService.LoadConfig();
             var newConfig = config with { Settings = config.Settings with { Theme = theme } };
+
             _eVisitorConfigService.SaveConfig(newConfig);
         }
 
@@ -385,6 +389,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task InitializeAsync()
         {
             _isInitializing = true;
+
             try
             {
                 StartWithWindows = await _os.WindowsStartupManagerService.IsAutoStartEnabledAsync();
@@ -431,15 +436,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             int days = _currentConfig.Computer.ComputerRestartIntervalDays;
             int hours = _currentConfig.Computer.RestartClockTime;
+
             _currentConfig.Computer.NextRestartDate = _restartCalculationService.GetNextRestartDate(days, hours);
         }
 
         private async void ToggleAutoStartAsync(bool enable)
         {
             if (enable)
+            {
                 await _os.WindowsStartupManagerService.EnableAutoStartAsync();
-            else
+            }
+            else {
+
                 await _os.WindowsStartupManagerService.DisableAutoStartAsync();
+            }
 
             _currentConfig.Settings.StartWithWindows = enable;
             SaveSettings();

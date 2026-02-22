@@ -22,4 +22,8 @@
     <ProjectReference Include="..\eBRestarter.Core\eBRestarter.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
 </Project>

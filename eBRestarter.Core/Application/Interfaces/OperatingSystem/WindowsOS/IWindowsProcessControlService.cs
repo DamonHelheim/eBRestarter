@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
-namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS
+public interface IWindowsProcessControlService
 {
-    public interface IWindowsProcessControlService
-    {
-        void StartMsiFile(string msiFilePath);
-        void StartExecutable(string exeFilePath);
-        Task StartExecutableAsync(string exeFilePath);
+    void StartMsiFile(string msiFilePath);
+    void StartExecutable(string exeFilePath);
+    Task StartExecutableAsync(string exeFilePath);
 
-        /// <summary>
-        /// Öffnet den Windows Explorer an einem bestimmten Pfad.
-        /// </summary>
-        void OpenExplorer(string folderPath);
+    /// <summary>
+    /// Öffnet den Windows Explorer an einem bestimmten Pfad.
+    /// </summary>
+    void OpenExplorer(string folderPath);
 
-        void OpenUrlInBrowser(string exeFilePath, string arguments);
-        void CloseApplication(string processName);
-        void CloseAllOpenPrograms();
-        void ShutdownComputer();
-        bool IsProcessAlive(string processName);
-    }
+    void OpenUrlInBrowser(string exeFilePath, string arguments);
+    void CloseApplication(string processName);
+    void CloseAllOpenPrograms();
+    void ShutdownComputer();
+    bool IsProcessAlive(string processName);
 }

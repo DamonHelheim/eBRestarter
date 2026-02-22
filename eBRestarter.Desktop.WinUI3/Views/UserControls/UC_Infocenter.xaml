@@ -1,51 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_Infocenter"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="DP_MainWindows_Top"
-      Background="{ThemeResource MenuBackgroundColor_2}"
-      CornerRadius="8,0,0,0">
+    <Grid
+        x:Name="DP_MainWindows_Top"
+        Background="{ThemeResource MenuBackgroundColor_2}"
+        CornerRadius="8,0,0,0">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0"
-                    Background="{ThemeResource MenuBackgroundColor}"
-                    Orientation="Horizontal"
-                    Height="35"
-                    Margin="5"
-                    CornerRadius="8"
-                    VerticalAlignment="Center"
-                    Spacing="10"
-                    Padding="10,0,0,0">
+        <StackPanel
+            Grid.Row="0"
+            Height="35"
+            Margin="5"
+            Padding="10,0,0,0"
+            VerticalAlignment="Center"
+            Background="{ThemeResource MenuBackgroundColor}"
+            CornerRadius="8"
+            Orientation="Horizontal"
+            Spacing="10">
 
-            <FontIcon Glyph="&#xE946;"
-                      Foreground="{ThemeResource FontColor_1}"
-                      Margin="0,0,0,5"
-                      FontSize="24"
-                      VerticalAlignment="Bottom"/>
+            <FontIcon
+                Margin="0,0,0,5"
+                VerticalAlignment="Bottom"
+                FontSize="24"
+                Foreground="{ThemeResource FontColor_1}"
+                Glyph="&#xE946;" />
 
-            <TextBlock x:Name="tbl_MainWindowTitle"
-                       x:Uid="Infocenter_Title"
-                       Foreground="{ThemeResource FontColor_1}"
-                       Margin="0,7,0,9"
-                       VerticalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Bold"/>
+            <TextBlock
+                x:Name="tbl_MainWindowTitle"
+                x:Uid="Infocenter_Title"
+                Margin="0,7,0,9"
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="{ThemeResource FontColor_1}" />
 
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1"
-                  HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
 
             <Grid>
 
@@ -55,69 +60,76 @@
                     <RowDefinition Height="160" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Left"
-                            Width="995">
+                <StackPanel
+                    Grid.Row="0"
+                    Width="995"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
 
-                    <local:UC_InformationsCard x:Uid="Infocenter_CardHardware"
-                                               TitleForeground="{ThemeResource FontColor_1}"
-                                               HeaderImage="{ThemeResource WorkstationIcon}"
-                                               ImageHeight="40"
-                                               ImageWidth="40"
-                                               BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
-                                               InformationRow1="{Binding ProcessorText, Mode=OneWay}"
-                                               InformationRow2="{Binding GraphicsText,  Mode=OneWay}"
-                                               InformationRow3="{Binding RamText,       Mode=OneWay}"
-                                               InformationRowForeground="{ThemeResource FontColor_1}"
-                                               Width="480"
-                                               Margin="25,0,10,0" />
+                    <local:UC_InformationsCard
+                        x:Uid="Infocenter_CardHardware"
+                        Width="480"
+                        Margin="25,0,10,0"
+                        BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
+                        HeaderImage="{ThemeResource WorkstationIcon}"
+                        ImageHeight="40"
+                        ImageWidth="40"
+                        InformationRow1="{Binding ProcessorText, Mode=OneWay}"
+                        InformationRow2="{Binding GraphicsText, Mode=OneWay}"
+                        InformationRow3="{Binding RamText, Mode=OneWay}"
+                        InformationRowForeground="{ThemeResource FontColor_1}"
+                        TitleForeground="{ThemeResource FontColor_1}" />
 
-                    <local:UC_InformationsCard x:Uid="Infocenter_CardWindows"
-                                               TitleForeground="{ThemeResource FontColor_1}"
-                                               HeaderImage="{ThemeResource WindowsIcon}"
-                                               ImageHeight="25"
-                                               ImageWidth="25"
-                                               BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
-                                               InformationRow1="{Binding  OsEditionText, Mode=OneWay}"
-                                               InformationRow2="{Binding  OsVersionText, Mode=OneWay}"
-                                               InformationRow3="{Binding  OsBuildText,   Mode=OneWay}"
-                                               InformationRowForeground="{ThemeResource FontColor_1}"
-                                               Width="480"/>
+                    <local:UC_InformationsCard
+                        x:Uid="Infocenter_CardWindows"
+                        Width="480"
+                        BackGroundColor="{ThemeResource DashletBackgroundColor_5}"
+                        HeaderImage="{ThemeResource WindowsIcon}"
+                        ImageHeight="25"
+                        ImageWidth="25"
+                        InformationRow1="{Binding OsEditionText, Mode=OneWay}"
+                        InformationRow2="{Binding OsVersionText, Mode=OneWay}"
+                        InformationRow3="{Binding OsBuildText, Mode=OneWay}"
+                        InformationRowForeground="{ThemeResource FontColor_1}"
+                        TitleForeground="{ThemeResource FontColor_1}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="1"
-                        Orientation="Horizontal">
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
 
-                    <local:UC_InformationCardUrls Width="970"
-                                      Margin="25,0,10,0" />
+                    <local:UC_InformationCardUrls Width="970" Margin="25,0,10,0" />
+
                 </StackPanel>
 
-                <StackPanel Grid.Row="2"
-                            Orientation="Vertical"
-                            HorizontalAlignment="Left"
-                            Margin="25,10,0,0">
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="25,10,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Vertical">
 
-                    <Button x:Name="Btn_about"
-                            Style="{ThemeResource AccentButtonStyle}"
-                            Command="{Binding ShowAboutInfoCommand}"
-                            Width="968"
-                            Height="63"
-                            Margin="0">
+                    <Button
+                        x:Name="Btn_about"
+                        Width="968"
+                        Height="63"
+                        Margin="0"
+                        Command="{Binding ShowAboutInfoCommand}"
+                        Style="{ThemeResource AccentButtonStyle}">
 
-                        <StackPanel Orientation="Horizontal"
-                                    VerticalAlignment="Center"
-                                    Margin="-5,0,0,0">
+                        <StackPanel
+                            Margin="-5,0,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
 
-                            <FontIcon Glyph="&#xE946;"
-                                      FontSize="20"
-                                      Width="35"
-                                      Height="30" />
+                            <FontIcon
+                                Width="35"
+                                Height="30"
+                                FontSize="20"
+                                Glyph="&#xE946;" />
 
-                            <TextBlock x:Uid="Infocenter_BtnAbout"
-                                       FontSize="16"
-                                       Margin="10,0,0,0"
-                                       VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Uid="Infocenter_BtnAbout"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="16" />
 
                         </StackPanel>
 

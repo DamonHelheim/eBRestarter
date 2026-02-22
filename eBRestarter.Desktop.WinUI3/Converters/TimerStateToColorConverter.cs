@@ -2,9 +2,6 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Windows.UI;
 
 namespace eBRestarter.Desktop.WinUI3.Converters
 {

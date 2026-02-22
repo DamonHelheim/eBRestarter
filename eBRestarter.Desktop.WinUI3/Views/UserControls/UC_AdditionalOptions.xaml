@@ -1,100 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_AdditionalOptions"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
     mc:Ignorable="d">
 
-    <Border x:Name="Border_Additional_Options"
+    <Border
+        x:Name="Border_Additional_Options"
+        Padding="10"
         Background="{ThemeResource DashletBackgroundColor_1}"
         BorderThickness="1"
-        CornerRadius="5"
-        Padding="10">
+        CornerRadius="5">
 
         <Grid>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <!-- Header: Icon + Titel -->
+                <!--  Header: Icon + Titel  -->
                 <RowDefinition Height="Auto" />
-                <!-- Hinweis-Text -->
+                <!--  Hinweis-Text  -->
                 <RowDefinition Height="Auto" />
-                <!-- Button 1 -->
+                <!--  Button 1  -->
                 <RowDefinition Height="Auto" />
-                <!-- Button 2 -->
+                <!--  Button 2  -->
                 <RowDefinition Height="Auto" />
-                <!-- Button 3 -->
+                <!--  Button 3  -->
             </Grid.RowDefinitions>
 
 
-            <StackPanel Grid.Row="0"
-                        Orientation="Horizontal"
-                        Margin="0,0,0,8">
+            <StackPanel
+                Grid.Row="0"
+                Margin="0,0,0,8"
+                Orientation="Horizontal">
 
-                <Image x:Name="image_additional_options"
-                       Source="{ThemeResource CirclePlusIcon}"
-                       Height="28"
-                       Width="28"
-                       Margin="0,0,8,0" />
+                <Image
+                    x:Name="image_additional_options"
+                    Width="28"
+                    Height="28"
+                    Margin="0,0,8,0"
+                    Source="{ThemeResource CirclePlusIcon}" />
 
-                <TextBlock x:Name="tbl_AdditionalOptions"
-                           x:Uid="AdditionalOptions"
-                           Foreground="{ThemeResource FontColor_1}"
-                           TextWrapping="Wrap"
-                           Text="Zusatzoptionen"
-                           FontSize="18"
-                           VerticalAlignment="Center" />
-                
+                <TextBlock
+                    x:Name="tbl_AdditionalOptions"
+                    x:Uid="AdditionalOptions"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Text="Zusatzoptionen"
+                    TextWrapping="Wrap" />
+
             </StackPanel>
 
-        <TextBlock Grid.Row="1"
-                   x:Name="tbl_NoBrowserInstalled"
-                   x:Uid="No_Browsers_Installed"
-                   Text="Keine Browser installiert!"
-                   FontSize="16"
-                   Foreground="#FFC70E3F"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,8"
-                   Visibility="{Binding Tbl_NoBrowserInstalledIsVisible}" />
+            <TextBlock
+                x:Name="tbl_NoBrowserInstalled"
+                x:Uid="No_Browsers_Installed"
+                Grid.Row="1"
+                Margin="0,0,0,8"
+                FontSize="16"
+                Foreground="#FFC70E3F"
+                Text="Keine Browser installiert!"
+                TextWrapping="Wrap"
+                Visibility="{Binding Tbl_NoBrowserInstalledIsVisible}" />
 
 
-            <Button Grid.Row="2"
-                    x:Name="BtnDeleteBrowserContent"
-                    x:Uid="Delete_browser_content"
-                    Command="{Binding ShowBrowserDeleteContentCommand}"
-                    Margin="0,4,0,0"
-                    Height="40"
-                    FontSize="16"
-                    HorizontalAlignment="Stretch"
-                    IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
+            <Button
+                x:Name="BtnDeleteBrowserContent"
+                x:Uid="Delete_browser_content"
+                Grid.Row="2"
+                Height="40"
+                Margin="0,4,0,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding ShowBrowserDeleteContentCommand}"
+                FontSize="16"
+                IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
 
-            <Button Grid.Row="3"
-                    x:Name="BtnInstalleBesucherAddOn"
-                    x:Uid="Install_eVisitor_add_on"
-                    Command="{Binding ShowInstallAddOnDialogCommand}"
-                    Margin="0,8,0,0"
-                    Height="40"
-                    FontSize="16"
-                    HorizontalAlignment="Stretch"
-                    IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+            <Button
+                x:Name="BtnInstalleBesucherAddOn"
+                x:Uid="Install_eVisitor_add_on"
+                Grid.Row="3"
+                Height="40"
+                Margin="0,8,0,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding ShowInstallAddOnDialogCommand}"
+                FontSize="16"
+                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
 
-        <Button Grid.Row="4"
+            <Button
                 x:Name="BtnInfoeVisitorAddOn"
                 x:Uid="Important_information_about_the_add_on"
-                Command="{Binding ShowInstallAddOnInfoDialogCommand}"
-                Margin="0,8,0,0"
+                Grid.Row="4"
                 Height="30"
-                FontSize="12"
+                Margin="0,8,0,0"
                 HorizontalAlignment="Stretch"
+                Command="{Binding ShowInstallAddOnInfoDialogCommand}"
+                FontSize="12"
                 IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
 
         </Grid>
-            
+
     </Border>
 
 </UserControl>

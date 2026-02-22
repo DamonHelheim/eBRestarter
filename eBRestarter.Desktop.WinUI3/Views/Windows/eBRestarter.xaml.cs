@@ -42,7 +42,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private readonly INavigationService _navigationService;
 
-        private readonly IAppVersionInfoService _iAppVersionInfoService;
+        private readonly IAppVersionInfoService? _iAppVersionInfoService;
 
         /// <summary>
         /// Die Standard-Animation f�r Seiten�berg�nge (hier: "DrillIn" Effekt).
@@ -163,7 +163,7 @@ namespace eBRestarter.Desktop.WinUI3
                 // Es �bergibt nur den Befehl "Navigiere zu Tag X" an den Service.
                 _navigationService.NavigateTo(
                     tag,
-                    parameter: null,
+                    parameter: null!,
                     transitionInfo: _defaultTransition
                 );
             }

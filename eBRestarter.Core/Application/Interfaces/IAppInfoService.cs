@@ -1,14 +1,9 @@
-﻿using eBRestarter.Core.Domain.Models;
-using eBRestarter.Core.Domain.Models.Records;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using eBRestarter.Core.Domain.Models.Records;
 
-namespace eBRestarter.Core.Application.Interfaces
+namespace eBRestarter.Core.Application.Interfaces;
+
+public interface IAppInfoService
 {
-    public interface IAppInfoService
-    {
-        string GetAppVersion();
-        List<IconCredit> GetIconCredits();
-    }
+    string GetAppVersion();
+    List<IconCredit> GetIconCredits();
 }

@@ -4,10 +4,7 @@ using eBRestarter.Core.Domain.Models;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using RestSharp.Authenticators;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace eBRestarter.Infrastructure.Services.RestSharp
 {

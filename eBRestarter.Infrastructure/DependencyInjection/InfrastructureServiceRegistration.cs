@@ -13,7 +13,6 @@ using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services;
 using eBRestarter.Infrastructure.Services.Authentication;
 using eBRestarter.Infrastructure.Services.Config;
-using eBRestarter.Infrastructure.Services.EBesucher;
 using eBRestarter.Infrastructure.Services.RestSharp;
 using eBRestarter.Infrastructure.Services.Update;
 using eBRestarter.Infrastructure.Services.WindowsOS;
@@ -22,90 +21,86 @@ using eBRestarter.Infrastructure.Wrapper;
 using eBRestarter.Infrastructure.Wrapper.Interface;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace eBRestarter.Infrastructure.DependencyInjection
+namespace eBRestarter.Infrastructure.DependencyInjection;
+
+public static class InfrastructureServiceRegistration
 {
-    public static class InfrastructureServiceRegistration
-    {
-        // =========================================================
-        // 1. PUBLIC & PROTECTED METHODS (API / Extension)
-        // =========================================================
-        #region PublicAndProtectedMethods
+    // =========================================================
+    // 1. PUBLIC & PROTECTED METHODS (API / Extension)
+    // =========================================================
+    #region PublicAndProtectedMethods
 
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddLogging(builder =>
         {
-            services.AddLogging(builder =>
-            {
-                builder.AddDebug();
-            });
+            builder.AddDebug();
+        });
 
 #pragma warning disable CA1416 // Plattformkompatibilität überprüfen
 
-            services.AddTransient<IProcessWrapper, RealProcessWrapper>();
-            services.AddSingleton<IWindowsProcessControlService, WindowsProcessService>();
-            services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
+        services.AddSingleton<IProcessWrapper, RealProcessWrapper>();
+        services.AddSingleton<IWindowsProcessControlService, WindowsProcessService>();
+        services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
 
-            services.AddTransient<IProcessInfoService, ProcessInfoService>();
-            services.AddTransient<IWindowsRegistryService, WindowsRegistryService>();
-            services.AddTransient<IWindowsFileSystemService, WindowsFileSystemService>();
-            services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
+        services.AddSingleton<IProcessInfoService, ProcessInfoService>();
+        services.AddSingleton<IWindowsRegistryService, WindowsRegistryService>();
+        services.AddSingleton<IWindowsFileSystemService, WindowsFileSystemService>();
+        services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
 
-            services.AddTransient<IWindowsAutoLogonService, WindowsAutoLogonService>();
+        services.AddSingleton<IWindowsAutoLogonService, WindowsAutoLogonService>();
 
-            services.AddTransient<IEncryptionService, WindowsEncryptionService>();
+        services.AddSingleton<IEncryptionService, WindowsEncryptionService>();
 
 #pragma warning restore CA1416 // Plattformkompatibilität überprüfen
 
-            services.AddSingleton<WindowsWmiHardwareService>();
+        services.AddSingleton<WindowsWmiHardwareService>();
 
-            services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+        services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
 
-            services.AddSingleton<IOsEditionService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+        services.AddSingleton<IOsEditionService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
 
-            services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
+        services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
 
-            services.AddSingleton<IWindowsNetworkInfoService, WindowsNetworkInfoService>();
+        services.AddSingleton<IWindowsNetworkInfoService, WindowsNetworkInfoService>();
 
-            services.AddTransient<ChromeBrowser>();
-            services.AddTransient<FirefoxBrowser>();
-            services.AddTransient<EdgeBrowser>();
-            services.AddTransient<BraveBrowser>();
-            services.AddTransient<VivaldiBrowser>();
+        services.AddTransient<ChromeBrowser>();
+        services.AddTransient<FirefoxBrowser>();
+        services.AddTransient<EdgeBrowser>();
+        services.AddTransient<BraveBrowser>();
+        services.AddTransient<VivaldiBrowser>();
 
-            services.AddSingleton<IBrowserFactory, BrowserFactory>();
+        services.AddSingleton<IBrowserFactory, BrowserFactory>();
 
-            services.AddSingleton<IBrowserService, WindowsBrowserService>();
+        services.AddSingleton<IBrowserService, WindowsBrowserService>();
 
-            services.AddSingleton<IBrowserDownloadService, HttpClientDownloadService>();
+        services.AddSingleton<IBrowserDownloadService, HttpClientDownloadService>();
 
-            services.AddTransient<IRestClientService, RestSharpClientService>();
+        services.AddSingleton<IRestClientService, RestSharpClientService>();
 
-            services.AddSingleton<IPathService, WindowsPathService>();
+        services.AddSingleton<IPathService, WindowsPathService>();
 
-            services.AddSingleton<IEVisitorConfigService, EVisitorConfigService>();
+        services.AddSingleton<IEVisitorConfigService, EVisitorConfigService>();
 
-            services.AddSingleton<IAppInfoService, AppInfoService>();
+        services.AddSingleton<IAppInfoService, AppInfoService>();
 
-            services.AddSingleton<IFileDeletionService, FileDeletionService>();
+        services.AddSingleton<IFileDeletionService, FileDeletionService>();
 
-            services.AddSingleton<IApiAuthenticationService, EVisitorApiService>();
+        services.AddSingleton<IApiAuthenticationService, EVisitorApiService>();
 
-            services.AddSingleton<ICredentialStore, JsonCredentialStore>();
+        services.AddSingleton<ICredentialStore, JsonCredentialStore>();
 
-            services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
+        services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
 
-            services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
+        services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
 
-            services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
+        services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
 
-            services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();
+        services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();
 
-            return services;
-        }
-
-        #endregion
+        return services;
     }
+
+    #endregion
 }

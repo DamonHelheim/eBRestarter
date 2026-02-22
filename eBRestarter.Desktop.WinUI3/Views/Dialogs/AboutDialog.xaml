@@ -1,41 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentDialog
     x:Class="eBRestarter.Desktop.WinUI3.Views.Dialogs.AboutDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.Dialogs"
-    xmlns:models="using:eBRestarter.Core.Domain.Models.Records"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext="{d:DesignInstance Type=VM:ViewModelAbout}"
-    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:eBRestarter.Core.Domain.Models.Records"
     x:Uid="AboutDialog"
-    DefaultButton="Close">
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelAbout}"
+    DefaultButton="Close"
+    mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="10">
 
-            <TextBlock x:Uid="AboutDialog_VersionHeader"
-                       HorizontalAlignment="Center" FontWeight="Bold" FontSize="16"/>
+            <TextBlock
+                x:Uid="AboutDialog_VersionHeader"
+                HorizontalAlignment="Center"
+                FontSize="16"
+                FontWeight="Bold" />
 
-            <TextBlock Text="{Binding AppVersion}" 
-                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <TextBlock
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                Text="{Binding AppVersion}" />
 
-            <TextBlock x:Uid="AboutDialog_CreditsHeader"
-                       HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
+            <TextBlock
+                x:Uid="AboutDialog_CreditsHeader"
+                HorizontalAlignment="Center"
+                FontSize="18"
+                FontWeight="Bold" />
 
-            <TextBlock x:Uid="AboutDialog_DevRole" 
-                       HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock
+                x:Uid="AboutDialog_DevRole"
+                HorizontalAlignment="Center"
+                FontWeight="Bold" />
 
-            <TextBlock x:Uid="AboutDialog_DevName" 
-                       HorizontalAlignment="Center"/>
+            <TextBlock x:Uid="AboutDialog_DevName" HorizontalAlignment="Center" />
 
-            <TextBlock x:Uid="AboutDialog_AssetsHeader"
-                       HorizontalAlignment="Center" 
-                       FontWeight="Bold" 
-                       FontSize="16" 
-                       Margin="0,20,0,10"/>
+            <TextBlock
+                x:Uid="AboutDialog_AssetsHeader"
+                Margin="0,20,0,10"
+                HorizontalAlignment="Center"
+                FontSize="16"
+                FontWeight="Bold" />
 
             <ItemsControl ItemsSource="{Binding IconCredits}">
 
@@ -47,28 +57,32 @@
 
                             <Grid.ColumnDefinitions>
 
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
 
                             </Grid.ColumnDefinitions>
 
-                            <Image Source="{x:Bind IconImageSource}" 
-                                   Width="32" Height="32" 
-                                   Margin="0,0,10,0" 
-                                   VerticalAlignment="Center"/>
+                            <Image
+                                Width="32"
+                                Height="32"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                Source="{x:Bind IconImageSource}" />
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
 
-                                <TextBlock Text="{x:Bind IconCreator}" 
-                                           FontWeight="SemiBold" 
-                                           TextWrapping="Wrap"/>
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind IconCreator}"
+                                    TextWrapping="Wrap" />
 
-                                <HyperlinkButton Content="{x:Bind IconHyperLink}" 
-                                                 NavigateUri="{x:Bind IconHyperLinkContent}"
-                                                 FontSize="12"
-                                                 Padding="0"
-                                                 HorizontalAlignment="Left"
-                                                 Margin="0"/>
+                                <HyperlinkButton
+                                    Margin="0"
+                                    Padding="0"
+                                    HorizontalAlignment="Left"
+                                    Content="{x:Bind IconHyperLink}"
+                                    FontSize="12"
+                                    NavigateUri="{x:Bind IconHyperLinkContent}" />
                             </StackPanel>
 
                         </Grid>

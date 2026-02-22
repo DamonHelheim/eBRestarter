@@ -1,12 +1,9 @@
 ﻿using eBRestarter.Core.Domain.Models.Records;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
-namespace eBRestarter.Core.Application.Contstants
-{
-    public class LanguageSelectionConstants
+namespace eBRestarter.Core.Application.Contstants;
+
+    public static class LanguageSelectionConstants
     {
         public static readonly ReadOnlyCollection<LanguageOption> Options = new(
         [
@@ -14,4 +11,3 @@ namespace eBRestarter.Core.Application.Contstants
             new("Englisch", 1)
         ]);
     }
-}

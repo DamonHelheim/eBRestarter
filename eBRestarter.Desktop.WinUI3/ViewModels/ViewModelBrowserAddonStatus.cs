@@ -2,11 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.UI.Dispatching;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -114,7 +110,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     InstallStatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
                     IsButtonEnabled = true;
 
-                    bool hasAddon = _browser.IsExtensionInstalled(null);
+                    bool hasAddon = _browser.IsExtensionInstalled(null!);
 
                     if (hasAddon)
                     {

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Domain.Enums;
 
-namespace eBRestarter.Core.Domain.Enums
+public enum BrowserType
 {
-    public enum BrowserType
-    {
-        //SRWare Iron,       
-        //Epic Privacy Browser
-        Brave,
-        Chrome,
-        Edge,
-        Firefox,
-        Vivaldi
-    }
+    //SRWare Iron,
+    //Epic Privacy Browser
+    Brave,
+    Chrome,
+    Edge,
+    Firefox,
+    Vivaldi
 }

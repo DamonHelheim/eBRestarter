@@ -1,25 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
-<UserControl x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_RestartAndRuntimeOptions"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-             xmlns:behaviors="using:eBRestarter.Desktop.WinUI3.Behaviors"
-             xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-             d:DataContext  ="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
-             mc:Ignorable="d">
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_RestartAndRuntimeOptions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:behaviors="using:eBRestarter.Desktop.WinUI3.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
+    mc:Ignorable="d">
 
-    <Border x:Name="Border_Restart_and_Runtime_Options"
-            Background="{ThemeResource DashletBackgroundColor_1}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Padding="12">
+    <Border
+        x:Name="Border_Restart_and_Runtime_Options"
+        Padding="12"
+        Background="{ThemeResource DashletBackgroundColor_1}"
+        BorderThickness="1"
+        CornerRadius="8">
 
         <Grid>
 
-            <!-- 2 Spalten: links Text/Slider, rechts Wert + Einheit -->
+            <!--  2 Spalten: links Text/Slider, rechts Wert + Einheit  -->
             <Grid.ColumnDefinitions>
 
                 <ColumnDefinition Width="*" />
@@ -28,71 +30,77 @@
 
             </Grid.ColumnDefinitions>
 
-            <!-- Zeilen dynamisch nach Inhalt -->
+            <!--  Zeilen dynamisch nach Inhalt  -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Header -->
                 <RowDefinition Height="Auto" />
-                <!-- Label 1 -->
+                <!--  Header  -->
                 <RowDefinition Height="Auto" />
-                <!-- Slider 1 -->
+                <!--  Label 1  -->
                 <RowDefinition Height="Auto" />
-                <!-- Label 2 -->
+                <!--  Slider 1  -->
                 <RowDefinition Height="Auto" />
-                <!-- Slider 2 -->
+                <!--  Label 2  -->
+                <RowDefinition Height="Auto" />
+                <!--  Slider 2  -->
             </Grid.RowDefinitions>
 
-            <!-- HEADER -->
-            <StackPanel Grid.Row="0"
-                        Grid.ColumnSpan="2"
-                        Orientation="Horizontal"
-                        Margin="0,0,0,8">
+            <!--  HEADER  -->
+            <StackPanel
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,8"
+                Orientation="Horizontal">
 
-                <Image x:Name="image_restart_and_runtime_options"
-                       Source="{ThemeResource ClockRotateIcon}"
-                       Margin="0,2,0,0"
-                       Height="25"
-                       Width="30" />
+                <Image
+                    x:Name="image_restart_and_runtime_options"
+                    Width="30"
+                    Height="25"
+                    Margin="0,2,0,0"
+                    Source="{ThemeResource ClockRotateIcon}" />
 
-                <TextBlock x:Name="tbl_Restart_and_Runtime_Option"
-                           x:Uid="Restart_And_Runtime_Options"
-                           Foreground="{ThemeResource FontColor_1}"
-                           Margin="8,0,0,0"
-                           FontSize="18"
-                           VerticalAlignment="Center"/>
+                <TextBlock
+                    x:Name="tbl_Restart_and_Runtime_Option"
+                    x:Uid="Restart_And_Runtime_Options"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{ThemeResource FontColor_1}" />
 
             </StackPanel>
 
-            <!-- LABEL: Wartezeit bis der Browser wieder startet -->
-            <TextBlock Grid.Row="1"
-                       Grid.ColumnSpan="2"
-                       x:Name="Tbl_waiting_time_until_the_browser_starts"
-                       x:Uid="Waiting_time_until_the_browser_restarts"
-                       Foreground="{ThemeResource FontColor_1}"
-                       Margin="0,4,0,10"
-                       FontSize="15" />
+            <!--  LABEL: Wartezeit bis der Browser wieder startet  -->
+            <TextBlock
+                x:Name="Tbl_waiting_time_until_the_browser_starts"
+                x:Uid="Waiting_time_until_the_browser_restarts"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="0,4,0,10"
+                FontSize="15"
+                Foreground="{ThemeResource FontColor_1}" />
 
-            <!-- SLIDER + WERT (Sekunden) -->
-            <Slider Grid.Row="2"
-                    Grid.Column="0"                       
-                    x:Name="SliderBrowserWaitingTimeToStart"
-                    Minimum="{Binding RuntimePauseSecondsMin, Mode=OneTime}"
-                    Maximum="{Binding RuntimePauseSecondsMax, Mode=OneTime}"
-                    Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Margin="0,4,12,5"
-                    Height="30"
-                    Width="115"
-                    Background="Black"
-                    Foreground="#FF00D4BC" 
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Left"/>
+            <!--  SLIDER + WERT (Sekunden)  -->
+            <Slider
+                x:Name="SliderBrowserWaitingTimeToStart"
+                Grid.Row="2"
+                Grid.Column="0"
+                Width="115"
+                Height="30"
+                Margin="0,4,12,5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Stretch"
+                Background="Black"
+                Foreground="#FF00D4BC"
+                Maximum="{Binding RuntimePauseSecondsMax, Mode=OneTime}"
+                Minimum="{Binding RuntimePauseSecondsMin, Mode=OneTime}"
+                Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <StackPanel Grid.Row="2"
-                        Grid.Column="1"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center">
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
 
-                <!--<TextBox x:Name="TxtB_Browser_Waiting_Time_To_Start"                      
+                <!--<TextBox x:Name="TxtB_Browser_Waiting_Time_To_Start"
                          MinWidth="50"
                          MaxWidth="70"
                          Margin="0,0,0,0"
@@ -105,60 +113,65 @@
                          Text="{Binding RestMinutes, Mode=TwoWay, UpdateSourceTrigger=LostFocus}">
 
                     <interactivity:Interaction.Behaviors>
-                        
+
                         <behaviors:TextBoxNumericOnlyBehavior />
-                        
+
                     </interactivity:Interaction.Behaviors>
-                    
+
                 </TextBox>-->
 
-                <NumberBox Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                           Width="150"
-                           Minimum="20"
-                           Maximum="60"
-                           VerticalAlignment="Stretch"
-                           HorizontalAlignment="Left"
-                           Foreground="{ThemeResource FontColor_1}"
-                           BorderBrush="{ThemeResource FontColor_1}"
-                           SpinButtonPlacementMode="Inline"
-                           SmallChange="1" />
+                <NumberBox
+                    Width="150"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource FontColor_1}"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Maximum="60"
+                    Minimum="20"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Inline"
+                    Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
-                <TextBlock x:Name="tbl_restart_and_runtime_options_s"
-                           Foreground="{ThemeResource FontColor_1}"
-                           Margin="5,0,0,0"
-                           Text="s"
-                           FontSize="18"
-                           VerticalAlignment="Center"/>
+                <TextBlock
+                    x:Name="tbl_restart_and_runtime_options_s"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Text="s" />
             </StackPanel>
 
-            <!-- LABEL: Browserlaufzeit -->
-            <TextBlock Grid.Row="3"
-                       Grid.ColumnSpan="2"                      
-                       x:Name="Tbl_set_your_browser_runtime"
-                       x:Uid="Determine_your_browser_runtime_here"
-                       Foreground="{ThemeResource FontColor_1}"
-                       Margin="0,12,0,10"
-                       FontSize="15"/>
+            <!--  LABEL: Browserlaufzeit  -->
+            <TextBlock
+                x:Name="Tbl_set_your_browser_runtime"
+                x:Uid="Determine_your_browser_runtime_here"
+                Grid.Row="3"
+                Grid.ColumnSpan="2"
+                Margin="0,12,0,10"
+                FontSize="15"
+                Foreground="{ThemeResource FontColor_1}" />
 
-            <!-- SLIDER + WERT (Stunden) -->
-            <Slider Grid.Row="4"
-                    Grid.Column="0"
-                    x:Name="SliderBrowserRuntime"
-                    Minimum="{Binding BrowserRuntimeHoursMin, Mode=OneTime}"
-                    Maximum="{Binding BrowserRuntimeHoursMax, Mode=OneTime}"
-                    Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Margin="0,4,12,10"
-                    Height="30"
-                    Width="115"
-                    Background="Black"
-                    Foreground="#FF00D4BC" 
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"/>
+            <!--  SLIDER + WERT (Stunden)  -->
+            <Slider
+                x:Name="SliderBrowserRuntime"
+                Grid.Row="4"
+                Grid.Column="0"
+                Width="115"
+                Height="30"
+                Margin="0,4,12,10"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Black"
+                Foreground="#FF00D4BC"
+                Maximum="{Binding BrowserRuntimeHoursMax, Mode=OneTime}"
+                Minimum="{Binding BrowserRuntimeHoursMin, Mode=OneTime}"
+                Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <StackPanel Grid.Row="4"
-                        Grid.Column="1"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center">
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
 
                 <!--<TextBox x:Name="Txt_Browser_Runtime"
                          MinWidth="50"
@@ -179,24 +192,26 @@
 
                 </TextBox>-->
 
-                <NumberBox Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                           Width="150"
-                           Minimum="1"
-                           Maximum="12"
-                           VerticalAlignment="Stretch"
-                           HorizontalAlignment="Left"
-                           Foreground="{ThemeResource FontColor_1}"
-                           BorderBrush="{ThemeResource FontColor_1}"
-                           SpinButtonPlacementMode="Inline"
-                           SmallChange="1" />
+                <NumberBox
+                    Width="150"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
+                    BorderBrush="{ThemeResource FontColor_1}"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Maximum="12"
+                    Minimum="1"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Inline"
+                    Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
-                <TextBlock x:Name="Tbl_restart_and_runtime_options_h"
-                           Foreground="{ThemeResource FontColor_1}"
-                           Margin="5,0,0,0"
-                           Text="h"
-                           FontSize="18"
-                           VerticalAlignment="Center"/>
-                
+                <TextBlock
+                    x:Name="Tbl_restart_and_runtime_options_h"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Text="h" />
+
             </StackPanel>
 
         </Grid>

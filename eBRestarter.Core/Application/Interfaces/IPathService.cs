@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace eBRestarter.Core.Application.Interfaces;
 
-namespace eBRestarter.Core.Application.Interfaces
+public interface IPathService
 {
-    public interface IPathService
-    {
-        string GetAppDataPath();
-        string GetDownloadsPath();
-        string GetConfigFilePath();
-        string GetLogFilePath();
-        // Weitere Pfade bei Bedarf...
-    }
+    string GetAppDataPath();
+    string GetDownloadsPath();
+    string GetConfigFilePath();
+    string GetLogFilePath();
 }

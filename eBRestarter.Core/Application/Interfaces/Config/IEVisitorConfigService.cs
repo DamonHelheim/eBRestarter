@@ -1,19 +1,15 @@
 ﻿using eBRestarter.Core.Domain.Models.Records.Config;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace eBRestarter.Core.Application.Interfaces.Config
+namespace eBRestarter.Core.Application.Interfaces.Config;
+
+public interface IEVisitorConfigService
 {
-    public interface IEVisitorConfigService
-    {
-        // Lädt die Config. Falls keine existiert, wird eine Standard-Config erstellt.
-        AppConfig LoadConfig();
+    // Lädt die Config. Falls keine existiert, wird eine Standard-Config erstellt.
+    AppConfig LoadConfig();
 
-        // Speichert die komplette Config (ersetzt SaveXMLConfigFileByTagValue)
-        void SaveConfig(AppConfig config);
+    // Speichert die komplette Config (ersetzt SaveXMLConfigFileByTagValue)
+    void SaveConfig(AppConfig config);
 
-        // Löscht oder resettet die Config
-        void ResetConfig();
-    }
+    // Löscht oder resettet die Config
+    void ResetConfig();
 }

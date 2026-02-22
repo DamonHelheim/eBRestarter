@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.DependencyInjections;
+using eBRestarter.Core.Application.DependencyInjections;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config; // Namespace für IEVisitorConfigService anpassen
 using eBRestarter.Desktop.WinUI3.DependencyInjections;
@@ -48,11 +48,9 @@ namespace eBRestarter.Desktop.WinUI3
                  services.AddApplicationServices();
                  services.AddNavigationService();
                  services.AddDialoglServiceExtensions();
+                 services.AddThemeService();
                  services.AddViewModels();
 
-                 // WICHTIG: Sicherstellen, dass der ThemeService registriert ist
-                 // Entweder hier direkt oder in einer deiner Extension-Methoden (z.B. AddApplicationServices)
-                 services.AddSingleton<IThemeService, ThemeService>();
                  services.AddSingleton<ILanguageService, LanguageService>();
                  services.AddSingleton<ILocalizationService, LocalizationService>();
              });
@@ -61,8 +59,9 @@ namespace eBRestarter.Desktop.WinUI3
         /// Invoked when the application is launched.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+
             // 1. Fenster Instanz holen (das erstellt das Fenster, zeigt es aber noch nicht an)
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
 

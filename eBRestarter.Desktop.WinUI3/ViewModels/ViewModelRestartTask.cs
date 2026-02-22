@@ -53,10 +53,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
         private IBrowser? _currentBrowser;
         private RestartTaskState _currentState = RestartTaskState.Idle;
-        private bool _isTestMode = false;
+        private readonly bool _isTestMode = true;
         private int _pauseSeconds = 20;
         private int _runtimeSeconds = 3600;
-        private int _testRuntimeSeconds = 20;
+        private readonly int _testRuntimeSeconds = 20;
         private DispatcherTimer? _uiTimer;
 
         #endregion
@@ -70,8 +70,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool DeleteBrowserContentIsActive { get; set; } = false;
         [ObservableProperty] public partial string DeleteIsActivatedMessage { get; set; } = "Disable";
         [ObservableProperty] public partial bool IsActive { get; set; } = false;
-        [ObservableProperty] public partial string NextDeletionProcessDateMessage { get; set; }
-        [ObservableProperty] public partial string NextDeletionProcessMessage { get; set; }
+        [ObservableProperty] public partial string? NextDeletionProcessDateMessage { get; set; }
+        [ObservableProperty] public partial string? NextDeletionProcessMessage { get; set; }
         [ObservableProperty] public partial int SecondsRemaining { get; set; }
         [ObservableProperty] public partial string StatusInfoText { get; set; }
         [ObservableProperty] public partial string Username { get; set; } = "-";
@@ -206,16 +206,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task CheckAndExecuteBrowserCleanup()
         {
             var appConfig = _configService.LoadConfig();
+
             if (!_browserCleanupScheduleService.ShouldRunCleanupNow(appConfig))
                 return;
 
             CloseCurrentBrowser();
+
             await Task.Delay(1000);
 
             await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
 
             var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(DateTime.Today, appConfig.Browser.DeleteBrowserCacheIntervalDays);
+
             appConfig.Browser.NextBrowserDeleteCacheDate = newDate;
+
             _configService.SaveConfig(appConfig);
 
             LoadInitialData();
@@ -227,14 +231,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             try
             {
                 var browserType = GetBrowserTypeFromString(ChosenBrowser);
+
                 _currentBrowser = _browserFactory.Create(browserType);
+
                 string url = $"{BaseUrl}{Username}";
+
                 _currentBrowser.Start(url);
             }
             catch (Exception ex)
             {
                 string errorFormat = _localizationService.GetString("General_ErrorPrefix");
+
                 StatusInfoText = string.Format(errorFormat, ex.Message);
+
                 IsActive = false;
             }
         }
@@ -243,9 +252,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void LoadInitialData()
         {
             var appConfig = _configService.LoadConfig();
+
             var state = _restartTaskDisplayStateService.GetInitialState(appConfig);
 
             Username = state.Username;
+
             ChosenBrowser = state.ChoosenBrowser;
 
             if (_isTestMode)
@@ -284,8 +295,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             if (_uiTimer == null)
             {
-                _uiTimer = new DispatcherTimer();
-                _uiTimer.Interval = TimeSpan.FromMilliseconds(1000);
+                _uiTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromMilliseconds(1000)
+                };
+
                 _uiTimer.Tick += OnTimerTick;
             }
 

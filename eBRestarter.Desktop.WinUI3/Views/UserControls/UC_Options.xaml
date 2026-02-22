@@ -1,92 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_Options"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext  ="{d:DesignInstance Type=VM:ViewModelOptions}"
+    xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelOptions}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
     </UserControl.Resources>
 
-    <Grid x:Name="RootGrid"
-          Background="{ThemeResource MenuBackgroundColor_2}"
-          CornerRadius="8,0,0,0">
+    <Grid
+        x:Name="RootGrid"
+        Background="{ThemeResource MenuBackgroundColor_2}"
+        CornerRadius="8,0,0,0">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- Top-Balken -->
+            <!--  Top-Balken  -->
             <RowDefinition Height="*" />
-            <!-- Pivot + Inhalt -->
+            <!--  Pivot + Inhalt  -->
         </Grid.RowDefinitions>
 
-        <!-- OBERER BALKEN -->
-        <StackPanel Grid.Row="0"
-                    Background="{ThemeResource MenuBackgroundColor}"
-                    Orientation="Horizontal"
-                    Height="35"
-                    Margin="5"
-                    CornerRadius="8"
-                    VerticalAlignment="Center"
-                    Spacing="10"
-                    Padding="10,0,0,0">
+        <!--  OBERER BALKEN  -->
+        <StackPanel
+            Grid.Row="0"
+            Height="35"
+            Margin="5"
+            Padding="10,0,0,0"
+            VerticalAlignment="Center"
+            Background="{ThemeResource MenuBackgroundColor}"
+            CornerRadius="8"
+            Orientation="Horizontal"
+            Spacing="10">
 
-            <FontIcon Glyph="&#xF2C7;"
-                      Margin="0,0,0,3"
-                      Foreground="{ThemeResource FontColor_1}"
-                      FontSize="26"
-                      VerticalAlignment="Bottom"/>
+            <FontIcon
+                Margin="0,0,0,3"
+                VerticalAlignment="Bottom"
+                FontSize="26"
+                Foreground="{ThemeResource FontColor_1}"
+                Glyph="&#xF2C7;" />
 
-            <TextBlock x:Name="tbl_MainWindowTitle"
-                       Foreground="{ThemeResource FontColor_1}"
-                       Margin="0,6,0,9"
-                       x:Uid="Options"
-                       VerticalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Bold"/>
+            <TextBlock
+                x:Name="tbl_MainWindowTitle"
+                x:Uid="Options"
+                Margin="0,6,0,9"
+                VerticalAlignment="Center"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="{ThemeResource FontColor_1}" />
         </StackPanel>
 
-        <!-- PIVOT -->
-        <Pivot Grid.Row="1"
-               x:Name="OptionsPivot"
-               Margin="0,0,0,0">
+        <!--  PIVOT  -->
+        <Pivot
+            x:Name="OptionsPivot"
+            Grid.Row="1"
+            Margin="0,0,0,0">
 
-            <!-- ========================================
-             PIVOT 1: ALLGEMEIN
-             ========================================= -->
+            <!--
+                ========================================
+                PIVOT 1: ALLGEMEIN
+                =========================================
+            -->
             <PivotItem Margin="0,0,0,0">
 
                 <PivotItem.Header>
 
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
 
-                        <!-- optional: Icon -->
-                        <FontIcon Glyph="&#xE713;"
-                                  Width="20"
-                                  Foreground="{ThemeResource FontColor_1}"/>
+                        <!--  optional: Icon  -->
+                        <FontIcon
+                            Width="20"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Glyph="&#xE713;" />
 
-                        <TextBlock x:Uid="General"
-                                   FontSize="14"
-                                   VerticalAlignment="Center" 
-                                   Foreground="{ThemeResource FontColor_1}"/>
+                        <TextBlock
+                            x:Uid="General"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Foreground="{ThemeResource FontColor_1}" />
                     </StackPanel>
 
                 </PivotItem.Header>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
-                    <Grid x:Name="Grid_Options_General"
-                           Margin="20,10,20,20"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Top">
+                    <Grid
+                        x:Name="Grid_Options_General"
+                        Margin="20,10,20,20"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top">
 
                         <Grid.ColumnDefinitions>
 
@@ -96,75 +104,88 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Border Grid.Column="0"
-                                Background="{ThemeResource DashletBackgroundColor_2}"
-                                CornerRadius="6"
-                                Padding="16"
-                                Margin="0,0,24,0">
+                        <Border
+                            Grid.Column="0"
+                            Margin="0,0,24,0"
+                            Padding="16"
+                            Background="{ThemeResource DashletBackgroundColor_2}"
+                            CornerRadius="6">
 
                             <StackPanel Orientation="Vertical">
 
-                                <TextBlock x:Name="lbl_Options_OperatingSettings"
-                                           x:Uid="Windows"
-                                           Foreground="{ThemeResource FontColor_1}"
-                                           FontSize="18"
-                                           FontWeight="SemiBold"
-                                           Margin="0,0,0,12" />
+                                <TextBlock
+                                    x:Name="lbl_Options_OperatingSettings"
+                                    x:Uid="Windows"
+                                    Margin="0,0,0,12"
+                                    FontSize="18"
+                                    FontWeight="SemiBold"
+                                    Foreground="{ThemeResource FontColor_1}" />
 
-                                <Button x:Name="btnOptionsAutomaticWindowsUserLogin"
-                                        x:Uid="Automatic_User_Login"
-                                        Command="{Binding ConfigureAutoLogonCommand}" 
-                                        FontSize="16"
-                                        HorizontalAlignment="Left"
-                                        Margin="0,0,0,12"
-                                        Height="50"
-                                        Width="300"
-                                        Background="#FF00CAD4"
-                                        Foreground="#DDFFFFFF"
-                                        BorderBrush="{x:Null}"/>
+                                <Button
+                                    x:Name="btnOptionsAutomaticWindowsUserLogin"
+                                    x:Uid="Automatic_User_Login"
+                                    Width="300"
+                                    Height="50"
+                                    Margin="0,0,0,12"
+                                    HorizontalAlignment="Left"
+                                    Background="#FF00CAD4"
+                                    BorderBrush="{x:Null}"
+                                    Command="{Binding ConfigureAutoLogonCommand}"
+                                    FontSize="16"
+                                    Foreground="#DDFFFFFF" />
 
-                                <TextBlock x:Uid="Start_eV_Restarter_with_Windows"
-                                           Foreground="{ThemeResource FontColor_1}"
-                                           Margin="10,8,0,4"/>
+                                <TextBlock
+                                    x:Uid="Start_eV_Restarter_with_Windows"
+                                    Margin="10,8,0,4"
+                                    Foreground="{ThemeResource FontColor_1}" />
 
-                                <ToggleSwitch x:Name="TS_OptionsStartWithWindows"
-                                              x:Uid="TS_OptionsStartWithWindows"
-                                              IsOn="{Binding StartWithWindows, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                              Foreground="{ThemeResource FontColor_1}"
-                                              HorizontalAlignment="Left"
-                                              Margin="10,0,0,12"
-                                              Height="40"
-                                              Width="250"
-                                              FontSize="16"/>
+                                <ToggleSwitch
+                                    x:Name="TS_OptionsStartWithWindows"
+                                    x:Uid="TS_OptionsStartWithWindows"
+                                    Width="250"
+                                    Height="40"
+                                    Margin="10,0,0,12"
+                                    HorizontalAlignment="Left"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource FontColor_1}"
+                                    IsOn="{Binding StartWithWindows, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                <TextBlock x:Name="lbl_Computer_Restartoptionen"
-                                           x:Uid="Computer_restart_options"
-                                           Foreground="{ThemeResource FontColor_1}"
-                                           Margin="10,0,0,8"
-                                           FontSize="16"
-                                           FontWeight="Bold"/>
+                                <TextBlock
+                                    x:Name="lbl_Computer_Restartoptionen"
+                                    x:Uid="Computer_restart_options"
+                                    Margin="10,0,0,8"
+                                    FontSize="16"
+                                    FontWeight="Bold"
+                                    Foreground="{ThemeResource FontColor_1}" />
 
-                                <ComboBox x:Name="ComboboxComputerRestartOptions"
-                                          FontSize="16"
-                                          RequestedTheme="{ThemeResource GeneralRequestedTheme}"
-                                          Margin="10,0,10,12"
-                                          Width="300"
-                                          DisplayMemberPath="DisplayText"
-                                          ItemsSource="{Binding ComputerRestartList}"
-                                          SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox
+                                    x:Name="ComboboxComputerRestartOptions"
+                                    Width="300"
+                                    Margin="10,0,10,12"
+                                    DisplayMemberPath="DisplayText"
+                                    FontSize="16"
+                                    ItemsSource="{Binding ComputerRestartList}"
+                                    RequestedTheme="{ThemeResource GeneralRequestedTheme}"
+                                    SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                                     <!--<ComboBox.Resources>
-                                        --><!-- Normal --><!--
+                                    -->
+                                    <!--  Normal  -->
+                                    <!--
                                         <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
                                         <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
 
-                                        --><!-- Hover --><!--
+                                    -->
+                                    <!--  Hover  -->
+                                    <!--
                                         <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
                                         <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
 
-                                        --><!-- Pressed --><!--
+                                    -->
+                                    <!--  Pressed  -->
+                                    <!--
                                         <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
                                         <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
                                         <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
@@ -174,178 +195,185 @@
                                 </ComboBox>
 
 
-                                <StackPanel Margin="10,5,10,10"
-                                            HorizontalAlignment="Left"
-                                            Width="300"
-                                            Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+                                <StackPanel
+                                    Width="300"
+                                    Margin="10,5,10,10"
+                                    HorizontalAlignment="Left"
+                                    Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
 
-                                    <TextBlock Margin="0,5,5,0"
-                                               Text="Lege die Uhrzeit fest:"
-                                               x:Uid="Set_the_time"
-                                               FontSize="14"
-                                               Foreground="{ThemeResource FontColor_1}"
-                                               HorizontalAlignment="Left" />
-                                    
-                                    <Slider x:Name="SliderRestartComputer"
-                                            Minimum="{Binding ComputerRestartClockTimeMin, Mode=OneTime}"
-                                            Maximum="{Binding ComputerRestartClockTimeMax, Mode=OneTime}"
-                                            Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                                            
-                                            Foreground="#FF167DA4"                                            
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            SnapsTo="StepValues"
-                                            HorizontalAlignment="Stretch"/>
+                                    <TextBlock
+                                        x:Uid="Set_the_time"
+                                        Margin="0,5,5,0"
+                                        HorizontalAlignment="Left"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource FontColor_1}"
+                                        Text="Lege die Uhrzeit fest:" />
+
+                                    <Slider
+                                        x:Name="SliderRestartComputer"
+                                        HorizontalAlignment="Stretch"
+                                        Foreground="#FF167DA4"
+                                        Maximum="{Binding ComputerRestartClockTimeMax, Mode=OneTime}"
+                                        Minimum="{Binding ComputerRestartClockTimeMin, Mode=OneTime}"
+                                        SnapsTo="StepValues"
+                                        TickFrequency="1"
+                                        TickPlacement="BottomRight"
+                                        Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <Grid Margin="0,-5,0,0">
-                                        
+
                                         <Grid.ColumnDefinitions>
-                                            
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            
+
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" 
-                                                   Text="{Binding ComputerRestartClockTimeMin, Mode=OneTime}" 
-                                                   Foreground="Gray" 
-                                                   FontSize="12"/>
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            FontSize="12"
+                                            Foreground="Gray"
+                                            Text="{Binding ComputerRestartClockTimeMin, Mode=OneTime}" />
 
-                                        <TextBlock Grid.Column="2" 
-                                                   Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" 
-                                                   Foreground="Gray" 
-                                                   FontSize="12"/>
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            FontSize="12"
+                                            Foreground="Gray"
+                                            Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" />
                                     </Grid>
 
                                 </StackPanel>
 
-                                <TextBlock x:Name="lbl_Options_DateOfRestartComputerInfo"
-                                           Foreground="{ThemeResource FontColor_1}"
-                                           Margin="10,0,0,4"
-                                           Text="{Binding RestartStatusText, Mode=OneWay}"
-                                           FontSize="16"/>
+                                <TextBlock
+                                    x:Name="lbl_Options_DateOfRestartComputerInfo"
+                                    Margin="10,0,0,4"
+                                    FontSize="16"
+                                    Foreground="{ThemeResource FontColor_1}"
+                                    Text="{Binding RestartStatusText, Mode=OneWay}" />
 
 
-                                <TextBlock x:Name="tbl_restart_information"
-                                           Foreground="#de1043"
-                                           Margin="10,0,0,0"
-                                           Text=""
-                                           TextWrapping="Wrap"
-                                           FontSize="12"
-                                           Height="51"
-                                           Width="336"/>
+                                <TextBlock
+                                    x:Name="tbl_restart_information"
+                                    Width="336"
+                                    Height="51"
+                                    Margin="10,0,0,0"
+                                    FontSize="12"
+                                    Foreground="#de1043"
+                                    Text=""
+                                    TextWrapping="Wrap" />
                             </StackPanel>
 
                         </Border>
 
-                        <Border Grid.Column="1"
-                                Background="{ThemeResource DashletBackgroundColor_2}"
-                                CornerRadius="6"
-                                Padding="16"
-                                Margin="0,0,24,0">
+                        <Border
+                            Grid.Column="1"
+                            Margin="0,0,24,0"
+                            Padding="16"
+                            Background="{ThemeResource DashletBackgroundColor_2}"
+                            CornerRadius="6">
 
                             <Border.Resources>
-                                <!-- Einheitliche Optik nur fürs Layout (keine Farben hier) -->
+                                <!--  Einheitliche Optik nur fürs Layout (keine Farben hier)  -->
                                 <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
-                                    <Setter Property="FontSize" Value="18"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="{ThemeResource FontColor_1}"/>
-                                    <Setter Property="Margin" Value="0,0,0,6"/>
+                                    <Setter Property="FontSize" Value="18" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="Foreground" Value="{ThemeResource FontColor_1}" />
+                                    <Setter Property="Margin" Value="0,0,0,6" />
                                 </Style>
 
                             </Border.Resources>
 
                             <StackPanel Spacing="14">
 
-                                <!-- UPDATE -->
+                                <!--  UPDATE  -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock x:Uid="Update"
-                                               Style="{StaticResource SectionTitleStyle}"/>
+                                    <TextBlock x:Uid="Update" Style="{StaticResource SectionTitleStyle}" />
 
-                                    <Button x:Name="BtnCheckForUpdates"
-                                            x:Uid="Check_for_updates"
-                                            Command="{Binding CheckForUpdatesCommand}"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Background="#FF4DC89E"
-                                            Foreground="#DDFFFFFF"
-                                            BorderBrush="{x:Null}"/>
+                                    <Button
+                                        x:Name="BtnCheckForUpdates"
+                                        x:Uid="Check_for_updates"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="#FF4DC89E"
+                                        BorderBrush="{x:Null}"
+                                        Command="{Binding CheckForUpdatesCommand}"
+                                        Foreground="#DDFFFFFF" />
 
                                 </StackPanel>
 
-                                <!-- Trennlinie -->
-                                <Border Height="1"
-                                        Background="#33000000" />
-
-                                <!-- SPEICHERORT -->
-                                <StackPanel Spacing="8">
-
-                                    <TextBlock x:Uid="Configuration_storage_location"
-                                               Style="{StaticResource SectionTitleStyle}" />
-
-                                    <Button x:Name="Btn_go_to_settings_data"
-                                            x:Uid="Go_to_storage_location"
-                                            Command="{Binding OpenSettingsDataFolderCommand}"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Background="#FF149DAE"
-                                            Foreground="#DDFFFFFF"
-                                            BorderBrush="{x:Null}"/>
-
-                                </StackPanel>
-
-                                <!-- Trennlinie -->
+                                <!--  Trennlinie  -->
                                 <Border Height="1" Background="#33000000" />
 
-                                <!-- THEMES -->
+                                <!--  SPEICHERORT  -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock x:Uid="Themes"
-                                               Style="{StaticResource SectionTitleStyle}" />
+                                    <TextBlock x:Uid="Configuration_storage_location" Style="{StaticResource SectionTitleStyle}" />
 
-                                    <Button x:Name="BtnSetStandardTheme"
-                                            x:Uid="Standard"
-                                            Command="{Binding SetLightThemeCommand}"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Background="#FFD5D5D5"
-                                            Foreground="Black"
-                                            BorderBrush="{x:Null}"/>
-
-                                    <Button x:Name="BtnSetDarkTheme"
-                                            x:Uid="Dark"
-                                            Command="{Binding SetDarkThemeCommand}"
-                                            Margin="0"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch"
-                                            Background="#FF414D4F"
-                                            Foreground="White"
-                                            BorderBrush="{x:Null}"/>
+                                    <Button
+                                        x:Name="Btn_go_to_settings_data"
+                                        x:Uid="Go_to_storage_location"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="#FF149DAE"
+                                        BorderBrush="{x:Null}"
+                                        Command="{Binding OpenSettingsDataFolderCommand}"
+                                        Foreground="#DDFFFFFF" />
 
                                 </StackPanel>
 
-                                <!-- Trennlinie -->
-                                <Border Height="1"
-                                        Background="#33000000" />
+                                <!--  Trennlinie  -->
+                                <Border Height="1" Background="#33000000" />
 
-                                <!-- RESTARTOPTIONEN -->
+                                <!--  THEMES  -->
                                 <StackPanel Spacing="8">
 
-                                    <TextBlock x:Uid="Language"
-                                               Foreground="{ThemeResource FontColor_1}"
-                                               FontSize="16"
-                                               FontWeight="Bold" />
+                                    <TextBlock x:Uid="Themes" Style="{StaticResource SectionTitleStyle}" />
 
-                                    <ComboBox FontSize="16"
-                                              RequestedTheme="{ThemeResource GeneralRequestedTheme}"
-                                              Margin="0,0,10,12"
-                                              Width="300"
-                                              DisplayMemberPath="DisplayText"
-                                              ItemsSource="{Binding LanguageList}"
-                                              SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <Button
+                                        x:Name="BtnSetStandardTheme"
+                                        x:Uid="Standard"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="#FFD5D5D5"
+                                        BorderBrush="{x:Null}"
+                                        Command="{Binding SetLightThemeCommand}"
+                                        Foreground="Black" />
 
-                                    </ComboBox>
+                                    <Button
+                                        x:Name="BtnSetDarkTheme"
+                                        x:Uid="Dark"
+                                        Margin="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="#FF414D4F"
+                                        BorderBrush="{x:Null}"
+                                        Command="{Binding SetDarkThemeCommand}"
+                                        Foreground="White" />
+
+                                </StackPanel>
+
+                                <!--  Trennlinie  -->
+                                <Border Height="1" Background="#33000000" />
+
+                                <!--  RESTARTOPTIONEN  -->
+                                <StackPanel Spacing="8">
+
+                                    <TextBlock
+                                        x:Uid="Language"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="{ThemeResource FontColor_1}" />
+
+                                    <ComboBox
+                                        Width="300"
+                                        Margin="0,0,10,12"
+                                        DisplayMemberPath="DisplayText"
+                                        FontSize="16"
+                                        ItemsSource="{Binding LanguageList}"
+                                        RequestedTheme="{ThemeResource GeneralRequestedTheme}"
+                                        SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 </StackPanel>
 
@@ -360,22 +388,22 @@
             </PivotItem>
 
             <!--<ComboBox.Resources>
-                                            -->
-            <!-- Normal -->
+            -->
+            <!--  Normal  -->
             <!--
                                             <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
                                             <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
                                             <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
 
-                                            -->
-            <!-- Hover -->
+            -->
+            <!--  Hover  -->
             <!--
                                             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
                                             <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
                                             <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
 
-                                            -->
-            <!-- Pressed -->
+            -->
+            <!--  Pressed  -->
             <!--
                                             <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
                                             <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
@@ -383,36 +411,39 @@
 
                                         </ComboBox.Resources>-->
 
-            <!-- ========================================
-             PIVOT 2: API ZUGANG
-            ========================================= -->
+            <!--
+                ========================================
+                PIVOT 2: API ZUGANG
+                =========================================
+            -->
             <PivotItem Margin="10,0,60,0">
 
                 <PivotItem.Header>
 
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
 
-                        <FontIcon Glyph="&#xE8B8;"
-                                  Width="20"
-                                  Foreground="{ThemeResource FontColor_1}"/>
+                        <FontIcon
+                            Width="20"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Glyph="&#xE8B8;" />
 
-                        <TextBlock x:Uid="API_access"
-                                   FontSize="14"
-                                   VerticalAlignment="Center"
-                                   Foreground="{ThemeResource FontColor_1}"/>
+                        <TextBlock
+                            x:Uid="API_access"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Foreground="{ThemeResource FontColor_1}" />
 
                     </StackPanel>
 
                 </PivotItem.Header>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
-                    <Grid x:Name="Grid_API_Access"
-                          Margin="20,10,20,20"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top">
+                    <Grid
+                        x:Name="Grid_API_Access"
+                        Margin="20,10,20,20"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top">
 
                         <Grid.ColumnDefinitions>
 
@@ -430,7 +461,9 @@
 
                             <StackPanel Orientation="Vertical">
 
-                                --><!-- Header --><!--
+                        -->
+                        <!--  Header  -->
+                        <!--
                                 <StackPanel Orientation="Horizontal"
                                             Margin="0,0,0,12">
 
@@ -446,7 +479,9 @@
                                                FontSize="16" />
                                 </StackPanel>
 
-                                --><!-- „Karte“ mit Username / Key --><!--
+                        -->
+                        <!--  „Karte“ mit Username / Key  -->
+                        <!--
                                 <Border x:Name="sp_Options_API_Information"
                                         Background="{ThemeResource DashletBackgroundColor_2}"
                                         CornerRadius="6"
@@ -494,60 +529,65 @@
                         </Border>-->
 
 
-                        <Border Grid.Column="0"
-                                Background="{ThemeResource DashletBackgroundColor_2}"
-                                CornerRadius="6"
-                                Padding="16">
+                        <Border
+                            Grid.Column="0"
+                            Padding="16"
+                            Background="{ThemeResource DashletBackgroundColor_2}"
+                            CornerRadius="6">
 
                             <StackPanel Orientation="Vertical">
 
-                                <!-- Header -->
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,12">
+                                <!--  Header  -->
+                                <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
 
-                                    <Image Margin="0,0,0,0"
-                                           Source="\Resources\Visuals\Icons\Intersection\api.png"
-                                           Height="40"
-                                           Width="40"/>
+                                    <Image
+                                        Width="40"
+                                        Height="40"
+                                        Margin="0,0,0,0"
+                                        Source="\Resources\Visuals\Icons\Intersection\api.png" />
 
-                                    <TextBlock x:Name="lbl_options_ebesucher_api_options"
-                                               x:Uid="eVisitor_API_Options"
-                                               Foreground="{ThemeResource FontColor_1}"
-                                               Margin="10,8,0,0"
-                                               FontSize="16" />
+                                    <TextBlock
+                                        x:Name="lbl_options_ebesucher_api_options"
+                                        x:Uid="eVisitor_API_Options"
+                                        Margin="10,8,0,0"
+                                        FontSize="16"
+                                        Foreground="{ThemeResource FontColor_1}" />
                                 </StackPanel>
 
-                                <!-- Karte: Verbindung herstellen -->
-                                <Border x:Name="sp_Options_API_1"
-                                        Background="{ThemeResource DashletBackgroundColor_5}"
-                                        CornerRadius="6"
-                                        Padding="10"
-                                        Margin="0,0,0,10">
+                                <!--  Karte: Verbindung herstellen  -->
+                                <Border
+                                    x:Name="sp_Options_API_1"
+                                    Margin="0,0,0,10"
+                                    Padding="10"
+                                    Background="{ThemeResource DashletBackgroundColor_5}"
+                                    CornerRadius="6">
 
                                     <StackPanel Orientation="Vertical">
 
-                                        <Button x:Name="BtnConnectWithAPIInterface"
-                                                x:Uid="Connect_to_API_interface"
-                                                Command="{Binding ShowActivateApiDialogCommand}"
-                                                Margin="0,0,0,8"
-                                                Width="330"
-                                                Height="40"
-                                                FontSize="16"
-                                                Background="#FF1598C9"
-                                                Foreground="White"
-                                                BorderBrush="{x:Null}"/>
+                                        <Button
+                                            x:Name="BtnConnectWithAPIInterface"
+                                            x:Uid="Connect_to_API_interface"
+                                            Width="330"
+                                            Height="40"
+                                            Margin="0,0,0,8"
+                                            Background="#FF1598C9"
+                                            BorderBrush="{x:Null}"
+                                            Command="{Binding ShowActivateApiDialogCommand}"
+                                            FontSize="16"
+                                            Foreground="White" />
 
-                                        <Button x:Name="BtnRemoveAPIFile"
-                                                x:Uid="Deactivate_API_interface"
-                                                Command="{Binding RemoveAPICredentialsCommand}"
-                                                Margin="0,0,0,0"
-                                                Width="330"
-                                                FontSize="16"
-                                                Height="40"
-                                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
-                                                Background="#FF1598C9"
-                                                Foreground="White"
-                                                BorderBrush="{x:Null}"/>
+                                        <Button
+                                            x:Name="BtnRemoveAPIFile"
+                                            x:Uid="Deactivate_API_interface"
+                                            Width="330"
+                                            Height="40"
+                                            Margin="0,0,0,0"
+                                            Background="#FF1598C9"
+                                            BorderBrush="{x:Null}"
+                                            Command="{Binding RemoveAPICredentialsCommand}"
+                                            FontSize="16"
+                                            Foreground="White"
+                                            IsEnabled="{Binding BtnAPISectionIsEnabled}" />
 
                                         <!--<Button x:Name="BtnImportAPIFile"
                                                 x:Uid="Establish_API_connection_with_file_import"
@@ -564,7 +604,7 @@
 
                                 </Border>
 
-                                <!-- Karte: Export / Entfernen -->
+                                <!--  Karte: Export / Entfernen  -->
                                 <!--<Border x:Name="sp_Options_API_2"
                                         Background="{ThemeResource DashletBackgroundColor_2}"
                                         CornerRadius="6"
@@ -611,5 +651,5 @@
         </Pivot>
 
     </Grid>
-    
+
 </UserControl>
