@@ -3,7 +3,10 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.Security;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization; // WICHTIG: Für den Source Generator hinzugefügt
 
 namespace eBRestarter.Infrastructure.Services.Config;
 
@@ -24,16 +27,19 @@ public class EVisitorConfigService : IEVisitorConfigService
     // Optionen für die JSON-Serialisierung.
     // WriteIndented: Erzeugt lesbares JSON (mit Zeilenumbrüchen).
     // PropertyNameCaseInsensitive: Ignoriert Groß-/Kleinschreibung beim Laden (Robustheit).
+    // TypeInfoResolver: Nutzt den Source Generator, damit es im Release-Modus (Trimmed) nicht abstürzt!
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
-        PropertyNameCaseInsensitive = true
+        PropertyNameCaseInsensitive = true,
+        TypeInfoResolver = AppConfigJsonContext.Default
     };
 
     /// <summary>
-    /// Initialisiert eine neue Instanz des <see cref="eVRestarterConfigService"/>.
+    /// Initialisiert eine neue Instanz des <see cref="EVisitorConfigService"/>.
     /// </summary>
     /// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
+    /// <param name="encryptionService">Service zur Ver-/Entschlüsselung sensibler Daten.</param>
     /// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
     public EVisitorConfigService(IPathService pathService, IEncryptionService encryptionService, ILogger<EVisitorConfigService> logger)
     {
@@ -153,4 +159,12 @@ public class EVisitorConfigService : IEVisitorConfigService
         var defaultConfig = new AppConfig();
         SaveConfig(defaultConfig);
     }
+}
+
+// =========================================================
+// SOURCE GENERATOR KONTEXT (Für Release/Trim-Kompatibilität)
+// =========================================================
+[JsonSerializable(typeof(AppConfig))]
+internal partial class AppConfigJsonContext : JsonSerializerContext
+{
 }

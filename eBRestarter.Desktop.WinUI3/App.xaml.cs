@@ -6,12 +6,14 @@ using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces; // Namespace für IThemeService anpassen
 using eBRestarter.Desktop.WinUI3.Views; // Namespace für dein MainWindow (EBRestarter)
 using eBRestarter.Infrastructure.DependencyInjection;
+using eBRestarter.Infrastructure.Services.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.Globalization;
 using System;
+
 
 namespace eBRestarter.Desktop.WinUI3
 {
@@ -41,7 +43,7 @@ namespace eBRestarter.Desktop.WinUI3
                  cfg.SetBasePath(AppContext.BaseDirectory);
                  cfg.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
              })
-             .ConfigureServices((ctx, services) =>
+             .ConfigureServices((_, services) =>
              {
                  // Deine Service-Registrierungen
                  services.AddInfrastructureServices();
@@ -61,64 +63,69 @@ namespace eBRestarter.Desktop.WinUI3
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
+            if (await WinUI3XamlPreview.Preview.IsXamlPreviewLaunched())
+            {
+                return;
+            }
 
-            // 1. Fenster Instanz holen (das erstellt das Fenster, zeigt es aber noch nicht an)
-            MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
-
-            // 2. Dispatcher Queue speichern
-            AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
-
-            // --- SPRACHE INITIALISIEREN ---
+            // =========================================================================
+            // 1. SPRACHE INITIALISIEREN (MUSS ZWINGEND VOR DEM FENSTER-LADEN PASSIEREN!)
+            // =========================================================================
             try
             {
-                // 1. Config-Service aus dem Dependency Injection Container holen
-                // (Benötigt: using Microsoft.Extensions.DependencyInjection;)
                 var configService = AppHost.Services.GetRequiredService<IEVisitorConfigService>();
-
-                // 2. Aktuelle Konfiguration laden
                 var config = configService.LoadConfig();
 
-                // 3. Sprachcode ermitteln (Mapping: 0 = Deutsch, 1 = Englisch)
-                // Sollte mit deiner Logik im ViewModelOptions übereinstimmen
+                int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
+                DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
+
+                if (nextDate == DateTime.Today && intervalDays > 0)
+                    nextDate = DateTime.Today.AddDays(intervalDays);
+
+                config.Browser?.NextBrowserDeleteCacheDate = nextDate;
+                configService.SaveConfig(config);
+
+                // Sprachcode ermitteln
                 string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
 
-                // 4. Sprache global für die App setzen
+                // Sprache für XAML und WinUI 3 MRT Core setzen
                 ApplicationLanguages.PrimaryLanguageOverride = languageCode;
+
+                // WICHTIG FÜR UNPACKAGED APPS: Fallback-Kontexte für Win32 & MRT Core synchronisieren
+                System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo(languageCode);
+                System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+                System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
             }
             catch (Exception)
             {
-                // Fallback: Falls die Config nicht geladen werden kann (z.B. erster Start oder Fehler),
-                // setzen wir einen sicheren Standard (z.B. Englisch oder Systemstandard).
                 ApplicationLanguages.PrimaryLanguageOverride = "en-US";
             }
 
             // =========================================================================
-            // THEME INITIALISIERUNG
+            // 2. THEME INITIALISIERUNG (AUCH VOR DEM FENSTER MACHEN)
             // =========================================================================
             try
             {
-                // Services aus dem Container holen
                 var configService = AppHost.Services.GetRequiredService<IEVisitorConfigService>();
                 var themeService = AppHost.Services.GetRequiredService<IThemeService>();
-
-                // Config laden
                 var config = configService.LoadConfig();
 
-                // Theme setzen (Fallback auf "Light", falls Config leer ist)
                 string themeToSet = string.IsNullOrEmpty(config.Settings.Theme) ? "Light" : config.Settings.Theme;
-
                 themeService.SetTheme(themeToSet);
             }
             catch (Exception ex)
             {
-                // Safety-First: Falls beim Theme-Laden was schief geht (z.B. Config korrupt),
-                // soll die App trotzdem starten (dann halt im Standard-Theme).
-                // Hier könntest du loggen: AppHost.Services.GetRequiredService<ILogger<App>>().LogError(ex, ...);
                 System.Diagnostics.Debug.WriteLine($"Fehler beim Laden des Themes: {ex.Message}");
             }
-            // =========================================================================
 
-            // 3. Jetzt erst das Fenster anzeigen (jetzt im richtigen Theme)
+            // =========================================================================
+            // 3. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
+            // =========================================================================
+            MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
+            AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
+
             MainWindoweBRestarter.Activate();
         }
     }

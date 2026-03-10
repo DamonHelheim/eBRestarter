@@ -73,7 +73,6 @@
                 Foreground="{ThemeResource FontColor_1}"
                 Text="{Binding NextDeletionProcessMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
-            <!--  Text                                ="{Binding DeleteDate}"  -->
             <TextBlock
                 x:Name="tbl_txtCleaningInfo"
                 Canvas.Left="10"

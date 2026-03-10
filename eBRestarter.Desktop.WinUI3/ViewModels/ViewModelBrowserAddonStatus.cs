@@ -107,7 +107,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (_browser.IsInstalled)
                 {
                     InstallStatusText = string.Format(installedFormat, BrowserName);
-                    InstallStatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
+                    InstallStatusColor = "#2e7d32";
                     IsButtonEnabled = true;
 
                     bool hasAddon = _browser.IsExtensionInstalled(null!);

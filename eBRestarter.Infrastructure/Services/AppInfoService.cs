@@ -25,7 +25,7 @@ public class AppInfoService : IAppInfoService
                 IconCreator = "Icon made by Hilmy Abiyyu A. from www.flaticon.com",
                 IconImageSource = "/Resources/Visuals/Icons/Intersection/play.png", // Hinweis: WinUI nutzt ms-appx:/// Pfade
                 IconHyperLink = "https://www.flaticon.com/free-icon/data-cleaning_2088794",
-                IconHyperLinkContent = "flaticon.com/data-cleaning"
+                IconHyperLinkContent = "https://www.flaticon.com/free-icon/data-cleaning_2088794"
             },
             new IconCredit()
             {

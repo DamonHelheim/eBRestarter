@@ -84,7 +84,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             OsVersionText = loading;
             ProcessorText = loading;
             RamText = loading;
-            Title = _localizationService.GetString("Infocenter_Title");
+            //Title = _localizationService.GetString("Infocenter_Title");
 
             _ = LoadDataAsync();
         }

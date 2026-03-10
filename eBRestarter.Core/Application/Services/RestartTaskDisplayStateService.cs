@@ -54,6 +54,7 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
 
         string username = config.Username ?? "-";
         string choosenBrowser = config.Browser?.Selected ?? _localizationService.GetString("Task_DefaultBrowser");
+
         int runtimeSeconds = config.Browser != null ? config.Browser.RuntimeHours * 3600 : 3600;
         int pauseSeconds = config.Browser?.RuntimePauseSeconds ?? 20;
 
@@ -61,6 +62,7 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
         DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
 
         bool deleteBrowserContentIsActive = _intervalValidator.IsValidIntervalDays(intervalDays);
+
         string deleteIsActivatedMessage;
         string nextDeletionProcessMessage;
         string nextDeletionProcessDateMessage;
@@ -69,9 +71,12 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
         {
             deleteIsActivatedMessage = _localizationService.GetString("Activate");
             nextDeletionProcessMessage = _localizationService.GetString("NextDeletionProcess");
+
             string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
-            if (nextDate == DateTime.MinValue && intervalDays > 0)
+
+            if (nextDate == DateTime.Today && intervalDays > 0)
                 nextDate = DateTime.Today.AddDays(intervalDays);
+
             nextDeletionProcessDateMessage = string.Format(formatPattern, nextDate);
         }
         else
