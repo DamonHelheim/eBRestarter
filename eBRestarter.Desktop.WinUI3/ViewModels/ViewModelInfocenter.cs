@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.UseCases.GetSystemInformation;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -21,11 +21,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region FieldsAndInjectedServices
 
+        private readonly IGetSystemInformationUseCase _getSystemInformationUseCase;
         private readonly IDialogService _dialogService;
         private readonly ILocalizationService _localizationService;
-        private readonly IHardwareInfoService _hardwareService;
-        private readonly IOsEditionService _osEditionService;
-        private readonly IWindowsSystemInfoService _systemInfoService;
 
         #endregion
 
@@ -64,15 +62,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// loading placeholder and starts async load so the page shows data as it becomes available.
         /// </summary>
         public ViewModelInfocenter(
-            IHardwareInfoService hardwareService,
-            IOsEditionService osEditionService,
-            IWindowsSystemInfoService systemInfoService,
+            IGetSystemInformationUseCase getSystemInformationUseCase,
             IDialogService dialogService,
             ILocalizationService localizationService)
         {
-            _hardwareService = hardwareService;
-            _osEditionService = osEditionService;
-            _systemInfoService = systemInfoService;
+            _getSystemInformationUseCase = getSystemInformationUseCase;
             _dialogService = dialogService;
             _localizationService = localizationService;
 
@@ -130,19 +124,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>Loads hardware and OS info from services and assigns localized strings to the observable properties.</summary>
         private async Task LoadDataAsync()
         {
-            var hardware = await _hardwareService.GetHardwareInfoAsync();
+            var response = await _getSystemInformationUseCase.ExecuteAsync();
 
-            ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {hardware.ProcessorName}";
-            GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {hardware.GraphicsCardName}";
-            RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {hardware.InstalledRam}";
+            ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {response.ProcessorName}";
+            GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {response.GraphicsCardName}";
+            RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {response.InstalledRam}";
 
-            var edition = await _osEditionService.GetOsEditionAsync();
+            OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {response.OsEdition}";
 
-            OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {edition}";
-
-            OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {_systemInfoService.GetCurrentOsDisplayVersion()}";
-            OsBuildText = $"{_localizationService.GetString("Infocenter_BuildPrefix")} {_systemInfoService.GetCurrentOsBuildVersion()}";
-            BrowserText = $"{_localizationService.GetString("Infocenter_BrowserPrefix")} {_systemInfoService.GetCurrentStandardBrowserName()}";
+            OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {response.OsDisplayVersion}";
+            OsBuildText = $"{_localizationService.GetString("Infocenter_BuildPrefix")} {response.OsBuildVersion}";
+            BrowserText = $"{_localizationService.GetString("Infocenter_BrowserPrefix")} {response.StandardBrowserName}";
         }
 
         #endregion

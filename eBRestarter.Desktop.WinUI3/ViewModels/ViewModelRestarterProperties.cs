@@ -5,6 +5,7 @@ using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -29,6 +30,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region FieldsAndInjectedServices
 
+        private readonly IScheduleBrowserCleanupUseCase _scheduleBrowserCleanupUseCase;
         private readonly AppConfig _currentConfig;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
@@ -84,11 +86,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// Does not send messages yet; property change handlers do that when the user edits.
         /// </summary>
         public ViewModelRestarterProperties(
+            IScheduleBrowserCleanupUseCase scheduleBrowserCleanupUseCase,
             IOperatingSystemFacade operatingSystemFacade,
             IEVisitorConfigService eVisitorConfigService,
             ILocalizationService localizationService,
             IDialogService dialogService)
         {
+            _scheduleBrowserCleanupUseCase = scheduleBrowserCleanupUseCase;
             _operatingSystemFacade = operatingSystemFacade;
             _eVisitorConfigService = eVisitorConfigService;
             _dialogService = dialogService;
@@ -177,22 +181,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
-        /// <summary>
-        /// Returns whether the given interval (in days) is allowed for cache deletion. Used to decide
-        /// if a next-deletion date is shown and messages are sent.
-        /// </summary>
-        /// <param name="days">Interval in days (e.g. 1, 3, 7, 14). Only these values return true.</param>
-        /// <returns>True if days is 1, 3, 7, or 14; otherwise false.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Member als statisch markieren", Justification = "<Ausstehend>")]
-        public bool IsIntervalAllowed(int days)
-        {
-            return days switch
-            {
-                1 or 3 or 7 or 14 => true,
-                _ => false
-            };
-        }
-
         #endregion
 
         // =========================================================
@@ -242,17 +230,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        /// <summary>Persists cache interval, computes next deletion date when interval is allowed, and sends messages so restart task and UI show the new state.</summary>
         partial void OnSelectedDeleteBrowserCacheOptionChanged(BrowserCacheDeleteOption value)
         {
-            _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
+            var response = _scheduleBrowserCleanupUseCase.UpdateSchedule(new ScheduleBrowserCleanupRequest(value.Days));
 
-            if (IsIntervalAllowed(value.Days))
+            // Keep the local instance of config up-to-date
+            _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
+            _currentConfig.Browser.NextBrowserDeleteCacheDate = response.NextDate ?? DateTime.MinValue;
+
+            if (response.IsActive && response.NextDate.HasValue)
             {
-                DateTime nextDate = DateTime.Today.AddDays(value.Days);
-                _currentConfig.Browser.NextBrowserDeleteCacheDate = nextDate;
                 string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
-                string formattedDateString = string.Format(formatPattern, nextDate);
+                string formattedDateString = string.Format(formatPattern, response.NextDate.Value);
 
                 WeakReferenceMessenger.Default.Send(new NextDeletionProcess(_localizationService.GetString("NextDeletionProcess")));
                 WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(formattedDateString));
@@ -261,13 +250,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
             else
             {
-                _currentConfig.Browser.NextBrowserDeleteCacheDate = DateTime.MinValue;
                 WeakReferenceMessenger.Default.Send(new NextDeletionProcess(string.Empty));
                 WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(string.Empty));
                 WeakReferenceMessenger.Default.Send(new DeleteBrowserContentActivateMessage(_localizationService.GetString("Disabled")));
                 WeakReferenceMessenger.Default.Send(new DeleteBrowserContentIsActive(false));
             }
-            SaveSettings();
         }
 
         partial void OnStartBrowserWithProgrammStartIsChanged(bool value)

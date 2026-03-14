@@ -1,3 +1,4 @@
+using System;
 using eBRestarter.Core.Application.Interfaces;
 
 namespace eBRestarter.Core.Application.Services;
@@ -7,6 +8,13 @@ namespace eBRestarter.Core.Application.Services;
 /// </summary>
 public class RestartCalculationService : IRestartCalculationService
 {
+    private readonly TimeProvider _timeProvider;
+
+    public RestartCalculationService(TimeProvider timeProvider)
+    {
+        _timeProvider = timeProvider;
+    }
+
     // =========================================================
     // 1. PUBLIC & PROTECTED METHODS (API)
     // =========================================================
@@ -17,7 +25,7 @@ public class RestartCalculationService : IRestartCalculationService
     {
         if (intervalDays > 0)
         {
-            return DateTime.Today.AddDays(intervalDays).AddHours(restartClockTime);
+            return _timeProvider.GetLocalNow().Date.AddDays(intervalDays).AddHours(restartClockTime);
         }
 
         return DateTime.MinValue;

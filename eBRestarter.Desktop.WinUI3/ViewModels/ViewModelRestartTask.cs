@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
 using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -29,34 +30,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                                                 IRecipient<NextDeletionProcessDate>
     {
         // =========================================================
-        // 1. CONSTANTS & STATICS (Konstanten)
-        // =========================================================
-        #region ConstantsAndStatics
-
-        private const string BaseUrl = "https://www.ebesucher.com/surfbar/";
-        private const int InitialDelaySeconds = 5;
-
-        #endregion
-
-        // =========================================================
-        // 2. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
+        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
         // =========================================================
         #region FieldsAndInjectedServices
 
-        private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService;
-        private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver;
-        private readonly IBrowserFactory _browserFactory;
+        private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
         private readonly IEVisitorConfigService _configService;
         private readonly IDialogService _dialogService;
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly ILocalizationService _localizationService;
         private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
-        private IBrowser? _currentBrowser;
-        private RestartTaskState _currentState = RestartTaskState.Idle;
+
         private int _pauseSeconds = 20;
         private int _runtimeSeconds = 3600;
         private readonly int _testRuntimeSeconds = 20;
-        private DispatcherTimer? _uiTimer;
 
         #endregion
 
@@ -88,25 +75,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// messages so the UI stays in sync when username, browser, or delete-content settings change.
         /// </summary>
         public ViewModelRestartTask(
+            IManageRestarterCycleUseCase manageRestarterCycleUseCase,
             IEVisitorConfigService configService,
-            IBrowserFactory browserFactory,
             IDialogService dialogService,
             ILocalizationService localizationService,
-            IRestartTaskDisplayStateService restartTaskDisplayStateService,
-            IBrowserCleanupScheduleService browserCleanupScheduleService,
-            IBrowserDisplayNameResolver browserDisplayNameResolver)
+            IRestartTaskDisplayStateService restartTaskDisplayStateService)
         {
+            _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
             _configService = configService;
-            _browserFactory = browserFactory;
             _dialogService = dialogService;
             _localizationService = localizationService;
             _restartTaskDisplayStateService = restartTaskDisplayStateService;
-            _browserCleanupScheduleService = browserCleanupScheduleService;
-            _browserDisplayNameResolver = browserDisplayNameResolver;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
             StatusInfoText = _localizationService.GetString("Task_StatusReady");
+
+            _manageRestarterCycleUseCase.ProgressChanged += OnCycleProgressChanged;
 
             LoadInitialConfigData();
             WeakReferenceMessenger.Default.RegisterAll(this);
@@ -119,11 +104,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region Commands
 
-        /// <summary>
-        /// Invoked when the user toggles the task on or off. Starts the delay→run→cooldown loop
-        /// when checked; stops the timer and closes the browser when unchecked.
-        /// </summary>
-        /// <param name="isChecked">True to start the scheduler, false to stop. Null is treated as false.</param>
         [RelayCommand]
         private void ExecuteStartTimerScheduler(bool? isChecked)
         {
@@ -147,17 +127,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PublicAndProtectedMethods
 
-        /// <summary>Updates the chosen browser name on the UI thread when a <see cref="BrowserChangedMessage"/> is received.</summary>
         public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChosenBrowser = message.BrowserName ?? "-");
-        /// <summary>Updates the displayed username on the UI thread when a <see cref="UsernameChangedMessage"/> is received.</summary>
         public void Receive(UsernameChangedMessage message) => _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
-        /// <summary>Updates the delete-activation label when a <see cref="DeleteBrowserContentActivateMessage"/> is received.</summary>
         public void Receive(DeleteBrowserContentActivateMessage message) => _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? "-");
-        /// <summary>Updates whether delete-content is active when a <see cref="DeleteBrowserContentIsActive"/> message is received.</summary>
         public void Receive(DeleteBrowserContentIsActive message) => _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
-        /// <summary>Updates the next deletion process text when a <see cref="NextDeletionProcess"/> message is received.</summary>
         public void Receive(NextDeletionProcess message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.NextDeletionProcessMessage ?? "-");
-        /// <summary>Updates the next deletion date text when a <see cref="NextDeletionProcessDate"/> message is received.</summary>
         public void Receive(NextDeletionProcessDate message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? "-");
 
         #endregion
@@ -167,112 +141,63 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PrivateHelperMethods
 
-        private void CloseCurrentBrowser()
+        private void OnCycleProgressChanged(object? sender, RestarterCycleProgress e)
         {
-            _currentBrowser?.Close();
-            _currentBrowser = null;
-        }
-
-        /// <summary>Maps the display name (e.g. from combo) to <see cref="BrowserType"/> using the resolver; uses default text for "no selection".</summary>
-        private BrowserType GetBrowserTypeFromString(string browserName)
-        {
-            string defaultText = _localizationService.GetString("Task_DefaultBrowser");
-
-            return _browserDisplayNameResolver.GetBrowserTypeFromDisplayName(browserName, defaultText);
-        }
-
-        /// <summary>Advances the state machine: InitialDelay→Running, Running→Cooldown (after optional cleanup), Cooldown→Running.</summary>
-        private async Task HandleStateTransitionAsync()
-        {
-            switch (_currentState)
+            _dispatcherQueue.TryEnqueue(() =>
             {
-                case RestartTaskState.InitialDelay:
-
-                    SwitchState(RestartTaskState.Running);
-
-                    break;
-
-                case RestartTaskState.Running:
-
-#if DEBUG
-                    // Wird nur ausgeführt, wenn du in Visual Studio auf "Debug" stellst
-                    await CheckAndExecuteBrowserCleanupTest();
-#else
-            // Wird im echten Betrieb ausgeführt (Build-Einstellung "Release")
-            await CheckAndExecuteBrowserCleanup();
-#endif
-
-                    // Danach ganz normal in den Cooldown wechseln
-                    SwitchState(RestartTaskState.Cooldown);
-                    break;
-
-                case RestartTaskState.Cooldown:
-
-                    SwitchState(RestartTaskState.Running);
-
-                    break;
-            }
+                SecondsRemaining = e.SecondsRemaining;
+                StatusInfoText = e.StatusMessage;
+                
+                // Uncheck the toggle button if the cycle went to idle due to error
+                if (e.State == RestartTaskState.Idle && IsActive)
+                {
+                    IsActive = false;
+                }
+            });
         }
 
-        /// <summary>If the cleanup schedule says it's time, closes the browser, shows the delete-content dialog (auto-start),
-        /// then persists the next cleanup date so the UI and schedule stay consistent.</summary>
-        private async Task CheckAndExecuteBrowserCleanup()
+        private void StartLoop()
         {
-            var appConfig = _configService.LoadConfig();
+            var request = new ManageRestarterCycleRequest(
+                BrowserDisplayName: ChosenBrowser,
+                Username: Username,
+                RuntimeSeconds: _runtimeSeconds,
+                PauseSeconds: _pauseSeconds
+            );
 
-            if (!_browserCleanupScheduleService.ShouldRunCleanupNow(appConfig))
-                return;
-
-            CloseCurrentBrowser();
-
-            await Task.Delay(1000);
-
-            await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
-
-            var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(DateTime.Today, appConfig.Browser.DeleteBrowserCacheIntervalDays);
-
-            appConfig.Browser.NextBrowserDeleteCacheDate = newDate;
-
-            _configService.SaveConfig(appConfig);
-
-            LoadInitialConfigData();
-        }
-
-        private async Task CheckAndExecuteBrowserCleanupTest()
-        {
-
-            CloseCurrentBrowser();
-
-            await Task.Delay(1000);
-
-            await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
-
-        }
-
-        /// <summary>Starts the selected browser with the eBesucher surfbar URL for the current username. On failure, sets status text and deactivates the task.</summary>
-        private void LaunchBrowser()
-        {
-            try
+            // Fire and forget (the use case manages its own background task loop)
+            _ = _manageRestarterCycleUseCase.StartAsync(request, async () =>
             {
-                var browserType = GetBrowserTypeFromString(ChosenBrowser);
+                // We use TryEnqueue because DialogService needs to run on UI thread,
+                // but the Task Completion source lets the UseCase await it.
+                var tcs = new TaskCompletionSource();
+                
+                _dispatcherQueue.TryEnqueue(async () =>
+                {
+                    try
+                    {
+                        await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
+                        tcs.SetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                    finally
+                    {
+                        LoadInitialConfigData();
+                    }
+                });
 
-                _currentBrowser = _browserFactory.Create(browserType);
-
-                string url = $"{BaseUrl}{Username}";
-
-                _currentBrowser.Start(url);
-            }
-            catch (Exception ex)
-            {
-                string errorFormat = _localizationService.GetString("General_ErrorPrefix");
-
-                StatusInfoText = string.Format(errorFormat, ex.Message);
-
-                IsActive = false;
-            }
+                await tcs.Task;
+            });
         }
 
-        /// <summary>Loads username, browser, runtime/pause, and delete-content state from config and display-state service so the UI matches saved settings.</summary>
+        private void StopLoop()
+        {
+            _manageRestarterCycleUseCase.Stop();
+        }
+
         private void LoadInitialConfigData()
         {
             var appConfig = _configService.LoadConfig();
@@ -282,126 +207,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             Username = currentConfigState.Username;
             ChosenBrowser = currentConfigState.ChoosenBrowser;
 
-            // Das gilt für BEIDE Modi (Test und Release)
             _pauseSeconds = currentConfigState.PauseSeconds;
 
 #if DEBUG
-            // Dieser Code wird NUR kompiliert, wenn du oben in Visual Studio "Debug" ausgewählt hast
             _runtimeSeconds = _testRuntimeSeconds;
-            StatusInfoText = $"[TEST] Runtime: {_runtimeSeconds}s";
 #else
-    // Dieser Code wird im echten Betrieb (wenn du auf "Release" stellst) kompiliert
-    _runtimeSeconds = currentConfigState.RuntimeSeconds;
+            _runtimeSeconds = currentConfigState.RuntimeSeconds;
 #endif
 
             DeleteBrowserContentIsActive = currentConfigState.DeleteBrowserContentIsActive;
             DeleteIsActivatedMessage = currentConfigState.DeleteIsActivatedMessage;
             NextDeletionProcessMessage = currentConfigState.NextDeletionProcessMessage;
             NextDeletionProcessDateMessage = currentConfigState.NextDeletionProcessDateMessage;
-        }
-
-        private async void OnTimerTick(object? sender, object e)
-        {
-            if (SecondsRemaining > 0)
-            {
-                SecondsRemaining--;
-                UpdateDynamicStatusText();
-            }
-            else
-            {
-                // Timer stoppen, damit er während des Dialogs (Task) nicht weiter tickt
-                _uiTimer?.Stop();
-
-                await HandleStateTransitionAsync();
-
-                // Nach Abschluss des Statuswechsels den Timer wieder starten
-                _uiTimer?.Start();
-            }
-        }
-
-        /// <summary>Creates the 1-second UI timer if needed and starts the state machine from InitialDelay.</summary>
-        private void StartLoop()
-        {
-            if (_uiTimer == null)
-            {
-                _uiTimer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(1000)
-                };
-
-                _uiTimer.Tick += OnTimerTick;
-            }
-
-
-            // Setze Enum RestartTaskState.InitialDelay und Warte 5 Sekunden bevor die startet
-            SwitchState(RestartTaskState.InitialDelay);
-
-            _uiTimer.Start();
-        }
-
-        /// <summary>Stops the timer, unsubscribes from Tick, disposes the browser, and sets state to Idle.</summary>
-        private void StopLoop()
-        {
-            if (_uiTimer != null)
-            {
-                _uiTimer.Stop();
-                _uiTimer.Tick -= OnTimerTick;
-                _uiTimer = null;
-            }
-
-            CloseCurrentBrowser();
-            SwitchState(RestartTaskState.Idle);
-        }
-
-        /// <summary>Sets current state and updates status text, remaining seconds, and starts/stops browser or cooldown as required.</summary>
-        private void SwitchState(RestartTaskState newState)
-        {
-            _currentState = newState;
-
-            switch (_currentState)
-            {
-
-                //Idle = Gestoppt
-                case RestartTaskState.Idle:
-                    StatusInfoText = _localizationService.GetString("Task_StatusStopped");
-                    SecondsRemaining = 0;
-                    break;
-
-                //Delay = beim ersten manuellen start der Software 5 Sekunden
-                case RestartTaskState.InitialDelay:
-                    SecondsRemaining = InitialDelaySeconds;
-                    UpdateDynamicStatusText();
-                    break;
-
-                //Eigentlicher Browser Runtimer
-                case RestartTaskState.Running:
-                    LaunchBrowser();
-                    SecondsRemaining = _runtimeSeconds;
-                    StatusInfoText = _localizationService.GetString("Task_StatusRunning");
-                    break;
-
-                //Die Pause 20 oder bis 60 Sekunden
-                case RestartTaskState.Cooldown:
-                    CloseCurrentBrowser();
-                    SecondsRemaining = _pauseSeconds;
-                    UpdateDynamicStatusText();
-                    break;
-            }
-        }
-
-        /// <summary>Updates status text for InitialDelay or Cooldown using localized "start in" / "restart in" format and current seconds.</summary>
-        private void UpdateDynamicStatusText()
-        {
-            if (_currentState == RestartTaskState.InitialDelay)
-            {
-                string statusFormat = _localizationService.GetString("Task_StatusStartIn");
-                StatusInfoText = string.Format(statusFormat, SecondsRemaining);
-            }
-            else if (_currentState == RestartTaskState.Cooldown)
-            {
-                string statusFormat = _localizationService.GetString("Task_StatusRestartIn");
-                StatusInfoText = string.Format(statusFormat, SecondsRemaining);
-            }
         }
 
         #endregion

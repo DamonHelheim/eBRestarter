@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using Microsoft.Extensions.Logging;
@@ -10,6 +10,8 @@ public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
     // Abhängigkeiten (Dependency Inversion Principle)
     private readonly IEVisitorConfigService _configService;
     private readonly IWindowsProcessControlService _processService;
+    private readonly IApplicationLifetime _applicationLifetime;
+    private readonly TimeProvider _timeProvider;
     private readonly ILogger<ComputerRestartScheduler> _logger;
 
     // Steuerung für den Hintergrund-Task
@@ -20,10 +22,14 @@ public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
     public ComputerRestartScheduler(
         IEVisitorConfigService configService,
         IWindowsProcessControlService processService,
+        IApplicationLifetime applicationLifetime,
+        TimeProvider timeProvider,
         ILogger<ComputerRestartScheduler> logger)
     {
         _configService = configService;
         _processService = processService;
+        _applicationLifetime = applicationLifetime;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -96,8 +102,8 @@ public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
             return; // Feature nicht aktiv
         }
 
-        var today = DateTime.Today;
-        var now = DateTime.Now;
+        var now = _timeProvider.GetLocalNow();
+        var today = now.Date;
         var restartDate = config.Computer.NextRestartDate.Value.Date;
 
         // Deine Logik aus dem alten Code: Prüfen ob heute der Tag ist
@@ -135,7 +141,7 @@ public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
             _processService.ShutdownComputer(); //
 
             // 3. Anwendung beenden (damit nicht weiter geloggt/gearbeitet wird bis Windows killt)
-            Environment.Exit(0);
+            _applicationLifetime.ExitApplication(0);
         }
         catch (Exception ex)
         {

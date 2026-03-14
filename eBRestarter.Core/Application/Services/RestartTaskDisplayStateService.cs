@@ -16,6 +16,7 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
 
     private readonly ILocalizationService _localizationService;
     private readonly ICacheDeletionIntervalValidator _intervalValidator;
+    private readonly TimeProvider _timeProvider;
 
     #endregion
 
@@ -26,10 +27,12 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
 
     public RestartTaskDisplayStateService(
         ILocalizationService localizationService,
-        ICacheDeletionIntervalValidator intervalValidator)
+        ICacheDeletionIntervalValidator intervalValidator,
+        TimeProvider timeProvider)
     {
         _localizationService = localizationService;
         _intervalValidator = intervalValidator;
+        _timeProvider = timeProvider;
     }
 
     #endregion
@@ -74,8 +77,9 @@ public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
 
             string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
 
-            if (nextDate == DateTime.Today && intervalDays > 0)
-                nextDate = DateTime.Today.AddDays(intervalDays);
+            var today = _timeProvider.GetLocalNow().Date;
+            if (nextDate == today && intervalDays > 0)
+                nextDate = today.AddDays(intervalDays);
 
             nextDeletionProcessDateMessage = string.Format(formatPattern, nextDate);
         }

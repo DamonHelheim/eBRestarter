@@ -1,8 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
@@ -25,8 +24,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region FieldsAndInjectedServices
 
-        private readonly IWindowsStartupManagerService _startupService;
-        private readonly IBrowserFactory _browserFactory;
+        private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
         private readonly IDialogService _dialogService;
         private readonly ILocalizationService _localizationService;
         private bool _isRevertingState = false;
@@ -56,16 +54,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// state so the toggle reflects the actual setting when the dialog opens.
         /// </summary>
         public ViewModelTurnOffEdgeStartupBoost(
-            IWindowsStartupManagerService startupService,
-            IBrowserFactory browserFactory,
+            IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
             IDialogService dialogService,
             ILocalizationService localizationService)
         {
-            _startupService = startupService;
-            _browserFactory = browserFactory;
+            _toggleEdgeStartupBoostUseCase = toggleEdgeStartupBoostUseCase;
             _dialogService = dialogService;
             _localizationService = localizationService;
-            IsStartupBoostEnabled = _startupService.IsEdgeStartupBoostEnabled();
+            IsStartupBoostEnabled = _toggleEdgeStartupBoostUseCase.IsEnabled();
         }
 
         #endregion
@@ -82,9 +78,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private async Task CopyAndOpenEdge()
         {
-            var edge = _browserFactory.Create(BrowserType.Edge);
-
-            if (edge.IsInstalled)
+            if (_toggleEdgeStartupBoostUseCase.IsEdgeInstalled())
             {
                 var dataPackage = new DataPackage();
                 dataPackage.SetText("edge://settings/?search=Startup-Boost");
@@ -119,27 +113,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             if (_isRevertingState) return;
 
-            try
+            IsInfoBarOpen = false;
+            var response = _toggleEdgeStartupBoostUseCase.Toggle(value);
+
+            if (response.Success)
             {
-                IsInfoBarOpen = false;
-                _startupService.SetEdgeStartupBoost(value);
                 InfoBarTitle = _localizationService.GetString("StartupBoostDialog_SuccessTitle");
-                InfoBarMessage = value
+                InfoBarMessage = response.NewState
                     ? _localizationService.GetString("StartupBoostDialog_SuccessStatus_Activated")
                     : _localizationService.GetString("StartupBoostDialog_SuccessMessage");
                 InfoBarSeverity = InfoBarSeverity.Success;
-                IsInfoBarOpen = true;
             }
-            catch (Exception ex)
+            else
             {
                 _isRevertingState = true;
-                IsStartupBoostEnabled = !value;
+                IsStartupBoostEnabled = response.NewState;
                 _isRevertingState = false;
+
                 InfoBarTitle = _localizationService.GetString("StartupBoostDialog_ErrorTitle");
-                InfoBarMessage = ex.Message;
+                InfoBarMessage = response.ErrorMessage;
                 InfoBarSeverity = InfoBarSeverity.Error;
-                IsInfoBarOpen = true;
             }
+
+            IsInfoBarOpen = true;
         }
 
         #endregion
