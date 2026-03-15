@@ -87,6 +87,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             StatusMessage = _localizationService.GetString("ActivateApi_Checking");
 
             var (IsValid, Message) = await _authService.VerifyCredentialsAsync(Username, ApiKey);
+
             IsBusy = false;
 
             if (IsValid)

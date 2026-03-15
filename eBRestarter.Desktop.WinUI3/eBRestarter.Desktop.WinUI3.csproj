@@ -19,6 +19,7 @@
 	<WindowsPackageType>None</WindowsPackageType>
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />

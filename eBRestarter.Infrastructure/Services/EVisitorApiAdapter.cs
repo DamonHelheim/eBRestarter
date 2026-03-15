@@ -136,24 +136,31 @@ public class EVisitorApiAdapter : IEVisitorApiService
             using var doc = JsonDocument.Parse(response.Content);
             var root = doc.RootElement;
 
-            double[] hourly;
+            // Unser Ziel-Array immer direkt mit 24 Feldern initialisieren
+            double[] hourly = new double[24];
 
-            if (root.ValueKind == JsonValueKind.Array)
+            // NEU: Verarbeitung als JSON-Objekt (z.B. {"1": 685.3, "2": 507.7})
+            if (root.ValueKind == JsonValueKind.Object)
             {
-                hourly = root.EnumerateArray()
-                             .Select(element => element.TryGetDouble(out double val) ? val : 0.0)
-                             .ToArray();
+                foreach (var property in root.EnumerateObject())
+                {
+                    // String-Key (z.B. "1") in eine Zahl parsen
+                    if (int.TryParse(property.Name, out int hour) && hour >= 1 && hour <= 24)
+                    {
+                        // Wert abgreifen und auf den korrekten Array-Index (Stunde - 1) legen
+                        hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? val : 0.0;
+                    }
+                }
             }
-            else
+            // FALLBACK: Falls die API doch mal ein echtes Array sendet [685.3, 507.7]
+            else if (root.ValueKind == JsonValueKind.Array)
             {
-                hourly = new double[24];
-            }
+                var parsedArray = root.EnumerateArray()
+                                      .Select(element => element.TryGetDouble(out double val) ? val : 0.0)
+                                      .ToArray();
 
-            if (hourly.Length < 24)
-            {
-                var temp = new double[24];
-                Array.Copy(hourly, temp, hourly.Length);
-                hourly = temp;
+                // Nur maximal 24 Werte rüberkopieren, um Exceptions zu vermeiden
+                Array.Copy(parsedArray, hourly, Math.Min(parsedArray.Length, 24));
             }
 
             return hourly;
@@ -200,12 +207,15 @@ public class EVisitorApiAdapter : IEVisitorApiService
                     if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
                     {
                         string dateStr = dateProp.GetString() ?? "";
-                        if (DateTime.TryParseExact(dateStr, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+
+                        // LÖSUNG 1: Normales TryParse kann das W3C-Format (ISO 8601) nativ verarbeiten!
+                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
                         {
                             int dayIndex = date.Day - 1;
                             if (dayIndex >= 0 && dayIndex < daysInMonth)
                             {
-                                dailyEarnings[dayIndex] = GetValueSafe(item);
+                                // LÖSUNG 2: Unbedingt += nutzen, um alle Einträge des Tages aufzusummieren!
+                                dailyEarnings[dayIndex] += GetValueSafe(item);
                             }
                         }
                     }
@@ -215,7 +225,7 @@ public class EVisitorApiAdapter : IEVisitorApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Fehler beim Parsen der Daily Earnings.");
+            _logger.LogError(ex, "Fehler beim Parsen der Daily Earnings.");
             return dailyEarnings;
         }
     }
@@ -255,13 +265,14 @@ public class EVisitorApiAdapter : IEVisitorApiService
                     if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
                     {
                         string dateStr = dateProp.GetString() ?? "";
-                        if (DateTime.TryParseExact(dateStr, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+
+                        // LÖSUNG: Flexibles TryParse nutzen, um das ISO/W3C Format ("2026-03-14T20:00:00+00:00") zu verstehen
+                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
                         {
                             int monthIndex = date.Month - 1; // 0-11
                             if (monthIndex >= 0 && monthIndex < 12)
                             {
-                                // Wir müssen hier aufaddieren, da die API vermutlich viele Einträge pro Monat liefert (jeden Tag)
-                                // und wir sie zu einem Monatsbalken zusammenfassen wollen.
+                                // PERFEKT: Das Aufaddieren hast du hier schon richtig implementiert!
                                 monthlyEarnings[monthIndex] += GetValueSafe(item);
                             }
                         }
@@ -272,7 +283,7 @@ public class EVisitorApiAdapter : IEVisitorApiService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Fehler beim Parsen der Monthly Earnings.");
+            _logger.LogError(ex, "Fehler beim Parsen der Monthly Earnings.");
             return monthlyEarnings;
         }
     }
@@ -283,10 +294,14 @@ public class EVisitorApiAdapter : IEVisitorApiService
         if (item.TryGetProperty("value", out JsonElement valProp))
         {
             if (valProp.ValueKind == JsonValueKind.Number)
+            {
                 return valProp.GetDouble();
+            }
             else if (valProp.ValueKind == JsonValueKind.String &&
                      double.TryParse(valProp.GetString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double dVal))
+            {
                 return dVal;
+            }
         }
         return 0.0;
     }

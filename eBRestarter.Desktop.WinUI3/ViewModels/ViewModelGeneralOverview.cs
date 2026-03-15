@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using SkiaSharp;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -111,21 +112,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     Name = _localizationService.GetString("Chart_YAxisPoints"),
                     LabelsDensity = 1,
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(200, 200, 200)) { StrokeThickness = 1 },
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(40, 40, 40)) { StrokeThickness = 1 },
                     MinStep = 100,
                     TextSize = 12
                 }
             ];
 
             _chartValues = [];
+
             for (int i = 0; i < 24; i++) _chartValues.Add(new ObservableValue(0));
 
             _mainColumnSeries = new ColumnSeries<ObservableValue>
             {
                 Values = _chartValues,
                 Name = _localizationService.GetString("Chart_SeriesEarnings"),
-                Rx = 200,
-                Ry = 200,
+                Rx = 5,
+                Ry = 5,
                 Fill = new SolidColorPaint(new SKColor(0, 120, 215)),
                 DataLabelsPaint = new SolidColorPaint(new SKColor(12, 142, 168)),
                 DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Top
@@ -236,10 +238,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             };
 
             while (_chartValues.Count < sourceData.Length)
+            {
                 _chartValues.Add(new ObservableValue(0));
+            }
 
             while (_chartValues.Count > sourceData.Length)
+            {
                 _chartValues.RemoveAt(_chartValues.Count - 1);
+            }
 
             for (int i = 0; i < sourceData.Length; i++)
             {
@@ -260,6 +266,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     break;
                 case 1:
                     xAxis.Name = _localizationService.GetString("Chart_XAxisDay");
+                    // NEU: Erstellt automatisch ein Array ["1", "2", "3", ..., "31"] für die X-Achse
+                    xAxis.Labels = System.Linq.Enumerable.Range(1, 31).Select(i => i.ToString()).ToArray();
                     break;
                 case 2:
                     xAxis.Name = _localizationService.GetString("Chart_XAxisMonth");

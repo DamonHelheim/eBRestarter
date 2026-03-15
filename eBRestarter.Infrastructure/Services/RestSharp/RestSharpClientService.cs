@@ -21,6 +21,7 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
         {
             // Client erstellen (using sorgt für Dispose)
             using var client = CreateClient(requestModel);
+
             var request = new RestRequest();
 
             try
@@ -38,6 +39,7 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
         public ApiResponse ExecuteGet(ApiRequest requestModel)
         {
             using var client = CreateClient(requestModel);
+
             var request = new RestRequest();
 
             try

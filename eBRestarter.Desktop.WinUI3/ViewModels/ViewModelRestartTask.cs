@@ -147,7 +147,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 SecondsRemaining = e.SecondsRemaining;
                 StatusInfoText = e.StatusMessage;
-                
+
                 // Uncheck the toggle button if the cycle went to idle due to error
                 if (e.State == RestartTaskState.Idle && IsActive)
                 {
@@ -171,7 +171,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 // We use TryEnqueue because DialogService needs to run on UI thread,
                 // but the Task Completion source lets the UseCase await it.
                 var tcs = new TaskCompletionSource();
-                
+
                 _dispatcherQueue.TryEnqueue(async () =>
                 {
                     try
