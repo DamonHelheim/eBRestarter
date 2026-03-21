@@ -145,13 +145,13 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            // Spezialfall: Der Benutzer hat auf "Einstellungen" (Zahnrad unten) geklickt.
-            if (args.IsSettingsInvoked)
-            {
-                // Hier k�nnte sp�ter die Navigation zur Einstellungsseite erfolgen.
-                _navigationService.NavigateTo("Settings", transitionInfo: _defaultTransition);
-                return;
-            }
+            //// Spezialfall: Der Benutzer hat auf "Einstellungen" (Zahnrad unten) geklickt.
+            //if (args.IsSettingsInvoked)
+            //{
+            //    // Hier k�nnte sp�ter die Navigation zur Einstellungsseite erfolgen.
+            //    _navigationService.NavigateTo("Settings", transitionInfo: _defaultTransition);
+            //    return;
+            //}
 
             // Standardfall: Ein normales Men�-Item wurde geklickt.
             // Wir extrahieren den "Tag" aus dem XAML (z.B. Tag="Options").

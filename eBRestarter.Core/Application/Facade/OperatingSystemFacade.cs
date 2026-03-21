@@ -3,28 +3,16 @@ using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 namespace eBRestarter.Core.Application.Facade;
 
-public class OperatingSystemFacade : IOperatingSystemFacade
+public class OperatingSystemFacade(
+    IWindowsProcessControlService windowsProcessControlService,
+    IWindowsSystemInfoService windowsSystemInfoService,
+    IWindowsRegistryService windowsRegistryService,
+    IWindowsStartupManagerService windowsStartupManagerService,
+    IWindowsFileSystemService windowsFileSystemService) : IOperatingSystemFacade
 {
-    public IWindowsProcessControlService WindowsProcessControlService { get; }
-    public IWindowsSystemInfoService WindowsSystemInfoService { get; }
-    public IWindowsRegistryService WindowsRegistryService { get; }
-    public IWindowsStartupManagerService WindowsStartupManagerService { get; }
-    public IWindowsFileSystemService WindowsFileSystemService { get; }
-
-    // Constructor Injection: Der Container füllt hier die 3 Services ein
-    public OperatingSystemFacade(
-        IWindowsProcessControlService windowsProcessControlService,
-        IWindowsSystemInfoService windowsSystemInfoService,
-        IWindowsRegistryService windowsRegistryService,
-        IWindowsStartupManagerService windowsStartupManagerService,
-        IWindowsFileSystemService windowsFileSystemService)
-    {
-        WindowsProcessControlService = windowsProcessControlService;
-        WindowsSystemInfoService = windowsSystemInfoService;
-        WindowsRegistryService = windowsRegistryService;
-        WindowsStartupManagerService = windowsStartupManagerService;
-        WindowsFileSystemService = windowsFileSystemService;
-    }
-
-
+    public IWindowsProcessControlService WindowsProcessControlService { get; } = windowsProcessControlService;
+    public IWindowsSystemInfoService WindowsSystemInfoService { get; } = windowsSystemInfoService;
+    public IWindowsRegistryService WindowsRegistryService { get; } = windowsRegistryService;
+    public IWindowsStartupManagerService WindowsStartupManagerService { get; } = windowsStartupManagerService;
+    public IWindowsFileSystemService WindowsFileSystemService { get; } = windowsFileSystemService;
 }

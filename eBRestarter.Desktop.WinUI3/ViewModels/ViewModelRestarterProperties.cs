@@ -11,7 +11,6 @@ using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 

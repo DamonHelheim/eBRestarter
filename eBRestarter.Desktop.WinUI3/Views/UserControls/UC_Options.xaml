@@ -452,83 +452,6 @@
 
                         </Grid.ColumnDefinitions>
 
-
-                        <!--<Border Grid.Column="0"
-                                Background="#FFF5F5F5"
-                                CornerRadius="6"
-                                Padding="16"
-                                Margin="0,0,24,0">
-
-                            <StackPanel Orientation="Vertical">
-
-                        -->
-                        <!--  Header  -->
-                        <!--
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,12">
-
-                                    <Image Margin="0,0,0,0"
-                                           Source="\Resources\Visuals\Icons\Intersection\file_information.png"
-                                           Height="35"
-                                           Width="35"/>
-
-                                    <TextBlock x:Name="lbl_options_api_informations"
-                                               x:Uid="API_Information"
-                                               Foreground="{ThemeResource FontColor_1}"
-                                               Margin="10,4,0,0"
-                                               FontSize="16" />
-                                </StackPanel>
-
-                        -->
-                        <!--  „Karte“ mit Username / Key  -->
-                        <!--
-                                <Border x:Name="sp_Options_API_Information"
-                                        Background="{ThemeResource DashletBackgroundColor_2}"
-                                        CornerRadius="6"
-                                        Padding="12"
-                                        Margin="0,0,0,0">
-
-                                    <StackPanel Orientation="Vertical">
-
-                                        <TextBlock x:Name="lbl_APIUsername"
-                                                   x:Uid="Username"
-                                                    Foreground="{ThemeResource FontColor_1}"
-                                                    HorizontalAlignment="Left"
-                                                    Margin="0,0,0,8"
-                                                    FontSize="16" />
-
-                                        <StackPanel Orientation="Horizontal"
-                                                    Height="52">
-
-                                            <TextBlock x:Name="lbl_options_key"
-                                                       x:Uid="API_key"
-                                                       Foreground="{ThemeResource FontColor_1}"
-                                                       Margin="0,10,0,10"
-                                                       FontSize="16"
-                                                       Width="94" />
-
-                                            <Button x:Name="BtnShowAPIKey"
-                                                    x:Uid="Show"
-                                                    Content="Anzeigen"
-                                                    Margin="8,5,0,10"
-                                                    Width="175"
-                                                    FontSize="14"
-                                                    Height="35"
-                                                    Background="#FF1598C9"
-                                                    Foreground="#DDFFFFFF"
-                                                    BorderBrush="{x:Null}"/>
-
-                                        </StackPanel>
-
-                                    </StackPanel>
-
-                                </Border>
-
-                            </StackPanel>
-
-                        </Border>-->
-
-
                         <Border
                             Grid.Column="0"
                             Padding="16"
@@ -552,6 +475,7 @@
                                         Margin="10,8,0,0"
                                         FontSize="16"
                                         Foreground="{ThemeResource FontColor_1}" />
+
                                 </StackPanel>
 
                                 <!--  Karte: Verbindung herstellen  -->
@@ -589,54 +513,10 @@
                                             Foreground="White"
                                             IsEnabled="{Binding BtnAPISectionIsEnabled}" />
 
-                                        <!--<Button x:Name="BtnImportAPIFile"
-                                                x:Uid="Establish_API_connection_with_file_import"
-                                                Command="{Binding ShowImportApiDialogCommand}"
-                                                Margin="0,0,0,0"
-                                                Width="330"
-                                                Height="40"
-                                                FontSize="16"
-                                                Background="#FF1598C9"
-                                                Foreground="White"
-                                                BorderBrush="{x:Null}"/>-->
 
                                     </StackPanel>
 
                                 </Border>
-
-                                <!--  Karte: Export / Entfernen  -->
-                                <!--<Border x:Name="sp_Options_API_2"
-                                        Background="{ThemeResource DashletBackgroundColor_2}"
-                                        CornerRadius="6"
-                                        Padding="10">
-
-                                    <StackPanel Orientation="Vertical">
-
-                                        <Button x:Name="BtnGoToSavedAPIFile"
-                                                x:Uid="Export_API_access_file"
-                                                Margin="0,0,0,8"
-                                                Width="330"
-                                                FontSize="16"
-                                                Height="40"
-                                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
-                                                Background="#FF1598C9"
-                                                Foreground="White"
-                                                BorderBrush="{x:Null}"/>
-
-                                        <Button x:Name="BtnRemoveAPIFile"
-                                                x:Uid="Deactivate_API_interface"
-                                                Margin="0,0,0,0"
-                                                Width="330"
-                                                FontSize="16"
-                                                Height="40"
-                                                IsEnabled="{Binding BtnAPISectionIsEnabled}"
-                                                Background="#FF1598C9"
-                                                Foreground="White"
-                                                BorderBrush="{x:Null}"/>
-
-                                    </StackPanel>
-
-                                </Border>-->
 
                             </StackPanel>
 

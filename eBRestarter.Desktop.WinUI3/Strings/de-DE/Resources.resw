@@ -828,4 +828,10 @@
   <data name="StartupBoostDialog.CloseButtonText" xml:space="preserve">
     <value>Schließen</value>
   </data>
+  <data name="Task_Username" xml:space="preserve">
+    <value>Nutzername</value>
+  </data>
+  <data name="Task_NoUsernameFound" xml:space="preserve">
+    <value>Du hast keinen Nutzernamen eingetragen, bitte trage einen Nutzernamen, damit du den Restarter nutzen kannst.</value>
+  </data>
 </root>

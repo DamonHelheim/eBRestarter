@@ -45,7 +45,7 @@ public class ChromeBrowserTests
         // Arrange
         var url = "https://www.google.com";
         var expectedExePath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
-        
+
         // Mock IsInstalled / ExecutablePaths
         _mockFileSystemService.Setup(f => f.FileExists(It.IsAny<string>())).Returns(false);
         _mockFileSystemService.Setup(f => f.FileExists(expectedExePath)).Returns(true);

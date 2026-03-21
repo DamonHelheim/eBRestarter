@@ -55,7 +55,7 @@
             IsBackButtonVisible="Collapsed"
             IsPaneOpen="True"
             IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="True"
+            IsSettingsVisible="False"
             ItemInvoked="NavView_ItemInvoked"
             OpenPaneLength="260"
             PaneDisplayMode="Left"

@@ -121,7 +121,20 @@ namespace eBRestarter.Desktop.WinUI3
             }
 
             // =========================================================================
-            // 3. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
+            // 3. HINTERGRUND-SERVICES STARTEN
+            // =========================================================================
+            try
+            {
+                var restartScheduler = AppHost.Services.GetRequiredService<IComputerRestartScheduler>();
+                restartScheduler.StartScheduler();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Fehler beim Starten des ComputerRestartSchedulers: {ex.Message}");
+            }
+
+            // =========================================================================
+            // 4. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
             // =========================================================================
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;

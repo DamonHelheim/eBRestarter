@@ -1,21 +1,14 @@
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
 
-public class ToggleAppAutoStartService : IToggleAppAutoStartUseCase
+public class ToggleAppAutoStartService(
+    IWindowsStartupManagerService startupManagerService,
+    IEVisitorConfigService configService) : IToggleAppAutoStartUseCase
 {
-    private readonly IWindowsStartupManagerService _startupManagerService;
-    private readonly IEVisitorConfigService _configService;
-
-    public ToggleAppAutoStartService(
-        IWindowsStartupManagerService startupManagerService,
-        IEVisitorConfigService configService)
-    {
-        _startupManagerService = startupManagerService;
-        _configService = configService;
-    }
+    private readonly IWindowsStartupManagerService _startupManagerService = startupManagerService;
+    private readonly IEVisitorConfigService _configService = configService;
 
     public async Task<bool> InitializeAndGetStateAsync()
     {

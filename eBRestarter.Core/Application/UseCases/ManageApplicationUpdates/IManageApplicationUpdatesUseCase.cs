@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 
 public interface IManageApplicationUpdatesUseCase

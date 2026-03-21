@@ -1,4 +1,3 @@
-using System;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
@@ -26,7 +25,7 @@ public class ConfigureAutoLogonService : IConfigureAutoLogonUseCase
                 _autoLogonService.DisableAutoLogon();
                 return new ConfigureAutoLogonResponse(true, AutoLogonResultStatus.Deactivated);
             }
-            
+
             if (!string.IsNullOrWhiteSpace(request.Username) && request.Password != null)
             {
                 string domain = request.Domain ?? string.Empty;

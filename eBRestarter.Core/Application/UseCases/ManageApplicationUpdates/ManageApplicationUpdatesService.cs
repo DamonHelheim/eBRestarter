@@ -1,16 +1,10 @@
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Interfaces.Update;
 
 namespace eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 
-public class ManageApplicationUpdatesService : IManageApplicationUpdatesUseCase
+public class ManageApplicationUpdatesService(IUpdateService updateService) : IManageApplicationUpdatesUseCase
 {
-    private readonly IUpdateService _updateService;
-
-    public ManageApplicationUpdatesService(IUpdateService updateService)
-    {
-        _updateService = updateService;
-    }
+    private readonly IUpdateService _updateService = updateService;
 
     public async Task<CheckUpdateResponse> CheckForUpdatesAsync()
     {

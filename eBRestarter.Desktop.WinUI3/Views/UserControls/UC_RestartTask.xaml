@@ -247,7 +247,8 @@
                 Command="{Binding ExecuteStartTimerSchedulerCommand}"
                 CommandParameter="{Binding ElementName=tbtn_StartTimerSchudeler, Path=IsChecked}"
                 Content="{Binding IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
-                Foreground="White">
+                Foreground="White"
+                IsChecked="{Binding IsActive, Mode=TwoWay}">
 
                 <ToggleButton.Resources>
 

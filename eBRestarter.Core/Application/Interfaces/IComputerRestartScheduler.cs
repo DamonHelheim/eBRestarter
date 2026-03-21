@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Application.Interfaces;
+namespace eBRestarter.Core.Application.Interfaces;
 
 public interface IComputerRestartScheduler
 {
@@ -7,4 +7,7 @@ public interface IComputerRestartScheduler
 
     // Stoppt die Überwachung
     Task StopSchedulerAsync();
+
+    // Event, das ausgelöst wird, wenn der Scheduler den Rechner-Neustart verschiebt
+    event EventHandler<DateTime?>? OnNextRestartDateChanged;
 }

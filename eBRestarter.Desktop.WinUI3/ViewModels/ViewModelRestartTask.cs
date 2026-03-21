@@ -2,15 +2,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
 using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -74,6 +74,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// from <see cref="IRestartTaskDisplayStateService"/>, and registers as recipient for app-wide
         /// messages so the UI stays in sync when username, browser, or delete-content settings change.
         /// </summary>
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public ViewModelRestartTask(
             IManageRestarterCycleUseCase manageRestarterCycleUseCase,
             IEVisitorConfigService configService,
@@ -95,6 +96,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             LoadInitialConfigData();
             WeakReferenceMessenger.Default.RegisterAll(this);
+
+            var appConfig = _configService.LoadConfig();
+            if (appConfig.Browser?.StartBrowserWithProgrammStart == true)
+            {
+                IsActive = true;
+                StartLoop();
+            }
         }
 
         #endregion
@@ -107,6 +115,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private void ExecuteStartTimerScheduler(bool? isChecked)
         {
+            var appConfig = _configService.LoadConfig();
+
+            if (string.IsNullOrEmpty(appConfig.Username))
+            {
+                _localizationService.GetString("Task_DefaultBrowser");
+                _dialogService.ShowMessageAsync(_localizationService.GetString("Task_Username"), _localizationService.GetString("Task_NoUsernameFound"), DialogIcon.Error);
+
+                IsActive = false;
+
+                return;
+
+            }
+
             IsActive = isChecked ?? false;
 
             if (IsActive)
@@ -166,7 +187,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             );
 
             // Fire and forget (the use case manages its own background task loop)
-            _ = _manageRestarterCycleUseCase.StartAsync(request, async () =>
+            _manageRestarterCycleUseCase.StartAsync(request, async () =>
             {
                 // We use TryEnqueue because DialogService needs to run on UI thread,
                 // but the Task Completion source lets the UseCase await it.
@@ -190,7 +211,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 });
 
                 await tcs.Task;
-            });
+            }).Forget();
         }
 
         private void StopLoop()

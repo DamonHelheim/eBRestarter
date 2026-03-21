@@ -1,8 +1,4 @@
 ﻿using eBRestarter.Core.Domain.Models.Records;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 
 namespace eBRestarter.Core.Application.Interfaces.Authentication;
 

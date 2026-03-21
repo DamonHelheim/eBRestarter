@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Domain.Models;
@@ -148,7 +148,7 @@ public class EVisitorApiAdapter : IEVisitorApiService
                     if (int.TryParse(property.Name, out int hour) && hour >= 1 && hour <= 24)
                     {
                         // Wert abgreifen und auf den korrekten Array-Index (Stunde - 1) legen
-                        hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? val : 0.0;
+                        hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0;
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class EVisitorApiAdapter : IEVisitorApiService
             else if (root.ValueKind == JsonValueKind.Array)
             {
                 var parsedArray = root.EnumerateArray()
-                                      .Select(element => element.TryGetDouble(out double val) ? val : 0.0)
+                                      .Select(element => element.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0)
                                       .ToArray();
 
                 // Nur maximal 24 Werte rüberkopieren, um Exceptions zu vermeiden
@@ -221,6 +221,13 @@ public class EVisitorApiAdapter : IEVisitorApiService
                     }
                 }
             }
+
+            // Auf 2 Nachkommastellen runden, um Floating-Point-Artefakte zu vermeiden
+            for (int i = 0; i < dailyEarnings.Length; i++)
+            {
+                dailyEarnings[i] = Math.Round(dailyEarnings[i], 2);
+            }
+
             return dailyEarnings;
         }
         catch (Exception ex)
@@ -279,6 +286,13 @@ public class EVisitorApiAdapter : IEVisitorApiService
                     }
                 }
             }
+
+            // Auf 2 Nachkommastellen runden, um Floating-Point-Artefakte zu vermeiden
+            for (int i = 0; i < monthlyEarnings.Length; i++)
+            {
+                monthlyEarnings[i] = Math.Round(monthlyEarnings[i], 2);
+            }
+
             return monthlyEarnings;
         }
         catch (Exception ex)

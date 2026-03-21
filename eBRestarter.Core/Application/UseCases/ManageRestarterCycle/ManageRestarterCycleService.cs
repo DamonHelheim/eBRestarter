@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
@@ -8,38 +5,28 @@ using eBRestarter.Core.Domain.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
 
-public class ManageRestarterCycleService : IManageRestarterCycleUseCase
+public class ManageRestarterCycleService(
+    IBrowserFactory browserFactory,
+    ILocalizationService localizationService,
+    IBrowserDisplayNameResolver browserDisplayNameResolver,
+    IEVisitorConfigService configService,
+    IBrowserCleanupScheduleService browserCleanupScheduleService,
+    TimeProvider timeProvider) : IManageRestarterCycleUseCase
 {
     private const string BaseUrl = "https://www.ebesucher.com/surfbar/";
     private const int InitialDelaySeconds = 5;
 
-    private readonly IBrowserFactory _browserFactory;
-    private readonly ILocalizationService _localizationService;
-    private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver;
-    private readonly IEVisitorConfigService _configService;
-    private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService;
-    private readonly TimeProvider _timeProvider;
+    private readonly IBrowserFactory _browserFactory = browserFactory;
+    private readonly ILocalizationService _localizationService = localizationService;
+    private readonly IBrowserDisplayNameResolver _browserDisplayNameResolver = browserDisplayNameResolver;
+    private readonly IEVisitorConfigService _configService = configService;
+    private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService = browserCleanupScheduleService;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     private CancellationTokenSource? _cts;
     private IBrowser? _currentBrowser;
-    
-    public event EventHandler<RestarterCycleProgress>? ProgressChanged;
 
-    public ManageRestarterCycleService(
-        IBrowserFactory browserFactory,
-        ILocalizationService localizationService,
-        IBrowserDisplayNameResolver browserDisplayNameResolver,
-        IEVisitorConfigService configService,
-        IBrowserCleanupScheduleService browserCleanupScheduleService,
-        TimeProvider timeProvider)
-    {
-        _browserFactory = browserFactory;
-        _localizationService = localizationService;
-        _browserDisplayNameResolver = browserDisplayNameResolver;
-        _configService = configService;
-        _browserCleanupScheduleService = browserCleanupScheduleService;
-        _timeProvider = timeProvider;
-    }
+    public event EventHandler<RestarterCycleProgress>? ProgressChanged;
 
     public async Task StartAsync(ManageRestarterCycleRequest request, Func<Task> performCleanupCallback)
     {

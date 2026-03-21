@@ -1,13 +1,10 @@
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
-using System;
-using Xunit;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Factories;
 

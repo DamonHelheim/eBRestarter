@@ -7,33 +7,22 @@ namespace eBRestarter.Core.Application.Services;
 /// <summary>
 /// Erzeugt RestartTaskDisplayState aus Config und Lokalisierung (Move aus ViewModelRestartTask LoadInitialData).
 /// </summary>
-public class RestartTaskDisplayStateService : IRestartTaskDisplayStateService
+public class RestartTaskDisplayStateService(
+    ILocalizationService localizationService,
+    ICacheDeletionIntervalValidator intervalValidator,
+    TimeProvider timeProvider) : IRestartTaskDisplayStateService
 {
     // =========================================================
     // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
     // =========================================================
     #region FieldsAndInjectedServices
 
-    private readonly ILocalizationService _localizationService;
-    private readonly ICacheDeletionIntervalValidator _intervalValidator;
-    private readonly TimeProvider _timeProvider;
+    private readonly ILocalizationService _localizationService = localizationService;
+    private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     #endregion
-
-    // =========================================================
-    // 2. CONSTRUCTOR & FINALIZER (Ctor)
-    // =========================================================
     #region ConstructorAndFinalizer
-
-    public RestartTaskDisplayStateService(
-        ILocalizationService localizationService,
-        ICacheDeletionIntervalValidator intervalValidator,
-        TimeProvider timeProvider)
-    {
-        _localizationService = localizationService;
-        _intervalValidator = intervalValidator;
-        _timeProvider = timeProvider;
-    }
 
     #endregion
 

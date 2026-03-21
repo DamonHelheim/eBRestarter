@@ -1,24 +1,16 @@
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 namespace eBRestarter.Core.Application.UseCases.GetSystemInformation;
 
-public class GetSystemInformationService : IGetSystemInformationUseCase
+public class GetSystemInformationService(
+    IHardwareInfoService hardwareService,
+    IOsEditionService osEditionService,
+    IWindowsSystemInfoService systemInfoService) : IGetSystemInformationUseCase
 {
-    private readonly IHardwareInfoService _hardwareService;
-    private readonly IOsEditionService _osEditionService;
-    private readonly IWindowsSystemInfoService _systemInfoService;
-
-    public GetSystemInformationService(
-        IHardwareInfoService hardwareService,
-        IOsEditionService osEditionService,
-        IWindowsSystemInfoService systemInfoService)
-    {
-        _hardwareService = hardwareService;
-        _osEditionService = osEditionService;
-        _systemInfoService = systemInfoService;
-    }
+    private readonly IHardwareInfoService _hardwareService = hardwareService;
+    private readonly IOsEditionService _osEditionService = osEditionService;
+    private readonly IWindowsSystemInfoService _systemInfoService = systemInfoService;
 
     public async Task<SystemInformationResponse> ExecuteAsync()
     {

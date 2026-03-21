@@ -2,14 +2,9 @@ using eBRestarter.Core.Application.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 
-public class RemoveApiCredentialsService : IRemoveApiCredentialsUseCase
+public class RemoveApiCredentialsService(IEVisitorConfigService configService) : IRemoveApiCredentialsUseCase
 {
-    private readonly IEVisitorConfigService _configService;
-
-    public RemoveApiCredentialsService(IEVisitorConfigService configService)
-    {
-        _configService = configService;
-    }
+    private readonly IEVisitorConfigService _configService = configService;
 
     public void Execute()
     {

@@ -1,20 +1,13 @@
-using System;
 using eBRestarter.Core.Application.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 
-public class ScheduleBrowserCleanupService : IScheduleBrowserCleanupUseCase
+public class ScheduleBrowserCleanupService(
+    IEVisitorConfigService configService,
+    TimeProvider timeProvider) : IScheduleBrowserCleanupUseCase
 {
-    private readonly IEVisitorConfigService _configService;
-    private readonly TimeProvider _timeProvider;
-
-    public ScheduleBrowserCleanupService(
-        IEVisitorConfigService configService,
-        TimeProvider timeProvider)
-    {
-        _configService = configService;
-        _timeProvider = timeProvider;
-    }
+    private readonly IEVisitorConfigService _configService = configService;
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)
     {

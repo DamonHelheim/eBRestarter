@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
@@ -11,6 +10,7 @@ using eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -49,6 +49,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IOperatingSystemFacade _os;
         private readonly IRestartCalculationService _restartCalculationService;
         private readonly IThemeService _themeService;
+        private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
+        private readonly IComputerRestartScheduler _computerRestartScheduler;
 
         #endregion
 
@@ -106,7 +108,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IEVisitorConfigService eVisitorConfigService,
             ILanguageService languageService,
             ILocalizationService localizationService,
-            IRestartCalculationService restartCalculationService)
+            IRestartCalculationService restartCalculationService,
+            IComputerRestartScheduler computerRestartScheduler)
         {
             _isInitializing = true;
 
@@ -121,6 +124,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _languageService = languageService;
             _localizationService = localizationService;
             _restartCalculationService = restartCalculationService;
+            _computerRestartScheduler = computerRestartScheduler;
 
             ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>([.. localizationService.GetComputerRestartOptions()]);
 
@@ -140,7 +144,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             _isInitializing = false;
 
-            _ = InitializeAsync();
+            _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
+            _computerRestartScheduler.OnNextRestartDateChanged += OnNextRestartDateChanged;
+
+            InitializeAsync().Forget();
         }
 
         #endregion
@@ -296,6 +304,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // =========================================================
         #region PropertyChangeHandlers
 
+        private void OnNextRestartDateChanged(object? sender, DateTime? newDate)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                _currentConfig.Computer.NextRestartDate = newDate;
+                UpdateRestartUiState();
+            });
+        }
+
         partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
         {
             _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
@@ -428,7 +445,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async void ToggleAutoStartAsync(bool enable)
         {
             await _toggleAppAutoStartUseCase.ToggleAsync(enable);
-            
+
             // Sync current config view
             _currentConfig.Settings.StartWithWindows = enable;
         }

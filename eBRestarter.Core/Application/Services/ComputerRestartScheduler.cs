@@ -5,33 +5,26 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Core.Application.Services;
 
-public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
+public class ComputerRestartScheduler(
+    IEVisitorConfigService configService,
+    IWindowsProcessControlService processService,
+    IApplicationLifetime applicationLifetime,
+    TimeProvider timeProvider,
+    ILogger<ComputerRestartScheduler> logger) : IComputerRestartScheduler, IDisposable
 {
     // Abhängigkeiten (Dependency Inversion Principle)
-    private readonly IEVisitorConfigService _configService;
-    private readonly IWindowsProcessControlService _processService;
-    private readonly IApplicationLifetime _applicationLifetime;
-    private readonly TimeProvider _timeProvider;
-    private readonly ILogger<ComputerRestartScheduler> _logger;
+    private readonly IEVisitorConfigService _configService = configService;
+    private readonly IWindowsProcessControlService _processService = processService;
+    private readonly IApplicationLifetime _applicationLifetime = applicationLifetime;
+    private readonly TimeProvider _timeProvider = timeProvider;
+    private readonly ILogger<ComputerRestartScheduler> _logger = logger;
 
     // Steuerung für den Hintergrund-Task
     private PeriodicTimer? _timer;
     private Task? _backgroundTask;
     private CancellationTokenSource? _cts;
 
-    public ComputerRestartScheduler(
-        IEVisitorConfigService configService,
-        IWindowsProcessControlService processService,
-        IApplicationLifetime applicationLifetime,
-        TimeProvider timeProvider,
-        ILogger<ComputerRestartScheduler> logger)
-    {
-        _configService = configService;
-        _processService = processService;
-        _applicationLifetime = applicationLifetime;
-        _timeProvider = timeProvider;
-        _logger = logger;
-    }
+    public event EventHandler<DateTime?>? OnNextRestartDateChanged;
 
     public void StartScheduler()
     {
@@ -97,29 +90,57 @@ public class ComputerRestartScheduler : IComputerRestartScheduler, IDisposable
         var config = _configService.LoadConfig();
 
         // 2. Validierung: Ist ein Datum gesetzt?
-        if (config.Computer.NextRestartDate == null)
+        if (config.Computer.NextRestartDate == null || config.Computer.ComputerRestartIntervalDays <= 0)
         {
             return; // Feature nicht aktiv
         }
 
         var now = _timeProvider.GetLocalNow();
+        var targetDateTime = config.Computer.NextRestartDate.Value.Date.AddHours(config.Computer.RestartClockTime);
         var today = now.Date;
-        var restartDate = config.Computer.NextRestartDate.Value.Date;
 
-        // Deine Logik aus dem alten Code: Prüfen ob heute der Tag ist
-        // UND ob die Uhrzeit stimmt.
-        // Annahme: RestartClockTime ist eine volle Stunde (int), z.B. 9 für 09:00 Uhr.
-
-        bool isCorrectDay = restartDate == today;
-
-        // Wir prüfen, ob wir in der richtigen Stunde sind und die Minute 0 ist.
-        // Der Timer läuft alle 30s, also treffen wir Minute 0 garantiert zweimal.
-        // Da der PC herunterfährt, ist das doppelte Treffen egal.
-        bool isCorrectTime = now.Hour == config.Computer.RestartClockTime && now.Minute == 0;
-
-        if (isCorrectDay && isCorrectTime)
+        // Prüfen, ob das geplante Datum und die Uhrzeit in der Vergangenheit liegen
+        if (now >= targetDateTime)
         {
-            //ExecuteRestartSequence();
+            // Wenn die geplante Zeit vorüber ist, ABER es nicht genau JETZT ist (mit einer gewissen Toleranz),
+            // dann haben wir den Termin verpasst (z.B. App war zu). In dem Fall nicht neustarten, sondern verschieben.
+            // Toleranz: Sagen wir, innerhalb von 5 Minuten nach der Zielzeit darf noch neugestartet werden.
+            if (now > targetDateTime.AddMinutes(5))
+            {
+                _logger.LogWarning("Geplanter Neustart am {Target} wurde verpasst. Berechne neuen Termin...", targetDateTime);
+
+                // Berechne neuen Termin basierend auf Intervall
+                DateTime newTargetDate = today;
+
+                // Wenn wir heute schon NACH der RestartClockTime sind, addiere die Interval-Tage auf heute.
+                if (now.Hour >= config.Computer.RestartClockTime)
+                {
+                    newTargetDate = today.AddDays(config.Computer.ComputerRestartIntervalDays);
+                }
+                else
+                {
+                    // Wenn wir heute noch VOR der Zeit sind, wäre der Restart eigentlich heute (passiert selten in dieser Logik-Branch, aber sicher ist sicher)
+                    newTargetDate = today;
+                }
+
+                config.Computer.NextRestartDate = newTargetDate;
+                _configService.SaveConfig(config);
+
+                // UI informieren, dass sich das Datum verschoben hat
+                OnNextRestartDateChanged?.Invoke(this, newTargetDate);
+                return;
+            }
+
+            // Wir sind genau am oder sehr nah am Ziel-Termin (innerhalb von 5 Minuten)
+            // Prüfen wir zur Sicherheit nochmal, ob es auch heute ist
+            var restartDate = config.Computer.NextRestartDate.Value.Date;
+            bool isCorrectDay = restartDate == today;
+            bool isCorrectTime = now.Hour == config.Computer.RestartClockTime;
+
+            if (isCorrectDay && isCorrectTime)
+            {
+                ExecuteRestartSequence();
+            }
         }
     }
 

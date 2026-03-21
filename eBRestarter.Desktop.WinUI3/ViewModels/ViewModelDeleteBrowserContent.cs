@@ -3,14 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 

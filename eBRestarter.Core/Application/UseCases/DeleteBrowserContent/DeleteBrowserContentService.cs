@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
@@ -9,24 +5,16 @@ using eBRestarter.Core.Domain.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
-public class DeleteBrowserContentService : IDeleteBrowserContentUseCase
+public class DeleteBrowserContentService(
+    IBrowserFactory browserFactory,
+    IFileDeletionService fileDeletionService,
+    IWindowsProcessControlService processService,
+    ILocalizationService localizationService) : IDeleteBrowserContentUseCase
 {
-    private readonly IBrowserFactory _browserFactory;
-    private readonly IFileDeletionService _fileDeletionService;
-    private readonly IWindowsProcessControlService _processService;
-    private readonly ILocalizationService _localizationService;
-
-    public DeleteBrowserContentService(
-        IBrowserFactory browserFactory,
-        IFileDeletionService fileDeletionService,
-        IWindowsProcessControlService processService,
-        ILocalizationService localizationService)
-    {
-        _browserFactory = browserFactory;
-        _fileDeletionService = fileDeletionService;
-        _processService = processService;
-        _localizationService = localizationService;
-    }
+    private readonly IBrowserFactory _browserFactory = browserFactory;
+    private readonly IFileDeletionService _fileDeletionService = fileDeletionService;
+    private readonly IWindowsProcessControlService _processService = processService;
+    private readonly ILocalizationService _localizationService = localizationService;
 
     public async Task<DeleteBrowserContentResponse> ExecuteAsync(
         DeleteBrowserContentRequest request,
