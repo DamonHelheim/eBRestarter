@@ -374,7 +374,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         partial void OnStartWithWindowsChanged(bool value)
         {
             if (_isInitializing) return;
-            ToggleAutoStartAsync(value);
+            ToggleAutoStartAsync(value).Forget();
         }
 
         #endregion
@@ -442,7 +442,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _currentConfig.Computer.NextRestartDate = _restartCalculationService.GetNextRestartDate(days, hours);
         }
 
-        private async void ToggleAutoStartAsync(bool enable)
+        private async Task ToggleAutoStartAsync(bool enable)
         {
             await _toggleAppAutoStartUseCase.ToggleAsync(enable);
 

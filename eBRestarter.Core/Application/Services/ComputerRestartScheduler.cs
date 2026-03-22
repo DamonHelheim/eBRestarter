@@ -44,7 +44,7 @@ public class ComputerRestartScheduler(
     {
         if (_cts != null)
         {
-            _cts.Cancel();
+            await _cts.CancelAsync();
             _cts.Dispose();
             _cts = null;
         }
@@ -110,7 +110,7 @@ public class ComputerRestartScheduler(
                 _logger.LogWarning("Geplanter Neustart am {Target} wurde verpasst. Berechne neuen Termin...", targetDateTime);
 
                 // Berechne neuen Termin basierend auf Intervall
-                DateTime newTargetDate = today;
+                DateTime newTargetDate;
 
                 // Wenn wir heute schon NACH der RestartClockTime sind, addiere die Interval-Tage auf heute.
                 if (now.Hour >= config.Computer.RestartClockTime)
@@ -123,11 +123,11 @@ public class ComputerRestartScheduler(
                     newTargetDate = today;
                 }
 
-                config.Computer.NextRestartDate = newTargetDate;
+                config.Computer.NextRestartDate = today;
                 _configService.SaveConfig(config);
 
                 // UI informieren, dass sich das Datum verschoben hat
-                OnNextRestartDateChanged?.Invoke(this, newTargetDate);
+                OnNextRestartDateChanged?.Invoke(this, today);
                 return;
             }
 
@@ -170,9 +170,34 @@ public class ComputerRestartScheduler(
         }
     }
 
+    // =========================================================
+    // IDisposable Pattern
+    // =========================================================
+
+    private bool _disposed;
+
     public void Dispose()
     {
-        _timer?.Dispose();
-        _cts?.Dispose();
+        // Ruft die eigentliche Aufräum-Methode auf
+        Dispose(true);
+
+        // Sagt dem Garbage Collector, dass er den Finalizer nicht mehr aufrufen muss (SonarQube Fix!)
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        // Verhindert, dass doppelt abgebaut wird
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Verwaltete Ressourcen (Managed Objects) freigeben
+                _timer?.Dispose();
+                _cts?.Dispose();
+            }
+
+            _disposed = true;
+        }
     }
 }

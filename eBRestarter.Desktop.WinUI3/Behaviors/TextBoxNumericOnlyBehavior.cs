@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Xaml.Interactivity;
+using System;
 using System.Text.RegularExpressions;
 
 namespace eBRestarter.Desktop.WinUI3.Behaviors;
@@ -14,7 +15,8 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
     // =========================================================
     #region ConstantsAndStatics
 
-    private static readonly Regex _regex = new("[^0-9]+");
+    // SonarQube Fix: Timeout (100ms) und NonBacktracking hinzugefügt, um UI-Freezes durch ReDoS zu verhindern.
+    private static readonly Regex _regex = new("[^0-9]+", RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
     #endregion
 
@@ -44,11 +46,20 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
 
     private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
-        if (_regex.IsMatch(sender.Text))
+        try
         {
-            int pos = sender.SelectionStart;
-            sender.Text = _regex.Replace(sender.Text, "");
-            sender.SelectionStart = System.Math.Min(pos, sender.Text.Length);
+            if (_regex.IsMatch(sender.Text))
+            {
+                int pos = sender.SelectionStart;
+                sender.Text = _regex.Replace(sender.Text, "");
+                sender.SelectionStart = System.Math.Min(pos, sender.Text.Length);
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            // Fallback: Falls der Text wirklich zu extrem ist und das Regex abbricht,
+            // fangen wir den Fehler ab, damit die App nicht abstürzt.
+            sender.Text = string.Empty;
         }
     }
 

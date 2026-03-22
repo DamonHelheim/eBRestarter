@@ -209,6 +209,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task ExecuteCleaningLogic(bool forceClose)
         {
             IsBusy = true;
+            // 1. Sicherheitshalber ein altes Token entsorgen, falls die Methode mehrfach aufgerufen wird
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
 
             try

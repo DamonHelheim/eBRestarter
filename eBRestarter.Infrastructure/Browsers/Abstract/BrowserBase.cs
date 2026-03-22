@@ -97,12 +97,24 @@ public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : I
         // Das macht den Regex noch robuster.
         var cleanRaw = raw.Trim();
 
-        // Nimmt Zahlen und Punkte am Anfang. Stoppt beim ersten Leerzeichen/Buchstaben.
-        var match = System.Text.RegularExpressions.Regex.Match(cleanRaw, @"^[\d\.]+");
-
-        if (match.Success)
+        try
         {
-            return match.Value;
+            // SonarQube Fix: RegexOptions.NonBacktracking und TimeSpan-Timeout (100ms) hinzugefügt
+            var match = System.Text.RegularExpressions.Regex.Match(
+                cleanRaw,
+                @"^[\d\.]+",
+                System.Text.RegularExpressions.RegexOptions.NonBacktracking,
+                TimeSpan.FromMilliseconds(100));
+
+            if (match.Success)
+            {
+                return match.Value;
+            }
+        }
+        catch (System.Text.RegularExpressions.RegexMatchTimeoutException)
+        {
+            // Fallback: Falls der Check zu lange dauert, brechen wir sicher ab.
+            return "Unknown";
         }
 
         return raw;

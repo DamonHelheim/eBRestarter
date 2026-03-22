@@ -47,10 +47,14 @@ namespace eBRestarter.Infrastructure.Services
             try
             {
                 using var searcher = new ManagementObjectSearcher($"SELECT {property} FROM {wmiClass}");
+                using var collection = searcher.Get();
+                using var enumerator = collection.GetEnumerator();
 
-                foreach (var obj in searcher.Get())
+                // SonarQube Fix: Statt einer foreach-Schleife, die nach dem 1. Durchlauf abbricht,
+                // fragen wir einfach gezielt nur das erste Element ab.
+                if (enumerator.MoveNext())
                 {
-                    return obj[property]?.ToString();
+                    return enumerator.Current[property]?.ToString();
                 }
             }
             catch (Exception ex)

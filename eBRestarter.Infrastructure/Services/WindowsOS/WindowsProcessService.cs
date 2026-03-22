@@ -72,9 +72,14 @@ public class WindowsProcessService : IWindowsProcessControlService
     /// </remarks>
     public void StartMsiFile(string path)
     {
+        // SonarQube Fix: Absoluten Pfad zur msiexec.exe aus dem System32-Ordner holen,
+        // um Path-Hijacking über Umgebungsvariablen zu verhindern.
+        string systemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        string msiExecPath = Path.Combine(systemFolder, "msiexec.exe");
+
         var startInfo = new ProcessStartInfo
         {
-            FileName = "msiexec.exe",
+            FileName = msiExecPath, // <-- Hier nutzen wir jetzt den absolut sicheren Pfad!
             Arguments = $"/i \"{path}\"",
 
             // UseShellExecute = false ist zwingend nötig, um Output-Streams umzuleiten.
@@ -156,7 +161,12 @@ public class WindowsProcessService : IWindowsProcessControlService
         try
         {
             _logger.LogInformation("Fahre Computer herunter (Neustart)...");
-            _processWrapper.Start(new ProcessStartInfo("shutdown", "/r /f /t 0") { UseShellExecute = true });
+
+            // SonarQube Fix: Absoluten Pfad zur shutdown.exe aus dem System32-Ordner holen
+            string systemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            string shutdownPath = Path.Combine(systemFolder, "shutdown.exe");
+
+            _processWrapper.Start(new ProcessStartInfo(shutdownPath, "/r /f /t 0") { UseShellExecute = true });
         }
         catch (Exception ex)
         {
@@ -292,9 +302,13 @@ public class WindowsProcessService : IWindowsProcessControlService
             // Sicherheitshalber Anführungszeichen um den Pfad, falls Leerzeichen enthalten sind.
             string args = $"\"{folderPath}\"";
 
+            // SonarQube Fix: Absoluten Pfad zur explorer.exe aus dem Windows-Hauptordner holen
+            string windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            string explorerPath = Path.Combine(windowsFolder, "explorer.exe");
+
             _processWrapper.Start(new ProcessStartInfo
             {
-                FileName = "explorer.exe",
+                FileName = explorerPath,
                 Arguments = args,
                 UseShellExecute = true // Wichtig für Explorer-Interaktion
             });

@@ -6,6 +6,7 @@ using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
@@ -246,7 +247,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void CancelDownload()
         {
             _cts?.Cancel();
-            _ = ResetDownloadState();
+            ResetDownloadState().Forget();
         }
 
         /// <summary>Removes a partially downloaded file so a retry starts clean. Swallows errors to avoid breaking the flow.</summary>
@@ -277,7 +278,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>Downloads the browser installer to the user's Downloads folder, reports progress, then prompts for install. On cancel or error, cleans up and resets state.</summary>
         private async Task StartDownloadAsync()
         {
+            // 1. Sicherheitshalber ein altes Token entsorgen, falls die Methode mehrfach aufgerufen wird
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
+
             IsDownloadActive = true;
             RefreshBrowserVersionText();
 
@@ -295,17 +299,25 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 await _downloadService.DownloadFileAsync(_browserInfo.DownloadUrl, downloadPath, progressHandler, _cts.Token);
                 await AskToInstall(downloadPath);
-                await ResetDownloadState();
             }
             catch (OperationCanceledException)
             {
                 CleanupPartialFile(downloadPath);
-                await ResetDownloadState();
             }
             catch (Exception)
             {
                 CleanupPartialFile(downloadPath);
+            }
+            finally
+            {
+                // 2. Egal was passiert (Erfolg, Abbruch, Exception):
+                // Dieser Block wird IMMER ausgeführt!
+
                 await ResetDownloadState();
+
+                // 3. Hier wird das CancellationTokenSource sauber entsorgt (SonarQube Fix)
+                _cts?.Dispose();
+                _cts = null;
             }
         }
 

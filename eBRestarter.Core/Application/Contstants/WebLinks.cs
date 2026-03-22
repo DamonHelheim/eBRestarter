@@ -27,6 +27,6 @@
         public const string EdgeSearchUrl = "https://www.google.com/search?q=Microsoft+Edge";
         public const string BraveSearchUrl = "https://www.google.com/search?q=Brave";
 
-        public const string GoogleLink = "http://www.google.com";
+        public const string GoogleLink = "https://www.google.com";
     }
 

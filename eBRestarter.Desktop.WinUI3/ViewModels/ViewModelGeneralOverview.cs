@@ -249,8 +249,15 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             for (int i = 0; i < sourceData.Length; i++)
             {
-                if (_chartValues[i].Value != sourceData[i])
+                // Aktuellen Wert sicher auslesen (mit 0.0 als Fallback, falls null)
+                double currentValue = _chartValues[i].Value ?? 0.0;
+
+                // SonarQube Fix: Wir prüfen, ob die absolute Differenz größer als 0.0001 ist.
+                // Das ignoriert winzige Rundungsfehler des Computers.
+                if (Math.Abs(currentValue - sourceData[i]) > 0.0001)
+                {
                     _chartValues[i].Value = sourceData[i];
+                }
             }
         }
 
