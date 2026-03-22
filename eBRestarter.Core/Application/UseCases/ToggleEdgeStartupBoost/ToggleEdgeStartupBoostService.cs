@@ -1,22 +1,15 @@
-using System;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Domain.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 
-public class ToggleEdgeStartupBoostService : IToggleEdgeStartupBoostUseCase
+public class ToggleEdgeStartupBoostService(
+    IWindowsStartupManagerService startupService,
+    IBrowserFactory browserFactory) : IToggleEdgeStartupBoostUseCase
 {
-    private readonly IWindowsStartupManagerService _startupService;
-    private readonly IBrowserFactory _browserFactory;
-
-    public ToggleEdgeStartupBoostService(
-        IWindowsStartupManagerService startupService,
-        IBrowserFactory browserFactory)
-    {
-        _startupService = startupService;
-        _browserFactory = browserFactory;
-    }
+    private readonly IWindowsStartupManagerService _startupService = startupService;
+    private readonly IBrowserFactory _browserFactory = browserFactory;
 
     public bool IsEnabled() => _startupService.IsEdgeStartupBoostEnabled();
 

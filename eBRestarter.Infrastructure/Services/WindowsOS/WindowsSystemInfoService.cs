@@ -5,21 +5,15 @@ using System.Runtime.Versioning;
 namespace eBRestarter.Infrastructure.Services.WindowsOS;
 
 [SupportedOSPlatform("windows")]
-public class WindowsSystemInfoService : IWindowsSystemInfoService
+public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, IWindowsRegistryService registry) : IWindowsSystemInfoService
 {
     // Pfade angepasst (Ohne "HKEY_...", da der Wrapper den Hive bestimmt)
     private const string RegistryPathUserChoiceHttp = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
     private const string RegistryPathUserChoiceHttps = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice";
     private const string RegistryPathCurrentVersion = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
-    private readonly ILogger<WindowsSystemInfoService> _logger;
-    private readonly IWindowsRegistryService _registry; // Der Wrapper
-
-    public WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, IWindowsRegistryService registry)
-    {
-        _logger = logger;
-        _registry = registry;
-    }
+    private readonly ILogger<WindowsSystemInfoService> _logger = logger;
+    private readonly IWindowsRegistryService _registry = registry; // Der Wrapper
 
     public string GetCurrentOsDisplayVersion()
     {
@@ -29,6 +23,7 @@ public class WindowsSystemInfoService : IWindowsSystemInfoService
             var versionObj = _registry.GetLocalMachineValue(RegistryPathCurrentVersion, "DisplayVersion");
 
             var version = versionObj?.ToString();
+
             return !string.IsNullOrWhiteSpace(version) ? version : "Unknown";
         }
         catch (Exception ex)

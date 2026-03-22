@@ -2,8 +2,6 @@
 
 public enum BrowserType
 {
-    //SRWare Iron,
-    //Epic Privacy Browser
     Brave,
     Chrome,
     Edge,

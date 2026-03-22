@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers;
 
-public class ChromeBrowser : ChromiumBrowserBase
+public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
 
     // Implementierung der abstrakten Properties für die Suchstrategie
@@ -26,7 +26,6 @@ public class ChromeBrowser : ChromiumBrowserBase
     // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
     public override string ExtensionInstallUrl => WebLinks.ChromeEVisitorAddOnLink;//"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
-    public ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> logger) : base(os, logger) { }
 
 
     public override BrowserPaths GetPaths()

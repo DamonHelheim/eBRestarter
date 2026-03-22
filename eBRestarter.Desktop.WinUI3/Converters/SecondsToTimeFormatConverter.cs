@@ -6,7 +6,7 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// <summary>
 /// Converts seconds (int) or TimeSpan to a formatted time string (e.g. hh:mm:ss).
 /// </summary>
-public class SecondsToTimeFormatConverter : IValueConverter
+public partial class SecondsToTimeFormatConverter : IValueConverter
 {
     // =========================================================
     // 1. PUBLIC METHODS (API)

@@ -6,7 +6,7 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// <summary>
 /// Converts a boolean timer state to display text ("Stop" when true, "Start" when false).
 /// </summary>
-public class TimerStateToTextConverter : IValueConverter
+public partial class TimerStateToTextConverter : IValueConverter
 {
     // =========================================================
     // 1. PUBLIC METHODS (API)

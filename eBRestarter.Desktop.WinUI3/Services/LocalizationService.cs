@@ -27,19 +27,19 @@ public class LocalizationService : ILocalizationService
     {
         // Nutzt den neuen ResourceManager aus dem Windows App SDK
         _resourceManager = new ResourceManager();
-        
+
         // Context erstellen, um Sprache explizit zu setzen
         _resourceContext = _resourceManager.CreateResourceContext();
-        
+
         // Unpackaged Apps ermitteln die Sprache oft nicht automatisch.
-        // Wir erzwingen hier die in der App.xaml.cs gesetzte PrimaryLanguageOverride, 
+        // Wir erzwingen hier die in der App.xaml.cs gesetzte PrimaryLanguageOverride,
         // oder fallen auf das System-UI zurück.
         string currentLanguage = Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
         if (string.IsNullOrEmpty(currentLanguage))
         {
             currentLanguage = System.Globalization.CultureInfo.CurrentUICulture.Name;
         }
-        
+
         // Setze den Language-Qualifier explizit für diesen Context!
         _resourceContext.QualifierValues["Language"] = currentLanguage;
 

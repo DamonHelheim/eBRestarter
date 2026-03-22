@@ -6,14 +6,9 @@ using eBRestarter.Infrastructure.Constants;
 
 namespace eBRestarter.Infrastructure.Services.Authentication;
 
-public class EVisitorApiService : IApiAuthenticationService
+public class EVisitorApiService(IRestClientService restClient) : IApiAuthenticationService
 {
-    private readonly IRestClientService _restClient;
-
-    public EVisitorApiService(IRestClientService restClient)
-    {
-        _restClient = restClient;
-    }
+    private readonly IRestClientService _restClient = restClient;
 
     public async Task<(bool IsValid, string Message)> VerifyCredentialsAsync(string username, string apiKey)
     {

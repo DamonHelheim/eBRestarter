@@ -10,6 +10,7 @@ public class ProcessInfoService : IProcessInfoService
         // Gibt den Pfad der aktuell laufenden .exe zurück.
         // MainModule kann theoretisch null sein, daher das ! (Null-Forgiving),
         // da wir in einem laufenden Prozess sind.
-        return Process.GetCurrentProcess().MainModule!.FileName;
+        //Process.GetCurrentProcess().MainModule!.FileName
+        return Environment.ProcessPath!;
     }
 }

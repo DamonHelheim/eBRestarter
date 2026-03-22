@@ -30,7 +30,7 @@ public class FileDeletionService : IFileDeletionService
         {
             int deletedCount = 0;
             // Variable für das Drosseln der Updates
-            int reportInterval = 10; // Nur alle 50 Dateien die UI updaten
+            const int reportInterval = 10; // Nur alle 50 Dateien die UI updaten
             int updateCounter = 0;
 
             foreach (var dir in directories)
@@ -38,7 +38,9 @@ public class FileDeletionService : IFileDeletionService
                 if (!Directory.Exists(dir)) continue;
 
                 string[] files;
+
                 try { files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories); }
+
                 catch { continue; }
 
                 foreach (var file in files)
@@ -68,6 +70,7 @@ public class FileDeletionService : IFileDeletionService
 
                 // Ordner löschen
                 if (token.IsCancellationRequested) return;
+
                 try { Directory.Delete(dir, true); } catch { }
             }
 

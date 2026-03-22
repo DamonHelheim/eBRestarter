@@ -227,7 +227,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     ProgressValue = p.CurrentFile;
                     if (p.TotalFiles > 0)
                     {
-                        ProgressText = $"{(p.CurrentFile * 100 / p.TotalFiles)} %";
+                        ProgressText = $"{p.CurrentFile * 100 / p.TotalFiles} %";
                     }
                 });
 

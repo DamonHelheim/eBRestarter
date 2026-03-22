@@ -6,16 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers.Abstract;
 
-public abstract class BrowserBase : IBrowser
+public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : IBrowser
 {
-    protected readonly IOperatingSystemFacade _os;
-    protected readonly ILogger _logger;
-
-    protected BrowserBase(IOperatingSystemFacade os, ILogger logger)
-    {
-        _os = os;
-        _logger = logger;
-    }
+    protected readonly IOperatingSystemFacade _os = os;
+    protected readonly ILogger _logger = logger;
 
     public abstract BrowserType Type { get; }
 

@@ -7,7 +7,7 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// <summary>
 /// Converts a string resource key to a Style from the application resource dictionary.
 /// </summary>
-public class StringKeyToStyleConverter : IValueConverter
+public partial class StringKeyToStyleConverter : IValueConverter
 {
     // =========================================================
     // 1. PUBLIC METHODS (API)

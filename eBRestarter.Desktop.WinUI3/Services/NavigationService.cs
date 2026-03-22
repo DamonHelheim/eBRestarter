@@ -39,18 +39,20 @@ public sealed class NavigationService : INavigationService
     public bool NavigateTo(string key, object parameter = null!, NavigationTransitionInfo transitionInfo = null!)
     {
         if (_frameAdapter == null) return false;
+
         if (_pages.TryGetValue(key, out var pageType))
         {
             if (_frameAdapter.Content?.GetType() == pageType) return false;
+
             return _frameAdapter.Navigate(pageType, parameter, transitionInfo);
         }
+
         return false;
     }
 
     public void RegisterRoute(string key, Type pageType)
     {
-        if (!_pages.ContainsKey(key))
-            _pages.Add(key, pageType);
+        _pages.TryAdd(key, pageType);
     }
 
     #endregion

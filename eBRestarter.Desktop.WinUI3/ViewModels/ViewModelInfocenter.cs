@@ -48,7 +48,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         #region PublicProperties
 
         /// <summary>Localized title for the Infocenter page.</summary>
-        public string Title { get; private set; }
+        public string? Title { get; private set; }
 
         #endregion
 
@@ -78,7 +78,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             OsVersionText = loading;
             ProcessorText = loading;
             RamText = loading;
-            //Title = _localizationService.GetString("Infocenter_Title");
 
             _ = LoadDataAsync();
         }

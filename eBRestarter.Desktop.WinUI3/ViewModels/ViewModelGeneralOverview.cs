@@ -264,11 +264,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 case 0:
                     xAxis.Name = _localizationService.GetString("Chart_XAxisTime");
                     break;
+
                 case 1:
                     xAxis.Name = _localizationService.GetString("Chart_XAxisDay");
                     // NEU: Erstellt automatisch ein Array ["1", "2", "3", ..., "31"] für die X-Achse
-                    xAxis.Labels = System.Linq.Enumerable.Range(1, 31).Select(i => i.ToString()).ToArray();
+                    // xAxis.Labels = Enumerable.Range(1, 31).Select(i => i.ToString()).ToArray();
+                    xAxis.Labels = [.. Enumerable.Range(1, 31).Select(i => i.ToString())];
                     break;
+
                 case 2:
                     xAxis.Name = _localizationService.GetString("Chart_XAxisMonth");
                     string monthsString = _localizationService.GetString("Chart_MonthsShort");
@@ -276,6 +279,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                         ? monthsString.Split(',')
                         : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
                     break;
+
             }
 
             return [xAxis];

@@ -8,14 +8,9 @@ using System.Net;
 
 namespace eBRestarter.Infrastructure.Services.RestSharp
 {
-    public class RestSharpClientService : IRestClientService
+    public class RestSharpClientService(ILogger<RestSharpClientService> logger) : IRestClientService
     {
-        private readonly ILogger<RestSharpClientService> _logger;
-
-        public RestSharpClientService(ILogger<RestSharpClientService> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<RestSharpClientService> _logger = logger;
 
         public async Task<ApiResponse> ExecuteGetAsync(ApiRequest requestModel)
         {

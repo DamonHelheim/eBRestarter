@@ -4,9 +4,7 @@ using eBRestarter.Core.Application.Interfaces.Config; // Namespace für IEVisito
 using eBRestarter.Desktop.WinUI3.DependencyInjections;
 using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces; // Namespace für IThemeService anpassen
-using eBRestarter.Desktop.WinUI3.Views; // Namespace für dein MainWindow (EBRestarter)
 using eBRestarter.Infrastructure.DependencyInjection;
-using eBRestarter.Infrastructure.Services.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -73,7 +71,7 @@ namespace eBRestarter.Desktop.WinUI3
             // =========================================================================
             try
             {
-                var configService = AppHost.Services.GetRequiredService<IEVisitorConfigService>();
+                var configService = AppHost!.Services.GetRequiredService<IEVisitorConfigService>();
                 var config = configService.LoadConfig();
 
                 int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
@@ -108,7 +106,7 @@ namespace eBRestarter.Desktop.WinUI3
             // =========================================================================
             try
             {
-                var configService = AppHost.Services.GetRequiredService<IEVisitorConfigService>();
+                var configService = AppHost!.Services.GetRequiredService<IEVisitorConfigService>();
                 var themeService = AppHost.Services.GetRequiredService<IThemeService>();
                 var config = configService.LoadConfig();
 
@@ -125,7 +123,7 @@ namespace eBRestarter.Desktop.WinUI3
             // =========================================================================
             try
             {
-                var restartScheduler = AppHost.Services.GetRequiredService<IComputerRestartScheduler>();
+                var restartScheduler = AppHost!.Services.GetRequiredService<IComputerRestartScheduler>();
                 restartScheduler.StartScheduler();
             }
             catch (Exception ex)

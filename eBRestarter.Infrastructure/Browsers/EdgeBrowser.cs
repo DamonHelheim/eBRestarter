@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers;
 
-public class EdgeBrowser : ChromiumBrowserBase
+public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
     public override string DisplayName => "Edge";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_edge.png";
@@ -24,8 +24,6 @@ public class EdgeBrowser : ChromiumBrowserBase
     // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
     public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink;//"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
-
-    public EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger) : base(os, logger) { }
 
     // WICHTIG: Die Exe heißt msedge.exe, nicht edge.exe!
     protected override string ExeFileName => "msedge.exe";

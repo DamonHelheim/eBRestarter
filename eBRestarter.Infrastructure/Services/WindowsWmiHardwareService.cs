@@ -7,14 +7,9 @@ using System.Management;
 namespace eBRestarter.Infrastructure.Services
 {
     // Dieser Service kümmert sich NUR um WMI (Win32_Processor, Win32_VideoController, etc.)
-    public class WindowsWmiHardwareService : IHardwareInfoService, IOsEditionService
+    public class WindowsWmiHardwareService(ILogger<WindowsWmiHardwareService> logger) : IHardwareInfoService, IOsEditionService
     {
-        private readonly ILogger<WindowsWmiHardwareService> _logger;
-
-        public WindowsWmiHardwareService(ILogger<WindowsWmiHardwareService> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<WindowsWmiHardwareService> _logger = logger;
 
         public async Task<HardwareInfo> GetHardwareInfoAsync()
         {
@@ -25,6 +20,7 @@ namespace eBRestarter.Infrastructure.Services
                 var ramRaw = GetWmiValue("Win32_OperatingSystem", "TotalVisibleMemorySize");
 
                 string ramFormatted = "N/A";
+
                 if (long.TryParse(ramRaw, out long ramKb))
                 {
                     // WMI liefert KB, FormatExtensions erwartet Bytes -> * 1024
@@ -51,6 +47,7 @@ namespace eBRestarter.Infrastructure.Services
             try
             {
                 using var searcher = new ManagementObjectSearcher($"SELECT {property} FROM {wmiClass}");
+
                 foreach (var obj in searcher.Get())
                 {
                     return obj[property]?.ToString();

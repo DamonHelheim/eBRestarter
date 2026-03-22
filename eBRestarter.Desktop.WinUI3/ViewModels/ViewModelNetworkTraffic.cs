@@ -74,7 +74,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _localizationService = localizationService;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-            _timer = new System.Timers.Timer(1000);
+            _timer = new Timer(1000);
             _timer.Elapsed += OnTimerElapsed;
             _timer.AutoReset = true;
             _timer.Start();
@@ -133,8 +133,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 string name = $"{prefixCard}: {stat.Name}";
                 var existingCard = NetworkCards.FirstOrDefault(card => card.AdapterName == name);
-                string received = $"{prefixRec}: {FormatExtensions.ToSizeSuffix(stat.BytesReceived)}";
-                string sent = $"{prefixSent}: {FormatExtensions.ToSizeSuffix(stat.BytesSent)}";
+
+                //string received = $"{prefixRec}: {FormatExtensions.ToSizeSuffix(stat.BytesReceived)}";
+                //string sent = $"{prefixSent}: {FormatExtensions.ToSizeSuffix(stat.BytesSent)}";
+
+                string received = $"{prefixRec}: {stat.BytesReceived.ToSizeSuffix()}";
+                string sent = $"{prefixSent}: {stat.BytesSent.ToSizeSuffix()}";
 
                 if (existingCard != null)
                 {
@@ -167,6 +171,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void PerformUpdate()
         {
             bool isAvailable = false;
+
             List<NetworkStats>? currentStats = null;
 
             try

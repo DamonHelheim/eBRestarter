@@ -58,10 +58,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             Browsers.Add(new ViewModelBrowserAddonStatus(_browserFactory.Create(BrowserType.Vivaldi), localizationService));
 
             _timer = new Timer(2000);
+
             _timer.Elapsed += (s, e) =>
             {
                 foreach (var browserAddonStatus in Browsers) browserAddonStatus.RefreshStatus();
             };
+
             _timer.Start();
         }
 

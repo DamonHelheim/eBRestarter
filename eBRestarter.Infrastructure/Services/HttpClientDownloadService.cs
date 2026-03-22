@@ -11,6 +11,7 @@ public class HttpClientDownloadService : IBrowserDownloadService
     public HttpClientDownloadService()
     {
         _httpClient = new HttpClient();
+
         // --- FIX START ---
         // Wir täuschen dem Server vor, dass wir ein normaler Chrome-Browser auf Windows 10 sind.
         // Ohne das liefert der Brave-Server nur eine HTML-Seite (80KB) statt der EXE (1.2MB).
@@ -28,10 +29,10 @@ public class HttpClientDownloadService : IBrowserDownloadService
         var canReportProgress = totalBytes != -1;
 
         // 2. Streams öffnen
-        using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
 
         // WICHTIG: FileOptions.Asynchronous für echtes Async I/O auf der Festplatte
-        using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+        await using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 
         var buffer = new byte[8192];
         long totalRead = 0;

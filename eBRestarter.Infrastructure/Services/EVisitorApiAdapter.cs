@@ -10,21 +10,14 @@ using System.Text.Json;
 
 namespace eBRestarter.Infrastructure.Services;
 
-public class EVisitorApiAdapter : IEVisitorApiService
+public class EVisitorApiAdapter(
+    IRestClientService restClient,
+    IEVisitorConfigService configService,
+    ILogger<EVisitorApiAdapter> logger) : IEVisitorApiService
 {
-    private readonly IRestClientService _restClient;
-    private readonly IEVisitorConfigService _configService;
-    private readonly ILogger<EVisitorApiAdapter> _logger;
-
-    public EVisitorApiAdapter(
-        IRestClientService restClient,
-        IEVisitorConfigService configService,
-        ILogger<EVisitorApiAdapter> logger)
-    {
-        _restClient = restClient;
-        _configService = configService;
-        _logger = logger;
-    }
+    private readonly IRestClientService _restClient = restClient;
+    private readonly IEVisitorConfigService _configService = configService;
+    private readonly ILogger<EVisitorApiAdapter> _logger = logger;
 
     public async Task<IpInfoData?> GetIpInfoAsync()
     {

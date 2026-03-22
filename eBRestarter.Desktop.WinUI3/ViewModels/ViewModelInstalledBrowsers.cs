@@ -3,6 +3,7 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml;
 using System;
@@ -71,8 +72,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _eVisitorConfigService = eVisitorConfigService;
 
             _refreshTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
-            _refreshTimer.Tick += async (s, e) => await LoadBrowsersSmartAsync();
-            _ = LoadBrowsersSmartAsync();
+
+            _refreshTimer.Tick += async (__, _) => await LoadBrowsersSmartAsync();
+
+            LoadBrowsersSmartAsync().Forget();
+
             _refreshTimer.Start();
         }
 

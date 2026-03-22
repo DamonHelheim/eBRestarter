@@ -33,10 +33,7 @@ public static class InfrastructureServiceRegistration
 
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddLogging(builder =>
-        {
-            builder.AddDebug();
-        });
+        services.AddLogging(builder => builder.AddDebug());
 
 #pragma warning disable CA1416 // Plattformkompatibilität überprüfen
 

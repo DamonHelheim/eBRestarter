@@ -5,14 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Infrastructure.Factories;
 
-public class BrowserFactory : IBrowserFactory
+public class BrowserFactory(IServiceProvider serviceProvider) : IBrowserFactory
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public BrowserFactory(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public IBrowser Create(BrowserType type)
     {

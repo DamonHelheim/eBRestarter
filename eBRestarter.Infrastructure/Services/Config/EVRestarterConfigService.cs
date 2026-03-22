@@ -3,8 +3,6 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.Security;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization; // WICHTIG: Für den Source Generator hinzugefügt
 
@@ -18,12 +16,17 @@ namespace eBRestarter.Infrastructure.Services.Config;
 /// <b>Verantwortlichkeit:</b> Lädt und speichert die <see cref="AppConfig"/> in eine JSON-Datei im Dateisystem.
 /// Kapselt die Serialisierungs-Logik (System.Text.Json) und den Dateizugriff.
 /// </summary>
-public class EVisitorConfigService : IEVisitorConfigService
+/// <remarks>
+/// Initialisiert eine neue Instanz des <see cref="EVisitorConfigService"/>.
+/// </remarks>
+/// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
+/// <param name="encryptionService">Service zur Ver-/Entschlüsselung sensibler Daten.</param>
+/// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
+public class EVisitorConfigService(IPathService pathService, IEncryptionService encryptionService, ILogger<EVisitorConfigService> logger) : IEVisitorConfigService
 {
-    private readonly IPathService _pathService;
-    private readonly IPathProvider _pathProvider;
-    private readonly IEncryptionService _encryptionService;
-    private readonly ILogger<EVisitorConfigService> _logger;
+    private readonly IPathService _pathService = pathService;
+    private readonly IEncryptionService _encryptionService = encryptionService;
+    private readonly ILogger<EVisitorConfigService> _logger = logger;
 
     // Optionen für die JSON-Serialisierung.
     // WriteIndented: Erzeugt lesbares JSON (mit Zeilenumbrüchen).
@@ -35,21 +38,6 @@ public class EVisitorConfigService : IEVisitorConfigService
         PropertyNameCaseInsensitive = true,
         TypeInfoResolver = AppConfigJsonContext.Default
     };
-
-    /// <summary>
-    /// Initialisiert eine neue Instanz des <see cref="EVisitorConfigService"/>.
-    /// </summary>
-    /// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
-    /// <param name="pathProvider">Provider für grundlegende Systempfade.</param>
-    /// <param name="encryptionService">Service zur Ver-/Entschlüsselung sensibler Daten.</param>
-    /// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
-    public EVisitorConfigService(IPathService pathService, IPathProvider pathProvider, IEncryptionService encryptionService, ILogger<EVisitorConfigService> logger)
-    {
-        _encryptionService = encryptionService;
-        _pathService = pathService;
-        _pathProvider = pathProvider;
-        _logger = logger;
-    }
 
     /// <summary>
     /// Lädt die aktuelle Konfiguration aus der Datei.

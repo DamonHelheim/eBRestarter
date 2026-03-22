@@ -2,15 +2,14 @@
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers.Abstract;
-public abstract class ChromiumBrowserBase : BrowserBase
+public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger logger) : BrowserBase(os, logger)
 {
-    protected ChromiumBrowserBase(IOperatingSystemFacade os, ILogger logger) : base(os, logger) { }
 
     // Diese Werte müssen die konkreten Klassen liefern
-    protected abstract string ExeFileName { get; }       // e. g. "chrome.exe"
-    protected abstract string BrowserRegistryName { get; } // e.g. "Google Chrome"
-    protected abstract string UninstallSubKey { get; }   // e.g. "Google Chrome" oder "BraveSoftware Brave-Browser"
-    protected abstract string ProgramFilesSubPath { get; } // e.g. @"Google\Chrome\Application"
+    protected abstract string ExeFileName { get; }          // e. g. "chrome.exe"
+    protected abstract string BrowserRegistryName { get; }  // e.g. "Google Chrome"
+    protected abstract string UninstallSubKey { get; }      // e.g. "Google Chrome" oder "BraveSoftware Brave-Browser"
+    protected abstract string ProgramFilesSubPath { get; }  // e.g. @"Google\Chrome\Application"
 
     // Muss von Chrome/Edge/Brave implementiert werden
     protected abstract string ExtensionId { get; }
@@ -34,8 +33,8 @@ public abstract class ChromiumBrowserBase : BrowserBase
             if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
 
             // Logik für Inkonsistenz-Behebung:
-            // Manche Subklassen (z.B. Brave) geben Pfad INKL. ID zurück.
-            // Andere (z.B. Chrome/Edge, wenn korrigiert) geben nur den ".../Extensions" Ordner zurück.
+            // Manche Subklassen (z. B. Brave) geben Pfad INKL. ID zurück.
+            // Andere (z. B. Chrome/Edge, wenn korrigiert) geben nur den ".../Extensions" Ordner zurück.
 
             // Fall A: Der Pfad endet bereits auf die ID (Brave-Style)
             if (extensionsDir.EndsWith(idToCheck, StringComparison.OrdinalIgnoreCase))
@@ -47,6 +46,7 @@ public abstract class ChromiumBrowserBase : BrowserBase
 
             // Fall B: Der Pfad ist nur der "Extensions"-Ordner -> Wir müssen die ID anhängen
             var fullExtensionPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
+
             if (_os.WindowsFileSystemService.DirectoryExists(fullExtensionPath))
             {
                 return true;

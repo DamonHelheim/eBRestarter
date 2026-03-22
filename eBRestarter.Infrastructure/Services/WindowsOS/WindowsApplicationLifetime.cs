@@ -1,4 +1,3 @@
-using System;
 using eBRestarter.Core.Application.Interfaces;
 
 namespace eBRestarter.Infrastructure.Services.WindowsOS;

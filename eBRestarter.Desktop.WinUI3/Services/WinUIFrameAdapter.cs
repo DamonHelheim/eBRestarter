@@ -8,23 +8,14 @@ namespace eBRestarter.Desktop.WinUI3.Services;
 /// <summary>
 /// Adapter that implements <see cref="INavigationFrame"/> and delegates to a WinUI <see cref="Frame"/>.
 /// </summary>
-public class WinUIFrameAdapter : INavigationFrame
+public class WinUIFrameAdapter(Frame frame) : INavigationFrame
 {
     // =========================================================
     // 1. FIELDS & INJECTED SERVICES (Backing state)
     // =========================================================
     #region FieldsAndInjectedServices
 
-    private readonly Frame _frame;
-
-    #endregion
-
-    // =========================================================
-    // 2. CONSTRUCTOR & FINALIZER (Ctor)
-    // =========================================================
-    #region ConstructorAndFinalizer
-
-    public WinUIFrameAdapter(Frame frame) => _frame = frame;
+    private readonly Frame _frame = frame;
 
     #endregion
 

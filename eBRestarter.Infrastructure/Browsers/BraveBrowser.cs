@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers;
 
-public class BraveBrowser : ChromiumBrowserBase
+public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
 
     protected override string ExeFileName => "brave.exe";
@@ -30,9 +30,6 @@ public class BraveBrowser : ChromiumBrowserBase
     // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
     public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
-
-    public BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logger) : base(os, logger) { }
-
 
     public override BrowserPaths GetPaths()
     {
@@ -60,7 +57,7 @@ public class BraveBrowser : ChromiumBrowserBase
         // nutzen wir System.IO direkt oder du musst es in deinen Service wrappen:
         try
         {
-            var dirs = System.IO.Directory.GetDirectories(userDataRoot, "Profile *");
+            var dirs = Directory.GetDirectories(userDataRoot, "Profile *");
             allProfileFolders.AddRange(dirs);
         }
         catch { /* Fehlerbehandlung falls Ordner nicht existiert */ }
