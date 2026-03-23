@@ -132,7 +132,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
-            ComputerRestartClockTimeMin = 0;
+            ComputerRestartClockTimeMin = 1;
             ComputerRestartClockTimeMax = 23;
             ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
 

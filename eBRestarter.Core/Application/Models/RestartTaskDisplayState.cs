@@ -18,6 +18,7 @@ public sealed class RestartTaskDisplayState
     public string DeleteIsActivatedMessage { get; init; } = string.Empty;
     public string NextDeletionProcessMessage { get; init; } = string.Empty;
     public string NextDeletionProcessDateMessage { get; init; } = string.Empty;
+    public bool CheckBrowserAliveRoutine { get; init; }
 
     #endregion
 }

@@ -50,6 +50,9 @@ public class RestartTaskDisplayStateService(
         int runtimeSeconds = config.Browser != null ? config.Browser.RuntimeHours * 3600 : 3600;
         int pauseSeconds = config.Browser?.RuntimePauseSeconds ?? 20;
 
+        // <--- NEU: Aus der Config auslesen
+        bool checkBrowserAliveRoutine = config.Browser?.CheckBrowserAliveRoutine ?? false;
+
         int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
         DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
 
@@ -85,6 +88,7 @@ public class RestartTaskDisplayStateService(
             ChoosenBrowser = choosenBrowser,
             RuntimeSeconds = runtimeSeconds,
             PauseSeconds = pauseSeconds,
+            CheckBrowserAliveRoutine = checkBrowserAliveRoutine,
             DeleteBrowserContentIsActive = deleteBrowserContentIsActive,
             DeleteIsActivatedMessage = deleteIsActivatedMessage,
             NextDeletionProcessMessage = nextDeletionProcessMessage,

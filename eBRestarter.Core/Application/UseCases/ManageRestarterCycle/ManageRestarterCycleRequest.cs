@@ -4,5 +4,6 @@ public record ManageRestarterCycleRequest(
     string BrowserDisplayName,
     string Username,
     int RuntimeSeconds,
-    int PauseSeconds
+    int PauseSeconds,
+    bool CheckBrowserAliveRoutine
 );

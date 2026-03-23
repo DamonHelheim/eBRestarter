@@ -3,12 +3,16 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
+using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -36,6 +40,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly ILocalizationService _localizationService;
         private readonly IOperatingSystemFacade _operatingSystemFacade;
 
+        private readonly IBrowserService _browserService; // <--- NEU
+        private readonly DispatcherQueue? _dispatcherQueue;  // <--- NEU
+        private readonly DispatcherTimer _browserCheckTimer; // <--- NEU
+
         #endregion
 
         // =========================================================
@@ -49,6 +57,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial BrowserCacheDeleteOption SelectedDeleteBrowserCacheOption { get; set; }
         [ObservableProperty] public partial bool StartBrowserWithProgrammStartIs { get; set; } = false;
         [ObservableProperty] private partial string StandardBrowser { get; set; } = string.Empty;
+        [ObservableProperty] public partial Visibility Tbl_NoBrowserInstalledIsVisible { get; set; } = Visibility.Collapsed;
+        [ObservableProperty] public partial bool BtnDeleteBrowserContentIsEnabled { get; set; } = true;
+        [ObservableProperty] public partial bool BtnInstalleBesucherAddOnIsEnabled { get; set; } = true;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddEVisitorUsernameCommand))]
@@ -89,13 +100,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IOperatingSystemFacade operatingSystemFacade,
             IEVisitorConfigService eVisitorConfigService,
             ILocalizationService localizationService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            IBrowserService browserService)
         {
             _scheduleBrowserCleanupUseCase = scheduleBrowserCleanupUseCase;
             _operatingSystemFacade = operatingSystemFacade;
             _eVisitorConfigService = eVisitorConfigService;
             _dialogService = dialogService;
             _localizationService = localizationService;
+            _browserService = browserService; // <--- NEU
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread(); // <--- NEU
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
             RuntimePauseSecondsMin = 20;
@@ -113,9 +127,45 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
 
             SelectedDeleteBrowserCacheOption = BrowserDeleteCacheOptionList.FirstOrDefault(option => option.Days == configDays) ?? BrowserDeleteCacheOptionList[0];
+
+            // NEU: Timer einrichten, der alle 5 Sekunden im Hintergrund die Browser prüft
+            _browserCheckTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+            _browserCheckTimer.Tick += async (__, _) => await CheckInstalledBrowsersAsync();
+            _browserCheckTimer.Start();
+
+            // Den allerersten Check sofort auslösen (damit wir nicht 5 Sekunden auf die initiale UI warten müssen)
+            CheckInstalledBrowsersAsync().Forget();
         }
 
         #endregion
+
+        /// <summary>
+        /// Prüft asynchron im Hintergrund, ob mindestens ein unterstützter Browser auf dem System
+        /// installiert ist. Aktualisiert anschließend die UI-Bindings über den Dispatcher.
+        /// </summary>
+        private async Task CheckInstalledBrowsersAsync()
+        {
+            // WICHTIG: Wir nutzen Task.Run, um die Registry-Prüfung zwingend in einen
+            // Hintergrund-Thread auszulagern! Sonst würde die App alle 5 Sekunden ruckeln.
+            var browsers = await Task.Run(() => _browserService.GetInstalledBrowsersAsync());
+
+            // Prüft, ob mindestens ein Browser die Eigenschaft "IsInstalled == true" hat
+            bool hasInstalledBrowsers = browsers != null && browsers.Any(b => b.IsInstalled);
+
+            // Aktualisiert die UI-Properties zwingend im Main-Thread
+            _dispatcherQueue!.TryEnqueue(() =>
+            {
+                // Nur aktualisieren, wenn sich der Zustand auch wirklich geändert hat
+                // (Das verhindert unnötiges Flackern in der UI)
+                var newVisibility = hasInstalledBrowsers ? Visibility.Collapsed : Visibility.Visible;
+                if (Tbl_NoBrowserInstalledIsVisible != newVisibility)
+                {
+                    Tbl_NoBrowserInstalledIsVisible = newVisibility;
+                    BtnDeleteBrowserContentIsEnabled = hasInstalledBrowsers;
+                    BtnInstalleBesucherAddOnIsEnabled = hasInstalledBrowsers;
+                }
+            });
+        }
 
         // =========================================================
         // 5. COMMANDS (MVVM Actions)
