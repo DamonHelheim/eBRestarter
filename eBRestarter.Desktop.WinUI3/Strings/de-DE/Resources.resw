@@ -834,4 +834,17 @@
   <data name="Task_NoUsernameFound" xml:space="preserve">
     <value>Du hast keinen Nutzernamen eingetragen, bitte trage einen Nutzernamen, damit du den Restarter nutzen kannst.</value>
   </data>
+  <data name="Options_AutoLogon_Success" xml:space="preserve">
+    <value>Autologin erfolgreich!</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorTitle" xml:space="preserve">
+    <value>Windows Hello blockiert AutoLogon</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorMessage" xml:space="preserve">
+    <value>Bitte deaktiviere in den Windows-Einstellungen unter 'Konten' -&gt; 'Anmeldeoptionen' die Option:
+
+"Aus Sicherheitsgründen nur Windows Hello-Anmeldung für Microsoft-Konten auf diesem Gerät zulassen."
+
+Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht deine PIN).</value>
+  </data>
 </root>

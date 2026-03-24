@@ -834,4 +834,17 @@
   <data name="Task_NoUsernameFound" xml:space="preserve">
     <value>You haven't entered a username. Please enter a username so you can use the restarter.</value>
   </data>
+  <data name="Options_AutoLogon_Success" xml:space="preserve">
+    <value>Autologin successful!</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorTitle" xml:space="preserve">
+    <value>Windows Hello is blocking AutoLogon</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorMessage" xml:space="preserve">
+    <value>Please disable the following option in Windows Settings under 'Accounts' -&gt; 'Sign-in options':
+
+"For improved security, only allow Windows Hello sign-in for Microsoft accounts on this device (Recommended)."
+
+Afterward, use your actual Microsoft account password (not your PIN) for AutoLogon.</value>
+  </data>
 </root>

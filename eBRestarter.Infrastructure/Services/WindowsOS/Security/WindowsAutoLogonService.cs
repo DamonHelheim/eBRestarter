@@ -62,6 +62,33 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         }
     }
 
+    public bool IsWindowsHelloPasswordlessEnabled()
+    {
+        try
+        {
+            // Der genaue Pfad, in dem Windows 11 die "Nur Windows Hello zulassen"-Einstellung speichert
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device", false);
+
+            if (key != null)
+            {
+                var val = key.GetValue("DevicePasswordLessBuildVersion");
+
+                // Wenn der Wert '2' ist, hat der Nutzer die Option AKTIVIERT (Passwort-Login ist blockiert).
+                // Wenn der Wert '0' ist (oder nicht existiert), ist sie DEAKTIVIERT.
+                if (val is int intValue && intValue == 2)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Fehler beim Lesen des PasswordLess Registry-Keys.");
+        }
+
+        return false;
+    }
+
     public bool IsAutoLogonEnabled()
     {
         using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, false);

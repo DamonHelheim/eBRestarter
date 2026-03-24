@@ -4,6 +4,7 @@ public enum AutoLogonResultStatus
 {
     Activated,
     Deactivated,
+    WindowsHelloBlockActive,
     ValidationError,
     DomainError,
     UnexpectedError

@@ -266,6 +266,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 Password: dialogResult.Credentials?.Password
             );
 
+            // Hier führt der Service die Prüfung durch, ob Windows Hello aktiv ist!
             var response = _configureAutoLogonUseCase.Execute(request);
 
             if (response.Success)
@@ -281,7 +282,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
             else
             {
-                if (response.Status == AutoLogonResultStatus.ValidationError)
+                // =========================================================
+                // NEU: Abfangen der Windows 11 "Passwordless" Blockade
+                // =========================================================
+                if (response.Status == AutoLogonResultStatus.WindowsHelloBlockActive)
+                {
+                    string title = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorTitle");
+                    string message = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorMessage");
+
+                    await _dialogService.ShowMessageAsync(title, message, DialogIcon.Error);
+                }
+                // =========================================================
+                else if (response.Status == AutoLogonResultStatus.ValidationError)
                 {
                     await _dialogService.ShowMessageAsync("Fehler", _localizationService.GetString("Options_AutoLogon_ValidationError"));
                 }

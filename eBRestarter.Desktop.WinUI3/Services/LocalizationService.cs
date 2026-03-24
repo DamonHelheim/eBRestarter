@@ -2,6 +2,7 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Domain.Models.Records;
 using Microsoft.Windows.ApplicationModel.Resources; // WICHTIG: Das neue Microsoft-Namespace!
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace eBRestarter.Desktop.WinUI3.Services;
 
@@ -57,6 +58,7 @@ public class LocalizationService : ILocalizationService
     {
         try
         {
+
             // Sucht den String in der Standard-ResourceMap "Resources" (z.B. Resources.resw)
             var result = _resourceMap.GetValue($"Resources/{key}", _resourceContext);
             return result?.ValueAsString ?? $"[{key}]";

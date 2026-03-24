@@ -10,6 +10,8 @@ public interface IWindowsAutoLogonService
     /// <param name="password">Das Klartext-Passwort.</param>
     void EnableAutoLogon(string username, string domain, string password);
 
+    bool IsWindowsHelloPasswordlessEnabled();
+
     /// <summary>
     /// Deaktiviert die automatische Anmeldung und löscht das gespeicherte Passwort.
     /// </summary>
