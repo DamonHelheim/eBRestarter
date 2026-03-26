@@ -847,4 +847,34 @@
 
 Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht deine PIN).</value>
   </data>
+  <data name="Options_UpdateAvailable_TitleFallback" xml:space="preserve">
+    <value>Update verfügbar</value>
+  </data>
+  <data name="Options_UpdatePrompt_Message" xml:space="preserve">
+    <value>{0}\n\nMöchten Sie die neue Version jetzt herunterladen und installieren?\nDas Programm wird dafür automatisch neu gestartet.</value>
+  </data>
+  <data name="Options_UpdateNoUpdate_Title" xml:space="preserve">
+    <value>Kein Update</value>
+  </data>
+  <data name="Options_UpdateNoUpdate_Message" xml:space="preserve">
+    <value>Die Anwendung ist bereits auf dem neuesten Stand.</value>
+  </data>
+  <data name="Options_UpdateError_Title" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Options_UpdateCheckError_Message" xml:space="preserve">
+    <value>Bei der Suche nach Updates ist ein Fehler aufgetreten:\n{0}</value>
+  </data>
+  <data name="Options_UpdateFailed_Title" xml:space="preserve">
+    <value>Update fehlgeschlagen</value>
+  </data>
+  <data name="Options_UpdateFailed_Message" xml:space="preserve">
+    <value>Das Update konnte nicht heruntergeladen oder installiert werden:\n{0}</value>
+  </data>
+  <data name="General_Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="General_No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
 </root>

@@ -70,6 +70,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool IsUpdateAvailable { get; set; }
         [ObservableProperty] public partial string UpdateMessage { get; set; } = string.Empty;
 
+        // NEU: Steuert Ladekreis und Button-Zustand
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
+        public partial bool IsCheckingForUpdates { get; set; } = false;
+
         #endregion
 
         // =========================================================
@@ -160,11 +165,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         /// <summary>
         /// Checks for application updates via <see cref="IUpdateService"/>. If an update is available,
-        /// sets <see cref="IsUpdateAvailable"/> and <see cref="UpdateMessage"/> for the UI.
+        /// asks the user via dialog if they want to install it right away.
         /// </summary>
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanCheckForUpdates))]
         private async Task CheckForUpdates()
         {
+            IsCheckingForUpdates = true;
+
             try
             {
                 var response = await _manageApplicationUpdatesUseCase.CheckForUpdatesAsync();
@@ -172,21 +179,95 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (response.IsUpdateAvailable)
                 {
                     IsUpdateAvailable = true;
+
+                    // 1. Nachricht für die UI laden und formatieren (z.B. "Version 1.2.0 ist verfügbar")
                     string messageFormat = _localizationService.GetString("Options_UpdateAvailable");
                     UpdateMessage = string.Format(messageFormat, response.LatestVersion);
+
+                    // 2. Titel für den Dialog laden
+                    string title = _localizationService.GetString("Options_UpdateAvailable_Title");
+
+                    // 3. Dialog-Nachricht mit dem Platzhalter {0} laden und befüllen
+                    string promptFormat = _localizationService.GetString("Options_UpdatePrompt_Message");
+                    string dialogMessage = string.Format(promptFormat, UpdateMessage);
+
+                    // 4. Dialog anzeigen mit lokalisierten Ja/Nein Buttons
+                    bool userWantsUpdate = await _dialogService.ShowConfirmationAsync(
+                        title,
+                        dialogMessage,
+                        _localizationService.GetString("General_Yes"),
+                        _localizationService.GetString("General_No")
+                    );
+
+                    if (userWantsUpdate)
+                    {
+                        await PerformUpdate();
+                    }
+                }
+                else
+                {
+                    IsUpdateAvailable = false;
+                    UpdateMessage = string.Empty;
+
+                    // Meldung: Kein Update verfügbar
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("Options_UpdateNoUpdate_Title"),
+                        _localizationService.GetString("Options_UpdateNoUpdate_Message"),
+                        DialogIcon.Information
+                    );
                 }
             }
-            catch (Exception ex) { Debug.WriteLine(ex); }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+
+                // Fehlermeldung formatieren (Platzhalter {0} wird mit ex.Message befüllt)
+                string errorFormat = _localizationService.GetString("Options_UpdateCheckError_Message");
+                string errorMessage = string.Format(errorFormat, ex.Message);
+
+                await _dialogService.ShowMessageAsync(
+                    _localizationService.GetString("Options_UpdateError_Title"),
+                    errorMessage,
+                    DialogIcon.Error
+                );
+            }
+            finally
+            {
+                IsCheckingForUpdates = false;
+            }
         }
 
         /// <summary>
-        /// Re-checks for updates and, if available, downloads and starts the installer via
-        /// <see cref="IUpdateService.DownloadAndInstallAsync"/>.
+        /// Downloads the update and starts the installer via <see cref="IUpdateService.DownloadAndInstallAsync"/>.
+        /// Closes the application upon success.
         /// </summary>
         [RelayCommand]
         private async Task PerformUpdate()
         {
-            await _manageApplicationUpdatesUseCase.PerformUpdateAsync();
+            IsCheckingForUpdates = true;
+
+            try
+            {
+                await _manageApplicationUpdatesUseCase.PerformUpdateAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+
+                // Fehlermeldung formatieren (Platzhalter {0} wird mit ex.Message befüllt)
+                string errorFormat = _localizationService.GetString("Options_UpdateFailed_Message");
+                string errorMessage = string.Format(errorFormat, ex.Message);
+
+                await _dialogService.ShowMessageAsync(
+                    _localizationService.GetString("Options_UpdateFailed_Title"),
+                    errorMessage,
+                    DialogIcon.Error
+                );
+            }
+            finally
+            {
+                IsCheckingForUpdates = false;
+            }
         }
 
         /// <summary>Opens the application data folder in Windows Explorer using the configured base path.</summary>
@@ -395,6 +476,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
         // =========================================================
         #region PrivateHelperMethods
+
+        // NEU: Verhindert Mehrfachklicks während der Suche
+        private bool CanCheckForUpdates() => !IsCheckingForUpdates;
 
         private void SaveThemeConfig(string theme)
         {

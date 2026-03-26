@@ -287,7 +287,7 @@
                             <StackPanel Spacing="14">
 
                                 <!--  UPDATE  -->
-                                <StackPanel Spacing="8">
+                                <!--<StackPanel Spacing="8">
 
                                     <TextBlock x:Uid="Update" Style="{StaticResource SectionTitleStyle}" />
 
@@ -300,6 +300,44 @@
                                         BorderBrush="{x:Null}"
                                         Command="{Binding CheckForUpdatesCommand}"
                                         Foreground="#DDFFFFFF" />
+
+                                </StackPanel>-->
+
+                                <StackPanel Spacing="8">
+
+                                    <TextBlock x:Uid="Update" Style="{StaticResource SectionTitleStyle}" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button
+                                            x:Name="BtnCheckForUpdates"
+                                            x:Uid="Check_for_updates"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Background="#FF4DC89E"
+                                            BorderBrush="{x:Null}"
+                                            Command="{Binding CheckForUpdatesCommand}"
+                                            Foreground="#DDFFFFFF" />
+
+                                        <ProgressRing
+                                            Grid.Column="1"
+                                            Width="24"
+                                            Height="24"
+                                            Margin="12,0,0,0"
+                                            IsActive="{Binding IsCheckingForUpdates}"
+                                            Visibility="{Binding IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                                    </Grid>
+
+                                    <TextBlock
+                                        Foreground="{ThemeResource FontColor_1}"
+                                        Text="{Binding UpdateMessage, Mode=OneWay}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{Binding IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
 
                                 </StackPanel>
 

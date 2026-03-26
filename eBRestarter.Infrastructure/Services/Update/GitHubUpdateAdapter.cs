@@ -10,28 +10,21 @@ using System.Text.Json;
 
 namespace eBRestarter.Infrastructure.Services.Update;
 
-public class GitHubUpdateAdapter : IUpdateService
+public class GitHubUpdateAdapter(
+    IRestClientService restClient,
+    IWindowsProcessControlService processService,
+    ILogger<GitHubUpdateAdapter> logger) : IUpdateService
 {
-    private readonly IRestClientService _restClient;
-    private readonly IWindowsProcessControlService _processService;
-    private readonly ILogger<GitHubUpdateAdapter> _logger;
+    private readonly IRestClientService _restClient = restClient;
+    private readonly IWindowsProcessControlService _processService = processService;
+    private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
 
     // Anpassen an dein Repository!
-    private const string RepoOwner = "DeinGitHubName";
+    private const string RepoOwner = "DamonHelheim";
     private const string RepoName = "eBRestarter";
 
     // GitHub API URL für das allerneueste Release
     private const string GitHubApiUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
-
-    public GitHubUpdateAdapter(
-        IRestClientService restClient,
-        IWindowsProcessControlService processService,
-        ILogger<GitHubUpdateAdapter> logger)
-    {
-        _restClient = restClient;
-        _processService = processService;
-        _logger = logger;
-    }
 
     public async Task<UpdateInfo> CheckForUpdateAsync()
     {
@@ -119,7 +112,7 @@ public class GitHubUpdateAdapter : IUpdateService
             // Dein aktueller RestClient gibt Strings zurück. Für Dateien nutzen wir besser HttpClient direkt
             // oder erweitern den RestClient. Hier der Einfachheit halber HttpClient:
 
-            using (var httpClient = new System.Net.Http.HttpClient())
+            using (var httpClient = new HttpClient())
             {
                 // GitHub erfordert User-Agent Header
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "eBRestarter-App");
