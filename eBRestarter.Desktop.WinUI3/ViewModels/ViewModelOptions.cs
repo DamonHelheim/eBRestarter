@@ -19,7 +19,9 @@ using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -70,6 +72,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [ObservableProperty] public partial bool IsUpdateAvailable { get; set; }
         [ObservableProperty] public partial string UpdateMessage { get; set; } = string.Empty;
 
+        [ObservableProperty] public partial string ExtensionUrl { get; set; } = string.Empty;
+        [ObservableProperty] public partial double ExtensionWaitTimeMinutes { get; set; } = 3;
+        [ObservableProperty] public partial LanguageOption SelectedExtensionLanguage { get; set; }
+        [ObservableProperty] public partial string ExtensionSaveStatus { get; set; } = string.Empty;
+
         // NEU: Steuert Ladekreis und Button-Zustand
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
@@ -90,6 +97,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public int ComputerRestartClockTimeMin { get; init; }
         /// <summary>Maximum allowed hour (0–23) for scheduled restart.</summary>
         public int ComputerRestartClockTimeMax { get; init; }
+
+        public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
         #endregion
 
@@ -152,6 +161,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
             _computerRestartScheduler.OnNextRestartDateChanged += OnNextRestartDateChanged;
+
+            // Erweiterungs-Sprachen initialisieren (Wir leihen uns einfach die normalen Languages)
+            // Erweiterungs-Sprachen initialisieren (Wir leihen uns einfach die normalen Languages)
+            ExtensionLanguages = new ReadOnlyCollection<LanguageOption>([.. localizationService.GetAvailableLanguages()]);
+            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault()!;
+
+            // Lade die Extension Config beim Start
+            LoadExtensionConfig();
 
             InitializeAsync().Forget();
         }
@@ -267,6 +284,65 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             finally
             {
                 IsCheckingForUpdates = false;
+            }
+        }
+
+        /// <summary>
+        /// Öffnet den Ordner der Chrome Extension im Windows Explorer
+        /// </summary>
+        [RelayCommand]
+        private void OpenExtensionFolder()
+        {
+            try
+            {
+                string extensionPath = GetExtensionFolderPath();
+                if (!Directory.Exists(extensionPath))
+                {
+                    Directory.CreateDirectory(extensionPath);
+                }
+                _os.WindowsProcessControlService.OpenExplorer(extensionPath);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Fehler beim Öffnen des Extension-Ordners: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Speichert die UI-Werte in die config.json der Chrome Extension
+        /// </summary>
+        [RelayCommand]
+        private async Task SaveExtensionConfig()
+        {
+            try
+            {
+                string configPath = Path.Combine(GetExtensionFolderPath(), "config.json");
+
+                // Erstelle das Datenobjekt. Zeit: Minuten * 60.000 (ms)
+                var configData = new ExtensionConfigDto
+                {
+                    LANGUAGE = SelectedExtensionLanguage?.Index == 0 ? "DE" : "EN", // Index 0 ist meist DE
+                    ZIEL_URL = ExtensionUrl,
+                    WARTEZEIT_MS = (int)(ExtensionWaitTimeMinutes * 60000)
+                };
+
+                // JSON Formatierung (hübsch machen)
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string jsonString = JsonSerializer.Serialize(configData, options);
+
+                // In Datei schreiben
+                if (!Directory.Exists(GetExtensionFolderPath())) Directory.CreateDirectory(GetExtensionFolderPath());
+                await File.WriteAllTextAsync(configPath, jsonString);
+
+                // Erfolgsmeldung für 3 Sekunden anzeigen
+                ExtensionSaveStatus = _localizationService.GetString("Options_SavedSuccessfully") ?? "Erfolgreich gespeichert!";
+                await Task.Delay(3000);
+                ExtensionSaveStatus = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Fehler beim Speichern der Extension Config: {ex.Message}");
+                await _dialogService.ShowMessageAsync("Fehler", $"Konnte config.json nicht speichern: {ex.Message}", DialogIcon.Error);
             }
         }
 
@@ -476,6 +552,47 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
         // =========================================================
         #region PrivateHelperMethods
+
+        /// <summary>
+        /// Sucht den Ordner "Extension" neben der ausführbaren .exe Datei.
+        /// </summary>
+        private string GetExtensionFolderPath()
+        {
+            // Pfad zur laufenden App + Ordner "Extension" (Hier liegt deine manifest.json etc.)
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Extension");
+        }
+
+        /// <summary>
+        /// Liest die config.json beim Programmstart aus und füllt die UI-Felder
+        /// </summary>
+        private void LoadExtensionConfig()
+        {
+            try
+            {
+                string configPath = Path.Combine(GetExtensionFolderPath(), "config.json");
+                if (File.Exists(configPath))
+                {
+                    string jsonString = File.ReadAllText(configPath);
+                    var configData = JsonSerializer.Deserialize<ExtensionConfigDto>(jsonString);
+
+                    if (configData != null)
+                    {
+                        ExtensionUrl = configData.ZIEL_URL;
+                        ExtensionWaitTimeMinutes = configData.WARTEZEIT_MS / 60000.0; // MS zurück in Minuten
+
+                        // Sprache setzen
+                        if (configData.LANGUAGE == "EN")
+                            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault(l => l.Index == 1)!; // 1 = Englisch
+                        else
+                            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault(l => l.Index == 0)!; // 0 = Deutsch
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Konnte existierende config.json nicht lesen: {ex.Message}");
+            }
+        }
 
         // NEU: Verhindert Mehrfachklicks während der Suche
         private bool CanCheckForUpdates() => !IsCheckingForUpdates;

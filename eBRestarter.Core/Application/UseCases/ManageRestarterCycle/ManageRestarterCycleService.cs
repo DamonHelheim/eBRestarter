@@ -1,3 +1,4 @@
+using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
@@ -16,7 +17,7 @@ public class ManageRestarterCycleService(
     TimeProvider timeProvider,
     IWindowsProcessControlService processService) : IManageRestarterCycleUseCase // NEU: IWindowsProcessControlService injiziert
 {
-    private const string BaseUrl = "https://www.ebesucher.com/surfbar/";
+    private const string BaseUrl = WebLinks.EVisitorSurflink; //"https://www.ebesucher.com/surfbar/";
     private const int InitialDelaySeconds = 5;
 
     private readonly IBrowserFactory _browserFactory = browserFactory;

@@ -13,7 +13,7 @@
             x:Name="Border_browser_downloadlinks"
             Grid.Row="1"
             Width="Auto"
-            Height="140"
+            Height="Auto"
             Margin="0"
             Background="#FF3A485C"
             BorderThickness="0"
@@ -50,8 +50,28 @@
                     HorizontalAlignment="Left"
                     Background="Transparent"
                     Command="{Binding OpenSupportWebsiteCommand}"
+                    CommandParameter="https://brave.com/de/download/"
+                    Content="Brave Download"
+                    Foreground="{ThemeResource FontColor_1}" />
+
+                <HyperlinkButton
+                    Margin="15,7,0,0"
+                    Padding="0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding OpenSupportWebsiteCommand}"
                     CommandParameter="https://www.google.com/chrome/"
                     Content="Chrome Download"
+                    Foreground="{ThemeResource FontColor_1}" />
+
+                <HyperlinkButton
+                    Margin="15,10,0,0"
+                    Padding="0"
+                    HorizontalAlignment="Left"
+                    Background="Transparent"
+                    Command="{Binding OpenSupportWebsiteCommand}"
+                    CommandParameter="https://www.microsoft.com/de-de/edge"
+                    Content="Edge Download"
                     Foreground="{ThemeResource FontColor_1}" />
 
                 <HyperlinkButton
@@ -65,18 +85,19 @@
                     Foreground="{ThemeResource FontColor_1}" />
 
                 <HyperlinkButton
-                    Margin="15,10,0,0"
+                    Margin="15,7,0,0"
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
                     Command="{Binding OpenSupportWebsiteCommand}"
-                    CommandParameter="https://www.microsoft.com/de-de/edge"
-                    Content="Edge Download"
+                    CommandParameter="https://vivaldi.com/download/"
+                    Content="Vivaldi Download"
                     Foreground="{ThemeResource FontColor_1}" />
 
             </StackPanel>
-        </Border>
-    </Grid>
 
+        </Border>
+
+    </Grid>
 
 </UserControl>

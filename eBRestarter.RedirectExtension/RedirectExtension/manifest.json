@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Globaler Error & Timer Redirector",
+  "version": "1.0",
+  "description": "Leitet bei Fehlern oder nach x Minuten um. Mit Popup-Steuerung.",
+  
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "redirector@ebrestarter.local",
+      "strict_min_version": "121.0"
+    }
+  },
+
+  "permissions": [
+    "webNavigation",
+    "tabs",
+    "storage"
+  ],
+  "icons": {
+    "16": "icons/eBRestarter_Redirect_On_small.png",
+    "48": "icons/eBRestarter_Redirect_On_small.png",
+    "128": "icons/eBRestarter_Redirect_On_small.png"
+  },
+  "action": {
+    "default_title": "Redirector Settings",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/eBRestarter_Redirect_On_small.png",
+      "32": "icons/eBRestarter_Redirect_On_small.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["config.json"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

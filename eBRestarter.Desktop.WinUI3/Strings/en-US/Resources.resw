@@ -877,4 +877,55 @@ Afterward, use your actual Microsoft account password (not your PIN) for AutoLog
   <data name="General_No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="BrowserExtension.Text" xml:space="preserve">
+    <value>Browser Extension</value>
+  </data>
+  <data name="BrowserExtension_WhyNeededTitle.Text" xml:space="preserve">
+    <value>Why is this extension needed?</value>
+  </data>
+  <data name="BrowserExtension_WhyNeededDesc.Text" xml:space="preserve">
+    <value>The Browser Redirector monitors Chrome in the background. If a website freezes, fails to load (e.g., due to network errors), or a set time limit on a page expires, the extension automatically redirects to the defined target URL. This ensures that automated operations never stall and continue running flawlessly without manual intervention.</value>
+  </data>
+  <data name="BrowserExtension_InstallTitle.Text" xml:space="preserve">
+    <value>Installation in Google Chrome</value>
+  </data>
+  <data name="BrowserExtension_InstallDesc.Text" xml:space="preserve">
+    <value>For the Redirector to work, the extension must be loaded in Chrome.</value>
+  </data>
+  <data name="BrowserExtension_Step1.Text" xml:space="preserve">
+    <value>1. Open this address in Chrome:</value>
+  </data>
+  <data name="BrowserExtension_Step2.Text" xml:space="preserve">
+    <value>2. Enable Developer mode in the top right corner.</value>
+  </data>
+  <data name="BrowserExtension_Step3.Text" xml:space="preserve">
+    <value>3. Click on 'Load unpacked'.</value>
+  </data>
+  <data name="BrowserExtension_Step4.Text" xml:space="preserve">
+    <value>4. Select the following folder:</value>
+  </data>
+  <data name="BrowserExtension_BtnOpenFolder.Content" xml:space="preserve">
+    <value>Open extension folder</value>
+  </data>
+  <data name="BrowserExtension_ConfigTitle.Text" xml:space="preserve">
+    <value>Configuration (config.json)</value>
+  </data>
+  <data name="BrowserExtension_TargetUrl.Text" xml:space="preserve">
+    <value>Target URL (incl. https://)</value>
+  </data>
+  <data name="BrowserExtension_TargetUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://www.example.com</value>
+  </data>
+  <data name="BrowserExtension_WaitTime.Text" xml:space="preserve">
+    <value>Waiting time until redirection (minutes)</value>
+  </data>
+  <data name="BrowserExtension_Language.Text" xml:space="preserve">
+    <value>Language of the extension menu</value>
+  </data>
+  <data name="BrowserExtension_BtnSave.Content" xml:space="preserve">
+    <value>Save configuration</value>
+  </data>
+  <data name="Options_SavedSuccessfully" xml:space="preserve">
+    <value>Saved successfully!</value>
+  </data>
 </root>
