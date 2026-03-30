@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using eBRestarter.Core.Application.Contstants;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
@@ -17,6 +18,7 @@ using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.Constants;
 using Microsoft.Windows.AppLifecycle;
 using System;
+using System.Buffers.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -322,7 +324,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 var configData = new ExtensionConfigDto
                 {
                     LANGUAGE = SelectedExtensionLanguage?.Index == 0 ? "DE" : "EN", // Index 0 ist meist DE
-                    ZIEL_URL = ExtensionUrl,
+                    ZIEL_URL = $"{WebLinks.EVisitorSurflink}{_currentConfig.Username}",
                     WARTEZEIT_MS = (int)(ExtensionWaitTimeMinutes * 60000)
                 };
 
@@ -556,10 +558,27 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>
         /// Sucht den Ordner "Extension" neben der ausführbaren .exe Datei.
         /// </summary>
+        /// <summary>
+        /// Sucht den Ordner "Extension" je nach Build-Modus (Debug vs Release).
+        /// </summary>
+        /// <summary>
+        /// Sucht den Ordner "Extension" je nach Build-Modus (Debug vs Release).
+        /// </summary>
         private string GetExtensionFolderPath()
         {
-            // Pfad zur laufenden App + Ordner "Extension" (Hier liegt deine manifest.json etc.)
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Extension");
+#if DEBUG
+            // Im Debug-Modus gehen wir 6 Ebenen nach oben in den Solution-Root-Ordner.
+            // Von: ...\eBRestarter\eBRestarter.Desktop.WinUI3\bin\x64\Debug\net10.0-windows10.0.26100.0\win-x64\
+            // Nach: ...\eBRestarter\
+            string solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\"));
+
+            // Nun navigieren wir in dein JavaScript-Projekt
+            return Path.Combine(solutionDirectory, "eBRestarter.RedirectExtension", "RedirectExtension");
+#else
+    // Im Release-Modus (fertig publizierte App) liegt der Ordner
+    // idealerweise direkt neben der ausführbaren .exe Datei.
+    return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RedirectExtension");
+#endif
         }
 
         /// <summary>
