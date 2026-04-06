@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="RootControl"
     mc:Ignorable="d">
 
     <Border
@@ -40,7 +41,7 @@
                     Width="35"
                     Height="35"
                     Margin="10,10,0,0"
-                    Source="{Binding HeaderImageEarnings}" />
+                    Source="{Binding ElementName=RootControl, Path=HeaderImageEarnings}" />
 
                 <TextBlock
                     x:Name="tbl_sum_points_daily"
@@ -49,7 +50,7 @@
                     FontSize="22"
                     FontWeight="Normal"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding HeaderTitleEarnings}"
+                    Text="{Binding ElementName=RootControl, Path=HeaderTitleEarnings}"
                     TextWrapping="Wrap" />
 
             </StackPanel>
@@ -62,7 +63,7 @@
                     FontSize="24"
                     FontWeight="Light"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding EarningsAmount}" />
+                    Text="{Binding ElementName=RootControl, Path=EarningsAmount}" />
 
             </StackPanel>
 
