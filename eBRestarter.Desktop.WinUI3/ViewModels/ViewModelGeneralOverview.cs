@@ -197,6 +197,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     }
 
                     var now = DateTime.Now;
+
+                    CurrentMonth = now.ToString("MMMM");
+                    CurrentYear = now.ToString("yyyy");
+
                     var nextRefresh = now.AddMinutes(60 - now.Minute + 5);
                     var nextRefreshTimeFormat = _localizationService.GetString("General_NextRefresh");
                     ClockNextEarningsRefresh = string.Format(nextRefreshTimeFormat, nextRefresh.ToString("HH:mm"));
