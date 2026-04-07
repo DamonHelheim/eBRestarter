@@ -9,4 +9,5 @@ public interface IWindowsFileSystemService
     string CombinePaths(params string[] paths);
     void WriteAllText(string path, string content);
     string ReadAllText(string path);
+    string[] ReadAllLines(string path);
 }

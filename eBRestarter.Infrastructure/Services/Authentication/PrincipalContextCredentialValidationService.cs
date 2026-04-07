@@ -1,16 +1,17 @@
 using eBRestarter.Core.Application.Interfaces.Authentication;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using System.DirectoryServices.AccountManagement;
+using Windows.Services.Maps;
 
 namespace eBRestarter.Infrastructure.Services.Authentication;
 
 /// <summary>
 /// Validierung von Windows-/Domain-Anmeldedaten via PrincipalContext (Move aus ViewModelOptions).
 /// </summary>
-public class PrincipalContextCredentialValidationService : ICredentialValidationService
+public class PrincipalContextCredentialValidationService(IActiveDirectoryService adService) : ICredentialValidationService
 {
-    // =========================================================
-    // 1. PUBLIC & PROTECTED METHODS (API)
-    // =========================================================
+    private readonly IActiveDirectoryService _adService = adService;
+
     #region PublicAndProtectedMethods
 
     /// <inheritdoc />
@@ -25,10 +26,8 @@ public class PrincipalContextCredentialValidationService : ICredentialValidation
                 contextType = ContextType.Domain;
             }
 
-            using (var context = new PrincipalContext(contextType, domain))
-            {
-                return context.ValidateCredentials(username, password);
-            }
+            // Hier rufen wir jetzt das gemockte Interface auf anstatt 'new' zu benutzen!
+            return _adService.ValidateCredentials(contextType, domain, username, password);
         }
         catch (PrincipalServerDownException)
         {
