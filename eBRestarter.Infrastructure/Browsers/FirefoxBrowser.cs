@@ -153,7 +153,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
         try
         {
             // Wir nutzen System.IO direkt für das zeilenweise Lesen
-            var lines = File.ReadAllLines(iniPath);
+            var lines = _os.WindowsFileSystemService.ReadAllLines(iniPath);
 
             // Temporäre Variablen für den aktuellen Block
             string? currentPath = null;

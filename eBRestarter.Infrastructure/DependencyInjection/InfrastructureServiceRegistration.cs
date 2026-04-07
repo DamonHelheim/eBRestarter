@@ -94,6 +94,8 @@ public static class InfrastructureServiceRegistration
 
         services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
 
+        services.AddSingleton<IActiveDirectoryService, WindowsActiveDirectoryService>();
+
         services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
 
         services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();

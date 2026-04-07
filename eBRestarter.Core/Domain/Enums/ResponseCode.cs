@@ -11,5 +11,7 @@ public enum ResponseCode
     NoConnectionToServer = 404,
     HTTPTimeout = 408,
     HttpRE429 = 429,
-    InternalServerError = 500
+    InternalServerError = 500,
+    HttpRE500 = 501,
+    HttpRE200 = 502
 }

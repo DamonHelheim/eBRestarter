@@ -56,4 +56,11 @@ public class WindowsFileSystemService : IWindowsFileSystemService
 
         return content;
     }
+
+    public string[] ReadAllLines(string path)
+    {
+        var content = File.ReadAllLines(path);
+
+        return content;
+    }
 }
