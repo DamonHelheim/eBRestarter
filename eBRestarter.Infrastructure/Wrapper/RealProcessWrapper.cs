@@ -21,7 +21,18 @@ public class RealProcessWrapper : IProcessWrapper
     /// Eine neue <see cref="Process"/>-Komponente, die der Prozessressource zugeordnet ist,
     /// oder <c>null</c>, wenn keine Prozessressource gestartet wurde.
     /// </returns>
-    public Process? Start(ProcessStartInfo info) => Process.Start(info);
+    public IProcess? Start(ProcessStartInfo info)
+    {
+        var process = Process.Start(info);
+
+        // Wenn der Start erfolgreich war, verpacken wir den echten Prozess in unseren Adapter
+        if (process != null)
+        {
+            return new ProcessAdapter(process);
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Prüft, ob aktuell mindestens eine Instanz eines Prozesses mit dem angegebenen Namen läuft.
@@ -52,9 +63,14 @@ public class RealProcessWrapper : IProcessWrapper
     }
 
     /// <summary>
-    /// Erstellt ein Array neuer <see cref="Process"/>-Komponenten und ordnet sie
-    /// allen Prozessressourcen zu, die aktuell auf dem lokalen Computer ausgeführt werden.
+    /// Holt alle laufenden Prozesse und verpackt sie in unsere testbaren Adapter.
     /// </summary>
-    /// <returns>Ein Array vom Typ <see cref="Process"/>, das alle laufenden Prozesse repräsentiert.</returns>
-    public Process[] GetProcesses() => Process.GetProcesses();
+    public IProcess[] GetProcesses()
+    {
+        var processes = Process.GetProcesses();
+
+        // HIER IST DIE LÖSUNG: Wir nehmen jeden echten Prozess (p) und stecken ihn in den ProcessAdapter.
+        // Das Ergebnis wandeln wir in ein Array von IProcess um.
+        return processes.Select(p => (IProcess)new ProcessAdapter(p)).ToArray();
+    }
 }

@@ -8,9 +8,10 @@ using System.Net;
 
 namespace eBRestarter.Infrastructure.Services.RestSharp
 {
-    public class RestSharpClientService(ILogger<RestSharpClientService> logger) : IRestClientService
+    public class RestSharpClientService(ILogger<RestSharpClientService> logger, HttpMessageHandler? httpMessageHandler = null) : IRestClientService
     {
         private readonly ILogger<RestSharpClientService> _logger = logger;
+        private readonly HttpMessageHandler? _httpMessageHandler = httpMessageHandler; // NEU FÜR TESTS
 
         public async Task<ApiResponse> ExecuteGetAsync(ApiRequest requestModel)
         {
@@ -58,7 +59,12 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
                 Timeout = TimeSpan.FromSeconds(model.TimeoutSeconds)
             };
 
-            // Vereinfachte Logik: Authenticator nur setzen, wenn beide Werte da sind.
+            //Dem RestClient den Test-Handler unterschieben
+            if (_httpMessageHandler != null)
+            {
+                options.ConfigureMessageHandler = _ => _httpMessageHandler;
+            }
+
             if (!string.IsNullOrWhiteSpace(model.Username) && !string.IsNullOrWhiteSpace(model.Password))
             {
                 options.Authenticator = new HttpBasicAuthenticator(model.Username, model.Password);
@@ -72,14 +78,25 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             // 1. Erfolgsfall
             if (response.IsSuccessful)
             {
-                // Rate Limit Check (Logik extrahiert)
                 var rateCode = CheckRateLimit(response);
-
                 return new ApiResponse
                 {
                     IsSuccess = true,
                     Content = response.Content,
-                    StatusCode = rateCode // Kann Success oder RequestLimit sein
+                    StatusCode = rateCode
+                };
+            }
+
+            // NEU: RestSharp internen Timeout (Client-seitig) abfangen!
+            // Hier ist response.StatusCode in der Regel '0'
+            if (response.ResponseStatus == ResponseStatus.TimedOut)
+            {
+                _logger.LogWarning("API Fehler: Lokaler Timeout bei {Url}", response.Request.Resource);
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = ResponseCode.HTTPTimeout,
+                    ErrorMessage = "Die Anfrage hat das Zeitlimit überschritten."
                 };
             }
 
@@ -89,8 +106,8 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
                 HttpStatusCode.Unauthorized => ResponseCode.HttpRE401,
                 HttpStatusCode.TooManyRequests => ResponseCode.HttpRE429,
                 HttpStatusCode.InternalServerError => ResponseCode.InternalServerError,
-                HttpStatusCode.RequestTimeout => ResponseCode.HTTPTimeout,
-                HttpStatusCode.GatewayTimeout => ResponseCode.HTTPTimeout, // 504 auch als Timeout behandeln
+                HttpStatusCode.RequestTimeout => ResponseCode.HTTPTimeout, // Server meldet Timeout
+                HttpStatusCode.GatewayTimeout => ResponseCode.HTTPTimeout,
                 _ => ResponseCode.NoConnectionToServer // Fallback
             };
 
@@ -122,6 +139,7 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             var code = ex switch
             {
                 TimeoutException => ResponseCode.HTTPTimeout,
+                TaskCanceledException => ResponseCode.HTTPTimeout,
                 HttpRequestException httpEx when httpEx.Message.Contains("429") => ResponseCode.HttpRE429,
                 HttpRequestException httpEx when httpEx.Message.Contains("401") => ResponseCode.HttpRE401,
                 _ => ResponseCode.GeneralExceptionError

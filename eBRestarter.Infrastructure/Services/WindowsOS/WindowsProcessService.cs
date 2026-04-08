@@ -220,31 +220,30 @@ public class WindowsProcessService : IWindowsProcessControlService
 
         foreach (var process in processes)
         {
-            // Sicherheitscheck: Systemprozesse niemals schließen
-            if (process.ProcessName == "System" || process.ProcessName == "Idle")
-                continue;
-
-            try
+            // DAS HIER HAT GEFEHLT: using sorgt für den automatischen Aufruf von Dispose()
+            using (process)
             {
-                // Wir schließen nur Prozesse, die ein grafisches Fenster haben (MainWindowHandle != 0)
-                if (process.MainWindowHandle != IntPtr.Zero)
+                if (process.ProcessName == "System" || process.ProcessName == "Idle")
+                    continue;
+
+                try
                 {
-                    // Sende "Schließen"-Signal an das Fenster
-                    PostMessage(process.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-
-                    // Warte max. 5 Sekunden auf Reaktion
-                    bool exited = process.WaitForExit(5000);
-
-                    if (!exited)
+                    if (process.MainWindowHandle != IntPtr.Zero)
                     {
-                        _logger.LogWarning("Prozess {Name} hat auf WM_CLOSE nicht reagiert.", process.ProcessName);
+                        PostMessage(process.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                        bool exited = process.WaitForExit(5000);
+
+                        if (!exited)
+                        {
+                            _logger.LogWarning("Prozess {Name} hat auf WM_CLOSE nicht reagiert.", process.ProcessName);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Fehler beim Schließen von Prozess {Name}", process.ProcessName);
-            }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Fehler beim Schließen von Prozess {Name}", process.ProcessName);
+                }
+            } // Hier wird Dispose() automatisch aufgerufen!
         }
     }
 

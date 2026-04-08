@@ -71,7 +71,9 @@ public class FileDeletionService : IFileDeletionService
                 // Ordner löschen
                 if (token.IsCancellationRequested) return;
 
-                try { Directory.Delete(dir, true); } catch { }
+                // So wird der Ordner NUR gelöscht, wenn er leer ist.
+                // Wenn eine "moz-extension" Datei übrig blieb, bleibt auch der Ordner bestehen.
+                try { Directory.Delete(dir, false); } catch { }
             }
 
             // AM ENDE: Einmal final 100% / Fertig melden, falls durch das Intervall was fehlte

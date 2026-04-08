@@ -5,7 +5,7 @@ namespace eBRestarter.Infrastructure.Wrapper.Interface;
 public interface IProcessWrapper
 {
     // Muss Process? zurückgeben, damit wir Streams lesen können (für MSI)
-    Process? Start(ProcessStartInfo info);
+    IProcess? Start(ProcessStartInfo info);
 
     // Für IsProcessAlive
     bool IsProcessRunning(string name);
@@ -14,6 +14,8 @@ public interface IProcessWrapper
     void KillProcess(string name);
 
     // Für CloseAllOpenPrograms (holt ALLE Prozesse)
-    Process[] GetProcesses();
+    //Process[] GetProcesses();
+
+    IProcess[] GetProcesses();
 
 }
