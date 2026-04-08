@@ -2,34 +2,37 @@
 using eBRestarter.Core.Domain.Models.Records;
 using System.Net.NetworkInformation;
 
-namespace eBRestarter.Infrastructure.Services.WindowsOS;
-
-public class WindowsNetworkInfoService : IWindowsNetworkInfoService
+namespace eBRestarter.Infrastructure.Services.WindowsOS
 {
-    public bool IsNetworkAvailable() => NetworkInterface.GetIsNetworkAvailable();
-
-    public IEnumerable<NetworkStats> GetActiveInterfaces()
+    public class WindowsNetworkInfoService(INetworkProvider networkProvider) : IWindowsNetworkInfoService
     {
-        var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+        private readonly INetworkProvider _networkProvider = networkProvider;
 
-        foreach (var nic in interfaces)
+        public bool IsNetworkAvailable() => _networkProvider.GetIsNetworkAvailable();
+
+        public IEnumerable<NetworkStats> GetActiveInterfaces()
         {
-            // Filter: Nur aktive Karten und keine Loopbacks
-            if (nic.OperationalStatus != OperationalStatus.Up || nic.NetworkInterfaceType == NetworkInterfaceType.Loopback)
-                continue;
+            var interfaces = _networkProvider.GetAllNetworkInterfaces();
 
-            var stats = nic.GetIPv4Statistics();
+            foreach (var nic in interfaces)
+            {
+                // Filter: Nur aktive Karten und keine Loopbacks
+                if (nic.OperationalStatus != OperationalStatus.Up || nic.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                    continue;
 
-            // Wir filtern Karten ohne Traffic, wie in deinem alten Code
-            if (stats.BytesSent == 0 && stats.BytesReceived == 0)
-                continue;
+                var stats = nic.GetIPv4Statistics();
 
-            yield return new NetworkStats(
-                Name: nic.Name,
-                BytesReceived: stats.BytesReceived,
-                BytesSent: stats.BytesSent,
-                IsActive: true
-            );
+                // Wir filtern Karten ohne Traffic
+                if (stats.BytesSent == 0 && stats.BytesReceived == 0)
+                    continue;
+
+                yield return new NetworkStats(
+                    Name: nic.Name,
+                    BytesReceived: stats.BytesReceived,
+                    BytesSent: stats.BytesSent,
+                    IsActive: true
+                );
+            }
         }
     }
 }

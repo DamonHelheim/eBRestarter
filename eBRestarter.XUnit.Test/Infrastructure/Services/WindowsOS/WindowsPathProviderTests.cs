@@ -1,0 +1,135 @@
+﻿using eBRestarter.Infrastructure.Services.WindowsOS;
+using Shouldly;
+using System;
+using System.IO;
+using Xunit;
+
+namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
+{
+    /// <summary>
+    /// Testet den WindowsPathProvider.
+    /// Da diese Klasse ein reiner Wrapper um System.Environment ist, testen wir hier,
+    /// ob die Methoden intern auf die korrekten Windows-Umgebungsvariablen verweisen
+    /// und ob die zurückgegebenen Strings gültige, absolute Pfade sind.
+    /// </summary>
+    public class WindowsPathProviderTests
+    {
+        private readonly WindowsPathProvider _sut;
+
+        public WindowsPathProviderTests()
+        {
+            _sut = new WindowsPathProvider();
+        }
+
+        // =========================================================
+        // 1. APPDATA / LOCALAPPDATA TESTS
+        // =========================================================
+
+        /// <summary>
+        /// WARUM WIRD DAS GETESTET?
+        /// Stellt sicher, dass GetAppDataDirectory den korrekten Pfad zum Roaming-AppData Ordner liefert.
+        ///
+        /// WAS WIRD GETESTET?
+        /// Wir rufen das echte System via Environment.GetFolderPath auf und vergleichen es mit der
+        /// Ausgabe unseres Wrappers. Zudem prüfen wir, ob es sich um einen validen absoluten Pfad handelt.
+        /// </summary>
+        [Fact]
+        public void GetAppDataDirectory_ShouldReturnCorrectRoamingAppDataPath()
+        {
+            // ARRANGE
+            string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+            // ACT
+            string actualPath = _sut.GetAppDataDirectory();
+
+            // ASSERT
+            actualPath.ShouldBe(expectedPath);
+            actualPath.ShouldNotBeNullOrWhiteSpace();
+            Path.IsPathRooted(actualPath).ShouldBeTrue("Der Pfad muss ein absoluter Systempfad (z.B. C:\\...) sein.");
+        }
+
+        /// <summary>
+        /// WARUM WIRD DAS GETESTET?
+        /// Stellt sicher, dass GetLocalAppDataDirectory auf den lokalen AppData Ordner verweist.
+        /// </summary>
+        [Fact]
+        public void GetLocalAppDataDirectory_ShouldReturnCorrectLocalAppDataPath()
+        {
+            // ARRANGE
+            string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            // ACT
+            string actualPath = _sut.GetLocalAppDataDirectory();
+
+            // ASSERT
+            actualPath.ShouldBe(expectedPath);
+            actualPath.ShouldNotBeNullOrWhiteSpace();
+            Path.IsPathRooted(actualPath).ShouldBeTrue();
+        }
+
+        // =========================================================
+        // 2. USER PROFILE TEST
+        // =========================================================
+
+        /// <summary>
+        /// WARUM WIRD DAS GETESTET?
+        /// Stellt sicher, dass der Wrapper den korrekten Hauptordner des aktuellen Benutzers findet.
+        /// </summary>
+        [Fact]
+        public void GetUserProfileDirectory_ShouldReturnCorrectUserProfilePath()
+        {
+            // ARRANGE
+            string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            // ACT
+            string actualPath = _sut.GetUserProfileDirectory();
+
+            // ASSERT
+            actualPath.ShouldBe(expectedPath);
+            actualPath.ShouldNotBeNullOrWhiteSpace();
+            Path.IsPathRooted(actualPath).ShouldBeTrue();
+        }
+
+        // =========================================================
+        // 3. PROGRAM FILES TESTS
+        // =========================================================
+
+        /// <summary>
+        /// WARUM WIRD DAS GETESTET?
+        /// Stellt sicher, dass der Pfad für 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
+        /// </summary>
+        [Fact]
+        public void GetProgramFilesDirectory_ShouldReturnCorrectProgramFilesPath()
+        {
+            // ARRANGE
+            string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
+            // ACT
+            string actualPath = _sut.GetProgramFilesDirectory();
+
+            // ASSERT
+            actualPath.ShouldBe(expectedPath);
+            actualPath.ShouldNotBeNullOrWhiteSpace();
+            Path.IsPathRooted(actualPath).ShouldBeTrue();
+        }
+
+        /// <summary>
+        /// WARUM WIRD DAS GETESTET?
+        /// Stellt sicher, dass explizit der x86 (32-Bit) Programme-Ordner referenziert wird.
+        /// </summary>
+        [Fact]
+        public void GetProgramFilesX86Directory_ShouldReturnCorrectProgramFilesX86Path()
+        {
+            // ARRANGE
+            string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
+            // ACT
+            string actualPath = _sut.GetProgramFilesX86Directory();
+
+            // ASSERT
+            actualPath.ShouldBe(expectedPath);
+            actualPath.ShouldNotBeNullOrWhiteSpace();
+            Path.IsPathRooted(actualPath).ShouldBeTrue();
+        }
+    }
+}
