@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBRestarter.XUnit.Test", "e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eBRestarter.Core", "eBRestarter.Core\eBRestarter.Core.csproj", "{3C5FA04F-56E4-4A16-9FBC-0D24D12DF566}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eBRestarter.RedirectExtension", "eBRestarter.RedirectExtension\eBRestarter.RedirectExtension.esproj", "{D7DD55D1-A75A-A2F7-6C16-E26ADD309929}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eBRestarter.TabRestarterExtension", "eBRestarter.RedirectExtension\eBRestarter.TabRestarterExtension.esproj", "{D7DD55D1-A75A-A2F7-6C16-E26ADD309929}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

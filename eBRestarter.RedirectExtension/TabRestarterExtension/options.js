@@ -1,11 +1,9 @@
 // Lade gespeicherte Werte beim Öffnen
 document.addEventListener('DOMContentLoaded', async () => {
   const data = await chrome.storage.local.get(['useCustom', 'customUrl', 'customTimeMin']);
-  
   document.getElementById('useCustom').checked = data.useCustom || false;
   document.getElementById('zielUrl').value = data.customUrl || "";
   document.getElementById('wartezeitMin').value = data.customTimeMin || 3;
-  
   toggleFields();
 });
 

@@ -928,4 +928,13 @@ Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht dei
   <data name="Options_SavedSuccessfully" xml:space="preserve">
     <value>Erfolgreich gespeichert!</value>
   </data>
+  <data name="BrowserExtension_Config_Error_Message" xml:space="preserve">
+    <value>Konnte tab_restarter_config.json nicht speichern:</value>
+  </data>
+  <data name="General_Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="General_Success" xml:space="preserve">
+    <value>Erfolg</value>
+  </data>
 </root>

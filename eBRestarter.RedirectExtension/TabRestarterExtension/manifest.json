@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Globaler Error & Timer Redirector",
-  "version": "1.2",
+  "version": "1.0",
   "description": "Leitet bei Fehlern oder nach x Minuten um. Kiosk-Modus.",
 
   "browser_specific_settings": {
@@ -23,7 +23,7 @@
     "128": "icons/eBRestarter_Redirect_On_small.png"
   },
   "action": {
-    "default_title": "Redirector Settings",
+    "default_title": "Tab Restarter Settings",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/eBRestarter_Redirect_On_small.png",
@@ -41,7 +41,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [ "config.json" ],
+      "resources": [ "tab_restarter_config.json" ],
       "matches": [ "<all_urls>" ]
     }
   ]

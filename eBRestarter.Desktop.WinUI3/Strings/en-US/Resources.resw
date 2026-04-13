@@ -928,4 +928,13 @@ Afterward, use your actual Microsoft account password (not your PIN) for AutoLog
   <data name="Options_SavedSuccessfully" xml:space="preserve">
     <value>Saved successfully!</value>
   </data>
+  <data name="BrowserExtension_Config_Error_Message" xml:space="preserve">
+    <value>Unable to save tab_restarter_config.json:</value>
+  </data>
+  <data name="General_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="General_Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
 </root>

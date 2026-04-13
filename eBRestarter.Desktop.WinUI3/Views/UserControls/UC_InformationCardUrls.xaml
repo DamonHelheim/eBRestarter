@@ -65,7 +65,7 @@
                     Foreground="{ThemeResource FontColor_1}" />
 
                 <HyperlinkButton
-                    Margin="15,10,0,0"
+                    Margin="15,7,0,0"
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
