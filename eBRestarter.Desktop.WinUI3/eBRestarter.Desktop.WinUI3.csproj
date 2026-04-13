@@ -368,7 +368,6 @@
 	<PackageReference Include="WinUI3XamlPreview" Version="0.8.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="RedirectExtension\" />
     <Folder Include="Resources\Images\" />
   </ItemGroup>
   <ItemGroup>

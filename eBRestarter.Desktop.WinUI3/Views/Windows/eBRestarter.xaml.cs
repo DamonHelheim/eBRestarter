@@ -75,7 +75,7 @@ namespace eBRestarter.Desktop.WinUI3
             _navigationService.AttachFrame(NavigationFrame);
 
             // MVVM-Binding: Setzt den DataContext f�r das XAML (Window.Content).
-            // Erm�glicht DataBinding im XAML (z.B. {Binding CurrentPageTitle}).
+            // Ermöglicht DataBinding im XAML (z.B. {Binding CurrentPageTitle}).
             (this.Content as FrameworkElement)!.DataContext = mainViewModel;
 
             // Initiale Navigation beim Start der App.
@@ -113,7 +113,7 @@ namespace eBRestarter.Desktop.WinUI3
             //// 3. Das AppWindow holen
             //AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-            //// 4. Gr��e �ndern (Breite, H�he) in Pixeln
+            //// 4. Größe ändern (Breite, H�he) in Pixeln
             //appWindow.Resize(new SizeInt32(2300, 2080));
         }
 

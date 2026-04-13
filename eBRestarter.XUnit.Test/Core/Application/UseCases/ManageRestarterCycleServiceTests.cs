@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace eBRestarter.Tests.Core.Application.UseCases.ManageRestarterCycle
+namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 {
     public class ManageRestarterCycleServiceTests
     {

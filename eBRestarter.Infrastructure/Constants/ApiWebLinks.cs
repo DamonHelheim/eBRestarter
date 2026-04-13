@@ -1,13 +1,17 @@
-﻿namespace eBRestarter.Infrastructure.Constants;
+﻿using System.Globalization;
+
+namespace eBRestarter.Infrastructure.Constants;
 
 public static class ApiWebLinks
 {
-    // Dynamische Property, da sich das Datum bei jedem Aufruf ändern kann
     public static string HourlyEarnings
     {
         get
         {
-            return "https://www.ebesucher.de/api/visitor_exchange.json/account/earnings_hourly/" + DateTime.Now.ToString("yyyy/MM/dd").Replace('.', '-') + "?timezone=Europe%2FBerlin";
+            // Baut exakt "yyyy-MM-dd" (z.B. "2026-04-13") absolut unbeeindruckt von der eingestellten Sprache.
+            string dateStr = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            return $"https://www.ebesucher.de/api/visitor_exchange.json/account/earnings_hourly/{dateStr}?timezone=Europe%2FBerlin";
         }
     }
 

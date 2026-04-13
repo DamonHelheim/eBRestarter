@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Domain.Models.Records;
 using LiveChartsCore;
@@ -140,6 +141,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _timer.Start();
 
             Task.Run(LoadDataAsync);
+
+            WeakReferenceMessenger.Default.Register<ApiCredentialsUpdatedMessage>(this, (_, __) => Task.Run(LoadDataAsync));
+
+            WeakReferenceMessenger.Default.Register<ApiCredentialsRemovedMessage>(this, (_, __) =>
+            {
+                // Wir nutzen die DispatcherQueue, da wir UI-Werte verändern
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    ResetChart();
+
+                    // Den internen Cache leeren!
+                    _cachedEarnings = null;
+
+                    // Chart updaten (die Methode füllt ihn nun mit Nullen)
+                    UpdateChartData();
+
+                    // 2. Die BTP Summen wieder auf das Standardzeichen "-" setzen
+                    EarningsThisDaySum = "-";
+                    EarningsThisMonthSum = "-";
+                    EarningsThisYearSum = "-";
+
+                });
+            });
         }
 
         #endregion

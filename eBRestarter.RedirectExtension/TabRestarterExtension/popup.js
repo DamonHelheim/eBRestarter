@@ -1,28 +1,28 @@
-// --- UNSER WÖRTERBUCH (DICTIONARY) ---
+// --- DICTIONARY ---
 const dict = {
     "DE": {
-        title: "Redirector",
+        title: "Tab Restarter",
         langLabel: "Sprache:",
         langAuto: "Auto (Config)",
-        statusLabel: "Status der Umleitung:",
+        statusLabel: "Tab Restarter Status:",
         btnOn: "AN",
         btnOff: "AUS",
         loading: "LADE...",
-        checkboxLabel: "Manuelle Werte nutzen<br><small>(Ignoriert die C# config.json)</small>",
+        checkboxLabel: "Manuelle Werte nutzen<br><small>(Ignoriert die eBRestarter Tab Restarter config.json)</small>",
         urlLabel: "Ziel-URL:",
         timeLabel: "Wartezeit (Minuten):",
         saveBtn: "Einstellungen Speichern",
         savedMsg: "Gespeichert!"
     },
     "EN": {
-        title: "Redirector",
+        title: "Tab Restarter",
         langLabel: "Language:",
         langAuto: "Auto (Config)",
-        statusLabel: "Redirection Status:",
+        statusLabel: "Tab Restarter Status:",
         btnOn: "ON",
         btnOff: "OFF",
         loading: "LOADING...",
-        checkboxLabel: "Use manual settings<br><small>(Ignores C# config.json)</small>",
+        checkboxLabel: "Use manual settings<br><small>(Ignores eBRestarter Tab Restarter config.json)</small>",
         urlLabel: "Target URL:",
         timeLabel: "Wait time (minutes):",
         saveBtn: "Save Settings",
