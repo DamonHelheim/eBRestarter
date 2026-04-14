@@ -47,7 +47,7 @@ function applyLanguage() {
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. ZUERST DIE SPRACHE AUS DER CONFIG LADEN (als Fallback für AUTO)
     try {
-        const response = await fetch(chrome.runtime.getURL('config.json'));
+        const response = await fetch(chrome.runtime.getURL('tab_restarter_config.json'));
         const config = await response.json();
         if (config.LANGUAGE && dict[config.LANGUAGE]) {
             configLang = config.LANGUAGE;

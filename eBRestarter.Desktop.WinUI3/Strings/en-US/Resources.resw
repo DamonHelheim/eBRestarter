@@ -884,13 +884,13 @@ Afterward, use your actual Microsoft account password (not your PIN) for AutoLog
     <value>Why is this extension needed?</value>
   </data>
   <data name="BrowserExtension_WhyNeededDesc.Text" xml:space="preserve">
-    <value>The Browser Redirector monitors Chrome in the background. If a website freezes, fails to load (e.g., due to network errors), or a set time limit on a page expires, the extension automatically redirects to the defined target URL. This ensures that automated operations never stall and continue running flawlessly without manual intervention.</value>
+    <value>The Tab Restarter monitors Chrome in the background. If a website freezes, fails to load (e.g., due to network errors), or a set time limit on a page expires, the extension automatically redirects to the defined target URL. This ensures that automated operations never stall and continue running flawlessly without manual intervention.</value>
   </data>
   <data name="BrowserExtension_InstallTitle.Text" xml:space="preserve">
     <value>Installation in Google Chrome</value>
   </data>
   <data name="BrowserExtension_InstallDesc.Text" xml:space="preserve">
-    <value>For the Redirector to work, the extension must be loaded in Chrome.</value>
+    <value>For the Tab Restarter to work, the extension must be loaded in Chrome.</value>
   </data>
   <data name="BrowserExtension_Step1.Text" xml:space="preserve">
     <value>1. Open this address in Chrome:</value>

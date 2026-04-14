@@ -22,10 +22,10 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
     protected override string RegistryKeyVersion => @"Software\Microsoft\Edge\BLBeacon";
 
     // --- NEU IMPLEMENTIERT ---
-    protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
-    public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink;//"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
+    protected override string ExtensionId => "kjhejmaladginnedpoppohfnkionnghi";
 
-    // WICHTIG: Die Exe heißt msedge.exe, nicht edge.exe!
+    public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink; //"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
+
     protected override string ExeFileName => "msedge.exe";
 
     // HKLM\SOFTWARE\Clients\StartMenuInternet\Microsoft Edge

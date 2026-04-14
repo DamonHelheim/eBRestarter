@@ -305,10 +305,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             try
             {
                 string extensionPath = _browserExtensionDeploymentService.GetExtensionFolderPath();
+
                 if (!Directory.Exists(extensionPath))
                 {
                     Directory.CreateDirectory(extensionPath);
                 }
+
                 _os.WindowsProcessControlService.OpenExplorer(extensionPath);
             }
             catch (Exception ex)
@@ -345,12 +347,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 string jsonString = JsonSerializer.Serialize(configData, options);
 
                 // In Datei schreiben
-                if (!Directory.Exists(_browserExtensionDeploymentService.GetExtensionFolderPath())) Directory.CreateDirectory(_browserExtensionDeploymentService.GetExtensionFolderPath());
+                if (!Directory.Exists(_browserExtensionDeploymentService.GetExtensionFolderPath()))
+                {
+                    Directory.CreateDirectory(_browserExtensionDeploymentService.GetExtensionFolderPath());
+                }
+
                 await File.WriteAllTextAsync(configPath, jsonString);
 
                 // Erfolgsmeldung für 3 Sekunden anzeigen
                 ExtensionSaveStatus = _localizationService.GetString("Options_SavedSuccessfully") ?? "Erfolgreich gespeichert!";
+
                 await Task.Delay(3000);
+
                 ExtensionSaveStatus = string.Empty;
             }
             catch (Exception ex)
@@ -358,12 +366,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                 await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Error"), _localizationService.GetString("BrowserExtension_Config_Error_Message") + " " + ex.Message, DialogIcon.Error);
             }
-        }
-
-        // Generiert den Code für das JSON-Mapping beim Kompilieren!
-        [JsonSerializable(typeof(ExtensionConfigDto))]
-        public partial class ExtensionConfigJsonContext : JsonSerializerContext
-        {
         }
 
         /// <summary>Opens the application data folder in Windows Explorer using the configured base path.</summary>
@@ -613,7 +615,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <summary>
         /// Liest die config.json beim Programmstart aus und füllt die UI-Felder
         /// </summary>
-        [RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
+        //[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
         private void LoadExtensionConfig()
         {
             try
@@ -624,7 +626,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     string jsonString = File.ReadAllText(configPath);
 
-                    var configData = JsonSerializer.Deserialize<ExtensionConfigDto>(jsonString);
+                    var configData = JsonSerializer.Deserialize(jsonString, ExtensionConfigJsonContext.Default.ExtensionConfigDto);
 
                     if (configData != null)
                     {
@@ -644,6 +646,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 Debug.WriteLine($"Konnte existierende config.json nicht lesen: {ex.Message}");
             }
+        }
+
+        // Generiert den Code für das JSON-Mapping beim Kompilieren!
+        [JsonSerializable(typeof(ExtensionConfigDto))]
+        public partial class ExtensionConfigJsonContext : JsonSerializerContext
+        {
         }
 
         // NEU: Verhindert Mehrfachklicks während der Suche
