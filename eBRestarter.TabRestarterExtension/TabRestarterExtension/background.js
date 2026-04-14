@@ -37,7 +37,7 @@ async function getActiveSettings() {
         };
     }
     try {
-        const response = await fetch(chrome.runtime.getURL('config.json'));
+        const response = await fetch(chrome.runtime.getURL('tab_restarter_config.json'));
         const config = await response.json();
         if (!config.ZIEL_URL.startsWith('http://') && !config.ZIEL_URL.startsWith('https://')) {
             config.ZIEL_URL = 'https://' + config.ZIEL_URL;

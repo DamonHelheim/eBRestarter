@@ -637,7 +637,8 @@
                             Width="400"
                             Margin="0,0,24,0"
                             Padding="16"
-                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             Background="{ThemeResource DashletBackgroundColor_2}"
                             CornerRadius="6">
                             <StackPanel Orientation="Vertical">
@@ -682,8 +683,10 @@
 
                                 <Button
                                     x:Uid="BrowserExtension_BtnOpenFolder"
+                                    Margin="0,17.5,0,0"
                                     Height="40"
                                     HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
                                     Background="#FF1598C9"
                                     BorderBrush="{x:Null}"
                                     Command="{Binding OpenExtensionFolderCommand}"
@@ -750,6 +753,7 @@
                                     x:Uid="BrowserExtension_BtnSave"
                                     Height="40"
                                     HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
                                     Background="#FF00CAD4"
                                     BorderBrush="{x:Null}"
                                     Command="{Binding SaveExtensionConfigCommand}"

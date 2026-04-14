@@ -884,13 +884,13 @@ Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht dei
     <value>Warum wird diese Erweiterung benötigt?</value>
   </data>
   <data name="BrowserExtension_WhyNeededDesc.Text" xml:space="preserve">
-    <value>Der Browser Redirector überwacht Chrome im Hintergrund. Sollte eine Webseite einfrieren, nicht mehr laden (z. B. bei Netzwerkfehlern) oder ein eingestelltes Zeitlimit auf einer Seite ablaufen, leitet die Erweiterung automatisch auf die definierte Ziel-URL um. Das stellt sicher, dass der automatische Betrieb niemals stehen bleibt und ohne manuelle Eingriffe fehlerfrei weiterläuft.</value>
+    <value>Der Tab Restarter überwacht Chrome im Hintergrund. Sollte eine Webseite einfrieren, nicht mehr laden (z. B. bei Netzwerkfehlern) oder ein eingestelltes Zeitlimit auf einer Seite ablaufen, leitet die Erweiterung automatisch auf die definierte Ziel-URL um. Das stellt sicher, dass der automatische Betrieb niemals stehen bleibt und ohne manuelle Eingriffe fehlerfrei weiterläuft.</value>
   </data>
   <data name="BrowserExtension_InstallTitle.Text" xml:space="preserve">
     <value>Installation in Google Chrome</value>
   </data>
   <data name="BrowserExtension_InstallDesc.Text" xml:space="preserve">
-    <value>Damit der Redirector funktioniert, muss die Erweiterung in Chrome geladen werden.</value>
+    <value>Damit der Tab Restarter funktioniert, muss die Erweiterung in Chrome geladen werden.</value>
   </data>
   <data name="BrowserExtension_Step1.Text" xml:space="preserve">
     <value>1. Öffne in Chrome die Adresse:</value>
