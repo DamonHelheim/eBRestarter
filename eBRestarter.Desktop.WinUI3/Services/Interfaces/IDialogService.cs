@@ -1,6 +1,8 @@
-using eBRestarter.Core.Domain.Enums;
+﻿using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models;
+using eBRestarter.Desktop.WinUI3.Models;
 using System.Threading.Tasks;
+using eBRestarter.Desktop.WinUI3.Models.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.Services.Interfaces;
 

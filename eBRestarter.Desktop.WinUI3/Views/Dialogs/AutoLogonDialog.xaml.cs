@@ -1,4 +1,4 @@
-using eBRestarter.Core.Domain.Models.Records;
+ï»¿using eBRestarter.Core.Domain.Models.Records;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -20,7 +20,7 @@ using Windows.Foundation.Collections;
 
 namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
 {
-    // HIER ÄNDERN: Statt ": UserControl" muss hier ": ContentDialog" stehen
+    // HIER ï¿½NDERN: Statt ": UserControl" muss hier ": ContentDialog" stehen
     public sealed partial class AutoLogonDialog : ContentDialog
     {
         public AutoLogonDialog()
@@ -28,7 +28,7 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
             this.InitializeComponent();
         }
 
-        // --- NEU HINZUFÜGEN ---
+        // --- NEU HINZUFï¿½GEN ---
         public void SetDefaults(string user, string domain)
         {
             if (!string.IsNullOrEmpty(user))

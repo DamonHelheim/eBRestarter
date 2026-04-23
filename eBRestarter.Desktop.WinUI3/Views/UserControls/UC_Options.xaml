@@ -683,8 +683,8 @@
 
                                 <Button
                                     x:Uid="BrowserExtension_BtnOpenFolder"
-                                    Margin="0,17.5,0,0"
                                     Height="40"
+                                    Margin="0,17.5,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Bottom"
                                     Background="#FF1598C9"
@@ -692,6 +692,7 @@
                                     Command="{Binding OpenExtensionFolderCommand}"
                                     Foreground="White" />
                             </StackPanel>
+
                         </Border>
 
                         <Border
@@ -702,7 +703,9 @@
                             VerticalAlignment="Top"
                             Background="{ThemeResource DashletBackgroundColor_2}"
                             CornerRadius="6">
+
                             <StackPanel Spacing="14">
+
                                 <TextBlock
                                     x:Uid="BrowserExtension_ConfigTitle"
                                     Margin="0,0,0,6"
@@ -711,6 +714,7 @@
                                     Foreground="{ThemeResource FontColor_1}" />
 
                                 <StackPanel>
+
                                     <TextBlock
                                         x:Uid="BrowserExtension_TargetUrl"
                                         Margin="0,0,0,4"

@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Domain.Models.Records;
+namespace eBRestarter.Desktop.WinUI3.Models;
 
 public record IconCredit
 {

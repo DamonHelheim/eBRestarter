@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Models.Constants;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -18,6 +20,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private readonly IAppInfoService _appInfoService;
         private readonly ILocalizationService _localizationService;
+        private readonly IIconCreditService _iconCreditService;
 
         #endregion
 
@@ -49,14 +52,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// Initializes the About VM with app-info and localization services, sets a loading placeholder
         /// for version, and loads version plus icon credits so the UI can bind immediately.
         /// </summary>
-        /// <param name="appInfoService">Provides app version and icon credit data. Must not be null.</param>
-        /// <param name="localizationService">Used for version prefix and other strings. Must not be null.</param>
         public ViewModelAbout(
             IAppInfoService appInfoService,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IIconCreditService iconCreditService)
         {
             _appInfoService = appInfoService;
             _localizationService = localizationService;
+            _iconCreditService = iconCreditService;
             AppVersion = _localizationService.GetString("About_Loading");
             LoadData();
         }
@@ -73,7 +76,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             string prefix = _localizationService.GetString("About_VersionPrefix");
             AppVersion = $"{prefix} {_appInfoService.GetAppVersion()}";
-            var credits = _appInfoService.GetIconCredits();
+            var credits = _iconCreditService.GetIconCredits();
             IconCredits.Clear();
             foreach (var iconCredit in credits)
                 IconCredits.Add(iconCredit);

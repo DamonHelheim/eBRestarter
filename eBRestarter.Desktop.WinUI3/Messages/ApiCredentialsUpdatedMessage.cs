@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace eBRestarter.Core.Domain.Models.Records
+namespace eBRestarter.Desktop.WinUI3.Messages
 {
     public record ApiCredentialsUpdatedMessage();
 }

@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using eBRestarter.Desktop.WinUI3.Models.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {

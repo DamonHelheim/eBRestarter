@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:eBRestarter.Core.Domain.Models.Records"
+    xmlns:models="using:eBRestarter.Desktop.WinUI3.Models"
     x:Uid="AboutDialog"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelAbout}"
     DefaultButton="Close"

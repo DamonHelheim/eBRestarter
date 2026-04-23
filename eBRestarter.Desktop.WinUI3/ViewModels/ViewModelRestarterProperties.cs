@@ -10,7 +10,10 @@ using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Domain.Extensions;
 using eBRestarter.Core.Domain.Models.Records;
 using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Models.Constants;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Messages;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System;
@@ -38,6 +41,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
         private readonly ILocalizationService _localizationService;
+        private readonly IUIOptionsService _uiOptionsService;
         private readonly IOperatingSystemFacade _operatingSystemFacade;
 
         private readonly IBrowserService _browserService; // <--- NEU
@@ -100,6 +104,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IOperatingSystemFacade operatingSystemFacade,
             IEVisitorConfigService eVisitorConfigService,
             ILocalizationService localizationService,
+            IUIOptionsService uiOptionsService,
             IDialogService dialogService,
             IBrowserService browserService)
         {
@@ -108,6 +113,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _eVisitorConfigService = eVisitorConfigService;
             _dialogService = dialogService;
             _localizationService = localizationService;
+            _uiOptionsService = uiOptionsService;
             _browserService = browserService; // <--- NEU
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread(); // <--- NEU
             _currentConfig = _eVisitorConfigService.LoadConfig();
@@ -122,7 +128,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             StartBrowserWithProgrammStartIs = _currentConfig.Browser.StartBrowserWithProgrammStart;
             CheckBrowserIsAliveIsOn = _currentConfig.Browser.CheckBrowserAliveRoutine;
 
-            BrowserDeleteCacheOptionList = new ReadOnlyCollection<BrowserCacheDeleteOption>([.. localizationService.GetBrowserCacheOptions()]); //new ReadOnlyCollection<BrowserCacheDeleteOption>(localizationService.GetBrowserCacheOptions().ToList());
+            BrowserDeleteCacheOptionList = new ReadOnlyCollection<BrowserCacheDeleteOption>([.. _uiOptionsService.GetBrowserCacheOptions()]); //new ReadOnlyCollection<BrowserCacheDeleteOption>(localizationService.GetBrowserCacheOptions().ToList());
 
             var configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
 

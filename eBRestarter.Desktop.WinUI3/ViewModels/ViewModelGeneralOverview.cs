@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Desktop.WinUI3.Messages;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
