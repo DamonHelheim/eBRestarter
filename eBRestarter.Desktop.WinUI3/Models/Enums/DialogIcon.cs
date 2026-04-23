@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Domain.Enums;
+namespace eBRestarter.Desktop.WinUI3.Models.Enums;
 
 public enum DialogIcon
 {

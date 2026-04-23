@@ -58,6 +58,8 @@ namespace eBRestarter.Desktop.WinUI3
 
                  services.AddSingleton<ILanguageService, LanguageService>();
                  services.AddSingleton<ILocalizationService, LocalizationService>();
+                 services.AddSingleton<IUIOptionsService>(sp => (LocalizationService)sp.GetRequiredService<ILocalizationService>());
+                 services.AddSingleton<IIconCreditService, IconCreditService>();
              });
 
         /// <summary>

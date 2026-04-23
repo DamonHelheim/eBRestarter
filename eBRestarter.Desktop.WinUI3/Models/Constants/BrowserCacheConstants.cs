@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Desktop.WinUI3.Models;
 using System.Collections.ObjectModel;
 
-namespace eBRestarter.Core.Application.Contstants;
+namespace eBRestarter.Desktop.WinUI3.Models.Constants;
 
     public static class BrowserCacheConstants
     {

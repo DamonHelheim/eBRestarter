@@ -1,5 +1,6 @@
-using eBRestarter.Core.Domain.Enums;
+﻿using eBRestarter.Core.Domain.Enums;
 using eBRestarter.Core.Domain.Models;
+using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Views.Dialogs;
 using Microsoft.UI;
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
+using eBRestarter.Desktop.WinUI3.Models.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.Services;
 

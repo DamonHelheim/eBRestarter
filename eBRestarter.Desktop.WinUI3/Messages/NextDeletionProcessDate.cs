@@ -1,3 +1,3 @@
-﻿namespace eBRestarter.Core.Domain.Models.Records;
+namespace eBRestarter.Desktop.WinUI3.Messages;
 
 public record class NextDeletionProcessDate(string NextDeletionProcessDateMessage);

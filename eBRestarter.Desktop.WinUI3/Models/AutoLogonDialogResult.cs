@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Domain.Models.Records;
 
-namespace eBRestarter.Core.Domain.Models;
+namespace eBRestarter.Desktop.WinUI3.Models;
 
 // NEU: Das Ergebnis des Dialogs
 public class AutoLogonDialogResult

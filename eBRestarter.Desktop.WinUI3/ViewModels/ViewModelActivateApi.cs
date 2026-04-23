@@ -5,6 +5,7 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Desktop.WinUI3.Messages;
 using System;
 using System.Threading.Tasks;
 
