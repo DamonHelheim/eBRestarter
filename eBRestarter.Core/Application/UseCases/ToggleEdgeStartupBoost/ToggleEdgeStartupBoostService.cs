@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 

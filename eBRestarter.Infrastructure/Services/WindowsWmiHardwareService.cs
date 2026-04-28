@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Domain.Extensions;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Extensions;
+using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 using System.Management;
 

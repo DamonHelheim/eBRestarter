@@ -1,9 +1,10 @@
-using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Domain.Services;
 using System.Diagnostics;
 
 namespace eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
@@ -66,18 +67,18 @@ public class ManageRestarterCycleService(
 
     private async Task RunCycleAsync(ManageRestarterCycleRequest request, Func<Task> performCleanupCallback, CancellationToken token)
     {
-        // 1. Initial Delay (wird nur 1x ganz am Anfang ausgeführt)
+        // 1. Initial Delay (wird nur 1x ganz am Anfang ausgefÃ¼hrt)
         await RunDelayPhaseAsync(RestartTaskState.InitialDelay, InitialDelaySeconds, token);
 
         while (!token.IsCancellationRequested)
         {
             // ====================================================================
-            // NEU: Config für den anstehenden Zyklus frisch laden
+            // NEU: Config fÃ¼r den anstehenden Zyklus frisch laden
             // ====================================================================
             var appConfig = _configService.LoadConfig();
 
-            // Da 'request' ein Record ist, können wir mit 'with' eine neue Kopie
-            // erstellen und dabei nur die aktualisierten Werte überschreiben!
+            // Da 'request' ein Record ist, kÃ¶nnen wir mit 'with' eine neue Kopie
+            // erstellen und dabei nur die aktualisierten Werte Ã¼berschreiben!
             request = request with
             {
                 BrowserDisplayName = string.IsNullOrWhiteSpace(appConfig.Browser?.Selected) ? request.BrowserDisplayName : appConfig.Browser.Selected,
@@ -93,7 +94,7 @@ public class ManageRestarterCycleService(
 
             var phaseResult = await RunBrowserPhaseAsync(request, token);
 
-            // Fall A: Browser ist abgestürzt/geschlossen worden
+            // Fall A: Browser ist abgestÃ¼rzt/geschlossen worden
             if (phaseResult == BrowserPhaseResult.BrowserClosed)
             {
                 CloseCurrentBrowser();
@@ -104,7 +105,7 @@ public class ManageRestarterCycleService(
                     ReportProgress(RestartTaskState.Cooldown, countdown, $"Der Browser wurde geschlossen, Starte Restarter in {countdown}...");
                     await Task.Delay(TimeSpan.FromMilliseconds(1000), _timeProvider, token);
                 }
-                continue; // Springt wieder nach oben -> Lädt Config neu -> Startet!
+                continue; // Springt wieder nach oben -> LÃ¤dt Config neu -> Startet!
             }
 
             // Fall B & C: Cleanup oder Completed
@@ -117,16 +118,16 @@ public class ManageRestarterCycleService(
     }
 
     /// <summary>
-    /// Führt die Laufzeit aus und prüft optional jede Sekunde, ob der Browser noch läuft.
-    /// Gibt 'true' zurück, wenn die Zeit normal abgelaufen ist, und 'false', wenn der Browser geschlossen wurde.
+    /// FÃ¼hrt die Laufzeit aus und prÃ¼ft optional jede Sekunde, ob der Browser noch lÃ¤uft.
+    /// Gibt 'true' zurÃ¼ck, wenn die Zeit normal abgelaufen ist, und 'false', wenn der Browser geschlossen wurde.
     /// </summary>
     private async Task<BrowserPhaseResult> RunBrowserPhaseAsync(ManageRestarterCycleRequest request, CancellationToken token)
     {
         string processName = GetProcessNameFromDisplayName(request.BrowserDisplayName);
 
         // ====================================================================
-        // LAZY CONFIG RELOAD: Holt das aktuellste Lösch-Datum und Intervall
-        // für diesen Zyklus direkt aus der frischen Config!
+        // LAZY CONFIG RELOAD: Holt das aktuellste LÃ¶sch-Datum und Intervall
+        // fÃ¼r diesen Zyklus direkt aus der frischen Config!
         // ====================================================================
         var appConfig = _configService.LoadConfig();
         bool isCleanupActive = appConfig.Browser != null && appConfig.Browser.DeleteBrowserCacheIntervalDays > 0;
@@ -145,7 +146,7 @@ public class ManageRestarterCycleService(
                 }
             }
 
-            // 2. Cleanup-Check (Prüft gegen das taufrische Datum aus der Config)
+            // 2. Cleanup-Check (PrÃ¼ft gegen das taufrische Datum aus der Config)
             if (isCleanupActive && _timeProvider.GetLocalNow().DateTime >= nextCleanupDate)
             {
                 return BrowserPhaseResult.CleanupDue;
@@ -207,19 +208,20 @@ public class ManageRestarterCycleService(
     private async Task CheckAndExecuteBrowserCleanupAsync(Func<Task> performCleanupCallback, CancellationToken token)
     {
         // ====================================================================
-        // LAZY CONFIG RELOAD: Wir laden frisch, bevor wir prüfen und speichern,
-        // damit wir keine anderen Nutzer-Settings versehentlich überschreiben!
+        // LAZY CONFIG RELOAD: Wir laden frisch, bevor wir prÃ¼fen und speichern,
+        // damit wir keine anderen Nutzer-Settings versehentlich Ã¼berschreiben!
         // ====================================================================
         var appConfig = _configService.LoadConfig();
 
-        if (!_browserCleanupScheduleService.ShouldRunCleanupNow(appConfig))
+        var browser = appConfig.Browser;
+        if (browser == null || !_browserCleanupScheduleService.ShouldRunCleanupNow(browser.DeleteBrowserCacheIntervalDays, browser.NextBrowserDeleteCacheDate))
             return;
 
         CloseCurrentBrowser();
 
         await Task.Delay(TimeSpan.FromMilliseconds(1000), _timeProvider, token);
 
-        // UI benachrichtigen (Dialog öffnen)
+        // UI benachrichtigen (Dialog Ã¶ffnen)
         await performCleanupCallback();
 
         // Neues Datum berechnen und in der aktuellen Config speichern

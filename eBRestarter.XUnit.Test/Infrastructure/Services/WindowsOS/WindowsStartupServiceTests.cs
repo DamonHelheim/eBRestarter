@@ -1,6 +1,6 @@
 ﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Services.WindowsOS;
-using eBRestarter.Infrastructure.Wrapper.Interface;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Moq;

@@ -1,9 +1,9 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.RestClient;
-using eBRestarter.Core.Domain.Models;
-using eBRestarter.Core.Domain.Models.Records;
-using eBRestarter.Infrastructure.Constants;
+using eBRestarter.Core.Application.Models.Api;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Constants;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text.Json;
@@ -24,7 +24,7 @@ public class EVisitorApiAdapter(
         var request = new ApiRequest
         {
             Url = ApiWebLinks.IpLink,
-            Method = Core.Domain.Enums.HttpMethod.GET
+            Method = Core.Application.Enums.HttpMethod.GET
         };
 
         var response = await _restClient.ExecuteGetAsync(request);
@@ -114,7 +114,7 @@ public class EVisitorApiAdapter(
         var request = new ApiRequest
         {
             Url = ApiWebLinks.HourlyEarnings,
-            Method = Core.Domain.Enums.HttpMethod.GET,
+            Method = Core.Application.Enums.HttpMethod.GET,
             Username = username,
             Password = apiKey
         };
@@ -175,7 +175,7 @@ public class EVisitorApiAdapter(
         var request = new ApiRequest
         {
             Url = url,
-            Method = Core.Domain.Enums.HttpMethod.GET,
+            Method = Core.Application.Enums.HttpMethod.GET,
             Username = username,
             Password = apiKey
         };
@@ -241,7 +241,7 @@ public class EVisitorApiAdapter(
         var request = new ApiRequest
         {
             Url = url,
-            Method = Core.Domain.Enums.HttpMethod.GET,
+            Method = Core.Application.Enums.HttpMethod.GET,
             Username = username,
             Password = apiKey
         };

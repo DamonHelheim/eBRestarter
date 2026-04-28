@@ -1,6 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces.Authentication;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
@@ -10,44 +13,76 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     /// imports credentials via <see cref="ICredentialStore"/> and validates them with
     /// <see cref="IApiAuthenticationService"/> before saving so only valid credentials are stored.
     /// </summary>
-    /// <remarks>
-    /// Initializes the import VM with authentication and credential-store services.
-    /// No pre-filled path; the user selects or drops a file.
-    /// </remarks>
-    public partial class ViewModelImportApi(
-        IApiAuthenticationService authService,
-        ICredentialStore credentialStore) : ObservableObject
+    public partial class ViewModelImportApi : ObservableObject
     {
-        // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
-        // =========================================================
-        #region FieldsAndInjectedServices
+        private const string DefaultFileStatusIconUri = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png";
 
-        private readonly IApiAuthenticationService _authService = authService;
-        private readonly ICredentialStore _credentialStore = credentialStore;
+        private const string ErrorFileReadMessage = "Fehler beim Lesen der Datei (Format ungültig).";
 
-        #endregion
+        private const string ErrorInvalidFileFormatMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
 
-        // =========================================================
-        // 2. OBSERVABLE PROPERTIES (MVVM State)
-        // =========================================================
-        #region ObservableProperties
+        private const string FileStatusIconErrorUri = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
 
-        [ObservableProperty] public partial string FileStatusIcon { get; set; } = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png";
-        [ObservableProperty] public partial string ImportedFileName { get; set; } = string.Empty;
+        private const string FileStatusIconReadyUri = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
+
+        private const string ImportFailedMessagePrefix = "Import fehlgeschlagen: ";
+
+        private const string ImportVerificationBusyMessage = "Lese Datei und prüfe Zugangsdaten...";
+
+        private const string InvalidStatusColorHex = "#E40E87";
+
+        private const string LegacyApiFileExtension = ".apiaf";
+
+        private const string ReadyStatusColorThemeKey = "{ThemeResource TextFillColorPrimaryBrush}";
+
+        private const string StatusColorThemeCautionKey = "{ThemeResource SystemFillColorCautionBrush}";
+
+        private const string StatusFileReadyMessage = "Datei erkannt. Bereit zum Import.";
+
+        private const string SuccessImportMessage = "Import und Aktivierung erfolgreich!";
+
+        private const string SuccessStatusColorHex = "#7ED422";
+
+        private const string UnexpectedImportErrorMessage = "Unerwarteter Fehler beim Import.";
+
+        private readonly IApiAuthenticationService _authService;
+
+        private readonly ICredentialStore _credentialStore;
+
+        [ObservableProperty]
+        public partial bool IsBusy { get; set; }
+
+
+        [ObservableProperty]
+        public partial string FileStatusIcon { get; set; } = DefaultFileStatusIconUri;
+
+        [ObservableProperty]
+        public partial string ImportedFileName { get; set; } = string.Empty;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
         public partial string ImportedFilePath { get; set; } = string.Empty;
-        [ObservableProperty] public partial bool IsBusy { get; set; }
-        [ObservableProperty] public partial string StatusColor { get; set; } = "Transparent";
-        [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
 
-        #endregion
+        [ObservableProperty]
+        public partial string StatusColor { get; set; } = "Transparent";
 
-        // =========================================================
-        // 4. COMMANDS (MVVM Actions)
-        // =========================================================
-        #region Commands
+        [ObservableProperty]
+        public partial string StatusMessage { get; set; } = string.Empty;
+
+        /// <summary>Import is allowed only when a file path is set and the VM is not busy.</summary>
+        private bool CanImport => !string.IsNullOrEmpty(ImportedFilePath) && !IsBusy;
+
+        /// <summary>
+        /// Authentication and credential-store services; no pre-filled path until the user selects or drops a file.
+        /// </summary>
+        public ViewModelImportApi(IApiAuthenticationService authService, ICredentialStore credentialStore)
+        {
+            ArgumentNullException.ThrowIfNull(authService);
+            ArgumentNullException.ThrowIfNull(credentialStore);
+
+            _authService = authService;
+            _credentialStore = credentialStore;
+        }
 
         /// <summary>
         /// Reads credentials from <see cref="ImportedFilePath"/> via the credential store,
@@ -58,42 +93,46 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task Import()
         {
             IsBusy = true;
-            StatusMessage = "Lese Datei und prüfe Zugangsdaten...";
-            StatusColor = "{ThemeResource SystemFillColorCautionBrush}";
 
-            var credentials = _credentialStore.ImportFromLegacyFile(ImportedFilePath);
-
-            if (credentials == null)
+            try
             {
-                StatusMessage = "Fehler beim Lesen der Datei (Format ungültig).";
-                StatusColor = "#E40E87";
+                StatusMessage = ImportVerificationBusyMessage;
+                StatusColor = StatusColorThemeCautionKey;
+
+                var credentials = _credentialStore.ImportFromLegacyFile(ImportedFilePath);
+
+                if (credentials == null)
+                {
+                    StatusMessage = ErrorFileReadMessage;
+                    StatusColor = InvalidStatusColorHex;
+                    return;
+                }
+
+                var (isValid, verificationDetail) = await _authService.VerifyCredentialsAsync(credentials.Username, credentials.ApiKey);
+
+                if (isValid)
+                {
+                    _credentialStore.SaveCredentials(credentials);
+                    StatusMessage = SuccessImportMessage;
+                    StatusColor = SuccessStatusColorHex;
+                }
+                else
+                {
+                    StatusMessage = $"{ImportFailedMessagePrefix}{verificationDetail}";
+                    StatusColor = InvalidStatusColorHex;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                StatusMessage = UnexpectedImportErrorMessage;
+                StatusColor = InvalidStatusColorHex;
+            }
+            finally
+            {
                 IsBusy = false;
-                return;
-            }
-
-            var (IsValid, Message) = await _authService.VerifyCredentialsAsync(credentials.Username, credentials.ApiKey);
-
-            IsBusy = false;
-
-            if (IsValid)
-            {
-                _credentialStore.SaveCredentials(credentials);
-                StatusMessage = "Import und Aktivierung erfolgreich!";
-                StatusColor = "#7ED422";
-            }
-            else
-            {
-                StatusMessage = $"Import fehlgeschlagen: {Message}";
-                StatusColor = "#E40E87";
             }
         }
-
-        #endregion
-
-        // =========================================================
-        // 5. PUBLIC METHODS
-        // =========================================================
-        #region PublicAndProtectedMethods
 
         /// <summary>
         /// Handles a dropped or selected file path. Only .apiaf is accepted; otherwise sets an error
@@ -102,32 +141,31 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// <param name="filePath">Full path to the file. If not .apiaf, status is set to error and path is cleared.</param>
         public void HandleFileDrop(string filePath)
         {
-            if (!filePath.EndsWith(".apiaf"))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                StatusMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
-                StatusColor = "#E40E87";
-                FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
-                ImportedFilePath = "";
-                ImportedFileName = "";
+                StatusMessage = ErrorInvalidFileFormatMessage;
+                StatusColor = InvalidStatusColorHex;
+                FileStatusIcon = FileStatusIconErrorUri;
+                ImportedFilePath = string.Empty;
+                ImportedFileName = string.Empty;
                 return;
             }
+
+            if (!filePath.EndsWith(LegacyApiFileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                StatusMessage = ErrorInvalidFileFormatMessage;
+                StatusColor = InvalidStatusColorHex;
+                FileStatusIcon = FileStatusIconErrorUri;
+                ImportedFilePath = string.Empty;
+                ImportedFileName = string.Empty;
+                return;
+            }
+
             ImportedFilePath = filePath;
-            ImportedFileName = System.IO.Path.GetFileName(filePath);
-            StatusMessage = "Datei erkannt. Bereit zum Import.";
-            StatusColor = "{ThemeResource TextFillColorPrimaryBrush}";
-            FileStatusIcon = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
+            ImportedFileName = Path.GetFileName(filePath);
+            StatusMessage = StatusFileReadyMessage;
+            StatusColor = ReadyStatusColorThemeKey;
+            FileStatusIcon = FileStatusIconReadyUri;
         }
-
-        #endregion
-
-        // =========================================================
-        // 6. PRIVATE HELPER METHODS
-        // =========================================================
-        #region PrivateHelperMethods
-
-        /// <summary>Import is allowed only when a file path is set and the VM is not busy.</summary>
-        private bool CanImport => !string.IsNullOrEmpty(ImportedFilePath) && !IsBusy;
-
-        #endregion
     }
 }

@@ -1,8 +1,8 @@
 ﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Application.Interfaces.Update;
-using eBRestarter.Core.Domain.Models;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Models.Api;
+using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Reflection;
@@ -33,7 +33,7 @@ public class GitHubUpdateAdapter(
         var request = new ApiRequest
         {
             Url = GitHubApiUrl,
-            Method = Core.Domain.Enums.HttpMethod.GET
+            Method = Core.Application.Enums.HttpMethod.GET
         };
 
         var response = await _restClient.ExecuteGetAsync(request);

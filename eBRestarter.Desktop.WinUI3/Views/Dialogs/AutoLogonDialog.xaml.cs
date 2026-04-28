@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

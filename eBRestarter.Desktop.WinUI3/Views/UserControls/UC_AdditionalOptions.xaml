@@ -65,7 +65,7 @@
                 Foreground="#FFC70E3F"
                 Text="Keine Browser installiert!"
                 TextWrapping="Wrap"
-                Visibility="{Binding Tbl_NoBrowserInstalledIsVisible}" />
+                Visibility="{Binding NoBrowserInstalledSectionVisibility}" />
 
 
             <Button
@@ -77,7 +77,7 @@
                 HorizontalAlignment="Stretch"
                 Command="{Binding ShowBrowserDeleteContentCommand}"
                 FontSize="16"
-                IsEnabled="{Binding BtnDeleteBrowserContentIsEnabled}" />
+                IsEnabled="{Binding DeleteBrowserContentCommandIsEnabled}" />
 
             <Button
                 x:Name="BtnInstalleBesucherAddOn"
@@ -88,7 +88,7 @@
                 HorizontalAlignment="Stretch"
                 Command="{Binding ShowInstallAddOnDialogCommand}"
                 FontSize="16"
-                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+                IsEnabled="{Binding InstallEVisitorAddOnCommandIsEnabled}" />
 
             <Button
                 x:Name="BtnInfoeVisitorAddOn"
@@ -99,7 +99,7 @@
                 HorizontalAlignment="Stretch"
                 Command="{Binding ShowInstallAddOnInfoDialogCommand}"
                 FontSize="12"
-                IsEnabled="{Binding BtnInstalleBesucherAddOnIsEnabled}" />
+                IsEnabled="{Binding InstallEVisitorAddOnCommandIsEnabled}" />
 
         </Grid>
 

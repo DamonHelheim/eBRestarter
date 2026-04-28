@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +10,7 @@ namespace eBRestarter.Infrastructure.Browsers;
 public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
 
-    // Implementierung der abstrakten Properties für die Suchstrategie
+    // Implementierung der abstrakten Properties fÃ¼r die Suchstrategie
     protected override string ExeFileName => "chrome.exe";
     protected override string BrowserRegistryName => "Google Chrome";
     protected override string UninstallSubKey => "Google Chrome";
@@ -32,7 +32,7 @@ public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> log
     {
         var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
 
-        // Das ist der Wurzel-Ordner für ALLE Daten
+        // Das ist der Wurzel-Ordner fÃ¼r ALLE Daten
         var userDataRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "Google", "Chrome", "User Data");
 
         var cacheDirs = new List<string>();
@@ -48,7 +48,7 @@ public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> log
         if (_os.WindowsFileSystemService.DirectoryExists(defaultPath))
             allProfileFolders.Add(defaultPath);
 
-        // Check Profile X (Dafür bräuchtest du eigentlich Directory.GetDirectories,
+        // Check Profile X (DafÃ¼r brÃ¤uchtest du eigentlich Directory.GetDirectories,
         // ich nutze hier eine fiktive Methode deines FileServices oder System.IO)
         // Da deine IWindowsFileSystemService-Schnittstelle hier nicht voll sichtbar ist,
         // nutzen wir System.IO direkt oder du musst es in deinen Service wrappen:
@@ -59,7 +59,7 @@ public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> log
         }
         catch { /* Fehlerbehandlung falls Ordner nicht existiert */ }
 
-        // 2. Für jedes gefundene Profil die Pfade generieren
+        // 2. FÃ¼r jedes gefundene Profil die Pfade generieren
         foreach (var profilePath in allProfileFolders)
         {
             // CACHE: Du wolltest speziell "Service Worker" (und meistens auch "Cache")
@@ -98,9 +98,9 @@ public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> log
     //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Code Cache
     //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Network
 
-    //Eine SQLite-Datenbank, die alle besuchten URLs enthält.
+    //Eine SQLite-Datenbank, die alle besuchten URLs enthÃ¤lt.
     //"C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\History"
 
-    //Hier wird gespeichert, welche Tabs offen sind. Wenn du das löschst, startet der Browser "leer" (keine "Zuletzt geschlossene Tabs wiederherstellen").
+    //Hier wird gespeichert, welche Tabs offen sind. Wenn du das lÃ¶schst, startet der Browser "leer" (keine "Zuletzt geschlossene Tabs wiederherstellen").
     //C:\Users\Workstation\AppData\Local\Google\Chrome\User Data\Default\Sessions
 }

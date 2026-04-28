@@ -96,8 +96,8 @@
                 Canvas.Left="234"
                 Canvas.Top="-1"
                 FontSize="25"
-                Foreground="{Binding BrowserExistTextForeground}"
-                Text="{Binding BrowserExist}"
+                Foreground="{Binding InstallStateGlyphForeground}"
+                Text="{Binding InstallStateGlyph}"
                 TextWrapping="Wrap" />
 
             <ProgressBar

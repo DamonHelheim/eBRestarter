@@ -11,7 +11,7 @@ public sealed class RestartTaskDisplayState
     #region PublicProperties
 
     public string Username { get; init; } = "-";
-    public string ChoosenBrowser { get; init; } = string.Empty;
+    public string ChosenBrowser { get; init; } = string.Empty;
     public int RuntimeSeconds { get; init; }
     public int PauseSeconds { get; init; }
     public bool DeleteBrowserContentIsActive { get; init; }

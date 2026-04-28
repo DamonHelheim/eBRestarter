@@ -44,12 +44,12 @@
 | IBrowserFactory / BrowserFactory | Singleton | Singleton ✓ | Factory mit IServiceProvider; korrekt. |
 | IBrowserService / WindowsBrowserService | Singleton | Singleton ✓ | Orchestriert Browser, zustandslos. |
 | IBrowserDownloadService / HttpClientDownloadService | Singleton | Singleton ✓ | Hält einen `HttpClient`; Singleton vermeidet Socket Exhaustion. |
-| **IRestClientService / RestSharpClientService** | Transient | **Singleton** | Wird von EVisitorApiService, EVisitorApiAdapter, GitHubUpdateAdapter (alle Singleton) injiziert → Captive. Erstellt pro Aufruf neuen RestClient (`using var client`), also zustandslos und sicher als Singleton. |
+| **IRestClientService / RestSharpClientService** | Transient | **Singleton** | Wird von EVisitorApiAuthenticationService, EVisitorApiAdapter, GitHubUpdateAdapter (alle Singleton) injiziert → Captive. Erstellt pro Aufruf neuen RestClient (`using var client`), also zustandslos und sicher als Singleton. |
 | IPathService / WindowsPathService | Singleton | Singleton ✓ | Pfad-Logik, zustandslos. |
 | IEVisitorConfigService / EVisitorConfigService | Singleton | Singleton ✓ | Lädt/speichert Config; eine Instanz pro App. |
 | IAppInfoService / AppInfoService | Singleton | Singleton ✓ | Zustandslos. |
 | IFileDeletionService / FileDeletionService | Singleton | Singleton ✓ | Zustandslos. |
-| IApiAuthenticationService / EVisitorApiService | Singleton | Singleton ✓ | Zustandslos. |
+| IApiAuthenticationService / EVisitorApiAuthenticationService | Singleton | Singleton ✓ | Zustandslos. |
 | ICredentialStore / JsonCredentialStore | Singleton | Singleton ✓ | Speicherpfad einmalig; eine Instanz. |
 | IEVisitorApiService / EVisitorApiAdapter | Singleton | Singleton ✓ | Zustandslos. |
 | IUpdateService / GitHubUpdateAdapter | Singleton | Singleton ✓ | Zustandslos. |

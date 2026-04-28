@@ -1,11 +1,10 @@
 using eBRestarter.Core.Application.DependencyInjections;
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Config; // Namespace für IEVisitorConfigService anpassen
+using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.DependencyInjections;
 using eBRestarter.Desktop.WinUI3.Services;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces; // Namespace für IThemeService anpassen
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.DependencyInjection;
-using eBRestarter.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -52,8 +51,6 @@ namespace eBRestarter.Desktop.WinUI3
                  services.AddDialoglServiceExtensions();
                  services.AddThemeService();
 
-                 services.AddSingleton<IBrowserExtensionDeploymentService, BrowserExtensionDeploymentService>();
-
                  services.AddViewModels();
 
                  services.AddSingleton<ILanguageService, LanguageService>();
@@ -74,29 +71,16 @@ namespace eBRestarter.Desktop.WinUI3
             }
 
             // =========================================================================
-            // 1. SPRACHE INITIALISIEREN (MUSS ZWINGEND VOR DEM FENSTER-LADEN PASSIEREN!)
+            // 1. KONFIGURATION (Persistenz) + SPRACHE + THEME (vor Fensterladen)
             // =========================================================================
+            StartupDisplayPreferences? launchConfig = null;
             try
             {
-                var configService = AppHost!.Services.GetRequiredService<IEVisitorConfigService>();
-                var config = configService.LoadConfig();
+                launchConfig = AppHost!.Services.GetRequiredService<IApplicationLaunchConfigService>().PrepareConfigForLaunch();
+                string languageCode = launchConfig.LanguageCode;
 
-                int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
-                DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
-
-                if (nextDate == DateTime.Today && intervalDays > 0)
-                    nextDate = DateTime.Today.AddDays(intervalDays);
-
-                config.Browser?.NextBrowserDeleteCacheDate = nextDate;
-                configService.SaveConfig(config);
-
-                // Sprachcode ermitteln
-                string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
-
-                // Sprache für XAML und WinUI 3 MRT Core setzen
                 ApplicationLanguages.PrimaryLanguageOverride = languageCode;
 
-                // WICHTIG FÜR UNPACKAGED APPS: Fallback-Kontexte für Win32 & MRT Core synchronisieren
                 System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo(languageCode);
                 System.Threading.Thread.CurrentThread.CurrentCulture = culture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
@@ -108,16 +92,12 @@ namespace eBRestarter.Desktop.WinUI3
                 ApplicationLanguages.PrimaryLanguageOverride = "en-US";
             }
 
-            // =========================================================================
-            // 2. THEME INITIALISIERUNG (AUCH VOR DEM FENSTER MACHEN)
-            // =========================================================================
             try
             {
-                var configService = AppHost!.Services.GetRequiredService<IEVisitorConfigService>();
-                var themeService = AppHost.Services.GetRequiredService<IThemeService>();
-                var config = configService.LoadConfig();
-
-                string themeToSet = string.IsNullOrEmpty(config.Settings.Theme) ? "Light" : config.Settings.Theme;
+                var themeService = AppHost!.Services.GetRequiredService<IThemeService>();
+                string themeToSet = launchConfig != null && !string.IsNullOrEmpty(launchConfig.ThemeName)
+                    ? launchConfig.ThemeName
+                    : "Light";
                 themeService.SetTheme(themeToSet);
             }
             catch (Exception ex)
@@ -126,7 +106,7 @@ namespace eBRestarter.Desktop.WinUI3
             }
 
             // =========================================================================
-            // 3. HINTERGRUND-SERVICES STARTEN
+            // 2. HINTERGRUND-SERVICES STARTEN
             // =========================================================================
             try
             {
@@ -139,7 +119,7 @@ namespace eBRestarter.Desktop.WinUI3
             }
 
             // =========================================================================
-            // 4. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
+            // 3. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
             // =========================================================================
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;

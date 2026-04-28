@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.Interfaces.Browser;
 

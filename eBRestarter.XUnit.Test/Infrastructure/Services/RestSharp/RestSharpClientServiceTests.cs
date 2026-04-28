@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Application.Interfaces.RestClient;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models;
+using eBRestarter.Core.Application.Interfaces.RestClient;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Api;
 using eBRestarter.Infrastructure.Services.RestSharp;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -28,8 +28,8 @@ namespace eBRestarter.Tests.Infrastructure.Services
             _loggerMock = new Mock<ILogger<RestSharpClientService>>();
             _sut = new RestSharpClientService(_loggerMock.Object);
 
-            // Startet einen lokalen HTTP-Mock-Server für jeden Testdurchlauf.
-            // Der Server läuft auf einem zufälligen, freien Port (z.B. localhost:51234).
+            // Startet einen lokalen HTTP-Mock-Server fÃ¼r jeden Testdurchlauf.
+            // Der Server lÃ¤uft auf einem zufÃ¤lligen, freien Port (z.B. localhost:51234).
             _server = WireMockServer.Start();
         }
 
@@ -43,8 +43,8 @@ namespace eBRestarter.Tests.Infrastructure.Services
         /// muss der Service den Inhalt (Body) extrahieren und als erfolgreich markieren.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir simulieren eine API, die "Test Content" zurückgibt. Wir prüfen, ob IsSuccess auf true
-        /// steht, der Statuscode Success ist und der Content exakt übereinstimmt.
+        /// Wir simulieren eine API, die "Test Content" zurÃ¼ckgibt. Wir prÃ¼fen, ob IsSuccess auf true
+        /// steht, der Statuscode Success ist und der Content exakt Ã¼bereinstimmt.
         /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_Success_ReturnsSuccessAndContent()
@@ -72,12 +72,12 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Viele APIs haben Rate Limits. Wenn wir zu viele Anfragen stellen, müssen wir rechtzeitig drosseln.
-        /// Deine eigene Logik prüft, ob "X-Ratelimit-Remaining" kleiner oder gleich 10 ist.
+        /// Viele APIs haben Rate Limits. Wenn wir zu viele Anfragen stellen, mÃ¼ssen wir rechtzeitig drosseln.
+        /// Deine eigene Logik prÃ¼ft, ob "X-Ratelimit-Remaining" kleiner oder gleich 10 ist.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir senden absichtlich einen Header mit dem Wert "5". Der Test prüft, ob der Service das erkennt
-        /// und trotz eines HTTP 200 den internen Enum-Wert auf "ResponseCode.RequestLimit" ändert.
+        /// Wir senden absichtlich einen Header mit dem Wert "5". Der Test prÃ¼ft, ob der Service das erkennt
+        /// und trotz eines HTTP 200 den internen Enum-Wert auf "ResponseCode.RequestLimit" Ã¤ndert.
         /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_WithRateLimitWarning_ReturnsRequestLimitCode()
@@ -101,11 +101,11 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wenn die API einen Fehler wirft (z.B. fehlende Berechtigung), darf die App nicht abstürzen.
-        /// Der HTTP-Fehlercode muss in unseren eigenen ResponseCode-Enum übersetzt und der Fehler geloggt werden.
+        /// Wenn die API einen Fehler wirft (z.B. fehlende Berechtigung), darf die App nicht abstÃ¼rzen.
+        /// Der HTTP-Fehlercode muss in unseren eigenen ResponseCode-Enum Ã¼bersetzt und der Fehler geloggt werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir simulieren einen HTTP 401 (Unauthorized). Wir prüfen, ob das Mapping auf ResponseCode.HttpRE401
+        /// Wir simulieren einen HTTP 401 (Unauthorized). Wir prÃ¼fen, ob das Mapping auf ResponseCode.HttpRE401
         /// funktioniert und ob der Logger aufgerufen wurde.
         /// </summary>
         [Fact]
@@ -129,12 +129,12 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wenn Benutzername und Passwort übergeben werden, muss der Client diese als
+        /// Wenn Benutzername und Passwort Ã¼bergeben werden, muss der Client diese als
         /// Base64-codierten Basic-Auth Header an die API senden.
         ///
         /// WAS WIRD GETESTET?
         /// Der Mock-Server antwortet NUR mit 200 OK, wenn exakt der Header "Basic dXNlcjpwYXNz" (user:pass) ankommt.
-        /// Wenn der Client den Header nicht baut, schlägt die Anfrage beim Mock-Server fehl.
+        /// Wenn der Client den Header nicht baut, schlÃ¤gt die Anfrage beim Mock-Server fehl.
         /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_WithBasicAuth_SendsCredentials()
@@ -144,7 +144,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 Request.Create()
                     .WithPath("/auth")
                     .UsingGet()
-                    .WithHeader("Authorization", "Basic dXNlcjpwYXNz") // Base64 für "user:pass"
+                    .WithHeader("Authorization", "Basic dXNlcjpwYXNz") // Base64 fÃ¼r "user:pass"
             ).RespondWith(Response.Create().WithStatusCode(200));
 
             var requestModel = new ApiRequest
@@ -164,12 +164,12 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Netzwerkverbindungen können hängen bleiben. Der Client muss nach der konfigurierten Zeit (TimeoutSeconds)
+        /// Netzwerkverbindungen kÃ¶nnen hÃ¤ngen bleiben. Der Client muss nach der konfigurierten Zeit (TimeoutSeconds)
         /// abbrechen und darf den Thread nicht endlos blockieren.
         ///
         /// WAS WIRD GETESTET?
-        /// Der Server braucht künstliche 6 Sekunden für die Antwort. Der Client darf aber nur 1 Sekunde warten.
-        /// Erwartet wird, dass der Client abbricht und einen entsprechenden Timeout/General Fehler zurückgibt.
+        /// Der Server braucht kÃ¼nstliche 6 Sekunden fÃ¼r die Antwort. Der Client darf aber nur 1 Sekunde warten.
+        /// Erwartet wird, dass der Client abbricht und einen entsprechenden Timeout/General Fehler zurÃ¼ckgibt.
         /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_Timeout_ReturnsMappedTimeoutCode()
@@ -178,7 +178,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
             _server.Given(Request.Create().WithPath("/timeout").UsingGet())
                    .RespondWith(Response.Create()
                        .WithStatusCode(200)
-                       .WithDelay(TimeSpan.FromSeconds(6))); // Server trödelt 6 Sekunden
+                       .WithDelay(TimeSpan.FromSeconds(6))); // Server trÃ¶delt 6 Sekunden
 
             var requestModel = new ApiRequest { Url = $"{_server.Urls[0]}/timeout", TimeoutSeconds = 1 };
 
@@ -196,11 +196,11 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wir stellen auch eine synchrone Methode zur Verfügung. Diese muss exakt dieselben
+        /// Wir stellen auch eine synchrone Methode zur VerfÃ¼gung. Diese muss exakt dieselben
         /// Ergebnisse liefern wie die asynchrone Variante.
         ///
         /// WAS WIRD GETESTET?
-        /// Ein normaler HTTP 200 Aufruf über ExecuteGet(). Es wird auf korrekten Status und Body geprüft.
+        /// Ein normaler HTTP 200 Aufruf Ã¼ber ExecuteGet(). Es wird auf korrekten Status und Body geprÃ¼ft.
         /// </summary>
         [Fact]
         public void ExecuteGet_SyncCall_Success_ReturnsSuccessAndContent()
@@ -237,11 +237,11 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         // =========================================================
-        // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
+        // CLEANUP (wird nach JEDEM Test automatisch ausgefÃ¼hrt)
         // =========================================================
         public void Dispose()
         {
-            // Server nach jedem Test ordnungsgemäß herunterfahren,
+            // Server nach jedem Test ordnungsgemÃ¤ÃŸ herunterfahren,
             // um Port-Blockaden bei parallel laufenden Tests zu vermeiden.
             _server.Stop();
             _server.Dispose();

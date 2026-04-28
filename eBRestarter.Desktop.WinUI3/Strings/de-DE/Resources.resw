@@ -645,6 +645,9 @@
   <data name="Infocenter_Loading" xml:space="preserve">
     <value>Lade...</value>
   </data>
+  <data name="Infocenter_LoadFailed" xml:space="preserve">
+    <value>Systeminformationen konnten nicht geladen werden.</value>
+  </data>
   <data name="Infocenter_ProcessorPrefix" xml:space="preserve">
     <value>Prozessor:</value>
   </data>
@@ -847,6 +850,9 @@
 
 Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht deine PIN).</value>
   </data>
+  <data name="Options_UpdateAvailable_Title" xml:space="preserve">
+    <value>Update verfügbar</value>
+  </data>
   <data name="Options_UpdateAvailable_TitleFallback" xml:space="preserve">
     <value>Update verfügbar</value>
   </data>
@@ -936,5 +942,22 @@ Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht dei
   </data>
   <data name="General_Success" xml:space="preserve">
     <value>Erfolg</value>
+  </data>
+  <data name="General_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Title" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Message" xml:space="preserve">
+    <value>Die Sprache wurde geändert. Damit alle Texte aktualisiert werden, muss die Anwendung neu gestartet werden.
+
+Möchten Sie die Anwendung jetzt neu starten?</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Title" xml:space="preserve">
+    <value>Ordner konnte nicht geöffnet werden</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Message" xml:space="preserve">
+    <value>Der Erweiterungsordner konnte nicht geöffnet oder erstellt werden: {0}</value>
   </data>
 </root>

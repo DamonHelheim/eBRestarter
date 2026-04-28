@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +9,7 @@ namespace eBRestarter.Infrastructure.Browsers;
 
 public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
-    // Implementierung der abstrakten Properties für die Suchstrategie
+    // Implementierung der abstrakten Properties fÃ¼r die Suchstrategie
     protected override string ExeFileName => "vivaldi.exe";
     protected override string BrowserRegistryName => "Vivaldi";
     protected override string UninstallSubKey => "Vivaldi";
@@ -19,17 +19,17 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
     public override string DisplayName => "Vivaldi";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/icons8_vivaldi.png"; // Bitte stelle sicher, dass dieses Icon existiert
 
-    // Annahme: Du fügst diesen Link noch in deine WebLinks Konstanten ein
+    // Annahme: Du fÃ¼gst diesen Link noch in deine WebLinks Konstanten ein
     public override string DownloadUrl => WebLinks.VivaldiDownloadLinkDE;
 
     protected override string ProcessName => "vivaldi";
 
     // Vivaldi speichert Version oft im AutoUpdate Key oder Uninstall Key.
-    // Falls "BLBeacon" bei Vivaldi nicht klappt, müsstest du hier @"Software\Vivaldi" prüfen.
+    // Falls "BLBeacon" bei Vivaldi nicht klappt, mÃ¼sstest du hier @"Software\Vivaldi" prÃ¼fen.
     protected override string RegistryKeyVersion => @"Software\Vivaldi\BLBeacon";
 
     // --- Extension / Add-On ---
-    // Vivaldi unterstützt Chrome-Erweiterungen direkt aus dem Chrome Web Store
+    // Vivaldi unterstÃ¼tzt Chrome-Erweiterungen direkt aus dem Chrome Web Store
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
 
     // Nutzt den Chrome Web Store Link
@@ -51,14 +51,14 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
             version ??= _os.WindowsRegistryService.GetLocalMachineValue(uninstallPathLM, "DisplayVersion")
                        ?? _os.WindowsRegistryService.GetLocalMachineValue(uninstallPathWow, "DisplayVersion");
 
-            // 4. Wenn wir die Vivaldi-Version gefunden haben, bereinigen und zurückgeben
+            // 4. Wenn wir die Vivaldi-Version gefunden haben, bereinigen und zurÃ¼ckgeben
             if (version != null && !string.IsNullOrEmpty(version.ToString()))
             {
                 return CleanVersionString(version.ToString());
             }
 
             // 5. Fallback: Falls der Uninstall-Key (warum auch immer) fehlt,
-            // greifen wir auf die Chromium-Logik aus der Basis-Klasse (BLBeacon) zurück.
+            // greifen wir auf die Chromium-Logik aus der Basis-Klasse (BLBeacon) zurÃ¼ck.
             return base.BrowserVersion;
         }
     }
@@ -67,7 +67,7 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
     {
         var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
 
-        // Das ist der Wurzel-Ordner für ALLE Daten bei Vivaldi
+        // Das ist der Wurzel-Ordner fÃ¼r ALLE Daten bei Vivaldi
         // Pfad: C:\Users\Username\AppData\Local\Vivaldi\User Data
         var userDataRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "Vivaldi", "User Data");
 
@@ -91,7 +91,7 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
         }
         catch { /* Fehlerbehandlung falls Ordner nicht existiert */ }
 
-        // 2. Für jedes gefundene Profil die Pfade generieren
+        // 2. FÃ¼r jedes gefundene Profil die Pfade generieren
         foreach (var profilePath in allProfileFolders)
         {
             // CACHE:

@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 using System.Text.Json;
 
 namespace eBRestarter.Infrastructure.Services.Authentication;
