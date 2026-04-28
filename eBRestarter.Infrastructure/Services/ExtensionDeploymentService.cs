@@ -1,5 +1,5 @@
 ﻿using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Infrastructure.Constants;
+using eBRestarter.Core.Application.Constants;
 
 namespace eBRestarter.Infrastructure.Services;
 

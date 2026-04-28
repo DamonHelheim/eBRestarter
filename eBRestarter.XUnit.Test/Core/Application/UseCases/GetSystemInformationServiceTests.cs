@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.GetSystemInformation;
 using Moq;
@@ -6,10 +6,7 @@ using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using eBRestarter.Core.Domain.Models.Records;
-
-// HINWEIS: Passe das an deinen tatsächlichen Namespace für HardwareInfo an!
-// using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
 {

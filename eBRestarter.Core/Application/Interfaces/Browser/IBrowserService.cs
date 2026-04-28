@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Domain.Models;
+﻿using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Core.Application.Interfaces.Browser;
 

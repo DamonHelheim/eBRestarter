@@ -645,6 +645,9 @@
   <data name="Infocenter_Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
+  <data name="Infocenter_LoadFailed" xml:space="preserve">
+    <value>Could not load system information.</value>
+  </data>
   <data name="Infocenter_ProcessorPrefix" xml:space="preserve">
     <value>Processor:</value>
   </data>
@@ -847,6 +850,9 @@
 
 Afterward, use your actual Microsoft account password (not your PIN) for AutoLogon.</value>
   </data>
+  <data name="Options_UpdateAvailable_Title" xml:space="preserve">
+    <value>Update available</value>
+  </data>
   <data name="Options_UpdateAvailable_TitleFallback" xml:space="preserve">
     <value>Update available</value>
   </data>
@@ -936,5 +942,22 @@ Afterward, use your actual Microsoft account password (not your PIN) for AutoLog
   </data>
   <data name="General_Success" xml:space="preserve">
     <value>Success</value>
+  </data>
+  <data name="General_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Title" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Message" xml:space="preserve">
+    <value>The language has been changed. To update all texts, the application must be restarted.
+
+Do you want to restart now?</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Title" xml:space="preserve">
+    <value>Could not open folder</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Message" xml:space="preserve">
+    <value>The extension folder could not be opened or created: {0}</value>
   </data>
 </root>

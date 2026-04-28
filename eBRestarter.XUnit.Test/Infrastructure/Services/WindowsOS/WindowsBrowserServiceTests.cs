@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models;
+using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using Moq;
 using Shouldly;

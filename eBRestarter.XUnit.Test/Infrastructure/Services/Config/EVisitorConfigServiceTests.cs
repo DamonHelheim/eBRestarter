@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.Security;
-using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Core.Application.Models.Config;
 using eBRestarter.Infrastructure.Services.Config;
 using Microsoft.Extensions.Logging;
 using Moq;

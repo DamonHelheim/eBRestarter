@@ -1,9 +1,9 @@
-﻿using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.Interfaces.Browser;
 
-//(Was muss ein Browser können?)
+//(Was muss ein Browser kÃ¶nnen?)
 public interface IBrowser
 {
     string DisplayName { get; }

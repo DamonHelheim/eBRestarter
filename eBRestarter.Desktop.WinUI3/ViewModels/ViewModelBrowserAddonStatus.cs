@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using Microsoft.UI.Dispatching;
+using System;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -13,38 +14,59 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     /// </summary>
     public partial class ViewModelBrowserAddonStatus : ObservableObject
     {
-        // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
-        // =========================================================
-        #region FieldsAndInjectedServices
+        private const string AddonPlaceholderDash = "-";
+
+        private const string AddonStatusColorExtensionInstalledHex = "#7ED422";
+
+        private const string AddonStatusColorExtensionNotInstalledHex = "#E40E87";
+
+        private const string AddonStatusIconDefault = "?";
+
+        private const string AddonStatusIconEmpty = "";
+
+        private const string AddonStatusIconExtensionInstalled = "\u2713";
+
+        private const string AddonStatusIconExtensionNotInstalled = "\u2717";
+
+        private const string InstallStatusColorBrowserInstalledHex = "#2e7d32";
+
+        private const string InstallStatusColorBrowserNotInstalledHex = "#BA224D";
+
+        private const string NeutralForegroundHex = "#000000";
 
         private readonly IBrowser _browser;
+
         private readonly DispatcherQueue _dispatcherQueue;
+
         private readonly ILocalizationService _localizationService;
 
-        #endregion
+        [ObservableProperty]
+        public partial string AddonStatusColor { get; set; }
 
-        // =========================================================
-        // 2. OBSERVABLE PROPERTIES (MVVM State)
-        // =========================================================
-        #region ObservableProperties
+        [ObservableProperty]
+        public partial string AddonStatusIcon { get; set; }
 
-        [ObservableProperty] public partial string AddonStatusColor { get; set; } = "#000000";
-        [ObservableProperty] public partial string AddonStatusIcon { get; set; } = "?";
-        [ObservableProperty] public partial string AddonStatusText { get; set; }
-        [ObservableProperty] public partial string BrowserName { get; set; } = string.Empty;
-        [ObservableProperty] public partial string ButtonText { get; set; }
-        [ObservableProperty] public partial string IconPath { get; set; } = string.Empty;
-        [ObservableProperty] public partial string InstallStatusColor { get; set; } = "#000000";
-        [ObservableProperty] public partial string InstallStatusText { get; set; }
-        [ObservableProperty] public partial bool IsButtonEnabled { get; set; } = false;
+        [ObservableProperty]
+        public partial string AddonStatusText { get; set; }
 
-        #endregion
+        [ObservableProperty]
+        public partial string BrowserName { get; set; }
 
-        // =========================================================
-        // 3. CONSTRUCTOR & FINALIZER (Ctor)
-        // =========================================================
-        #region ConstructorAndFinalizer
+        [ObservableProperty]
+        public partial string ButtonText { get; set; }
+
+        [ObservableProperty]
+        public partial string IconPath { get; set; }
+
+        [ObservableProperty]
+        public partial string InstallStatusColor { get; set; }
+
+        [ObservableProperty]
+        public partial string InstallStatusText { get; set; }
+
+
+        [ObservableProperty]
+        public partial bool IsButtonEnabled { get; set; }
 
         /// <summary>
         /// Initializes the row with a browser instance and localization, sets display name and icon path
@@ -55,12 +77,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IBrowser browser,
             ILocalizationService localizationService)
         {
+            ArgumentNullException.ThrowIfNull(browser);
+            ArgumentNullException.ThrowIfNull(localizationService);
+
             _browser = browser;
             _localizationService = localizationService;
-            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+            _dispatcherQueue =
+                DispatcherQueue.GetForCurrentThread()
+                ?? throw new InvalidOperationException(
+                    $"{nameof(ViewModelBrowserAddonStatus)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
 
             BrowserName = _browser.DisplayName;
-            IconPath = browser.IconPath;
+            IconPath = _browser.IconPath;
+            AddonStatusColor = NeutralForegroundHex;
+            AddonStatusIcon = AddonStatusIconDefault;
+            InstallStatusColor = NeutralForegroundHex;
             AddonStatusText = _localizationService.GetString("Addon_StatusChecking");
             InstallStatusText = _localizationService.GetString("Addon_StatusChecking");
             ButtonText = _localizationService.GetString("Addon_Loading");
@@ -68,29 +100,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             RefreshStatus();
         }
 
-        #endregion
-
-        // =========================================================
-        // 4. COMMANDS (MVVM Actions)
-        // =========================================================
-        #region Commands
-
         /// <summary>Opens the browser's extension/store URL in the browser if the URL is set (e.g. Chrome Web Store).</summary>
         [RelayCommand]
         private void OpenStore()
         {
-            if (!string.IsNullOrEmpty(_browser.ExtensionInstallUrl))
-            {
+            if (!string.IsNullOrWhiteSpace(_browser.ExtensionInstallUrl))
                 _browser.Start(_browser.ExtensionInstallUrl);
-            }
         }
-
-        #endregion
-
-        // =========================================================
-        // 5. PUBLIC & PROTECTED METHODS (API)
-        // =========================================================
-        #region PublicAndProtectedMethods
 
         /// <summary>
         /// Re-queries the browser instance for install and extension state on the UI thread, then
@@ -104,41 +120,38 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 string installedFormat = _localizationService.GetString("Addon_BrowserInstalled");
                 string notInstalledFormat = _localizationService.GetString("Addon_BrowserNotInstalled");
 
-                if (_browser.IsInstalled)
+                if (!_browser.IsInstalled)
                 {
-                    InstallStatusText = string.Format(installedFormat, BrowserName);
-                    InstallStatusColor = "#2e7d32";
-                    IsButtonEnabled = true;
+                    InstallStatusText = string.Format(notInstalledFormat, BrowserName);
+                    InstallStatusColor = InstallStatusColorBrowserNotInstalledHex;
+                    AddonStatusText = AddonPlaceholderDash;
+                    AddonStatusIcon = AddonStatusIconEmpty;
+                    IsButtonEnabled = false;
+                    ButtonText = _localizationService.GetString("Addon_BtnBrowserMissing");
+                    return;
+                }
 
-                    bool hasAddon = _browser.IsExtensionInstalled(null!);
+                InstallStatusText = string.Format(installedFormat, BrowserName);
+                InstallStatusColor = InstallStatusColorBrowserInstalledHex;
+                IsButtonEnabled = true;
 
-                    if (hasAddon)
-                    {
-                        AddonStatusText = _localizationService.GetString("Addon_ExtensionInstalled");
-                        AddonStatusIcon = "✓";
-                        AddonStatusColor = "#7ED422";
-                        ButtonText = _localizationService.GetString("Addon_BtnManage");
-                    }
-                    else
-                    {
-                        AddonStatusText = _localizationService.GetString("Addon_ExtensionNotInstalled");
-                        AddonStatusIcon = "✘";
-                        AddonStatusColor = "#E40E87";
-                        ButtonText = _localizationService.GetString("Addon_BtnInstall");
-                    }
+                bool extensionIsInstalled = _browser.IsExtensionInstalled(string.Empty);
+
+                if (extensionIsInstalled)
+                {
+                    AddonStatusText = _localizationService.GetString("Addon_ExtensionInstalled");
+                    AddonStatusIcon = AddonStatusIconExtensionInstalled;
+                    AddonStatusColor = AddonStatusColorExtensionInstalledHex;
+                    ButtonText = _localizationService.GetString("Addon_BtnManage");
                 }
                 else
                 {
-                    InstallStatusText = string.Format(notInstalledFormat, BrowserName);
-                    InstallStatusColor = "#BA224D";
-                    AddonStatusText = "-";
-                    AddonStatusIcon = "";
-                    IsButtonEnabled = false;
-                    ButtonText = _localizationService.GetString("Addon_BtnBrowserMissing");
+                    AddonStatusText = _localizationService.GetString("Addon_ExtensionNotInstalled");
+                    AddonStatusIcon = AddonStatusIconExtensionNotInstalled;
+                    AddonStatusColor = AddonStatusColorExtensionNotInstalledHex;
+                    ButtonText = _localizationService.GetString("Addon_BtnInstall");
                 }
             });
         }
-
-        #endregion
     }
 }

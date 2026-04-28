@@ -19,7 +19,7 @@ namespace eBRestarter.Desktop.WinUI3
     /// Das Hauptfenster der Anwendung.
     /// <br/>
     /// <b>Verantwortlichkeit:</b> Dient als "Shell" (H�lle), die das grundlegende Layout (NavigationView, TitleBar) bereitstellt
-    /// und den <see cref="Frame"/> f�r den Navigationsdienst hostet.
+    /// und den <see cref="Frame"/> für den Navigationsdienst hostet.
     /// </summary>
     public sealed partial class EBRestarter : Window
     {

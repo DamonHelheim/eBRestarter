@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
-using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Core.Application.Models.Config;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
 using Shouldly;

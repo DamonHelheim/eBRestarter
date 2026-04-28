@@ -1,5 +1,5 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Models.Records;
 using System.Net.NetworkInformation;
 
 namespace eBRestarter.Infrastructure.Services.WindowsOS

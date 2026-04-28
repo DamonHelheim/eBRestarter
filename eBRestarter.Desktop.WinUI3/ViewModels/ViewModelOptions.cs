@@ -1,37 +1,32 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Constants;
+using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.Update;
+using eBRestarter.Core.Application.Models.Config;
 using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Extensions;
-using eBRestarter.Core.Domain.Models.Records;
-using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.Models.Constants;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3;
 using eBRestarter.Desktop.WinUI3.Messages;
-using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using eBRestarter.Infrastructure.Constants;
+using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -42,81 +37,98 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     /// </summary>
     public partial class ViewModelOptions : ObservableObject
     {
-        // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
-        // =========================================================
-        #region FieldsAndInjectedServices
+        private const string ExtensionConfigFileName = "tab_restarter_config.json";
 
-        private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
-        private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
-        private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
-        private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
-        private readonly AppConfig _currentConfig;
-        private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private bool _isInitializing = false;
-        private readonly ILanguageService _languageService;
-        private readonly ILocalizationService _localizationService;
-        private readonly IUIOptionsService _uiOptionsService;
-        private readonly IOperatingSystemFacade _os;
-        private readonly IRestartCalculationService _restartCalculationService;
-        private readonly IThemeService _themeService;
-        private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
-        private readonly IComputerRestartScheduler _computerRestartScheduler;
+        private const int ExtensionSaveStatusDisplayDurationMilliseconds = 3000;
+
+        private const int MillisecondsPerMinute = 60000;
+
         private readonly IBrowserExtensionDeploymentService _browserExtensionDeploymentService;
 
-        #endregion
+        private readonly IComputerRestartDateService _computerRestartDateService;
 
-        // =========================================================
-        // 2. OBSERVABLE PROPERTIES (MVVM State)
-        // =========================================================
-        #region ObservableProperties
+        private readonly IComputerRestartScheduler _computerRestartScheduler;
 
-        [ObservableProperty] public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
-        [ObservableProperty] public partial LanguageOption SelectedLanguageOption { get; set; }
-        [ObservableProperty] public partial int ComputerRestartClockTime { get; set; }
-        [ObservableProperty] public partial bool StartWithWindows { get; set; } = false;
+        private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
 
-        [ObservableProperty] public partial bool IsRestartSliderVisible { get; set; }
-        [ObservableProperty] public partial string RestartStatusText { get; set; } = string.Empty;
+        private readonly IDialogService _dialogService;
 
-        [ObservableProperty] public partial bool IsUpdateAvailable { get; set; }
-        [ObservableProperty] public partial string UpdateMessage { get; set; } = string.Empty;
+        private readonly IEVisitorConfigService _eVisitorConfigService;
 
-        [ObservableProperty] public partial string ExtensionUrl { get; set; } = string.Empty;
-        [ObservableProperty] public partial double ExtensionWaitTimeMinutes { get; set; } = 3;
-        [ObservableProperty] public partial LanguageOption SelectedExtensionLanguage { get; set; }
-        [ObservableProperty] public partial string ExtensionSaveStatus { get; set; } = string.Empty;
+        private readonly ILanguageService _languageService;
 
-        // NEU: Steuert Ladekreis und Button-Zustand
+        private readonly ILocalizationService _localizationService;
+
+        private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
+
+        private readonly IOperatingSystemFacade _operatingSystemFacade;
+
+        private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
+
+        private readonly IThemeService _themeService;
+
+        private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
+
+        private readonly IUIOptionsService _uiOptionsService;
+
+        private bool _isInitializing;
+
+        private readonly AppConfig _currentConfig;
+
+        private readonly DispatcherQueue _dispatcherQueue;
+
+        [ObservableProperty]
+        public partial int ComputerRestartClockTime { get; set; }
+
+        [ObservableProperty]
+        public partial string ExtensionSaveStatus { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial double ExtensionWaitTimeMinutes { get; set; } = 3;
+
+        [ObservableProperty]
+        public partial string ExtensionUrl { get; set; } = string.Empty;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
-        public partial bool IsCheckingForUpdates { get; set; } = false;
+        public partial bool IsCheckingForUpdates { get; set; }
 
-        #endregion
+        [ObservableProperty]
+        public partial bool IsRestartSliderVisible { get; set; }
 
-        // =========================================================
-        // 3. PUBLIC PROPERTIES (Data & State)
-        // =========================================================
-        #region PublicProperties
+        [ObservableProperty]
+        public partial bool IsUpdateAvailable { get; set; }
 
-        /// <summary>Read-only list of available languages from localization; used to bind the language picker.</summary>
-        public ReadOnlyCollection<LanguageOption> LanguageList { get; private set; }
-        /// <summary>Read-only list of computer restart intervals (e.g. daily, weekly) from localization.</summary>
-        public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList { get; }
-        /// <summary>Minimum allowed hour (0–23) for scheduled restart.</summary>
-        public int ComputerRestartClockTimeMin { get; init; }
-        /// <summary>Maximum allowed hour (0–23) for scheduled restart.</summary>
+        [ObservableProperty]
+        public partial string RestartStatusText { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial bool StartWithWindows { get; set; }
+
+        [ObservableProperty]
+        public partial string UpdateMessage { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
+
+        [ObservableProperty]
+        public partial LanguageOption SelectedExtensionLanguage { get; set; }
+
+        [ObservableProperty]
+        public partial LanguageOption SelectedLanguageOption { get; set; }
+
+        /// <summary>Maximum allowed hour (1–23) for scheduled restart.</summary>
         public int ComputerRestartClockTimeMax { get; init; }
+
+        /// <summary>Minimum allowed hour (1–23) for scheduled restart.</summary>
+        public int ComputerRestartClockTimeMin { get; init; }
+
+        public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList { get; }
 
         public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
-        #endregion
-
-        // =========================================================
-        // 4. CONSTRUCTOR & FINALIZER (Ctor)
-        // =========================================================
-        #region ConstructorAndFinalizer
+        /// <summary>Read-only list of available languages from localization; used to bind the language picker.</summary>
+        public ReadOnlyCollection<LanguageOption> LanguageList { get; private set; }
 
         /// <summary>
         /// Builds the options VM from config and services, populates dropdowns from localization,
@@ -128,37 +140,68 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IToggleAppAutoStartUseCase toggleAppAutoStartUseCase,
             IManageApplicationUpdatesUseCase manageApplicationUpdatesUseCase,
             IRemoveApiCredentialsUseCase removeApiCredentialsUseCase,
-            IOperatingSystemFacade os,
+            IOperatingSystemFacade operatingSystemFacade,
             IThemeService themeService,
             IEVisitorConfigService eVisitorConfigService,
             ILanguageService languageService,
             ILocalizationService localizationService,
             IUIOptionsService uiOptionsService,
-            IRestartCalculationService restartCalculationService,
+            IComputerRestartDateService computerRestartDateService,
             IComputerRestartScheduler computerRestartScheduler,
             IBrowserExtensionDeploymentService browserExtensionDeploymentService)
         {
+            ArgumentNullException.ThrowIfNull(dialogService);
+            ArgumentNullException.ThrowIfNull(configureAutoLogonUseCase);
+            ArgumentNullException.ThrowIfNull(toggleAppAutoStartUseCase);
+            ArgumentNullException.ThrowIfNull(manageApplicationUpdatesUseCase);
+            ArgumentNullException.ThrowIfNull(removeApiCredentialsUseCase);
+            ArgumentNullException.ThrowIfNull(operatingSystemFacade);
+            ArgumentNullException.ThrowIfNull(themeService);
+            ArgumentNullException.ThrowIfNull(eVisitorConfigService);
+            ArgumentNullException.ThrowIfNull(languageService);
+            ArgumentNullException.ThrowIfNull(localizationService);
+            ArgumentNullException.ThrowIfNull(uiOptionsService);
+            ArgumentNullException.ThrowIfNull(computerRestartDateService);
+            ArgumentNullException.ThrowIfNull(computerRestartScheduler);
+            ArgumentNullException.ThrowIfNull(browserExtensionDeploymentService);
+
             _isInitializing = true;
 
-            _dialogService = dialogService;
+            _browserExtensionDeploymentService = browserExtensionDeploymentService;
+            _computerRestartDateService = computerRestartDateService;
+            _computerRestartScheduler = computerRestartScheduler;
             _configureAutoLogonUseCase = configureAutoLogonUseCase;
-            _toggleAppAutoStartUseCase = toggleAppAutoStartUseCase;
-            _manageApplicationUpdatesUseCase = manageApplicationUpdatesUseCase;
-            _removeApiCredentialsUseCase = removeApiCredentialsUseCase;
-            _os = os;
-            _themeService = themeService;
+            _dialogService = dialogService;
             _eVisitorConfigService = eVisitorConfigService;
             _languageService = languageService;
             _localizationService = localizationService;
+            _manageApplicationUpdatesUseCase = manageApplicationUpdatesUseCase;
+            _operatingSystemFacade = operatingSystemFacade;
+            _removeApiCredentialsUseCase = removeApiCredentialsUseCase;
+            _themeService = themeService;
+            _toggleAppAutoStartUseCase = toggleAppAutoStartUseCase;
             _uiOptionsService = uiOptionsService;
-            _restartCalculationService = restartCalculationService;
-            _computerRestartScheduler = computerRestartScheduler;
-            _browserExtensionDeploymentService = browserExtensionDeploymentService;
+
+            _dispatcherQueue =
+                DispatcherQueue.GetForCurrentThread()
+                ?? throw new InvalidOperationException(
+                    $"{nameof(ViewModelOptions)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
 
             _browserExtensionDeploymentService.EnsureExtensionIsDeployed();
             ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>([.. _uiOptionsService.GetComputerRestartOptions()]);
-
             LanguageList = new ReadOnlyCollection<LanguageOption>([.. _uiOptionsService.GetAvailableLanguages()]);
+
+            if (ComputerRestartList.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(ViewModelOptions)} requires at least one entry from {nameof(IUIOptionsService.GetComputerRestartOptions)}.");
+            }
+
+            if (LanguageList.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(ViewModelOptions)} requires at least one entry from {nameof(IUIOptionsService.GetAvailableLanguages)} for the language list.");
+            }
 
             _currentConfig = _eVisitorConfigService.LoadConfig();
 
@@ -166,36 +209,29 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             ComputerRestartClockTimeMax = 23;
             ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
 
-            var configDays = _currentConfig.Computer.ComputerRestartIntervalDays;
-            var configLanguageIndex = _currentConfig.Settings.Language;
+            int configDays = _currentConfig.Computer.ComputerRestartIntervalDays;
+            int configLanguageIndex = _currentConfig.Settings.Language;
 
             SelectedComputerRestartOption = ComputerRestartList.FirstOrDefault(option => option.Days == configDays) ?? ComputerRestartList[0];
             SelectedLanguageOption = LanguageList.FirstOrDefault(option => option.Index == configLanguageIndex) ?? LanguageList[0];
 
             _isInitializing = false;
 
-            _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-
             _computerRestartScheduler.OnNextRestartDateChanged += OnNextRestartDateChanged;
 
-            // Erweiterungs-Sprachen initialisieren (Wir leihen uns einfach die normalen Languages)
             ExtensionLanguages = new ReadOnlyCollection<LanguageOption>([.. _uiOptionsService.GetAvailableLanguages()]);
-            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault()!;
+            if (ExtensionLanguages.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(ViewModelOptions)} requires at least one entry from {nameof(IUIOptionsService.GetAvailableLanguages)} for extension languages.");
+            }
 
-            // Lade die Extension Config beim Start
+            SelectedExtensionLanguage = ExtensionLanguages[0];
+
             LoadExtensionConfig();
 
             InitializeAsync().Forget();
-
-
         }
-
-        #endregion
-
-        // =========================================================
-        // 5. COMMANDS (MVVM Actions)
-        // =========================================================
-        #region Commands
 
         /// <summary>
         /// Checks for application updates via <see cref="IUpdateService"/>. If an update is available,
@@ -214,28 +250,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     IsUpdateAvailable = true;
 
-                    // 1. Nachricht für die UI laden und formatieren (z.B. "Version 1.2.0 ist verfügbar")
                     string messageFormat = _localizationService.GetString("Options_UpdateAvailable");
                     UpdateMessage = string.Format(messageFormat, response.LatestVersion);
 
-                    // 2. Titel für den Dialog laden
                     string title = _localizationService.GetString("Options_UpdateAvailable_Title");
 
-                    // 3. Dialog-Nachricht mit dem Platzhalter {0} laden und befüllen
                     string promptFormat = _localizationService.GetString("Options_UpdatePrompt_Message");
                     string dialogMessage = string.Format(promptFormat, UpdateMessage);
 
-                    // 4. Dialog anzeigen mit lokalisierten Ja/Nein Buttons
                     bool userWantsUpdate = await _dialogService.ShowConfirmationAsync(
                         title,
                         dialogMessage,
                         _localizationService.GetString("General_Yes"),
-                        _localizationService.GetString("General_No")
-                    );
+                        _localizationService.GetString("General_No"));
 
                     if (userWantsUpdate)
                     {
-                        await PerformUpdate();
+                        await PerformUpdateCoreAsync();
                     }
                 }
                 else
@@ -243,27 +274,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     IsUpdateAvailable = false;
                     UpdateMessage = string.Empty;
 
-                    // Meldung: Kein Update verfügbar
                     await _dialogService.ShowMessageAsync(
                         _localizationService.GetString("Options_UpdateNoUpdate_Title"),
                         _localizationService.GetString("Options_UpdateNoUpdate_Message"),
-                        DialogIcon.Information
-                    );
+                        DialogIcon.Information);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
 
-                // Fehlermeldung formatieren (Platzhalter {0} wird mit ex.Message befüllt)
                 string errorFormat = _localizationService.GetString("Options_UpdateCheckError_Message");
                 string errorMessage = string.Format(errorFormat, ex.Message);
 
                 await _dialogService.ShowMessageAsync(
                     _localizationService.GetString("Options_UpdateError_Title"),
                     errorMessage,
-                    DialogIcon.Error
-                );
+                    DialogIcon.Error);
             }
             finally
             {
@@ -272,43 +299,79 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
 
         /// <summary>
-        /// Downloads the update and starts the installer via <see cref="IUpdateService.DownloadAndInstallAsync"/>.
-        /// Closes the application upon success.
+        /// Opens the auto-logon configuration dialog. If the user confirms, enables or disables
+        /// Windows auto-logon via <see cref="IWindowsAutoLogonService"/> after validating credentials.
         /// </summary>
         [RelayCommand]
-        private async Task PerformUpdate()
+        private async Task ConfigureAutoLogon()
         {
-            IsCheckingForUpdates = true;
+            string currentUser = Environment.UserName;
+            string currentDomain = Environment.UserDomainName;
 
-            try
+            var autoLogonDialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain);
+
+            if (autoLogonDialogResult == null)
+                return;
+
+            var configureAutoLogonRequest = new ConfigureAutoLogonRequest(
+                IsDeactivateAction: autoLogonDialogResult.IsDeactivateAction,
+                Username: autoLogonDialogResult.Credentials?.Username,
+                Domain: autoLogonDialogResult.Credentials?.Domain,
+                Password: autoLogonDialogResult.Credentials?.Password);
+
+            var configureAutoLogonResponse = _configureAutoLogonUseCase.Execute(configureAutoLogonRequest);
+
+            if (configureAutoLogonResponse.Success)
             {
-                await _manageApplicationUpdatesUseCase.PerformUpdateAsync();
+                if (configureAutoLogonResponse.Status == AutoLogonResultStatus.Deactivated)
+                {
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Info"),
+                        _localizationService.GetString("Options_AutoLogon_Deactivated"));
+                }
+                else if (configureAutoLogonResponse.Status == AutoLogonResultStatus.Activated)
+                {
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Success"),
+                        _localizationService.GetString("Options_AutoLogon_Success"));
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine(ex);
+                if (configureAutoLogonResponse.Status == AutoLogonResultStatus.WindowsHelloBlockActive)
+                {
+                    string title = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorTitle");
+                    string message = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorMessage");
 
-                // Fehlermeldung formatieren (Platzhalter {0} wird mit ex.Message befüllt)
-                string errorFormat = _localizationService.GetString("Options_UpdateFailed_Message");
-                string errorMessage = string.Format(errorFormat, ex.Message);
-
-                await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString("Options_UpdateFailed_Title"),
-                    errorMessage,
-                    DialogIcon.Error
-                );
-            }
-            finally
-            {
-                IsCheckingForUpdates = false;
+                    await _dialogService.ShowMessageAsync(title, message, DialogIcon.Error);
+                }
+                else if (configureAutoLogonResponse.Status == AutoLogonResultStatus.ValidationError)
+                {
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Error"),
+                        _localizationService.GetString("Options_AutoLogon_ValidationError"));
+                }
+                else if (configureAutoLogonResponse.Status == AutoLogonResultStatus.DomainError)
+                {
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Error"),
+                        _localizationService.GetString("Options_AutoLogon_DomainError"));
+                }
+                else
+                {
+                    string errorFormat = _localizationService.GetString("General_UnexpectedError");
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Error"),
+                        string.Format(errorFormat, configureAutoLogonResponse.ErrorMessage));
+                }
             }
         }
 
         /// <summary>
-        /// Öffnet den Ordner der Chrome Extension im Windows Explorer
+        /// Opens the folder of the Chrome extension in Windows Explorer.
         /// </summary>
         [RelayCommand]
-        private void OpenExtensionFolder()
+        private async Task OpenExtensionFolder()
         {
             try
             {
@@ -319,12 +382,55 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     Directory.CreateDirectory(extensionPath);
                 }
 
-                _os.WindowsProcessControlService.OpenExplorer(extensionPath);
+                _operatingSystemFacade.WindowsProcessControlService.OpenExplorer(extensionPath);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Fehler beim Öffnen des Extension-Ordners: {ex.Message}");
+                Debug.WriteLine(ex);
+
+                string messageFormat = _localizationService.GetString("Options_ExtensionFolderOpenError_Message");
+                await _dialogService.ShowMessageAsync(
+                    _localizationService.GetString("Options_ExtensionFolderOpenError_Title"),
+                    string.Format(messageFormat, ex.Message),
+                    DialogIcon.Error);
             }
+        }
+
+        /// <summary>Opens the application data folder in Windows Explorer using the configured base path.</summary>
+        [RelayCommand]
+        private void OpenSettingsDataFolder()
+        {
+            _operatingSystemFacade.WindowsProcessControlService.OpenExplorer(SystemPaths.ApplicationDataBasePath);
+        }
+
+        /// <summary>
+        /// Downloads the update and starts the installer via <see cref="IUpdateService.DownloadAndInstallAsync"/>.
+        /// Closes the application upon success.
+        /// </summary>
+        [RelayCommand]
+        private async Task PerformUpdate()
+        {
+            await PerformUpdateCoreAsync();
+        }
+
+        /// <summary>
+        /// Clears stored API username and key from config and shows a success message.
+        /// Does not validate or revoke on the server; only local storage is cleared.
+        /// </summary>
+        [RelayCommand]
+        private async Task RemoveAPICredentials()
+        {
+            _removeApiCredentialsUseCase.Execute();
+
+            _currentConfig.Settings.ApiUsername = string.Empty;
+            _currentConfig.Settings.ApiKey = string.Empty;
+
+            WeakReferenceMessenger.Default.Send(new ApiCredentialsRemovedMessage());
+
+            await _dialogService.ShowMessageAsync(
+                _localizationService.GetString("Options_RemoveCreds_Title"),
+                _localizationService.GetString("Options_RemoveCreds_Message"),
+                DialogIcon.Success);
         }
 
         [RelayCommand]
@@ -333,62 +439,45 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             try
             {
                 string extensionPath = _browserExtensionDeploymentService.GetExtensionFolderPath();
-                string configPath = Path.Combine(extensionPath, "tab_restarter_config.json");
+                string configPath = Path.Combine(extensionPath, ExtensionConfigFileName);
 
-                // Erstelle das Datenobjekt. Zeit: Minuten * 60.000 (ms)
-                var configData = new ExtensionConfigDto
+                var extensionConfigDto = new ExtensionConfigDto
                 {
-                    LANGUAGE = SelectedExtensionLanguage?.Index == 0 ? "DE" : "EN", // Index 0 ist meist DE
+                    LANGUAGE = SelectedExtensionLanguage?.Index == 0 ? "DE" : "EN",
                     ZIEL_URL = $"{WebLinks.EVisitorSurflink}{_currentConfig.Username}",
-                    WARTEZEIT_MS = (int)(ExtensionWaitTimeMinutes * 60000)
+                    WARTEZEIT_MS = (int)(ExtensionWaitTimeMinutes * MillisecondsPerMinute)
                 };
 
-                //JSON Formatierung mit Source Generator (AOT-kompatibel)
-                var options = new JsonSerializerOptions
+                var jsonSerializerOptions = new JsonSerializerOptions
                 {
                     WriteIndented = true,
-
-                    // Hier sagen wir dem Serializer, wo er die Struktur der Klasse findet:
                     TypeInfoResolver = ExtensionConfigJsonContext.Default
                 };
 
-                string jsonString = JsonSerializer.Serialize(configData, options);
+                string jsonString = JsonSerializer.Serialize(extensionConfigDto, jsonSerializerOptions);
 
-                // In Datei schreiben
-                if (!Directory.Exists(_browserExtensionDeploymentService.GetExtensionFolderPath()))
+                if (!Directory.Exists(extensionPath))
                 {
-                    Directory.CreateDirectory(_browserExtensionDeploymentService.GetExtensionFolderPath());
+                    Directory.CreateDirectory(extensionPath);
                 }
 
                 await File.WriteAllTextAsync(configPath, jsonString);
 
-                // Erfolgsmeldung für 3 Sekunden anzeigen
-                ExtensionSaveStatus = _localizationService.GetString("Options_SavedSuccessfully") ?? "Erfolgreich gespeichert!";
+                ExtensionSaveStatus = _localizationService.GetString("Options_SavedSuccessfully") ?? string.Empty;
 
-                await Task.Delay(3000);
+                await Task.Delay(ExtensionSaveStatusDisplayDurationMilliseconds);
 
                 ExtensionSaveStatus = string.Empty;
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex);
 
-                await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Error"), _localizationService.GetString("BrowserExtension_Config_Error_Message") + " " + ex.Message, DialogIcon.Error);
+                await _dialogService.ShowMessageAsync(
+                    _localizationService.GetString("General_Error"),
+                    _localizationService.GetString("BrowserExtension_Config_Error_Message") + " " + ex.Message,
+                    DialogIcon.Error);
             }
-        }
-
-        /// <summary>Opens the application data folder in Windows Explorer using the configured base path.</summary>
-        [RelayCommand]
-        private async Task OpenSettingsDataFolder()
-        {
-            _os.WindowsProcessControlService.OpenExplorer(SystemPaths.ApplicationDataBasePath);
-        }
-
-        /// <summary>Applies the light theme via <see cref="IThemeService"/> and persists the choice in config.</summary>
-        [RelayCommand]
-        private void SetLightTheme()
-        {
-            _themeService.SetTheme("Light");
-            SaveThemeConfig("Light");
         }
 
         /// <summary>Applies the dark theme via <see cref="IThemeService"/> and persists the choice in config.</summary>
@@ -397,6 +486,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             _themeService.SetTheme("Dark");
             SaveThemeConfig("Dark");
+        }
+
+        /// <summary>Applies the light theme via <see cref="IThemeService"/> and persists the choice in config.</summary>
+        [RelayCommand]
+        private void SetLightTheme()
+        {
+            _themeService.SetTheme("Light");
+            SaveThemeConfig("Light");
         }
 
         /// <summary>Opens the dialog to activate API credentials (username/key).</summary>
@@ -413,125 +510,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             await _dialogService.ShowImportApiDialogAsync();
         }
 
-        /// <summary>
-        /// Clears stored API username and key from config and shows a success message.
-        /// Does not validate or revoke on the server; only local storage is cleared.
-        /// </summary>
-        [RelayCommand]
-        private async Task RemoveAPICredentials()
-        {
-            _removeApiCredentialsUseCase.Execute();
-
-            // Resync current config in memory
-            _currentConfig.Settings.ApiUsername = string.Empty;
-            _currentConfig.Settings.ApiKey = string.Empty;
-
-            WeakReferenceMessenger.Default.Send(new ApiCredentialsRemovedMessage());
-
-            await _dialogService.ShowMessageAsync(
-                _localizationService.GetString("Options_RemoveCreds_Title"),
-                _localizationService.GetString("Options_RemoveCreds_Message"),
-                DialogIcon.Success);
-        }
-
-        /// <summary>
-        /// Opens the auto-logon configuration dialog. If the user confirms, enables or disables
-        /// Windows auto-logon via <see cref="IWindowsAutoLogonService"/> after validating credentials.
-        /// </summary>
-        [RelayCommand]
-        private async Task ConfigureAutoLogon()
-        {
-            string currentUser = Environment.UserName;
-            string currentDomain = Environment.UserDomainName;
-
-            var dialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain);
-
-            if (dialogResult == null) return;
-
-            var request = new ConfigureAutoLogonRequest(
-                IsDeactivateAction: dialogResult.IsDeactivateAction,
-                Username: dialogResult.Credentials?.Username,
-                Domain: dialogResult.Credentials?.Domain,
-                Password: dialogResult.Credentials?.Password
-            );
-
-            // Hier führt der Service die Prüfung durch, ob Windows Hello aktiv ist!
-            var response = _configureAutoLogonUseCase.Execute(request);
-
-            if (response.Success)
-            {
-                if (response.Status == AutoLogonResultStatus.Deactivated)
-                {
-                    await _dialogService.ShowMessageAsync("Info", _localizationService.GetString("Options_AutoLogon_Deactivated"));
-                }
-                else if (response.Status == AutoLogonResultStatus.Activated)
-                {
-                    await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Success"), _localizationService.GetString("Options_AutoLogon_Success"));
-                }
-            }
-            else
-            {
-                // =========================================================
-                // NEU: Abfangen der Windows 11 "Passwordless" Blockade
-                // =========================================================
-                if (response.Status == AutoLogonResultStatus.WindowsHelloBlockActive)
-                {
-                    string title = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorTitle");
-                    string message = _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorMessage");
-
-                    await _dialogService.ShowMessageAsync(title, message, DialogIcon.Error);
-                }
-                // =========================================================
-                else if (response.Status == AutoLogonResultStatus.ValidationError)
-                {
-                    await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Error"), _localizationService.GetString("Options_AutoLogon_ValidationError"));
-                }
-                else if (response.Status == AutoLogonResultStatus.DomainError)
-                {
-                    await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Error"), _localizationService.GetString("Options_AutoLogon_DomainError"));
-                }
-                else
-                {
-                    string errorFormat = _localizationService.GetString("General_UnexpectedError");
-                    await _dialogService.ShowMessageAsync(_localizationService.GetString("General_Error"), string.Format(errorFormat, response.ErrorMessage));
-                }
-            }
-        }
-
-        #endregion
-
-        // =========================================================
-        // 6. PROPERTY CHANGE HANDLERS (MVVM Hooks)
-        // =========================================================
-        #region PropertyChangeHandlers
-
-        private void OnNextRestartDateChanged(object? sender, DateTime? newDate)
-        {
-            _dispatcherQueue?.TryEnqueue(() =>
-            {
-                _currentConfig.Computer.NextRestartDate = newDate;
-                UpdateRestartUiState();
-            });
-        }
-
-
-
-        partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
-        {
-            // LÖSUNG: Wenn das ViewModel gerade startet oder der Wert null ist -> sofort abbrechen!
-            if (value == null || _isInitializing)
-            {
-                UpdateRestartUiState();
-                return;
-            }
-
-            _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
-
-            RecalculateNextRestartDate();
-            UpdateRestartUiState();
-            SaveSettings();
-        }
-
+        // Method order: (1) ObservableProperty partials and OnNextRestartDateChanged, A–Z; (2) remaining private helpers, A–Z.
         partial void OnComputerRestartClockTimeChanged(int value)
         {
             int clampedValue = Math.Clamp(value, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
@@ -552,9 +531,35 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
+        private void OnNextRestartDateChanged(object? sender, DateTime? newDate)
+        {
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                _currentConfig.Computer.NextRestartDate = newDate;
+                UpdateRestartUiState();
+            });
+        }
+
+        // ObservableProperty source-generated partials use 'value' as the parameter name (toolkit convention).
+        partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
+        {
+            if (value == null || _isInitializing)
+            {
+                UpdateRestartUiState();
+                return;
+            }
+
+            _currentConfig.Computer.ComputerRestartIntervalDays = value.Days;
+
+            RecalculateNextRestartDate();
+            UpdateRestartUiState();
+            SaveSettings();
+        }
+
         async partial void OnSelectedLanguageOptionChanged(LanguageOption value)
         {
-            if (value == null || _isInitializing) return;
+            if (value == null || _isInitializing)
+                return;
 
             if (_currentConfig.Settings.Language != value.Index)
             {
@@ -569,10 +574,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 _languageService.SetLanguage(newLanguageCode);
 
                 bool restartNow = await _dialogService.ShowConfirmationAsync(
-                    "Neustart erforderlich / Restart required",
-                    "Die Sprache wurde geändert. Damit alle Texte aktualisiert werden, muss die Anwendung neu gestartet werden.\n\nMöchten Sie die Anwendung jetzt neustarten?\n\n(The language has been changed. Restart now to apply all changes?)",
-                    "Ja / Yes", "Nein / No"
-                );
+                    _localizationService.GetString("Options_LanguageChanged_Restart_Title"),
+                    _localizationService.GetString("Options_LanguageChanged_Restart_Message"),
+                    _localizationService.GetString("General_Yes"),
+                    _localizationService.GetString("General_No"));
 
                 if (restartNow)
                 {
@@ -583,95 +588,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         partial void OnStartWithWindowsChanged(bool value)
         {
-            if (_isInitializing) return;
+            if (_isInitializing)
+                return;
+
             ToggleAutoStartAsync(value).Forget();
         }
 
-        #endregion
-
-        // =========================================================
-        // 7. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
-        // =========================================================
-        #region PrivateHelperMethods
-
-        /// <summary>
-        /// Sucht den Ordner "Extension" neben der ausführbaren .exe Datei.
-        /// </summary>
-        /// <summary>
-        /// Sucht den Ordner "Extension" je nach Build-Modus (Debug vs Release).
-        /// </summary>
-        /// <summary>
-        /// Sucht den Ordner "Extension" je nach Build-Modus (Debug vs Release).
-        /// </summary>
-        //        private string GetExtensionFolderPath()
-        //        {
-        //#if DEBUG
-        //            // Im Debug-Modus gehen wir 6 Ebenen nach oben in den Solution-Root-Ordner.
-        //            // Von: ...\eBRestarter\eBRestarter.Desktop.WinUI3\bin\x64\Debug\net10.0-windows10.0.26100.0\win-x64\
-        //            // Nach: ...\eBRestarter\
-        //            string solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\"));
-
-        //            // Nun navigieren wir in dein JavaScript-Projekt
-        //            return Path.Combine(solutionDirectory, "eBRestarter.TabRestarterExtension", "TabRestarterExtension");
-        //#else
-        //    // Im Release-Modus (fertig publizierte App) liegt der Ordner
-        //    // idealerweise direkt neben der ausführbaren .exe Datei.
-        //    return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "RedirectExtension");
-        //#endif
-        //        }
-
-        /// <summary>
-        /// Liest die config.json beim Programmstart aus und füllt die UI-Felder
-        /// </summary>
-        //[RequiresUnreferencedCode("Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)")]
-        private void LoadExtensionConfig()
-        {
-            try
-            {
-                string configPath = Path.Combine(_browserExtensionDeploymentService.GetExtensionFolderPath(), "tab_restarter_config.json");
-
-                if (File.Exists(configPath))
-                {
-                    string jsonString = File.ReadAllText(configPath);
-
-                    var configData = JsonSerializer.Deserialize(jsonString, ExtensionConfigJsonContext.Default.ExtensionConfigDto);
-
-                    if (configData != null)
-                    {
-                        ExtensionUrl = configData.ZIEL_URL;
-                        ExtensionWaitTimeMinutes = configData.WARTEZEIT_MS / 60000.0; // MS zurück in Minuten
-
-                        // Sprache setzen
-                        if (configData.LANGUAGE == "EN")
-                            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault(l => l.Index == 1)!; // 1 = Englisch
-                        else
-                            SelectedExtensionLanguage = ExtensionLanguages.FirstOrDefault(l => l.Index == 0)!; // 0 = Deutsch
-                    }
-                }
-            }
-
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Konnte existierende config.json nicht lesen: {ex.Message}");
-            }
-        }
-
-        // Generiert den Code für das JSON-Mapping beim Kompilieren!
-        [JsonSerializable(typeof(ExtensionConfigDto))]
-        public partial class ExtensionConfigJsonContext : JsonSerializerContext
-        {
-        }
-
-        // NEU: Verhindert Mehrfachklicks während der Suche
         private bool CanCheckForUpdates() => !IsCheckingForUpdates;
-
-        private void SaveThemeConfig(string theme)
-        {
-            var config = _eVisitorConfigService.LoadConfig();
-            var newConfig = config with { Settings = config.Settings with { Theme = theme } };
-
-            _eVisitorConfigService.SaveConfig(newConfig);
-        }
 
         /// <summary>Syncs StartWithWindows with the OS startup manager and, if config says start-with-Windows but OS was off, enables it.</summary>
         private async Task InitializeAsync()
@@ -686,6 +609,101 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 _isInitializing = false;
             }
+        }
+
+        /// <summary>Reads extension tab_restarter_config.json at startup and fills UI fields.</summary>
+        private void LoadExtensionConfig()
+        {
+            try
+            {
+                string configPath = Path.Combine(_browserExtensionDeploymentService.GetExtensionFolderPath(), ExtensionConfigFileName);
+
+                if (File.Exists(configPath))
+                {
+                    string jsonString = File.ReadAllText(configPath);
+
+                    var extensionConfigDto = JsonSerializer.Deserialize(jsonString, ExtensionConfigJsonContext.Default.ExtensionConfigDto);
+
+                    if (extensionConfigDto != null)
+                    {
+                        ExtensionUrl = extensionConfigDto.ZIEL_URL;
+                        ExtensionWaitTimeMinutes = extensionConfigDto.WARTEZEIT_MS / (double)MillisecondsPerMinute;
+
+                        LanguageOption? matchingExtensionLanguage = extensionConfigDto.LANGUAGE == "EN"
+                            ? ExtensionLanguages.FirstOrDefault(languageOption => languageOption.Index == 1)
+                            : ExtensionLanguages.FirstOrDefault(languageOption => languageOption.Index == 0);
+
+                        if (matchingExtensionLanguage != null)
+                        {
+                            SelectedExtensionLanguage = matchingExtensionLanguage;
+                        }
+                        else
+                        {
+                            Debug.WriteLine(
+                                "Extension tab_restarter_config.json LANGUAGE does not match any UI language option; keeping current selection.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Could not read existing tab_restarter_config.json: {ex}");
+            }
+        }
+
+        private async Task PerformUpdateCoreAsync()
+        {
+            IsCheckingForUpdates = true;
+
+            try
+            {
+                await _manageApplicationUpdatesUseCase.PerformUpdateAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+
+                string errorFormat = _localizationService.GetString("Options_UpdateFailed_Message");
+                string errorMessage = string.Format(errorFormat, ex.Message);
+
+                await _dialogService.ShowMessageAsync(
+                    _localizationService.GetString("Options_UpdateFailed_Title"),
+                    errorMessage,
+                    DialogIcon.Error);
+            }
+            finally
+            {
+                IsCheckingForUpdates = false;
+            }
+        }
+
+        /// <summary>Computes the next restart date from interval days and clock time and stores it in config.</summary>
+        private void RecalculateNextRestartDate()
+        {
+            int days = _currentConfig.Computer.ComputerRestartIntervalDays;
+            int hours = _currentConfig.Computer.RestartClockTime;
+
+            _currentConfig.Computer.NextRestartDate = _computerRestartDateService.GetNextRestartDate(days, hours);
+        }
+
+        private void SaveSettings()
+        {
+            _eVisitorConfigService.SaveConfig(_currentConfig);
+        }
+
+        private void SaveThemeConfig(string theme)
+        {
+            var config = _eVisitorConfigService.LoadConfig();
+            var newConfig = config with { Settings = config.Settings with { Theme = theme } };
+
+            _eVisitorConfigService.SaveConfig(newConfig);
+        }
+
+        private async Task ToggleAutoStartAsync(bool enable)
+        {
+            await _toggleAppAutoStartUseCase.ToggleAsync(enable);
+
+            _currentConfig.Settings.StartWithWindows = enable;
         }
 
         /// <summary>Shows or hides the restart-time slider and sets RestartStatusText from next restart date or "none".</summary>
@@ -713,30 +731,5 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 RestartStatusText = string.Format(messageFormat, targetDate.ToString("dd.MM.yyyy"), targetDate.ToString("HH"));
             }
         }
-
-        /// <summary>Computes the next restart date from interval days and clock time and stores it in config.</summary>
-        private void RecalculateNextRestartDate()
-        {
-            int days = _currentConfig.Computer.ComputerRestartIntervalDays;
-            int hours = _currentConfig.Computer.RestartClockTime;
-
-            _currentConfig.Computer.NextRestartDate = _restartCalculationService.GetNextRestartDate(days, hours);
-        }
-
-        private async Task ToggleAutoStartAsync(bool enable)
-        {
-            await _toggleAppAutoStartUseCase.ToggleAsync(enable);
-
-            // Sync current config view
-            _currentConfig.Settings.StartWithWindows = enable;
-        }
-
-        private void SaveSettings()
-        {
-            _eVisitorConfigService.SaveConfig(_currentConfig);
-        }
-
-        #endregion
     }
 }
-

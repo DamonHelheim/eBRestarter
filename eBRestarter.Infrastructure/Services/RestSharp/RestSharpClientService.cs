@@ -1,6 +1,6 @@
-﻿using eBRestarter.Core.Application.Interfaces.RestClient;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models;
+using eBRestarter.Core.Application.Interfaces.RestClient;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Api;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -11,11 +11,11 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
     public class RestSharpClientService(ILogger<RestSharpClientService> logger, HttpMessageHandler? httpMessageHandler = null) : IRestClientService
     {
         private readonly ILogger<RestSharpClientService> _logger = logger;
-        private readonly HttpMessageHandler? _httpMessageHandler = httpMessageHandler; // NEU FÜR TESTS
+        private readonly HttpMessageHandler? _httpMessageHandler = httpMessageHandler; // NEU FÃœR TESTS
 
         public async Task<ApiResponse> ExecuteGetAsync(ApiRequest requestModel)
         {
-            // Client erstellen (using sorgt für Dispose)
+            // Client erstellen (using sorgt fÃ¼r Dispose)
             using var client = CreateClient(requestModel);
 
             var request = new RestRequest();
@@ -96,7 +96,7 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
                 {
                     IsSuccess = false,
                     StatusCode = ResponseCode.HTTPTimeout,
-                    ErrorMessage = "Die Anfrage hat das Zeitlimit überschritten."
+                    ErrorMessage = "Die Anfrage hat das Zeitlimit Ã¼berschritten."
                 };
             }
 

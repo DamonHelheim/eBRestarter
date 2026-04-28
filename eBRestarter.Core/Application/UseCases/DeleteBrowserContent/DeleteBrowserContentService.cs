@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
@@ -60,7 +60,7 @@ public class DeleteBrowserContentService(
                 progress.Report(new DeleteBrowserContentProgress(status, 0, totalFiles)));
 
             var fileProgress = new Progress<int>(count =>
-                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Running") ?? "Lösche...", count, totalFiles)));
+                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Running") ?? "LÃ¶sche...", count, totalFiles)));
 
             await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, fileProgress, cancellationToken);
 

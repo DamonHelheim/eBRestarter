@@ -1,5 +1,5 @@
-﻿using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Browsers;
 using Microsoft.Extensions.DependencyInjection;
 

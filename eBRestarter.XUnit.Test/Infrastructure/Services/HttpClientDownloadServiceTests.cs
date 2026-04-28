@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Services;
 using Moq;
 using Moq.Protected;

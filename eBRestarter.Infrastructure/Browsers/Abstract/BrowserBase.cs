@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers.Abstract;
@@ -13,7 +13,7 @@ public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : I
 
     public abstract BrowserType Type { get; }
 
-    // Diese abstrakten Properties müssen Chrome/Firefox liefern
+    // Diese abstrakten Properties mÃ¼ssen Chrome/Firefox liefern
     public abstract string DisplayName { get; }
     public abstract string IconPath { get; }
     public abstract string DownloadUrl { get; }
@@ -34,7 +34,7 @@ public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : I
             var exePath = GetExecutablePath();
             _logger.LogInformation($"Starte {Type} mit URL {url}...");
 
-            // Wir kombinieren die URL und evtl. zusätzliche Argumente
+            // Wir kombinieren die URL und evtl. zusÃ¤tzliche Argumente
             // Browser akzeptieren die URL einfach als erstes Argument in der Kommandozeile.
             string finalArguments = $"{url} {arguments}".Trim();
 
@@ -73,7 +73,7 @@ public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : I
 
     public abstract BrowserPaths GetPaths();
 
-    // Neue Helper-Methode für alle Kinder
+    // Neue Helper-Methode fÃ¼r alle Kinder
     protected void AddPathFromUninstallKey(List<string> paths, string subKey, string exeName, bool isHklm)
     {
         var val = isHklm
@@ -99,7 +99,7 @@ public abstract class BrowserBase(IOperatingSystemFacade os, ILogger logger) : I
 
         try
         {
-            // SonarQube Fix: RegexOptions.NonBacktracking und TimeSpan-Timeout (100ms) hinzugefügt
+            // SonarQube Fix: RegexOptions.NonBacktracking und TimeSpan-Timeout (100ms) hinzugefÃ¼gt
             var match = System.Text.RegularExpressions.Regex.Match(
                 cleanRaw,
                 @"^[\d\.]+",

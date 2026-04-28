@@ -1,5 +1,5 @@
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Domain.Extensions;
+using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Desktop.WinUI3.Models.UI;
 using eBRestarter.Desktop.WinUI3.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +32,9 @@ public sealed partial class UC_Networktraffic : UserControl
     {
         InitializeComponent();
 
-        // Dummy-Initialisierung (In echter App via DI Container auflösen!)
+        // Dummy-Initialisierung (In echter App via DI Container auflï¿½sen!)
         ViewModelNetworkTraffic = App.AppHost!.Services.GetRequiredService<ViewModelNetworkTraffic>();
-        //Fallback für Design - Time:
+        //Fallback fï¿½r Design - Time:
         this.DataContext = ViewModelNetworkTraffic;
     }
 }

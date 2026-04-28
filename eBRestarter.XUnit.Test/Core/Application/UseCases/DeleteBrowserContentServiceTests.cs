@@ -1,9 +1,9 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using Moq;
 using Shouldly;
 using System;
@@ -16,7 +16,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 {
     /// <summary>
     /// Testet den DeleteBrowserContentService.
-    /// Der Fokus liegt auf der Einhaltung des Lösch-Workflows: Prozessprüfung,
+    /// Der Fokus liegt auf der Einhaltung des LÃ¶sch-Workflows: ProzessprÃ¼fung,
     /// Pfadermittlung, Fortschrittsmeldung und Fehlerbehandlung.
     /// </summary>
     public class DeleteBrowserContentServiceTests
@@ -34,8 +34,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             _mockProcessService = new Mock<IWindowsProcessControlService>();
             _mockLocalizationService = new Mock<ILocalizationService>();
 
-            // Hilfs-Setup für die Lokalisierung: Gibt einfach den angefragten Key zurück,
-            // damit wir im Test verifizieren können, ob die richtige Meldung angefordert wurde.
+            // Hilfs-Setup fÃ¼r die Lokalisierung: Gibt einfach den angefragten Key zurÃ¼ck,
+            // damit wir im Test verifizieren kÃ¶nnen, ob die richtige Meldung angefordert wurde.
             _mockLocalizationService
                 .Setup(l => l.GetString(It.IsAny<string>()))
                 .Returns((string key) => key);
@@ -53,8 +53,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wenn der Browser noch läuft und "ForceCloseProcess" auf false steht,
-        /// darf nicht gelöscht werden. Die Methode muss abbrechen und einen Konflikt melden.
+        /// Wenn der Browser noch lÃ¤uft und "ForceCloseProcess" auf false steht,
+        /// darf nicht gelÃ¶scht werden. Die Methode muss abbrechen und einen Konflikt melden.
         /// </summary>
         [Fact]
         public async Task ExecuteAsync_ShouldReturnProcessConflict_WhenBrowserIsStillRunning()
@@ -66,7 +66,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var mockBrowser = new Mock<IBrowser>();
             _mockBrowserFactory.Setup(f => f.Create(BrowserType.Chrome)).Returns(mockBrowser.Object);
 
-            // Simulieren: Chrome läuft noch!
+            // Simulieren: Chrome lÃ¤uft noch!
             _mockProcessService.Setup(p => p.IsProcessAlive("chrome")).Returns(true);
 
             // ACT
@@ -77,14 +77,14 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             result.ProcessConflict.ShouldBeTrue();
             result.ErrorMessage.ShouldBe("Cleanup_BrowserRunning");
 
-            // Sicherstellen, dass keine Löschung versucht wurde
+            // Sicherstellen, dass keine LÃ¶schung versucht wurde
             _mockFileDeletionService.Verify(f => f.DeleteFilesAsync(It.IsAny<List<string>>(), It.IsAny<IProgress<string>>(), It.IsAny<IProgress<int>>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Wenn "ForceCloseProcess" auf true steht, muss der Service versuchen,
-        /// den Prozess aktiv über den IWindowsProcessControlService zu beenden.
+        /// den Prozess aktiv Ã¼ber den IWindowsProcessControlService zu beenden.
         /// </summary>
         [Fact]
         public async Task ExecuteAsync_ShouldForceCloseProcess_WhenRequested()
@@ -104,34 +104,34 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 
             _mockBrowserFactory.Setup(f => f.Create(BrowserType.Edge)).Returns(mockBrowser.Object);
 
-            // Simulieren: Edge läuft anfangs, wird aber erfolgreich geschlossen (IsProcessAlive liefert danach false)
+            // Simulieren: Edge lÃ¤uft anfangs, wird aber erfolgreich geschlossen (IsProcessAlive liefert danach false)
             _mockProcessService.Setup(p => p.IsProcessAlive("msedge")).Returns(false);
 
             // ACT
             var result = await _sut.ExecuteAsync(request, progress, CancellationToken.None);
 
             // ASSERT
-            // Prüfen, ob der Befehl zum Schließen gesendet wurde
+            // PrÃ¼fen, ob der Befehl zum SchlieÃŸen gesendet wurde
             _mockProcessService.Verify(p => p.CloseApplication("msedge"), Times.Once);
 
-            // Prüfen, ob die UI über das Schließen informiert wurde
+            // PrÃ¼fen, ob die UI Ã¼ber das SchlieÃŸen informiert wurde
             progressUpdates.ShouldContain(p => p.StatusMessage == "Cleanup_ClosingBrowser");
         }
 
         // =========================================================
-        // 2. PFAD- UND LÖSCH-LOGIK TESTS
+        // 2. PFAD- UND LÃ–SCH-LOGIK TESTS
         // =========================================================
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wenn der Benutzer zwar den Löschvorgang startet, aber weder Cache noch Cookies
-        /// löschen möchte (oder der Browser keine Pfade liefert), muss abgebrochen werden.
+        /// Wenn der Benutzer zwar den LÃ¶schvorgang startet, aber weder Cache noch Cookies
+        /// lÃ¶schen mÃ¶chte (oder der Browser keine Pfade liefert), muss abgebrochen werden.
         /// </summary>
         [Fact]
         public async Task ExecuteAsync_ShouldReturnNoPathsError_WhenNothingIsSelectedOrAvailable()
         {
             // ARRANGE
-            // Weder Cookies noch Cache sollen gelöscht werden
+            // Weder Cookies noch Cache sollen gelÃ¶scht werden
             var request = new DeleteBrowserContentRequest(BrowserType.Firefox, DeleteCookies: false, DeleteCache: false, ForceCloseProcess: false);
             var progress = new Progress<DeleteBrowserContentProgress>();
 
@@ -158,9 +158,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Dies ist der "Happy Path". Es prüft, ob die Listen aus Cache und Cookies korrekt
-        /// zusammengeführt und an den FileDeletionService übergeben werden.
-        /// Außerdem wird geprüft, ob die Progress-Reporter korrekt aufgerufen werden.
+        /// Dies ist der "Happy Path". Es prÃ¼ft, ob die Listen aus Cache und Cookies korrekt
+        /// zusammengefÃ¼hrt und an den FileDeletionService Ã¼bergeben werden.
+        /// AuÃŸerdem wird geprÃ¼ft, ob die Progress-Reporter korrekt aufgerufen werden.
         /// </summary>
         [Fact]
         public async Task ExecuteAsync_ShouldCallDeletionService_WithCombinedPaths()
@@ -192,7 +192,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             result.Success.ShouldBeTrue();
             result.ErrorMessage.ShouldBeEmpty();
 
-            // Prüfen, ob DeleteFilesAsync exakt einmal mit beiden Pfaden aufgerufen wurde
+            // PrÃ¼fen, ob DeleteFilesAsync exakt einmal mit beiden Pfaden aufgerufen wurde
             _mockFileDeletionService.Verify(f => f.DeleteFilesAsync(
                 It.Is<List<string>>(list => list.Contains("C:\\Brave\\Cache") && list.Contains("C:\\Brave\\Cookies") && list.Count == 2),
                 It.IsAny<IProgress<string>>(),
@@ -200,7 +200,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
-            // Prüfen, ob die Final-Meldung in der UI gelandet ist (inkl. der korrekten Gesamtanzahl)
+            // PrÃ¼fen, ob die Final-Meldung in der UI gelandet ist (inkl. der korrekten Gesamtanzahl)
             progressUpdates.ShouldContain(p => p.StatusMessage == "Cleanup_Finished" && p.TotalFiles == 100 && p.CurrentFile == 100);
         }
 
@@ -211,7 +211,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Wenn ein unvorhergesehener Fehler passiert (z.B. ein Dienst wirft eine Exception),
-        /// darf die Anwendung nicht abstürzen. Der Fehler muss sicher in der Response verpackt werden.
+        /// darf die Anwendung nicht abstÃ¼rzen. Der Fehler muss sicher in der Response verpackt werden.
         /// </summary>
         [Fact]
         public async Task ExecuteAsync_ShouldCatchExceptions_AndReturnFailure()

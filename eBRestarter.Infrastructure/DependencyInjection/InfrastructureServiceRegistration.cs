@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Facade;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Browser;
@@ -9,8 +8,10 @@ using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Application.Interfaces.Security;
 using eBRestarter.Core.Application.Interfaces.Update;
 using eBRestarter.Infrastructure.Browsers;
+using eBRestarter.Infrastructure.Facades;
 using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Services;
+using eBRestarter.Infrastructure.Services.Scheduling;
 using eBRestarter.Infrastructure.Services.Authentication;
 using eBRestarter.Infrastructure.Services.Config;
 using eBRestarter.Infrastructure.Services.RestSharp;
@@ -18,7 +19,7 @@ using eBRestarter.Infrastructure.Services.Update;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Infrastructure.Services.WindowsOS.Security;
 using eBRestarter.Infrastructure.Wrapper;
-using eBRestarter.Infrastructure.Wrapper.Interface;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -88,11 +89,15 @@ public static class InfrastructureServiceRegistration
 
         services.AddSingleton<IFileDeletionService, FileDeletionService>();
 
-        services.AddSingleton<IApiAuthenticationService, EVisitorApiService>();
+        services.AddSingleton<IApiAuthenticationService, EVisitorApiAuthenticationService>();
 
         services.AddSingleton<ICredentialStore, JsonCredentialStore>();
 
         services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
+
+        services.AddSingleton<IBrowserDisplayNameResolver, BrowserDisplayNameResolverService>();
+
+        services.AddSingleton<IBrowserExtensionDeploymentService, BrowserExtensionDeploymentService>();
 
         services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
 
@@ -101,6 +106,8 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
 
         services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();
+
+        services.AddSingleton<IComputerRestartScheduler, ComputerRestartScheduler>();
 
         return services;
     }

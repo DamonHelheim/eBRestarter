@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Enums;
 using Moq;
 using Shouldly;
 using System;
@@ -28,7 +28,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
             _mockBrowserFactory = new Mock<IBrowserFactory>();
             _mockEdgeBrowser = new Mock<IBrowser>();
 
-            // Standard-Setup: Wenn die Factory nach Edge gefragt wird, liefern wir unseren Mock zurück
+            // Standard-Setup: Wenn die Factory nach Edge gefragt wird, liefern wir unseren Mock zurÃ¼ck
             _mockBrowserFactory
                 .Setup(f => f.Create(BrowserType.Edge))
                 .Returns(_mockEdgeBrowser.Object);
@@ -45,7 +45,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Status des Startup-Boosts 1:1 vom Windows-Service
-        /// durchgereicht wird, ohne dass die Logik ihn verfälscht.
+        /// durchgereicht wird, ohne dass die Logik ihn verfÃ¤lscht.
         /// </summary>
         [Theory]
         [InlineData(true)]
@@ -65,8 +65,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Die UI muss wissen, ob Edge überhaupt installiert ist, bevor sie den Schalter anzeigt.
-        /// Der Test prüft, ob der Service den Edge-Browser aus der Factory anfordert und
+        /// Die UI muss wissen, ob Edge Ã¼berhaupt installiert ist, bevor sie den Schalter anzeigt.
+        /// Der Test prÃ¼ft, ob der Service den Edge-Browser aus der Factory anfordert und
         /// dessen 'IsInstalled' Property korrekt auswertet.
         /// </summary>
         [Theory]
@@ -83,7 +83,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
             // ASSERT
             result.ShouldBe(isInstalled);
 
-            // Verifizieren, dass explizit Edge angefordert wurde (nicht Chrome o.ä.)
+            // Verifizieren, dass explizit Edge angefordert wurde (nicht Chrome o.Ã¤.)
             _mockBrowserFactory.Verify(f => f.Create(BrowserType.Edge), Times.Once);
         }
 
@@ -95,7 +95,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         /// WARUM WIRD DAS GETESTET?
         /// Der "Happy Path": Wenn der Benutzer den Schalter umlegt (egal ob an oder aus),
         /// muss der Windows-Service mit exakt diesem Wert aufgerufen werden und eine
-        /// Erfolgs-Response zurückliefern.
+        /// Erfolgs-Response zurÃ¼ckliefern.
         /// </summary>
         [Theory]
         [InlineData(true)]
@@ -117,9 +117,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Fehlerbehandlung: Wenn es beim Ändern der Registry/Richtlinie knallt
+        /// Fehlerbehandlung: Wenn es beim Ã„ndern der Registry/Richtlinie knallt
         /// (z.B. fehlende Admin-Rechte / UnauthorizedAccessException), darf die
-        /// App nicht abstürzen. Das Response-Objekt muss den Fehler sauber verpacken.
+        /// App nicht abstÃ¼rzen. Das Response-Objekt muss den Fehler sauber verpacken.
         /// </summary>
         [Fact]
         public void Toggle_ShouldCatchException_AndReturnFailureResponse()

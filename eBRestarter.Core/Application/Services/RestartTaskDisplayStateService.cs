@@ -1,35 +1,21 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Domain.Models.Records.Config;
+using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Services;
 
 namespace eBRestarter.Core.Application.Services;
 
 /// <summary>
-/// Erzeugt RestartTaskDisplayState aus Config und Lokalisierung (Move aus ViewModelRestartTask LoadInitialData).
+/// Erzeugt RestartTaskDisplayState aus Config und Lokalisierung.
 /// </summary>
 public class RestartTaskDisplayStateService(
     ILocalizationService localizationService,
     ICacheDeletionIntervalValidator intervalValidator,
     TimeProvider timeProvider) : IRestartTaskDisplayStateService
 {
-    // =========================================================
-    // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
-    // =========================================================
-    #region FieldsAndInjectedServices
-
     private readonly ILocalizationService _localizationService = localizationService;
     private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator;
     private readonly TimeProvider _timeProvider = timeProvider;
-
-    #endregion
-    #region ConstructorAndFinalizer
-
-    #endregion
-
-    // =========================================================
-    // 3. PUBLIC & PROTECTED METHODS (API)
-    // =========================================================
-    #region PublicAndProtectedMethods
 
     /// <inheritdoc />
     public RestartTaskDisplayState GetInitialState(AppConfig config)
@@ -38,19 +24,18 @@ public class RestartTaskDisplayStateService(
         {
             return new RestartTaskDisplayState
             {
-                ChoosenBrowser = _localizationService.GetString("Task_DefaultBrowser"),
+                ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser"),
                 PauseSeconds = 20,
                 RuntimeSeconds = 3600
             };
         }
 
         string username = config.Username ?? "-";
-        string choosenBrowser = config.Browser?.Selected ?? _localizationService.GetString("Task_DefaultBrowser");
+        string chosenBrowser = config.Browser?.Selected ?? _localizationService.GetString("Task_DefaultBrowser");
 
         int runtimeSeconds = config.Browser != null ? config.Browser.RuntimeHours * 3600 : 3600;
         int pauseSeconds = config.Browser?.RuntimePauseSeconds ?? 20;
 
-        // <--- NEU: Aus der Config auslesen
         bool checkBrowserAliveRoutine = config.Browser?.CheckBrowserAliveRoutine ?? false;
 
         int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
@@ -85,7 +70,7 @@ public class RestartTaskDisplayStateService(
         return new RestartTaskDisplayState
         {
             Username = username,
-            ChoosenBrowser = choosenBrowser,
+            ChosenBrowser = chosenBrowser,
             RuntimeSeconds = runtimeSeconds,
             PauseSeconds = pauseSeconds,
             CheckBrowserAliveRoutine = checkBrowserAliveRoutine,
@@ -95,6 +80,4 @@ public class RestartTaskDisplayStateService(
             NextDeletionProcessDateMessage = nextDeletionProcessDateMessage
         };
     }
-
-    #endregion
 }

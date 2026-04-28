@@ -1,8 +1,8 @@
-﻿using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.RestClient;
-using eBRestarter.Core.Domain.Models;
-using eBRestarter.Core.Domain.Models.Records.Config;
-using eBRestarter.Infrastructure.Constants;
+using eBRestarter.Core.Application.Models.Api;
+using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;

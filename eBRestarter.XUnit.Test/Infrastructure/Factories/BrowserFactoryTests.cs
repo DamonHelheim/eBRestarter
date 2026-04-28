@@ -1,5 +1,5 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Browsers;
 using eBRestarter.Infrastructure.Factories;
 using Microsoft.Extensions.Logging;
@@ -11,19 +11,19 @@ using Xunit;
 namespace eBRestarter.XUnit.Test.Infrastructure.Factories
 {
     /// <summary>
-    /// Testet die BrowserFactory, welche für die Instanziierung der korrekten Browser-Klassen
-    /// über den Dependency Injection Container (IServiceProvider) zuständig ist.
+    /// Testet die BrowserFactory, welche fÃ¼r die Instanziierung der korrekten Browser-Klassen
+    /// Ã¼ber den Dependency Injection Container (IServiceProvider) zustÃ¤ndig ist.
     /// </summary>
     public class BrowserFactoryTests
     {
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Die Factory nutzt ein 'switch'-Statement, um das Enum auf konkrete Klassen zu mappen.
-        /// Ein simpler Kopierfehler im Code (z.B. Edge => gibt Chrome zurück) würde das Programm crashen.
+        /// Ein simpler Kopierfehler im Code (z.B. Edge => gibt Chrome zurÃ¼ck) wÃ¼rde das Programm crashen.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir prüfen für JEDEN gültigen BrowserType, ob die Factory den ServiceProvider nach dem
-        /// exakt korrekten Typ fragt und diesen zurückgibt. Wir nutzen [Theory] und [InlineData],
+        /// Wir prÃ¼fen fÃ¼r JEDEN gÃ¼ltigen BrowserType, ob die Factory den ServiceProvider nach dem
+        /// exakt korrekten Typ fragt und diesen zurÃ¼ckgibt. Wir nutzen [Theory] und [InlineData],
         /// um alle Browser-Arten in einem einzigen Test-Durchlauf zu verifizieren.
         /// </summary>
         [Theory]
@@ -39,11 +39,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
             // ==========================================
             var mockServiceProvider = new Mock<IServiceProvider>();
 
-            // Um die konkreten Browser zu erstellen, brauchen wir Dummy-Mocks für deren Konstruktoren
+            // Um die konkreten Browser zu erstellen, brauchen wir Dummy-Mocks fÃ¼r deren Konstruktoren
             var mockOs = new Mock<IOperatingSystemFacade>();
 
-            // Wir definieren für jeden Browser-Typ eine Dummy-Instanz.
-            // Der ServiceProvider soll diese zurückgeben, wenn er danach gefragt wird.
+            // Wir definieren fÃ¼r jeden Browser-Typ eine Dummy-Instanz.
+            // Der ServiceProvider soll diese zurÃ¼ckgeben, wenn er danach gefragt wird.
             var fakeChrome = new ChromeBrowser(mockOs.Object, new Mock<ILogger<ChromeBrowser>>().Object);
             var fakeFirefox = new FirefoxBrowser(mockOs.Object, new Mock<ILogger<FirefoxBrowser>>().Object);
             var fakeEdge = new EdgeBrowser(mockOs.Object, new Mock<ILogger<EdgeBrowser>>().Object);
@@ -62,29 +62,29 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
             var factory = new BrowserFactory(mockServiceProvider.Object);
 
             // ==========================================
-            // ACT (Ausführung)
+            // ACT (AusfÃ¼hrung)
             // ==========================================
             var result = factory.Create(inputType);
 
             // ==========================================
-            // ASSERT (Prüfung)
+            // ASSERT (PrÃ¼fung)
             // ==========================================
-            // 1. Prüfen wir, ob überhaupt etwas zurückkam
+            // 1. PrÃ¼fen wir, ob Ã¼berhaupt etwas zurÃ¼ckkam
             result.ShouldNotBeNull();
 
-            // 2. Prüfen wir, ob das zurückgegebene Objekt vom ERWARTETEN Typ ist.
+            // 2. PrÃ¼fen wir, ob das zurÃ¼ckgegebene Objekt vom ERWARTETEN Typ ist.
             // z.B. wenn inputType = BrowserType.Edge ist, muss das Ergebnis vom Typ 'EdgeBrowser' sein.
             result.ShouldBeOfType(expectedClassType);
         }
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Wenn in der Zukunft jemand im 'BrowserType' Enum einen neuen Browser (z.B. Opera) hinzufügt,
+        /// Wenn in der Zukunft jemand im 'BrowserType' Enum einen neuen Browser (z.B. Opera) hinzufÃ¼gt,
         /// aber vergisst, die Factory anzupassen, soll das Programm kontrolliert mit einer
         /// klaren NotSupportedException abbrechen, anstatt seltsame Fehler zu werfen.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir werfen einen absichtlich ungültigen Enum-Wert in die Factory und nutzen die
+        /// Wir werfen einen absichtlich ungÃ¼ltigen Enum-Wert in die Factory und nutzen die
         /// Shouldly-Methode 'ShouldThrow', um zu garantieren, dass exakt diese Exception fliegt.
         /// </summary>
         [Fact]
@@ -96,14 +96,14 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
             var mockServiceProvider = new Mock<IServiceProvider>();
             var factory = new BrowserFactory(mockServiceProvider.Object);
 
-            // Wir "erfinden" einen ungültigen BrowserType, indem wir eine Zahl casten,
+            // Wir "erfinden" einen ungÃ¼ltigen BrowserType, indem wir eine Zahl casten,
             // die gar nicht im Enum definiert ist.
             var invalidBrowserType = (BrowserType)999;
 
             // ==========================================
             // ACT & ASSERT
             // ==========================================
-            // Shouldly fängt die Exception und prüft ihren Typ und (optional) die Nachricht
+            // Shouldly fÃ¤ngt die Exception und prÃ¼ft ihren Typ und (optional) die Nachricht
             var exception = Should.Throw<NotSupportedException>(() =>
             {
                 factory.Create(invalidBrowserType);

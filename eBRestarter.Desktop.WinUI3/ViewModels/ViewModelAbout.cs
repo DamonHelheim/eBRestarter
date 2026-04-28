@@ -13,40 +13,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     /// </summary>
     public partial class ViewModelAbout : ObservableObject
     {
-        // =========================================================
-        // 1. FIELDS & INJECTED SERVICES (Backing-Felder und DI)
-        // =========================================================
-        #region FieldsAndInjectedServices
-
         private readonly IAppInfoService _appInfoService;
-        private readonly ILocalizationService _localizationService;
+
         private readonly IIconCreditService _iconCreditService;
 
-        #endregion
-
-        // =========================================================
-        // 2. OBSERVABLE PROPERTIES (MVVM State)
-        // =========================================================
-        #region ObservableProperties
+        private readonly ILocalizationService _localizationService;
 
         [ObservableProperty] public partial string AppVersion { get; set; }
 
-        #endregion
-
-        // =========================================================
-        // 3. PUBLIC PROPERTIES (Data & State)
-        // =========================================================
-        #region PublicProperties
-
         /// <summary>Collection of icon credit entries shown on the About page (e.g. author and license).</summary>
         public ObservableCollection<IconCredit> IconCredits { get; } = [];
-
-        #endregion
-
-        // =========================================================
-        // 4. CONSTRUCTOR & FINALIZER (Ctor)
-        // =========================================================
-        #region ConstructorAndFinalizer
 
         /// <summary>
         /// Initializes the About VM with app-info and localization services, sets a loading placeholder
@@ -61,18 +37,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _localizationService = localizationService;
             _iconCreditService = iconCreditService;
             AppVersion = _localizationService.GetString("About_Loading");
-            LoadData();
+            LoadVersionAndIconCredits();
         }
 
-        #endregion
-
-        // =========================================================
-        // 5. PRIVATE HELPER METHODS (Interne Hilfsmethoden)
-        // =========================================================
-        #region PrivateHelperMethods
-
         /// <summary>Fetches version from app info and icon credits, then updates AppVersion and IconCredits for binding.</summary>
-        private void LoadData()
+        private void LoadVersionAndIconCredits()
         {
             string prefix = _localizationService.GetString("About_VersionPrefix");
             AppVersion = $"{prefix} {_appInfoService.GetAppVersion()}";
@@ -81,7 +50,5 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             foreach (var iconCredit in credits)
                 IconCredits.Add(iconCredit);
         }
-
-        #endregion
     }
 }

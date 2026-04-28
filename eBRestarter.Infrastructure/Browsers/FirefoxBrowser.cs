@@ -1,7 +1,7 @@
-﻿using eBRestarter.Core.Application.Contstants;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Enums;
-using eBRestarter.Core.Domain.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.Extensions.Logging;
 
@@ -22,7 +22,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
     protected override string RegistryKeyVersion => @"Software\Mozilla\Mozilla Firefox";
 
     // ---------------------------------------------------------------------------------
-    // PRÜFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
+    // PRÃœFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
     // ---------------------------------------------------------------------------------
     public override bool IsExtensionInstalled(string? extensionId = null)
     {
@@ -35,7 +35,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
             ? EbesucherAddOnNameForFirefox.TrimStart('\\')
             : extensionId;
 
-        // Wir prüfen jeden gefundenen Profil-Ordner
+        // Wir prÃ¼fen jeden gefundenen Profil-Ordner
         foreach (var extensionsDir in paths.ExtensionsDirs)
         {
             if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
@@ -45,7 +45,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
             if (_os.WindowsFileSystemService.FileExists(xpiPath)) return true;
 
             // Fall 2: Die Extension ist ein entpackter Ordner (Sideloading)
-            // Entferne .xpi Endung für den Ordnernamen-Check
+            // Entferne .xpi Endung fÃ¼r den Ordnernamen-Check
             var folderName = idToCheck.Replace(".xpi", "", StringComparison.OrdinalIgnoreCase);
             var folderPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, folderName);
             if (_os.WindowsFileSystemService.DirectoryExists(folderPath)) return true;
@@ -55,7 +55,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
     }
 
     // ---------------------------------------------------------------------------------
-    // PFADE: Cache, Cookies & Extensions für ALLE Profile ermitteln
+    // PFADE: Cache, Cookies & Extensions fÃ¼r ALLE Profile ermitteln
     // ---------------------------------------------------------------------------------
     public override BrowserPaths GetPaths()
     {
@@ -65,7 +65,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
         var firefoxRoamingRoot = _os.WindowsFileSystemService.CombinePaths(appData, "Mozilla", "Firefox");
         var firefoxLocalRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "Mozilla", "Firefox");
 
-        // Listen für die Ergebnisse
+        // Listen fÃ¼r die Ergebnisse
         var cacheDirs = new List<string>();
         var cookiesDirs = new List<string>();
         var extensionsDirs = new List<string>();
@@ -74,7 +74,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
         var profilesIniPath = _os.WindowsFileSystemService.CombinePaths(firefoxRoamingRoot, "profiles.ini");
         var profileInfos = GetProfileFoldersFromIni(profilesIniPath);
 
-        // 2. Pfade für jedes gefundene Profil generieren
+        // 2. Pfade fÃ¼r jedes gefundene Profil generieren
         foreach (var profile in profileInfos)
         {
             string fullProfilePathRoaming;
@@ -101,12 +101,12 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
             // --- CACHE (LocalAppData) ---
             // Pfad: ...\Profiles\xxxx.default\cache2\entries
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "cache2", "entries"));
-            // Optional: Auch den StartupCache löschen
+            // Optional: Auch den StartupCache lÃ¶schen
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "startupCache"));
 
             // --- COOKIES (Roaming) ---
             // Pfad: ...\Profiles\xxxx.default\storage\default
-            // (Firefox speichert Daten für Webseiten hier in Unterordnern)
+            // (Firefox speichert Daten fÃ¼r Webseiten hier in Unterordnern)
             cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathRoaming, "storage", "default"));
 
             // --- EXTENSIONS (Roaming) ---
@@ -152,10 +152,10 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
 
         try
         {
-            // Wir nutzen System.IO direkt für das zeilenweise Lesen
+            // Wir nutzen System.IO direkt fÃ¼r das zeilenweise Lesen
             var lines = _os.WindowsFileSystemService.ReadAllLines(iniPath);
 
-            // Temporäre Variablen für den aktuellen Block
+            // TemporÃ¤re Variablen fÃ¼r den aktuellen Block
             string? currentPath = null;
             bool? currentIsRelative = null;
 
@@ -174,7 +174,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
                         });
                     }
 
-                    // Reset für neuen Block
+                    // Reset fÃ¼r neuen Block
                     currentPath = null;
                     currentIsRelative = null;
                     continue;

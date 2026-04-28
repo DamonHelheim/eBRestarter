@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Services;
 using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
@@ -10,6 +9,7 @@ using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
+using eBRestarter.Core.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Core.Application.DependencyInjections;
@@ -23,10 +23,10 @@ public static class ApplicationServiceExtensions
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddSingleton<IComputerRestartScheduler, ComputerRestartScheduler>();
         services.AddSingleton<IRestartCalculationService, RestartCalculationService>();
+        services.AddSingleton<IComputerRestartDateService, ComputerRestartDateService>();
+        services.AddSingleton<IApplicationLaunchConfigService, ApplicationLaunchConfigService>();
         services.AddSingleton<ICacheDeletionIntervalValidator, CacheDeletionIntervalValidator>();
-        services.AddSingleton<IBrowserDisplayNameResolver, BrowserDisplayNameResolverService>();
         services.AddSingleton<IBrowserCleanupScheduleService, BrowserCleanupScheduleService>();
         services.AddSingleton<IRestartTaskDisplayStateService, RestartTaskDisplayStateService>();
 
