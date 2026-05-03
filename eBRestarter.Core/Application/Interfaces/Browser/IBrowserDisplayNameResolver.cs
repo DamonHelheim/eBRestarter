@@ -7,10 +7,7 @@ namespace eBRestarter.Core.Application.Interfaces.Browser;
 /// </summary>
 public interface IBrowserDisplayNameResolver
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Vertrag)
-    // =========================================================
-    #region PublicMethods
+
 
     /// <summary>
     /// Ermittelt den BrowserType aus dem Anzeigenamen (z.B. ComboBox-Text).
@@ -20,5 +17,4 @@ public interface IBrowserDisplayNameResolver
     /// <returns>BrowserType, bei unbekannt/leer Fallback auf Chrome</returns>
     BrowserType GetBrowserTypeFromDisplayName(string displayName, string defaultDisplayText);
 
-    #endregion
 }

@@ -16,7 +16,7 @@ public class RealProcessWrapper : IProcessWrapper
     /// Startet eine Prozessressource, die durch den Parameter <see cref="ProcessStartInfo"/> angegeben wird,
     /// und verknüpft die Ressource mit einer neuen <see cref="Process"/>-Komponente.
     /// </summary>
-    /// <param name="info">Die <see cref="ProcessStartInfo"/>, die die Startdaten (Dateiname, Argumente etc.) enthält.</param>
+    /// <param name="info">Die <see cref="ProcessStartInfo"/>, die Startdaten (Dateiname, Argumente etc.) enthält.</param>
     /// <returns>
     /// Eine neue <see cref="Process"/>-Komponente, die der Prozessressource zugeordnet ist,
     /// oder <c>null</c>, wenn keine Prozessressource gestartet wurde.
@@ -71,6 +71,6 @@ public class RealProcessWrapper : IProcessWrapper
 
         // HIER IST DIE LÖSUNG: Wir nehmen jeden echten Prozess (p) und stecken ihn in den ProcessAdapter.
         // Das Ergebnis wandeln wir in ein Array von IProcess um.
-        return processes.Select(p => (IProcess)new ProcessAdapter(p)).ToArray();
+        return [.. processes.Select(p => (IProcess)new ProcessAdapter(p))];
     }
 }
