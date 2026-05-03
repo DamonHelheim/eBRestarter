@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.Globalization;
 using System;
+using System.Globalization;
+using System.Threading;
 
 
 namespace eBRestarter.Desktop.WinUI3
@@ -35,7 +37,7 @@ namespace eBRestarter.Desktop.WinUI3
         }
 
         private static IHostBuilder CreateHostBuilder() => Host.CreateDefaultBuilder()
-             .ConfigureAppConfiguration((ctx, cfg) =>
+             .ConfigureAppConfiguration((_, cfg) =>
              {
                  cfg.Sources.Clear();
                  cfg.SetBasePath(AppContext.BaseDirectory);
@@ -81,11 +83,11 @@ namespace eBRestarter.Desktop.WinUI3
 
                 ApplicationLanguages.PrimaryLanguageOverride = languageCode;
 
-                System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo(languageCode);
-                System.Threading.Thread.CurrentThread.CurrentCulture = culture;
-                System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
-                System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
-                System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+                CultureInfo culture = new(languageCode);
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
             }
             catch (Exception)
             {

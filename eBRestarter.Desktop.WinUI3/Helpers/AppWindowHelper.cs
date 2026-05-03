@@ -7,11 +7,6 @@ namespace eBRestarter.Desktop.WinUI3.Helpers;
 /// </summary>
 public static class AppWindowHelper
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API)
-    // =========================================================
-    #region PublicMethods
-
     /// <summary>
     /// Configures title bar colors and extends content into the title bar for the given window.
     /// </summary>
@@ -29,6 +24,4 @@ public static class AppWindowHelper
         window.ExtendsContentIntoTitleBar = true;
         window.SetTitleBar(null);
     }
-
-    #endregion
 }

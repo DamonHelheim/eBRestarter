@@ -5,7 +5,7 @@ namespace eBRestarter.Core.Application.Models.Config;
 /// <summary>
 /// Repräsentiert die Struktur der config.json für die Chrome-Erweiterung
 /// </summary>
-public record ExtensionConfigDto
+public sealed record ExtensionConfigDto
 {
     public string LANGUAGE { get; init; } = "DE";
     public string ZIEL_URL { get; init; } = WebLinks.EVisitorSurflink;

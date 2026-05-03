@@ -960,4 +960,7 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
   <data name="Options_ExtensionFolderOpenError_Message" xml:space="preserve">
     <value>Der Erweiterungsordner konnte nicht geöffnet oder erstellt werden: {0}</value>
   </data>
+  <data name="HTTPS_Timeout_Message" xml:space="preserve">
+    <value>Die Anfrage hat das Zeitlimit Überschritten</value>
+  </data>
 </root>

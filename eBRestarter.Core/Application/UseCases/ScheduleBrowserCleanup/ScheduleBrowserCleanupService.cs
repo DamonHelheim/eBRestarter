@@ -12,9 +12,11 @@ public class ScheduleBrowserCleanupService(
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)
     {
         var config = _configService.LoadConfig();
+
         config.Browser.DeleteBrowserCacheIntervalDays = request.IntervalDays;
 
         bool isActive = IsIntervalAllowed(request.IntervalDays);
+
         DateTime? nextDate = null;
 
         if (isActive)
@@ -32,7 +34,7 @@ public class ScheduleBrowserCleanupService(
         return new ScheduleBrowserCleanupResponse(isActive, nextDate);
     }
 
-    private bool IsIntervalAllowed(int days)
+    private static bool IsIntervalAllowed(int days)
     {
         return days switch
         {

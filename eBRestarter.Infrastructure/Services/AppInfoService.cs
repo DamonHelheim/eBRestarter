@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Models.Records;
 using System.Diagnostics;
 using System.Reflection;
 

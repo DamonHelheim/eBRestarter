@@ -11,20 +11,9 @@ namespace eBRestarter.Desktop.WinUI3.Services;
 /// </summary>
 public sealed class NavigationService : INavigationService
 {
-    // =========================================================
-    // 1. FIELDS & INJECTED SERVICES (Backing state)
-    // =========================================================
-    #region FieldsAndInjectedServices
 
     private readonly Dictionary<string, Type> _pages = [];
     private INavigationFrame? _frameAdapter;
-
-    #endregion
-
-    // =========================================================
-    // 2. PUBLIC METHODS
-    // =========================================================
-    #region PublicMethods
 
     public void AttachFrame(Frame frame)
     {
@@ -55,5 +44,4 @@ public sealed class NavigationService : INavigationService
         _pages.TryAdd(key, pageType);
     }
 
-    #endregion
 }

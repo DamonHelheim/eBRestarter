@@ -11,11 +11,11 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
     public class RestSharpClientService(ILogger<RestSharpClientService> logger, HttpMessageHandler? httpMessageHandler = null) : IRestClientService
     {
         private readonly ILogger<RestSharpClientService> _logger = logger;
-        private readonly HttpMessageHandler? _httpMessageHandler = httpMessageHandler; // NEU FÃœR TESTS
+        private readonly HttpMessageHandler? _httpMessageHandler = httpMessageHandler;
 
         public async Task<ApiResponse> ExecuteGetAsync(ApiRequest requestModel)
         {
-            // Client erstellen (using sorgt fÃ¼r Dispose)
+            // Client erstellen (using sorgt für Dispose)
             using var client = CreateClient(requestModel);
 
             var request = new RestRequest();
@@ -91,12 +91,13 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             // Hier ist response.StatusCode in der Regel '0'
             if (response.ResponseStatus == ResponseStatus.TimedOut)
             {
-                _logger.LogWarning("API Fehler: Lokaler Timeout bei {Url}", response.Request.Resource);
+                _logger.LogWarning("API error: Local timeout at {Url}", response.Request.Resource);
+
                 return new ApiResponse
                 {
                     IsSuccess = false,
                     StatusCode = ResponseCode.HTTPTimeout,
-                    ErrorMessage = "Die Anfrage hat das Zeitlimit Ã¼berschritten."
+                    ErrorMessage = "The request has exceeded the time limit"
                 };
             }
 
@@ -121,7 +122,7 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             };
         }
 
-        private ResponseCode CheckRateLimit(RestResponse response)
+        private static ResponseCode CheckRateLimit(RestResponse response)
         {
             // Versuche den Header sicher zu lesen
             var header = response.Headers?.FirstOrDefault(h => h.Name == "X-Ratelimit-Remaining")?.Value?.ToString();
@@ -130,18 +131,24 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             {
                 return ResponseCode.RequestLimit;
             }
+
             return ResponseCode.Success;
+
         }
 
-        private ApiResponse MapExceptionToResponse(Exception ex)
+        private static ApiResponse MapExceptionToResponse(Exception ex)
         {
             // Mapping von .NET Exceptions zu deinem Enum
             var code = ex switch
             {
                 TimeoutException => ResponseCode.HTTPTimeout,
+
                 TaskCanceledException => ResponseCode.HTTPTimeout,
+
                 HttpRequestException httpEx when httpEx.Message.Contains("429") => ResponseCode.HttpRE429,
+
                 HttpRequestException httpEx when httpEx.Message.Contains("401") => ResponseCode.HttpRE401,
+
                 _ => ResponseCode.GeneralExceptionError
             };
 

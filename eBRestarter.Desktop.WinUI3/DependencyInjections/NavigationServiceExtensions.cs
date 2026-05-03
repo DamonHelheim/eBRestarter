@@ -10,10 +10,6 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections;
 /// </summary>
 public static class NavigationServiceExtensions
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Extension)
-    // =========================================================
-    #region PublicMethods
 
     public static IServiceCollection AddNavigationService(this IServiceCollection services)
     {
@@ -27,8 +23,7 @@ public static class NavigationServiceExtensions
             navService.RegisterRoute("Settings", typeof(P_Settings));
             return navService;
         });
+
         return services;
     }
-
-    #endregion
 }

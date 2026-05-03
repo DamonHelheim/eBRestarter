@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Services.Scheduling;
 
-public class ComputerRestartScheduler(
+public partial class ComputerRestartScheduler(
     IEVisitorConfigService configService,
     IWindowsProcessControlService processService,
     IApplicationLifetime applicationLifetime,
@@ -170,12 +170,7 @@ public class ComputerRestartScheduler(
         }
     }
 
-    // =========================================================
-    // IDisposable Pattern
-    // =========================================================
-
     private bool _disposed;
-
     public void Dispose()
     {
         // Ruft die eigentliche Aufräum-Methode auf

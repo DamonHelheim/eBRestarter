@@ -2,7 +2,7 @@ using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.Models.Api;
 
-public class ApiResponse
+public sealed class ApiResponse
 {
     public bool IsSuccess { get; set; }
     public string? Content { get; set; } // Das JSON

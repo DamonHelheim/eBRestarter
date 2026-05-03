@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -7,27 +7,32 @@ using System.Runtime.Versioning;
 namespace eBRestarter.Infrastructure.Services.WindowsOS.Security;
 
 [SupportedOSPlatform("windows")]
-public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : IWindowsAutoLogonService
+public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : IWindowsAutoLogonService
 {
     private const string WinLogonPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon";
     private const string DefaultPasswordKey = "DefaultPassword";
+
     private readonly ILogger<WindowsAutoLogonService> _logger = logger;
 
     public void EnableAutoLogon(string username, string domain, string password)
     {
         try
         {
-            using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, true);
-            if (key == null) throw new InvalidOperationException("Winlogon Registry Key nicht gefunden.");
+            using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, true) ?? throw new InvalidOperationException("Winlogon Registry Key nicht gefunden.");
 
             // 1. Registry Werte setzen
             key.SetValue("AutoAdminLogon", "1", RegistryValueKind.String);
+
             key.SetValue("DefaultUserName", username, RegistryValueKind.String);
 
             if (!string.IsNullOrEmpty(domain))
+            {
                 key.SetValue("DefaultDomainName", domain, RegistryValueKind.String);
+            }
             else
+            {
                 key.DeleteValue("DefaultDomainName", false);
+            }
 
             // WICHTIG: Klartext-Passwort aus Registry löschen, falls vorhanden
             key.DeleteValue(DefaultPasswordKey, false);
@@ -35,11 +40,16 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
             // 2. Passwort sicher in LSA Secrets speichern
             SetLsaSecret(DefaultPasswordKey, password);
 
-            _logger.LogInformation("AutoLogon für User '{User}' erfolgreich aktiviert.", username);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("AutoLogon für User '{User}' erfolgreich aktiviert.", username);
+            }
+
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Fehler beim Aktivieren von AutoLogon.");
+
             throw;
         }
     }
@@ -49,6 +59,7 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         try
         {
             using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, true);
+
             key?.SetValue("AutoAdminLogon", "0", RegistryValueKind.String);
 
             // LSA Secret löschen
@@ -92,13 +103,15 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
     public bool IsAutoLogonEnabled()
     {
         using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, false);
+
         var val = key?.GetValue("AutoAdminLogon") as string;
+
         return val == "1";
     }
 
     // --- Private Helper & P/Invoke (Interne Logik) ---
 
-    private void SetLsaSecret(string keyName, string? value)
+    private static void SetLsaSecret(string keyName, string? value)
     {
         var objectAttributes = new LSA_OBJECT_ATTRIBUTES(); // Structs initialisieren standardmäßig auf 0/Null
 
@@ -107,7 +120,8 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         var secretValue = (value != null) ? InitLsaString(value) : new LSA_UNICODE_STRING(); // Leeres Struct für Löschung
 
         IntPtr lsaPolicyHandle = IntPtr.Zero;
-        uint access = 0x00000020 | 0x00000800; // POLICY_CREATE_SECRET | POLICY_LOOKUP_NAMES
+
+        const uint access = 0x00000020 | 0x00000800; // POLICY_CREATE_SECRET | POLICY_LOOKUP_NAMES
 
         var result = LsaOpenPolicy(ref localsystem, ref objectAttributes, access, out lsaPolicyHandle);
 
@@ -127,14 +141,19 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
                 }
 
                 if (result != 0)
+                {
                     throw new Exception($"LsaStorePrivateData Fehlercode: {result}");
+                }
+
             }
             finally
             {
-                LsaClose(lsaPolicyHandle);
+                _ = LsaClose(lsaPolicyHandle);
+
                 // Speicher freigeben
                 FreeLsaString(secretKey);
-                if (value != null) FreeLsaString(secretValue);
+
+                if (value != null) { FreeLsaString(secretValue); }
             }
         }
         else
@@ -143,7 +162,7 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         }
     }
 
-    private LSA_UNICODE_STRING InitLsaString(string s)
+    private static LSA_UNICODE_STRING InitLsaString(string s)
     {
         // Sauberere Implementierung mit Marshal
         return new LSA_UNICODE_STRING
@@ -154,7 +173,7 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         };
     }
 
-    private void FreeLsaString(LSA_UNICODE_STRING lus)
+    private static void FreeLsaString(LSA_UNICODE_STRING lus)
     {
         if (lus.Buffer != IntPtr.Zero)
         {
@@ -183,16 +202,16 @@ public class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> logger) : 
         public IntPtr SecurityQualityOfService;
     }
 
-    [DllImport("advapi32.dll")]
-    private static extern uint LsaOpenPolicy(ref IntPtr SystemName, ref LSA_OBJECT_ATTRIBUTES ObjectAttributes, uint DesiredAccess, out IntPtr PolicyHandle);
+    [LibraryImport("advapi32.dll")]
+    private static partial uint LsaOpenPolicy(ref IntPtr SystemName, ref LSA_OBJECT_ATTRIBUTES ObjectAttributes, uint DesiredAccess, out IntPtr PolicyHandle);
 
-    [DllImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
-    private static extern uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, ref LSA_UNICODE_STRING PrivateData);
+    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
+    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, ref LSA_UNICODE_STRING PrivateData);
 
     // Überladung zum Löschen (IntPtr für null)
-    [DllImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
-    private static extern uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, IntPtr PrivateData);
+    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
+    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, IntPtr PrivateData);
 
-    [DllImport("advapi32.dll")]
-    private static extern uint LsaClose(IntPtr ObjectHandle);
+    [LibraryImport("advapi32.dll")]
+    private static partial uint LsaClose(IntPtr ObjectHandle);
 }

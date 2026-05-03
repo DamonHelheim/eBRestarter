@@ -9,16 +9,9 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections;
 /// </summary>
 public static class DialoglServiceExtensions
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Extension)
-    // =========================================================
-    #region PublicMethods
-
     public static IServiceCollection AddDialoglServiceExtensions(this IServiceCollection services)
     {
         services.AddSingleton<IDialogService, DialogService>();
         return services;
     }
-
-    #endregion
 }

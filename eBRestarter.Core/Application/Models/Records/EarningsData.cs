@@ -9,7 +9,7 @@ namespace eBRestarter.Core.Application.Models.Records;
 /// <param name="YearlySum">Die Gesamtsumme des aktuellen Jahres.</param>
 /// <param name="MonthlySum">Die Gesamtsumme des aktuellen Monats.</param>
 /// <param name="TodaySum">Die Gesamtsumme des heutigen Tages.</param>
-public record EarningsData(
+public sealed record EarningsData(
     double[] HourlyEarnings, // Die 24 Balken
     double[] DailyEarnings,
     double[] MonthlyEarnings,

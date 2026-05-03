@@ -1,4 +1,3 @@
-using eBRestarter.Desktop.WinUI3.Models;
 using System.Collections.ObjectModel;
 
 namespace eBRestarter.Desktop.WinUI3.Models.Constants

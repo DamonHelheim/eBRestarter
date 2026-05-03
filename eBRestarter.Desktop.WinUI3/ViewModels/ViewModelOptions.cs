@@ -13,7 +13,6 @@ using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
-using eBRestarter.Desktop.WinUI3;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -42,6 +41,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private const int ExtensionSaveStatusDisplayDurationMilliseconds = 3000;
 
         private const int MillisecondsPerMinute = 60000;
+
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        {
+            WriteIndented = true,
+            TypeInfoResolver = ExtensionConfigJsonContext.Default
+        };
 
         private readonly IBrowserExtensionDeploymentService _browserExtensionDeploymentService;
 
@@ -448,13 +453,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     WARTEZEIT_MS = (int)(ExtensionWaitTimeMinutes * MillisecondsPerMinute)
                 };
 
-                var jsonSerializerOptions = new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    TypeInfoResolver = ExtensionConfigJsonContext.Default
-                };
-
-                string jsonString = JsonSerializer.Serialize(extensionConfigDto, jsonSerializerOptions);
+                string jsonString = JsonSerializer.Serialize(extensionConfigDto, _jsonSerializerOptions);
 
                 if (!Directory.Exists(extensionPath))
                 {

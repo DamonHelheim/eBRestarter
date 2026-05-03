@@ -4,16 +4,12 @@ using System.Runtime.Versioning;
 namespace eBRestarter.Infrastructure.Services.WindowsOS;
 
 [SupportedOSPlatform("windows")]
-public class WindowsPathService : IPathService
+public class WindowsPathService(IPathProvider pathProvider) : IPathService
 {
-    private readonly IPathProvider _pathProvider;
+    private readonly IPathProvider _pathProvider = pathProvider;
+
     private const string AppFolderName = "eBRestarter";
     private const string ConfigFileName = "eBRestarterConfig.json"; // Jetzt JSON!
-
-    public WindowsPathService(IPathProvider pathProvider)
-    {
-        _pathProvider = pathProvider;
-    }
 
     // %LocalAppData%/eBRestarter/
     public string GetAppDataPath()

@@ -3,7 +3,7 @@ using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.Interfaces.Browser;
 
-//(Was muss ein Browser kÃ¶nnen?)
+//(Was muss ein Browser können?)
 public interface IBrowser
 {
     string DisplayName { get; }

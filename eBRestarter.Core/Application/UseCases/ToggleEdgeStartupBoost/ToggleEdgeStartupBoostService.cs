@@ -16,6 +16,7 @@ public class ToggleEdgeStartupBoostService(
     public bool IsEdgeInstalled()
     {
         var edge = _browserFactory.Create(BrowserType.Edge);
+
         return edge.IsInstalled;
     }
 
@@ -24,7 +25,9 @@ public class ToggleEdgeStartupBoostService(
         try
         {
             _startupService.SetEdgeStartupBoost(enable);
+
             return new ToggleEdgeStartupBoostResponse(true, enable);
+
         }
         catch (Exception ex)
         {

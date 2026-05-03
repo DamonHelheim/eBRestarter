@@ -38,7 +38,7 @@ namespace eBRestarter.Infrastructure.Services
 
         public async Task<string> GetOsEditionAsync()
         {
-            return await Task.Run(() => GetWmiValue("Win32_OperatingSystem", "Caption") ?? "Windows (Unbekannt)");
+            return await Task.Run(() => GetWmiValue("Win32_OperatingSystem", "Caption") ?? "Windows (Unkwone)");
         }
 
         // Private Hilfsmethode, um Code-Duplizierung zu vermeiden (DRY Principle)
@@ -59,7 +59,7 @@ namespace eBRestarter.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Fehler beim Abrufen von WMI Daten: {Class}.{Property}", wmiClass, property);
+                _logger.LogError(ex, "Error retrieving WMI data: {Class}.{Property}", wmiClass, property);
             }
             return null;
         }

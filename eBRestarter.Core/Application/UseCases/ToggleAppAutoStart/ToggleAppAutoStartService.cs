@@ -13,6 +13,7 @@ public class ToggleAppAutoStartService(
     public async Task<bool> InitializeAndGetStateAsync()
     {
         var config = _configService.LoadConfig();
+
         bool isEnabledInOs = await _startupManagerService.IsAutoStartEnabledAsync();
 
         if (config.Settings.StartWithWindows && !isEnabledInOs)

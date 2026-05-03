@@ -1,7 +1,7 @@
+using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
@@ -24,13 +24,16 @@ public class DeleteBrowserContentService(
         try
         {
             var browser = _browserFactory.Create(request.BrowserType);
+
             string processName = GetProcessNameByType(request.BrowserType);
 
             // If forced close is requested, do it. Otherwise just check if running.
             if (request.ForceCloseProcess)
             {
                 progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_ClosingBrowser"), 0, 0));
+
                 _processService.CloseApplication(processName);
+
                 await Task.Delay(1000, cancellationToken);
             }
 
@@ -42,11 +45,15 @@ public class DeleteBrowserContentService(
             var browserPaths = browser.GetPaths();
             var directoriesToDelete = new List<string>();
 
-            if (request.DeleteCache && browserPaths.CacheDirs != null && browserPaths.CacheDirs.Count > 0)
+            if (request.DeleteCache && browserPaths.CacheDirs?.Count > 0)
+            {
                 directoriesToDelete.AddRange(browserPaths.CacheDirs);
+            }
 
-            if (request.DeleteCookies && browserPaths.CookiesDirs != null && browserPaths.CookiesDirs.Count > 0)
+            if (request.DeleteCookies && browserPaths.CookiesDirs?.Count > 0)
+            {
                 directoriesToDelete.AddRange(browserPaths.CookiesDirs);
+            }
 
             if (directoriesToDelete.Count == 0)
             {
@@ -54,17 +61,19 @@ public class DeleteBrowserContentService(
             }
 
             progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Analyzing"), 0, 0));
+
             int totalFiles = await _fileDeletionService.CountFilesAsync(directoriesToDelete);
 
             var statusProgress = new Progress<string>(status =>
                 progress.Report(new DeleteBrowserContentProgress(status, 0, totalFiles)));
 
             var fileProgress = new Progress<int>(count =>
-                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Running") ?? "LÃ¶sche...", count, totalFiles)));
+                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Running") ?? "Delete...", count, totalFiles)));
 
             await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, fileProgress, cancellationToken);
 
             progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Finished"), totalFiles, totalFiles));
+
             return new DeleteBrowserContentResponse(true, false, string.Empty);
         }
         catch (Exception ex)
@@ -73,7 +82,7 @@ public class DeleteBrowserContentService(
         }
     }
 
-    private string GetProcessNameByType(BrowserType type)
+    private static string GetProcessNameByType(BrowserType type)
     {
         return type switch
         {
