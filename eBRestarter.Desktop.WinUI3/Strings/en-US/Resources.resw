@@ -316,7 +316,7 @@
     <value>Browser download links</value>
   </data>
   <data name="About_eV_Restarter.Text" xml:space="preserve">
-    <value>About eB Restarter</value>
+    <value>About eV Restarter</value>
   </data>
   <data name="AppTitleBar.Title" xml:space="preserve">
     <value>eVRestarter</value>
@@ -559,7 +559,7 @@
     <value>Browser missing</value>
   </data>
   <data name="InstallAddOnDialog.Title" xml:space="preserve">
-    <value>Manage eBesucher Add-on</value>
+    <value>Manage eVisitor Add-on</value>
   </data>
   <data name="InstallAddOnDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
@@ -631,7 +631,7 @@
     <value>Username</value>
   </data>
   <data name="ActivateApiDialog_Username.PlaceholderText" xml:space="preserve">
-    <value>eBesucher Username</value>
+    <value>eVisitor Username</value>
   </data>
   <data name="ActivateApiDialog_ApiKey.Header" xml:space="preserve">
     <value>API Key</value>
@@ -688,7 +688,7 @@
     <value>Version:</value>
   </data>
   <data name="AboutDialog.Title" xml:space="preserve">
-    <value>About eBRestarter</value>
+    <value>About eVRestarter</value>
   </data>
   <data name="AboutDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
@@ -760,13 +760,13 @@
     <value>Next deletion process:</value>
   </data>
   <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
-    <value>on {0:MM/dd/yyyy} at 12 AM</value>
+    <value>on {0:MM/dd/yyyy} at 1 AM</value>
   </data>
   <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="AddOnInfo_HeaderMain.Text" xml:space="preserve">
-    <value>eBesucher Add-on Information</value>
+    <value>eVisitor Add-on Information</value>
   </data>
   <data name="AddOnInfo_BodyMain.Text" xml:space="preserve">
     <value>You must install the eBesucher Add-on for the surfbar to start automatically with your username. Without it, the surfbar will not start automatically when the restarter is active.</value>
