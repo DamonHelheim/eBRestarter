@@ -110,20 +110,14 @@ public partial class WindowsProcessService(ILogger<WindowsProcessService> logger
             process.WaitForExit();
 
             // Protokolliert Fehler oder Ausgaben, falls vorhanden
-            if (!string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(error) && _logger.IsEnabled(LogLevel.Warning))
             {
-                if (_logger.IsEnabled(LogLevel.Warning))
-                {
-                    _logger.LogWarning("MSI Installer Fehler-Output: {Error}", error);
-                }
+                _logger.LogWarning("MSI Installer Fehler-Output: {Error}", error);
             }
 
-            if (!string.IsNullOrWhiteSpace(output))
+            if (!string.IsNullOrWhiteSpace(output) && _logger.IsEnabled(LogLevel.Debug))
             {
-                if (_logger.IsEnabled(LogLevel.Debug))
-                {
-                    _logger.LogDebug("MSI Installer Output: {Output}", output);
-                }
+                _logger.LogDebug("MSI Installer Output: {Output}", output);
             }
         }
         catch (Exception ex)

@@ -10,7 +10,6 @@ public static class ViewModelServiceExtensions
 {
     public static IServiceCollection AddViewModels(this IServiceCollection services)
     {
-        services.AddSingleton<MainViewModel>();
         services.AddSingleton<EBRestarter>();
         services.AddSingleton<ViewModelRestartTask>();
         services.AddSingleton<ViewModelRestarterProperties>();

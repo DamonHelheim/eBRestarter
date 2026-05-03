@@ -32,11 +32,9 @@ public class BrowserExtensionDeploymentService : IBrowserExtensionDeploymentServ
 #endif
     }
 
-#pragma warning disable CA1822 // Member als statisch markieren
 #pragma warning disable RCS1213 // Remove unused member declaration
-    private void CopyDirectoryContents(string sourceDir, string targetDir)
+    private static void CopyDirectoryContents(string sourceDir, string targetDir)
 #pragma warning restore RCS1213 // Remove unused member declaration
-#pragma warning restore CA1822 // Member als statisch markieren
     {
         foreach (var dirPath in Directory.GetDirectories(sourceDir, "*", SearchOption.AllDirectories))
         {

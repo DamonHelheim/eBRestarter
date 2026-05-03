@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <title>Tab Restarter Popup</title>
     <style>
         body {
             font-family: sans-serif;
@@ -62,7 +63,7 @@
         }
 
         .btn-on {
-            background: #00b300;
+            background: #008000;
         }
 
         .btn-off {
@@ -103,7 +104,7 @@
             margin-top: 15px;
             width: 100%;
             padding: 8px;
-            background: #007bff;
+            background: #0056b3;
             color: white;
             border: none;
             border-radius: 4px;
@@ -112,7 +113,7 @@
         }
 
             #saveBtn:hover {
-                background: #0056b3;
+                background: #004085;
             }
 
         #status {
@@ -150,10 +151,10 @@
     </label>
 
     <div id="settingsArea" style="opacity: 0.5; pointer-events: none;">
-        <label data-i18n="urlLabel">Ziel-URL:</label>
+        <label for="zielUrl" data-i18n="urlLabel">Ziel-URL:</label>
         <input type="text" id="zielUrl" placeholder="https://...">
 
-        <label data-i18n="timeLabel">Wartezeit (Minuten):</label>
+        <label for="wartezeitMin" data-i18n="timeLabel">Wartezeit (Minuten):</label>
         <input type="number" id="wartezeitMin" placeholder="3" min="1">
     </div>
 

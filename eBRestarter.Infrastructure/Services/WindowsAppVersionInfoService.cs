@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using System.Reflection;
 
 namespace eBRestarter.Infrastructure.Services;
@@ -19,6 +19,6 @@ public class WindowsAppVersionInfoService : IAppVersionInfoService
             return $"{assemblyVersion.Major}.{assemblyVersion.Minor}.{assemblyVersion.Build}.{assemblyVersion.Revision}";
         }
 
-        return "1.0.0.0"; // Fallback
+        return new Version(1, 0, 0, 0).ToString(); // Fallback
     }
 }

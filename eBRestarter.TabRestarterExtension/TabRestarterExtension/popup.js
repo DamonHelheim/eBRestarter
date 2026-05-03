@@ -37,8 +37,8 @@ let configLang = "DE";  // Die Sprache, die in der config.json steht
 function applyLanguage() {
     const elements = document.querySelectorAll('[data-i18n]');
     elements.forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[currentLang] && dict[currentLang][key]) {
+        const key = el.dataset.i18n;
+        if (dict[currentLang]?.[key]) {
             el.innerHTML = dict[currentLang][key];
         }
     });
@@ -133,7 +133,7 @@ function toggleFields() {
 document.getElementById('saveBtn').addEventListener('click', () => {
     const useCustom = document.getElementById('useCustom').checked;
     let customUrl = document.getElementById('zielUrl').value.trim();
-    const customTimeMin = parseInt(document.getElementById('wartezeitMin').value, 10);
+    const customTimeMin = Number.parseInt(document.getElementById('wartezeitMin').value, 10);
 
     if (customUrl && !customUrl.startsWith('http://') && !customUrl.startsWith('https://')) {
         customUrl = 'https://' + customUrl;

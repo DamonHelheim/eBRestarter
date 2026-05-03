@@ -15,15 +15,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// </summary>
 public partial class ViewModelImportApi : ObservableObject
 {
-    private const string DefaultFileStatusIconUri = "ms-appx:///Resources/Visuals/Icons/LightTheme/note_light_theme.png";
+    private const string BaseIconUri = "ms-appx:///Resources/Visuals/Icons/";
+
+    private const string DefaultFileStatusIconUri = BaseIconUri + "LightTheme/note_light_theme.png";
 
     private const string ErrorFileReadMessage = "Fehler beim Lesen der Datei (Format ungültig).";
 
     private const string ErrorInvalidFileFormatMessage = "Ungültiges Dateiformat. Bitte .apiaf Datei verwenden.";
 
-    private const string FileStatusIconErrorUri = "ms-appx:///Resources/Visuals/Icons/Intersection/wrong_document.png";
+    private const string FileStatusIconErrorUri = BaseIconUri + "Intersection/wrong_document.png";
 
-    private const string FileStatusIconReadyUri = "ms-appx:///Resources/Visuals/Icons/Intersection/approval.png";
+    private const string FileStatusIconReadyUri = BaseIconUri + "Intersection/approval.png";
 
     private const string ImportFailedMessagePrefix = "Import fehlgeschlagen: ";
 

@@ -39,8 +39,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// Initialisiert eine neue Instanz des Hauptfensters.
         /// </summary>
         /// <param name="navigationService">Der injizierte Navigationsdienst (Dependency Injection).</param>
-        /// <param name="mainViewModel">Das ViewModel für das Hauptfenster (für Binding von Menüelementen etc.).</param>
-        public EBRestarter(INavigationService navigationService, IAppVersionInfoService iAppVersionInfoService, MainViewModel mainViewModel)
+        public EBRestarter(INavigationService navigationService, IAppVersionInfoService iAppVersionInfoService)
         {
             InitializeComponent();
 
@@ -59,10 +58,6 @@ namespace eBRestarter.Desktop.WinUI3
             // WICHTIG: Verbindung von UI (View) und Logik (Service).
             // Wir übergeben den XAML-Frame an den Service, damit dieser navigieren kann.
             _navigationService.AttachFrame(NavigationFrame);
-
-            // MVVM-Binding: Setzt den DataContext für das XAML (Window.Content).
-            // Ermöglicht DataBinding im XAML (z.B. {Binding CurrentPageTitle}).
-            (this.Content as FrameworkElement)!.DataContext = mainViewModel;
 
             // Initiale Navigation beim Start der App.
             // Wir nutzen den String-Key "CommonOverview", damit das Fenster den konkreten Typ der Page nicht kennen muss.

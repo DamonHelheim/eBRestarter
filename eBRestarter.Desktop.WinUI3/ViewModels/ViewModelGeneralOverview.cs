@@ -72,7 +72,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
     public partial string CountryName { get; set; } = "-";
 
     [ObservableProperty]
-    public partial string CurrentDay { get; set; } = string.Empty;
+    public partial string CurrentDay { get; set; } = "-";
 
     [ObservableProperty]
     public partial string CurrentMonth { get; set; } = DateTime.Now.ToString("MMMM");
@@ -96,7 +96,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
     public partial string IpAddress { get; set; } = "-";
 
     [ObservableProperty]
-    public partial ObservableCollection<ISeries> Series { get; set; } = null!;
+    public partial ObservableCollection<ISeries> Series { get; set; }
 
     /// <summary>Localized chart title based on selected pivot (hourly/daily/yearly) and current date.</summary>
     public string ChartTitle => SelectedPivotIndex switch

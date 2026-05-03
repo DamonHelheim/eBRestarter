@@ -34,7 +34,6 @@
     <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
     <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
     <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
-    <None Remove="Views\Dialogs\ImportApiDialog.xaml" />
     <None Remove="Views\Dialogs\InstallAddOnInfoDialog.xaml" />
     <None Remove="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml" />
     <None Remove="Views\Pages\P_CommonOverview.xaml" />
@@ -393,11 +392,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\UserControls\UC_RestartAgent.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Dialogs\ImportApiDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

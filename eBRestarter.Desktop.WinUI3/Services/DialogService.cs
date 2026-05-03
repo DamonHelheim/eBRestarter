@@ -74,7 +74,6 @@ public class DialogService : IDialogService
     public async Task ShowInstallAddOnDialogAsync() => await ShowDialogInternalAsync<InstallAddOnDialog>();
     public async Task ShowInstallAddOnInfoDialogAsync() => await ShowDialogInternalAsync<InstallAddOnInfoDialog>();
     public async Task ShowActivateApiDialogAsync() => await ShowDialogInternalAsync<ActivateApiDialog>();
-    public async Task ShowImportApiDialogAsync() => await ShowDialogInternalAsync<ImportApiDialog>();
     public async Task ShowTurnOffEdgeStartupBoostDialogAsync() => await ShowDialogInternalAsync<TurnOffEdgeStartupBoostDialog>();
 
     public async Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false)
