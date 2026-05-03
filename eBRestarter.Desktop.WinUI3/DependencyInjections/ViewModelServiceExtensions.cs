@@ -23,7 +23,6 @@ public static class ViewModelServiceExtensions
         services.AddTransient<ViewModelDeleteBrowserContent>();
         services.AddTransient<ViewModelInstallAddOn>();
         services.AddTransient<ViewModelActivateApi>();
-        services.AddTransient<ViewModelImportApi>();
         services.AddTransient<ViewModelTurnOffEdgeStartupBoost>();
 
         return services;
