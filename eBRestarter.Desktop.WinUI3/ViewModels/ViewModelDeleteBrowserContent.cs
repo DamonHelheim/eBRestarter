@@ -116,7 +116,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string selectedBrowserString = appConfig.Browser.Selected;
 
             if (Enum.TryParse<BrowserType>(selectedBrowserString, ignoreCase: true, out BrowserType parsedBrowserType))
+            {
                 Initialize(parsedBrowserType);
+            }
             else
             {
                 string errorFormat = _localizationService.GetString("Cleanup_ConfigError");

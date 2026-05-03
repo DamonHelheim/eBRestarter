@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Interfaces.Authentication;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using System.DirectoryServices.AccountManagement;
 using Windows.Services.Maps;
 

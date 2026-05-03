@@ -1,12 +1,9 @@
 ﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace eBRestarter.Infrastructure.Wrapper
 {
-    public class ProcessAdapter(Process process) : IProcess
+    public partial class ProcessAdapter(Process process) : IProcess
     {
         private readonly Process _process = process ?? throw new ArgumentNullException(nameof(process));
 
@@ -19,6 +16,9 @@ namespace eBRestarter.Infrastructure.Wrapper
         public bool WaitForExit(int milliseconds) => _process.WaitForExit(milliseconds);
         public Task WaitForExitAsync() => _process.WaitForExitAsync();
 
-        public void Dispose() => _process.Dispose();
+        public void Dispose()
+        {
+            _process.Dispose();
+        }
     }
 }

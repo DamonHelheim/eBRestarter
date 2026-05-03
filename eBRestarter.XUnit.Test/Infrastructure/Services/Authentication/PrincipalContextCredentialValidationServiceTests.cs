@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Infrastructure.Services.Authentication;
 using Moq;
 using Shouldly;

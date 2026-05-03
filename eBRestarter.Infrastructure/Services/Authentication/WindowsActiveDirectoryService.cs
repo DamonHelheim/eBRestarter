@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Interfaces.Authentication;
 using System.DirectoryServices.AccountManagement;
 
 namespace eBRestarter.Infrastructure.Services.Authentication;

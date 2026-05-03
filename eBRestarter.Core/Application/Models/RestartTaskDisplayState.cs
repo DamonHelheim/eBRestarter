@@ -5,11 +5,6 @@ namespace eBRestarter.Core.Application.Models;
 /// </summary>
 public sealed class RestartTaskDisplayState
 {
-    // =========================================================
-    // 1. PUBLIC PROPERTIES (Data & State)
-    // =========================================================
-    #region PublicProperties
-
     public string Username { get; init; } = "-";
     public string ChosenBrowser { get; init; } = string.Empty;
     public int RuntimeSeconds { get; init; }
@@ -20,5 +15,4 @@ public sealed class RestartTaskDisplayState
     public string NextDeletionProcessDateMessage { get; init; } = string.Empty;
     public bool CheckBrowserAliveRoutine { get; init; }
 
-    #endregion
 }

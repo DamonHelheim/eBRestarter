@@ -4,7 +4,7 @@ using System.DirectoryServices.AccountManagement;
 using System.Net.Mime;
 using System.Text;
 
-namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS
+namespace eBRestarter.Core.Application.Interfaces.Authentication
 {
     public interface IActiveDirectoryService
     {
