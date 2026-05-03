@@ -33,6 +33,7 @@ public partial class ComputerRestartScheduler(
         _logger.LogInformation("Computer Restart Scheduler gestartet.");
 
         _cts = new CancellationTokenSource();
+
         // Prüfe alle 30 Sekunden (ausreichend genau für Minuten-Checks)
         _timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
 
@@ -123,11 +124,11 @@ public partial class ComputerRestartScheduler(
                     newTargetDate = today;
                 }
 
-                config.Computer.NextRestartDate = today;
+                config.Computer.NextRestartDate = newTargetDate;
                 _configService.SaveConfig(config);
 
                 // UI informieren, dass sich das Datum verschoben hat
-                OnNextRestartDateChanged?.Invoke(this, today);
+                OnNextRestartDateChanged?.Invoke(this, newTargetDate);
                 return;
             }
 

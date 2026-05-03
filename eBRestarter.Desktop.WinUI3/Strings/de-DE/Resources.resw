@@ -760,7 +760,7 @@
     <value>Nächster Löschvorgang:</value>
   </data>
   <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
-    <value>am {0:dd.MM.yyyy} um 0 Uhr</value>
+    <value>am {0:dd.MM.yyyy} um 1 Uhr</value>
   </data>
   <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Schließen</value>
