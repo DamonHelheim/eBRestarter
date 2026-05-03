@@ -38,4 +38,3 @@ C:\Users\Workstation\.nuget\packages\microsoft.testplatform.testhost\18.5.1\buil
 C:\Users\Workstation\.nuget\packages\microsoft.testplatform.testhost\18.5.1\build\net8.0\x64\testhost.dll
 C:\Users\Workstation\.nuget\packages\xunit.runner.visualstudio\3.1.5\build\net8.0\xunit.abstractions.dll
 C:\Users\Workstation\.nuget\packages\xunit.runner.visualstudio\3.1.5\build\net8.0\xunit.runner.visualstudio.testadapter.dll
-C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\TestResults\d1ab10ab-6554-4c0a-89b7-7a9a3737dc60\coverage.opencover.xml

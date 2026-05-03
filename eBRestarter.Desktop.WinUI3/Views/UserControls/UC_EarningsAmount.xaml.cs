@@ -53,11 +53,6 @@ public sealed partial class UC_EarningsAmount : UserControl
     public UC_EarningsAmount()
     {
         InitializeComponent();
-        // KEIN manuelles DataContext-Setzen hier
-
-        //tbl_sum_points_daily.DataContext = this;
-        //headerImage.DataContext = this;
-        //tbl_EarningsDay.DataContext = this;
     }
 }
 

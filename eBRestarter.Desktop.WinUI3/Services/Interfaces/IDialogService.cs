@@ -14,7 +14,6 @@ public interface IDialogService
     Task ShowInstallAddOnDialogAsync();
     Task ShowInstallAddOnInfoDialogAsync();
     Task ShowActivateApiDialogAsync();
-    Task ShowImportApiDialogAsync();
     Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false);
     Task ShowTurnOffEdgeStartupBoostDialogAsync();
 }

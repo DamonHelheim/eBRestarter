@@ -51,7 +51,7 @@ async function getActiveSettings() {
 // =========================================================================
 let isEnforcing = false;
 
-function forceSingleTabRedirect(newUrl) {
+async function forceSingleTabRedirect(newUrl) {
     if (isEnforcing) return;
     isEnforcing = true;
 
@@ -60,38 +60,41 @@ function forceSingleTabRedirect(newUrl) {
 
     console.log(`Erzwinge Redirect auf: ${newUrl}. Schließe alle alten Tabs.`);
 
-    // 1. Zuerst ALLE aktuell offenen Tabs aufschreiben
-    chrome.tabs.query({}, (oldTabs) => {
+    try {
+        // 1. Zuerst ALLE aktuell offenen Tabs aufschreiben
+        const oldTabs = await new Promise(resolve => chrome.tabs.query({}, resolve));
         const oldTabIds = oldTabs.map(tab => tab.id);
 
         // 2. Den neuen Tab öffnen
-        chrome.tabs.create({ url: newUrl }, (newTab) => {
-            // Timer für den frisch geschlüpften Tab direkt scharfschalten
-            resetTabTimer(newTab.id);
+        const newTab = await new Promise(resolve => chrome.tabs.create({ url: newUrl }, resolve));
+        
+        // Timer für den frisch geschlüpften Tab direkt scharfschalten
+        resetTabTimer(newTab.id);
 
-            // 3. Wenn es alte Tabs gab, diese gnadenlos löschen
-            if (oldTabIds.length > 0) {
-                chrome.tabs.remove(oldTabIds, () => {
-                    let ignoreError = chrome.runtime.lastError;
-
-                    // 4. Doppelter Check nach 1 Sekunde! (Falls alte Tabs hängen geblieben sind)
-                    setTimeout(() => {
-                        chrome.tabs.query({}, (checkTabs) => {
-                            // Finde alle Tabs, die NICHT unser neuer Tab sind
-                            const strayTabs = checkTabs.filter(t => t.id !== newTab.id).map(t => t.id);
-                            if (strayTabs.length > 0) {
-                                console.log("Stray Tabs gefunden! Trete nochmal nach...");
-                                chrome.tabs.remove(strayTabs);
-                            }
-                            isEnforcing = false; // Reguläres Entsperren
-                        });
-                    }, 1000);
-                });
-            } else {
-                isEnforcing = false;
+        // 3. Wenn es alte Tabs gab, diese gnadenlos löschen
+        if (oldTabIds.length > 0) {
+            await new Promise(resolve => chrome.tabs.remove(oldTabIds, resolve));
+            if (chrome.runtime.lastError) {
+                console.debug("Ignoriere Fehler beim Schließen alter Tabs:", chrome.runtime.lastError.message);
             }
-        });
-    });
+
+            // 4. Doppelter Check nach 1 Sekunde! (Falls alte Tabs hängen geblieben sind)
+            setTimeout(async () => {
+                const checkTabs = await new Promise(resolve => chrome.tabs.query({}, resolve));
+                const strayTabs = checkTabs.filter(t => t.id !== newTab.id).map(t => t.id);
+                if (strayTabs.length > 0) {
+                    console.log("Stray Tabs gefunden! Trete nochmal nach...");
+                    chrome.tabs.remove(strayTabs);
+                }
+                isEnforcing = false; // Reguläres Entsperren
+            }, 1000);
+        } else {
+            isEnforcing = false;
+        }
+    } catch (e) {
+        console.error(e);
+        isEnforcing = false;
+    }
 }
 
 // Sucht nach unerlaubten Zweit-Tabs (z.B. beim Start oder durch Popups)

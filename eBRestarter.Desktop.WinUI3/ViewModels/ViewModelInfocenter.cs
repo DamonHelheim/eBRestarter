@@ -27,25 +27,25 @@ public partial class ViewModelInfocenter : ObservableObject
     private readonly ILocalizationService _localizationService;
 
     [ObservableProperty]
-    public partial string BrowserText { get; set; } = string.Empty;
+    public partial string BrowserText { get; set; }
 
     [ObservableProperty]
-    public partial string GraphicsText { get; set; } = string.Empty;
+    public partial string GraphicsText { get; set; }
 
     [ObservableProperty]
-    public partial string OsBuildText { get; set; } = string.Empty;
+    public partial string OsBuildText { get; set; }
 
     [ObservableProperty]
-    public partial string OsEditionText { get; set; } = string.Empty;
+    public partial string OsEditionText { get; set; }
 
     [ObservableProperty]
-    public partial string OsVersionText { get; set; } = string.Empty;
+    public partial string OsVersionText { get; set; }
 
     [ObservableProperty]
-    public partial string ProcessorText { get; set; } = string.Empty;
+    public partial string ProcessorText { get; set; }
 
     [ObservableProperty]
-    public partial string RamText { get; set; } = string.Empty;
+    public partial string RamText { get; set; }
 
     /// <summary>
     /// Initializes the VM with the system-information use case and dialog service; sets all info

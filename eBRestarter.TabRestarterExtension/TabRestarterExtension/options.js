@@ -21,7 +21,7 @@ function toggleFields() {
 document.getElementById('saveBtn').addEventListener('click', () => {
   const useCustom = document.getElementById('useCustom').checked;
   let customUrl = document.getElementById('zielUrl').value.trim();
-  const customTimeMin = parseInt(document.getElementById('wartezeitMin').value, 10);
+  const customTimeMin = Number.parseInt(document.getElementById('wartezeitMin').value, 10);
 
   // URL reparieren (http:// hinzufügen, falls vergessen)
   if (customUrl && !customUrl.startsWith('http://') && !customUrl.startsWith('https://')) {

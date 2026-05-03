@@ -17,7 +17,7 @@ public class ManageRestarterCycleService(
     TimeProvider timeProvider,
     IWindowsProcessControlService processService) : IManageRestarterCycleUseCase // NEU: IWindowsProcessControlService injiziert
 {
-    private const string BaseUrl = WebLinks.EVisitorSurflink; //"https://www.ebesucher.com/surfbar/";
+    private const string BaseUrl = WebLinks.EVisitorSurflink;
     private const int InitialDelaySeconds = 5;
 
     private readonly IBrowserFactory _browserFactory = browserFactory;
@@ -139,12 +139,9 @@ public class ManageRestarterCycleService(
             token.ThrowIfCancellationRequested();
 
             // 1. Alive-Check
-            if (request.CheckBrowserAliveRoutine && secondsRemaining < request.RuntimeSeconds - 2)
+            if (request.CheckBrowserAliveRoutine && secondsRemaining < request.RuntimeSeconds - 2 && !_processService.IsProcessAlive(processName))
             {
-                if (!_processService.IsProcessAlive(processName))
-                {
-                    return BrowserPhaseResult.BrowserClosed;
-                }
+                return BrowserPhaseResult.BrowserClosed;
             }
 
             // 2. Cleanup-Check (Prüft gegen das taufrische Datum aus der Config)

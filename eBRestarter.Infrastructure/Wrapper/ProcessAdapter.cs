@@ -16,9 +16,23 @@ namespace eBRestarter.Infrastructure.Wrapper
         public bool WaitForExit(int milliseconds) => _process.WaitForExit(milliseconds);
         public Task WaitForExitAsync() => _process.WaitForExitAsync();
 
+        private bool _disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _process.Dispose();
+                }
+                _disposedValue = true;
+            }
+        }
+
         public void Dispose()
         {
-            _process.Dispose();
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }

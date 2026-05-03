@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AnalysisConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
-  <SonarConfigDir>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf</SonarConfigDir>
-  <SonarOutputDir>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\out</SonarOutputDir>
-  <SonarBinDir>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\bin</SonarBinDir>
-  <SonarScannerWorkingDirectory>C:\Users\Workstation\source\repos\eBRestarter</SonarScannerWorkingDirectory>
+  <SonarConfigDir>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf</SonarConfigDir>
+  <SonarOutputDir>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\out</SonarOutputDir>
+  <SonarBinDir>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\bin</SonarBinDir>
+  <SonarScannerWorkingDirectory>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test</SonarScannerWorkingDirectory>
   <JavaExePath>C:\Users\Workstation\.sonar\cache\39c5e23f3ce4d420663afba8ffde28034b72e2b3e240943dc2321bc1f912eef9\OpenJDK21U-jre_x64_windows_hotspot_21.0.9_10.zip_extracted\jdk-21.0.9+10-jre\bin\java.exe</JavaExePath>
   <EngineJarPath>C:\Users\Workstation\.sonar\cache\6638ba85ce42e3932d84e2a6fa4e88da59fb6dc108749aa9079633593d82b651\sonar-scanner-engine-shaded-26.3.0.120487-all.jar</EngineJarPath>
   <UseSonarScannerCli>false</UseSonarScannerCli>
@@ -18,7 +18,7 @@
     <ConfigSetting Id="TfsUri" />
     <ConfigSetting Id="VsCoverageConverterToolPath" />
     <ConfigSetting Id="UnchangedFilesPath" />
-    <ConfigSetting Id="sonar.pullrequest.cache.basepath" Value="C:\Users\Workstation\source\repos\eBRestarter" />
+    <ConfigSetting Id="sonar.pullrequest.cache.basepath" Value="C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test" />
     <ConfigSetting Id="settings.file.path" Value="C:\Users\Workstation\.dotnet\tools\.store\dotnet-sonarscanner\11.2.0\dotnet-sonarscanner\11.2.0\tools\netcoreapp3.1\any\SonarQube.Analysis.xml" />
   </AdditionalConfig>
   <ServerSettings>
@@ -155,13 +155,15 @@
   </ServerSettings>
   <LocalSettings>
     <Property Name="sonar.host.url">http://192.168.0.123:9001</Property>
+    <Property Name="sonar.cs.opencover.reportsPaths">**/TestResults/**/coverage.opencover.xml</Property>
+    <Property Name="sonar.exclusions">**/TestResults/**/coverage.opencover.xml</Property>
   </LocalSettings>
   <ScannerOptsSettings />
   <AnalyzersSettings>
     <AnalyzerSettings>
       <Language>cs</Language>
-      <RulesetPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\Sonar-cs.ruleset</RulesetPath>
-      <DeactivatedRulesetPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\Sonar-cs-none.ruleset</DeactivatedRulesetPath>
+      <RulesetPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\Sonar-cs.ruleset</RulesetPath>
+      <DeactivatedRulesetPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\Sonar-cs-none.ruleset</DeactivatedRulesetPath>
       <AnalyzerPlugins>
         <AnalyzerPlugin Key="csharp" Version="10.19.0.132793" StaticResourceName="SonarAnalyzer-csharp-10.19.0.132793.zip">
           <AssemblyPaths>
@@ -173,13 +175,13 @@
         </AnalyzerPlugin>
       </AnalyzerPlugins>
       <AdditionalFilePaths>
-        <Path>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\cs\SonarLint.xml</Path>
+        <Path>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\cs\SonarLint.xml</Path>
       </AdditionalFilePaths>
     </AnalyzerSettings>
     <AnalyzerSettings>
       <Language>vbnet</Language>
-      <RulesetPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\Sonar-vbnet.ruleset</RulesetPath>
-      <DeactivatedRulesetPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\Sonar-vbnet-none.ruleset</DeactivatedRulesetPath>
+      <RulesetPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\Sonar-vbnet.ruleset</RulesetPath>
+      <DeactivatedRulesetPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\Sonar-vbnet-none.ruleset</DeactivatedRulesetPath>
       <AnalyzerPlugins>
         <AnalyzerPlugin Key="vbnet" Version="10.19.0.132793" StaticResourceName="SonarAnalyzer-vbnet-10.19.0.132793.zip">
           <AssemblyPaths>
@@ -191,7 +193,7 @@
         </AnalyzerPlugin>
       </AnalyzerPlugins>
       <AdditionalFilePaths>
-        <Path>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\vbnet\SonarLint.xml</Path>
+        <Path>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\.sonarqube\conf\vbnet\SonarLint.xml</Path>
       </AdditionalFilePaths>
     </AnalyzerSettings>
   </AnalyzersSettings>
