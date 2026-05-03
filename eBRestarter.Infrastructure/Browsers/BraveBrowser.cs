@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Constants;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.Extensions.Logging;
@@ -24,7 +24,7 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
     // Brave nutzt "brave" als Prozessnamen
     protected override string ProcessName => "brave";
 
-    // Registry Key fÃ¼r VersionsprÃ¼fung
+    // Registry Key für Versionsprüfung
     protected override string RegistryKeyVersion => @"Software\BraveSoftware\Brave-Browser\BLBeacon";
 
     // --- NEU IMPLEMENTIERT ---
@@ -35,7 +35,7 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
     {
         var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
 
-        // Das ist der Wurzel-Ordner fÃ¼r ALLE Daten
+        // Das ist der Wurzel-Ordner für ALLE Daten
         var userDataRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "BraveSoftware", "Brave-Browser", "User Data");
 
         var cacheDirs = new List<string>();
@@ -48,21 +48,26 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
 
         // Check Default
         var defaultPath = _os.WindowsFileSystemService.CombinePaths(userDataRoot, "Default");
+
         if (_os.WindowsFileSystemService.DirectoryExists(defaultPath))
+        {
             allProfileFolders.Add(defaultPath);
 
-        // Check Profile X (DafÃ¼r brÃ¤uchtest du eigentlich Directory.GetDirectories,
+        }
+
+        // Check Profile X (Dafür bräuchtest du eigentlich Directory.GetDirectories,
         // ich nutze hier eine fiktive Methode deines FileServices oder System.IO)
         // Da deine IWindowsFileSystemService-Schnittstelle hier nicht voll sichtbar ist,
         // nutzen wir System.IO direkt oder du musst es in deinen Service wrappen:
         try
         {
             var dirs = Directory.GetDirectories(userDataRoot, "Profile *");
+
             allProfileFolders.AddRange(dirs);
         }
         catch { /* Fehlerbehandlung falls Ordner nicht existiert */ }
 
-        // 2. FÃ¼r jedes gefundene Profil die Pfade generieren
+        // 2. Für jedes gefundene Profil die Pfade generieren
         foreach (var profilePath in allProfileFolders)
         {
             // CACHE: Du wolltest speziell "Service Worker" (und meistens auch "Cache")

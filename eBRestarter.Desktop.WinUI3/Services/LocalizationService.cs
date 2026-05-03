@@ -1,10 +1,8 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.Models.Constants;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace eBRestarter.Desktop.WinUI3.Services;
 
@@ -20,6 +18,7 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
         _resourceContext = _resourceManager.CreateResourceContext();
 
         string currentLanguage = Microsoft.Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride;
+
         if (string.IsNullOrEmpty(currentLanguage))
         {
             currentLanguage = System.Globalization.CultureInfo.CurrentUICulture.Name;
@@ -46,8 +45,8 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
     {
         string de = GetString("Lang_German");
         string en = GetString("Lang_English");
-        if (de.StartsWith("[")) de = "Deutsch";
-        if (en.StartsWith("[")) en = "English";
+        if (de.StartsWith('[')) de = "Deutsch";
+        if (en.StartsWith('[')) en = "English";
         return [new(de, 0), new(en, 1)];
     }
 

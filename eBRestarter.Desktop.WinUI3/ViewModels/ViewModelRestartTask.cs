@@ -15,233 +15,232 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace eBRestarter.Desktop.WinUI3.ViewModels
+namespace eBRestarter.Desktop.WinUI3.ViewModels;
+
+/// <summary>
+/// View model for the restart task page. Drives the cyclic workflow: initial delay, launch browser
+/// with eBesucher surfbar URL, run for configured runtime, cooldown, repeat. Listens to app-wide
+/// messages (username, browser, delete-content state) and optionally triggers browser cache cleanup
+/// when the schedule demands it.
+/// </summary>
+public partial class ViewModelRestartTask : ObservableObject,
+                                            IRecipient<UsernameChangedMessage>,
+                                            IRecipient<BrowserChangedMessage>,
+                                            IRecipient<DeleteBrowserContentActivateMessage>,
+                                            IRecipient<DeleteBrowserContentIsActive>,
+                                            IRecipient<NextDeletionProcess>,
+                                            IRecipient<NextDeletionProcessDate>
 {
+    private readonly IEVisitorConfigService _configService;
+
+    private readonly IDialogService _dialogService;
+
+    private readonly ILocalizationService _localizationService;
+
+    private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
+
+    private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
+
+    private bool _checkBrowserAliveRoutine;
+
+    private int _pauseSeconds = 20;
+
+    private int _runtimeSeconds = 3600;
+
+    private readonly DispatcherQueue _dispatcherQueue;
+
+    [ObservableProperty]
+    public partial string ChosenBrowser { get; set; }
+
+    [ObservableProperty]
+    public partial bool DeleteBrowserContentIsActive { get; set; }
+
+    [ObservableProperty]
+    public partial string DeleteIsActivatedMessage { get; set; } = "Disable";
+
+    [ObservableProperty]
+    public partial bool IsActive { get; set; }
+
+    [ObservableProperty]
+    public partial string? NextDeletionProcessDateMessage { get; set; }
+
+    [ObservableProperty]
+    public partial string? NextDeletionProcessMessage { get; set; }
+
+    [ObservableProperty]
+    public partial int SecondsRemaining { get; set; }
+
+    [ObservableProperty]
+    public partial string StatusInfoText { get; set; }
+
+    [ObservableProperty]
+    public partial string Username { get; set; } = "-";
+
     /// <summary>
-    /// View model for the restart task page. Drives the cyclic workflow: initial delay, launch browser
-    /// with eBesucher surfbar URL, run for configured runtime, cooldown, repeat. Listens to app-wide
-    /// messages (username, browser, delete-content state) and optionally triggers browser cache cleanup
-    /// when the schedule demands it.
+    /// Initializes the restart task view model with config and services, loads initial display state
+    /// from <see cref="IRestartTaskDisplayStateService"/>, and registers as recipient for app-wide
+    /// messages so the UI stays in sync when username, browser, or delete-content settings change.
     /// </summary>
-    public partial class ViewModelRestartTask : ObservableObject,
-                                                IRecipient<UsernameChangedMessage>,
-                                                IRecipient<BrowserChangedMessage>,
-                                                IRecipient<DeleteBrowserContentActivateMessage>,
-                                                IRecipient<DeleteBrowserContentIsActive>,
-                                                IRecipient<NextDeletionProcess>,
-                                                IRecipient<NextDeletionProcessDate>
+    public ViewModelRestartTask(
+        IManageRestarterCycleUseCase manageRestarterCycleUseCase,
+        IEVisitorConfigService configService,
+        IDialogService dialogService,
+        ILocalizationService localizationService,
+        IRestartTaskDisplayStateService restartTaskDisplayStateService)
     {
-        private readonly IEVisitorConfigService _configService;
+        ArgumentNullException.ThrowIfNull(manageRestarterCycleUseCase);
+        ArgumentNullException.ThrowIfNull(configService);
+        ArgumentNullException.ThrowIfNull(dialogService);
+        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(restartTaskDisplayStateService);
 
-        private readonly IDialogService _dialogService;
+        _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
+        _configService = configService;
+        _dialogService = dialogService;
+        _localizationService = localizationService;
+        _restartTaskDisplayStateService = restartTaskDisplayStateService;
 
-        private readonly ILocalizationService _localizationService;
+        _dispatcherQueue =
+            DispatcherQueue.GetForCurrentThread()
+            ?? throw new InvalidOperationException(
+                $"{nameof(ViewModelRestartTask)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
 
-        private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
+        ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
+        StatusInfoText = _localizationService.GetString("Task_StatusReady");
 
-        private readonly IRestartTaskDisplayStateService _restartTaskDisplayStateService;
+        _manageRestarterCycleUseCase.ProgressChanged += OnCycleProgressChanged;
 
-        private bool _checkBrowserAliveRoutine;
+        LoadInitialConfigData();
 
-        private int _pauseSeconds = 20;
+        WeakReferenceMessenger.Default.RegisterAll(this);
 
-        private int _runtimeSeconds = 3600;
-
-        private readonly DispatcherQueue _dispatcherQueue;
-
-        [ObservableProperty]
-        public partial string ChosenBrowser { get; set; }
-
-        [ObservableProperty]
-        public partial bool DeleteBrowserContentIsActive { get; set; }
-
-        [ObservableProperty]
-        public partial string DeleteIsActivatedMessage { get; set; } = "Disable";
-
-        [ObservableProperty]
-        public partial bool IsActive { get; set; }
-
-        [ObservableProperty]
-        public partial string? NextDeletionProcessDateMessage { get; set; }
-
-        [ObservableProperty]
-        public partial string? NextDeletionProcessMessage { get; set; }
-
-        [ObservableProperty]
-        public partial int SecondsRemaining { get; set; }
-
-        [ObservableProperty]
-        public partial string StatusInfoText { get; set; }
-
-        [ObservableProperty]
-        public partial string Username { get; set; } = "-";
-
-        /// <summary>
-        /// Initializes the restart task view model with config and services, loads initial display state
-        /// from <see cref="IRestartTaskDisplayStateService"/>, and registers as recipient for app-wide
-        /// messages so the UI stays in sync when username, browser, or delete-content settings change.
-        /// </summary>
-        public ViewModelRestartTask(
-            IManageRestarterCycleUseCase manageRestarterCycleUseCase,
-            IEVisitorConfigService configService,
-            IDialogService dialogService,
-            ILocalizationService localizationService,
-            IRestartTaskDisplayStateService restartTaskDisplayStateService)
+        var appConfig = _configService.LoadConfig();
+        if (appConfig.Browser?.StartBrowserWithProgrammStart == true)
         {
-            ArgumentNullException.ThrowIfNull(manageRestarterCycleUseCase);
-            ArgumentNullException.ThrowIfNull(configService);
-            ArgumentNullException.ThrowIfNull(dialogService);
-            ArgumentNullException.ThrowIfNull(localizationService);
-            ArgumentNullException.ThrowIfNull(restartTaskDisplayStateService);
+            IsActive = true;
+            StartLoop();
+        }
+    }
 
-            _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
-            _configService = configService;
-            _dialogService = dialogService;
-            _localizationService = localizationService;
-            _restartTaskDisplayStateService = restartTaskDisplayStateService;
+    [RelayCommand]
+    private async Task ExecuteStartTimerScheduler(bool? isChecked)
+    {
+        var appConfig = _configService.LoadConfig();
 
-            _dispatcherQueue =
-                DispatcherQueue.GetForCurrentThread()
-                ?? throw new InvalidOperationException(
-                    $"{nameof(ViewModelRestartTask)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
+        if (string.IsNullOrEmpty(appConfig.Username))
+        {
+            await _dialogService.ShowMessageAsync(
+                _localizationService.GetString("Task_Username"),
+                _localizationService.GetString("Task_NoUsernameFound"),
+                DialogIcon.Error);
 
-            ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
-            StatusInfoText = _localizationService.GetString("Task_StatusReady");
+            IsActive = false;
 
-            _manageRestarterCycleUseCase.ProgressChanged += OnCycleProgressChanged;
+            return;
+        }
 
+        IsActive = isChecked ?? false;
+
+        if (IsActive)
+        {
             LoadInitialConfigData();
 
-            WeakReferenceMessenger.Default.RegisterAll(this);
-
-            var appConfig = _configService.LoadConfig();
-            if (appConfig.Browser?.StartBrowserWithProgrammStart == true)
-            {
-                IsActive = true;
-                StartLoop();
-            }
+            StartLoop();
         }
-
-        [RelayCommand]
-        private async Task ExecuteStartTimerScheduler(bool? isChecked)
+        else
         {
-            var appConfig = _configService.LoadConfig();
+            StopLoop();
+        }
+    }
 
-            if (string.IsNullOrEmpty(appConfig.Username))
+    public void Receive(BrowserChangedMessage message) =>
+        _dispatcherQueue.TryEnqueue(() => ChosenBrowser = message.BrowserName ?? "-");
+
+    public void Receive(DeleteBrowserContentActivateMessage message) =>
+        _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? "-");
+
+    public void Receive(DeleteBrowserContentIsActive message) =>
+        _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
+
+    public void Receive(NextDeletionProcess message) =>
+        _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.NextDeletionProcessMessage ?? "-");
+
+    public void Receive(NextDeletionProcessDate message) =>
+        _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? "-");
+
+    public void Receive(UsernameChangedMessage message) =>
+        _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
+
+    private void LoadInitialConfigData()
+    {
+        var appConfig = _configService.LoadConfig();
+
+        var currentConfigState = _restartTaskDisplayStateService.GetInitialState(appConfig);
+
+        Username = currentConfigState.Username;
+        ChosenBrowser = currentConfigState.ChosenBrowser;
+        _checkBrowserAliveRoutine = currentConfigState.CheckBrowserAliveRoutine;
+        _pauseSeconds = currentConfigState.PauseSeconds;
+        _runtimeSeconds = currentConfigState.RuntimeSeconds;
+
+        DeleteBrowserContentIsActive = currentConfigState.DeleteBrowserContentIsActive;
+        DeleteIsActivatedMessage = currentConfigState.DeleteIsActivatedMessage;
+        NextDeletionProcessMessage = currentConfigState.NextDeletionProcessMessage;
+        NextDeletionProcessDateMessage = currentConfigState.NextDeletionProcessDateMessage;
+    }
+
+    private void OnCycleProgressChanged(object? sender, RestarterCycleProgress cycleProgress)
+    {
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            SecondsRemaining = cycleProgress.SecondsRemaining;
+            StatusInfoText = cycleProgress.StatusMessage;
+
+            if (cycleProgress.State == RestartTaskState.Idle && IsActive)
             {
-                await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString("Task_Username"),
-                    _localizationService.GetString("Task_NoUsernameFound"),
-                    DialogIcon.Error);
-
                 IsActive = false;
-
-                return;
             }
+        });
+    }
 
-            IsActive = isChecked ?? false;
+    private void StartLoop()
+    {
+        var manageRestarterCycleRequest = new ManageRestarterCycleRequest(
+            BrowserDisplayName: ChosenBrowser,
+            Username: Username,
+            RuntimeSeconds: _runtimeSeconds,
+            PauseSeconds: _pauseSeconds,
+            CheckBrowserAliveRoutine: _checkBrowserAliveRoutine);
 
-            if (IsActive)
-            {
-                LoadInitialConfigData();
-
-                StartLoop();
-            }
-            else
-            {
-                StopLoop();
-            }
-        }
-
-        public void Receive(BrowserChangedMessage message) =>
-            _dispatcherQueue.TryEnqueue(() => ChosenBrowser = message.BrowserName ?? "-");
-
-        public void Receive(DeleteBrowserContentActivateMessage message) =>
-            _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? "-");
-
-        public void Receive(DeleteBrowserContentIsActive message) =>
-            _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
-
-        public void Receive(NextDeletionProcess message) =>
-            _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.NextDeletionProcessMessage ?? "-");
-
-        public void Receive(NextDeletionProcessDate message) =>
-            _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? "-");
-
-        public void Receive(UsernameChangedMessage message) =>
-            _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? "-");
-
-        private void LoadInitialConfigData()
+        _manageRestarterCycleUseCase.StartAsync(manageRestarterCycleRequest, async () =>
         {
-            var appConfig = _configService.LoadConfig();
+            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            var currentConfigState = _restartTaskDisplayStateService.GetInitialState(appConfig);
-
-            Username = currentConfigState.Username;
-            ChosenBrowser = currentConfigState.ChosenBrowser;
-            _checkBrowserAliveRoutine = currentConfigState.CheckBrowserAliveRoutine;
-            _pauseSeconds = currentConfigState.PauseSeconds;
-            _runtimeSeconds = currentConfigState.RuntimeSeconds;
-
-            DeleteBrowserContentIsActive = currentConfigState.DeleteBrowserContentIsActive;
-            DeleteIsActivatedMessage = currentConfigState.DeleteIsActivatedMessage;
-            NextDeletionProcessMessage = currentConfigState.NextDeletionProcessMessage;
-            NextDeletionProcessDateMessage = currentConfigState.NextDeletionProcessDateMessage;
-        }
-
-        private void OnCycleProgressChanged(object? sender, RestarterCycleProgress cycleProgress)
-        {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue.TryEnqueue(async () =>
             {
-                SecondsRemaining = cycleProgress.SecondsRemaining;
-                StatusInfoText = cycleProgress.StatusMessage;
-
-                if (cycleProgress.State == RestartTaskState.Idle && IsActive)
+                try
                 {
-                    IsActive = false;
+                    await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
+                    tcs.TrySetResult();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    tcs.TrySetException(ex);
+                }
+                finally
+                {
+                    LoadInitialConfigData();
                 }
             });
-        }
 
-        private void StartLoop()
-        {
-            var manageRestarterCycleRequest = new ManageRestarterCycleRequest(
-                BrowserDisplayName: ChosenBrowser,
-                Username: Username,
-                RuntimeSeconds: _runtimeSeconds,
-                PauseSeconds: _pauseSeconds,
-                CheckBrowserAliveRoutine: _checkBrowserAliveRoutine);
+            await tcs.Task.ConfigureAwait(false);
 
-            _manageRestarterCycleUseCase.StartAsync(manageRestarterCycleRequest, async () =>
-            {
-                var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        }).Forget();
+    }
 
-                _dispatcherQueue.TryEnqueue(async () =>
-                {
-                    try
-                    {
-                        await _dialogService.ShowDeleteBrowserContentDialogAsync(autoStart: true);
-                        tcs.TrySetResult();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                        tcs.TrySetException(ex);
-                    }
-                    finally
-                    {
-                        LoadInitialConfigData();
-                    }
-                });
-
-                await tcs.Task.ConfigureAwait(false);
-
-            }).Forget();
-        }
-
-        private void StopLoop()
-        {
-            _manageRestarterCycleUseCase.Stop();
-        }
+    private void StopLoop()
+    {
+        _manageRestarterCycleUseCase.Stop();
     }
 }

@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
-public record UpdateInfo
+public sealed record UpdateInfo
 {
     public bool IsUpdateAvailable { get; init; }
     public string LatestVersion { get; init; } = string.Empty;

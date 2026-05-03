@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
 namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 
 public interface IProcess : IDisposable

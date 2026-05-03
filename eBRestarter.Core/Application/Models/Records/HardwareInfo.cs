@@ -1,7 +1,7 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
 // Record für Hardware-Daten
-public record HardwareInfo
+public sealed record HardwareInfo
 {
     public string ProcessorName { get; init; } = "Unbekannt";
     public string GraphicsCardName { get; init; } = "Unbekannt";

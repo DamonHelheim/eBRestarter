@@ -9,6 +9,7 @@ public interface IWindowsStartupManagerService
     void EnableAutoStart();
     void DisableAutoStart();
     Dictionary<string, object> GetStartupEntries();
+
     // Edge & AutoLogon Logik passt hier gut rein oder in einen "SystemConfigService"
     void SetEdgeStartupBoost(bool enable);
 

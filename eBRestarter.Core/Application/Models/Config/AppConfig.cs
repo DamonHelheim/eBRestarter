@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Config;
 
-public record AppConfig
+public sealed record AppConfig
 {
     public string Username { get; set; } = string.Empty;
     public Browser Browser { get; set; } = new();

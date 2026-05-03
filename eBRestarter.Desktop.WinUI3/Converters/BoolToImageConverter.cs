@@ -9,27 +9,17 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// </summary>
 public partial class BoolToImageConverter : IValueConverter
 {
-    // =========================================================
-    // 1. PUBLIC PROPERTIES (Data & State)
-    // =========================================================
-    #region PublicProperties
-
     public string? ImagePathWhenFalse { get; set; }
     public string? ImagePathWhenTrue { get; set; }
-
-    #endregion
-
-    // =========================================================
-    // 2. PUBLIC METHODS (API)
-    // =========================================================
-    #region PublicMethods
 
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         bool flag = value is bool b && b;
+
         string? path = flag ? ImagePathWhenTrue : ImagePathWhenFalse;
-        if (string.IsNullOrEmpty(path))
-            return null!;
+
+        if (string.IsNullOrEmpty(path)) return null!;
+
         return new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
     }
 
@@ -37,6 +27,4 @@ public partial class BoolToImageConverter : IValueConverter
     {
         throw new NotImplementedException();
     }
-
-    #endregion
 }

@@ -1,3 +1,3 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
-public record DeleteBrowserContentIsActive(bool IsActiveOrNot);
+public sealed record DeleteBrowserContentIsActive(bool IsActiveOrNot);

@@ -8,7 +8,7 @@ public class IconCreditService : IIconCreditService
 {
     public List<IconCredit> GetIconCredits()
     {
-        IconCredit CreateCredit(string creator, string source, string url) => new()
+        static IconCredit CreateCredit(string creator, string source, string url) => new()
         {
             IconCreator = creator,
             IconImageSource = source,

@@ -55,8 +55,11 @@ public class RestartTaskDisplayStateService(
             string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
 
             var today = _timeProvider.GetLocalNow().Date;
+
             if (nextDate == today && intervalDays > 0)
+            {
                 nextDate = today.AddDays(intervalDays);
+            }
 
             nextDeletionProcessDateMessage = string.Format(formatPattern, nextDate);
         }

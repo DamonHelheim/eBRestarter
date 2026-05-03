@@ -1,6 +1,6 @@
 namespace eBRestarter.Desktop.WinUI3.Models;
 
-public record IconCredit
+public sealed record IconCredit
 {
     public string IconCreator { get; set; } = string.Empty;
     public string IconImageSource { get; init; } = string.Empty;

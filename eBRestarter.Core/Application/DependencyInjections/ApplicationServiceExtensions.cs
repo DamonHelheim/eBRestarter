@@ -16,11 +16,6 @@ namespace eBRestarter.Core.Application.DependencyInjections;
 
 public static class ApplicationServiceExtensions
 {
-    // =========================================================
-    // 1. PUBLIC & PROTECTED METHODS (API / Extension)
-    // =========================================================
-    #region PublicAndProtectedMethods
-
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddSingleton<IRestartCalculationService, RestartCalculationService>();
@@ -43,6 +38,4 @@ public static class ApplicationServiceExtensions
 
         return services;
     }
-
-    #endregion
 }

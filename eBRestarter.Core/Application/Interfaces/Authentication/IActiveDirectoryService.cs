@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.AccountManagement;
-using System.Net.Mime;
-using System.Text;
+﻿using System.DirectoryServices.AccountManagement;
 
 namespace eBRestarter.Core.Application.Interfaces.Authentication
 {

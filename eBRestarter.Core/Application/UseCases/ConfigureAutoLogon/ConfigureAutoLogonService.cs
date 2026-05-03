@@ -3,18 +3,12 @@ using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 namespace eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 
-public class ConfigureAutoLogonService : IConfigureAutoLogonUseCase
+public class ConfigureAutoLogonService(
+    IWindowsAutoLogonService autoLogonService,
+    ICredentialValidationService credentialValidationService) : IConfigureAutoLogonUseCase
 {
-    private readonly IWindowsAutoLogonService _autoLogonService;
-    private readonly ICredentialValidationService _credentialValidationService;
-
-    public ConfigureAutoLogonService(
-        IWindowsAutoLogonService autoLogonService,
-        ICredentialValidationService credentialValidationService)
-    {
-        _autoLogonService = autoLogonService;
-        _credentialValidationService = credentialValidationService;
-    }
+    private readonly IWindowsAutoLogonService _autoLogonService = autoLogonService;
+    private readonly ICredentialValidationService _credentialValidationService = credentialValidationService;
 
     public ConfigureAutoLogonResponse Execute(ConfigureAutoLogonRequest request)
     {
@@ -23,6 +17,7 @@ public class ConfigureAutoLogonService : IConfigureAutoLogonUseCase
             if (request.IsDeactivateAction)
             {
                 _autoLogonService.DisableAutoLogon();
+
                 return new ConfigureAutoLogonResponse(true, AutoLogonResultStatus.Deactivated);
             }
 

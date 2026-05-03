@@ -66,8 +66,8 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
         // =========================================================
 
         /// <summary>
-        /// Spult die Zeit Schritt fÃ¼r Schritt vor und erlaubt der async/await StateMachine
-        /// des Services, die nÃ¤chsten Task.Delays korrekt zu planen.
+        /// Spult die Zeit Schritt für Schritt vor und erlaubt der async/await StateMachine
+        /// des Services, die nächsten Task.Delays korrekt zu planen.
         /// </summary>
         private async Task AdvanceTimeAsync(int seconds)
         {
@@ -88,7 +88,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass die Stop() Methode einen laufenden Zyklus sauber beendet,
-        /// ohne dass die Anwendung durch eine unhandled TaskCanceledException abstÃ¼rzt.
+        /// ohne dass die Anwendung durch eine unhandled TaskCanceledException abstürzt.
         /// </summary>
         [Fact]
         public async Task StartAsync_ShouldStopCleanly_WhenStopIsCalled()
@@ -113,8 +113,8 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Dies ist der "Happy Path" Test. Er prÃ¼ft, ob die gesamte Logik der zeitlichen
-        /// Phasen (VerzÃ¶gerung -> Starten -> Warten -> SchlieÃŸen) in der korrekten Reihenfolge ablÃ¤uft.
+        /// Dies ist der "Happy Path" Test. Er prüft, ob die gesamte Logik der zeitlichen
+        /// Phasen (Verzögerung -> Starten -> Warten -> SchlieÃŸen) in der korrekten Reihenfolge abläuft.
         /// </summary>
         [Fact]
         public async Task StartAsync_ShouldExecuteFullCycleAndLaunchBrowser()
@@ -148,7 +148,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
         /// Wenn der User die "CheckBrowserAliveRoutine" aktiviert hat, muss das Programm merken,
-        /// wenn der Browser abgestÃ¼rzt ist oder manuell geschlossen wurde.
+        /// wenn der Browser abgestürzt ist oder manuell geschlossen wurde.
         /// </summary>
         [Fact]
         public async Task RunBrowserPhase_ShouldDetectCrash_AndTriggerCrashCooldown()
@@ -163,7 +163,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             var cycleTask = _sut.StartAsync(request, () => Task.CompletedTask);
 
             // ACT
-            await AdvanceTimeAsync(6); // Ãœber den InitialDelay drÃ¼ber
+            await AdvanceTimeAsync(6); // Ãœber den InitialDelay drüber
             await AdvanceTimeAsync(4); // Innerhalb der Running Phase greift der Alive-Check ab
 
             // ASSERT
@@ -179,8 +179,8 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// PrÃ¼ft die automatisierte Browser-Bereinigung. Wenn der berechnete Tag erreicht ist,
-        /// muss der Browser geschlossen und die Callback-Methode ausgefÃ¼hrt werden.
+        /// Prüft die automatisierte Browser-Bereinigung. Wenn der berechnete Tag erreicht ist,
+        /// muss der Browser geschlossen und die Callback-Methode ausgeführt werden.
         /// </summary>
         [Fact]
         public async Task Cycle_ShouldTriggerCleanupCallback_AndSaveNewDate()
@@ -203,7 +203,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
             // ACT
             await AdvanceTimeAsync(6); // Initial Delay
-            await AdvanceTimeAsync(3); // Tick in der Running Phase triggert den Date-Check + Puffer fÃ¼r das interne Delay
+            await AdvanceTimeAsync(3); // Tick in der Running Phase triggert den Date-Check + Puffer für das interne Delay
 
             _sut.Stop();
             await cycleTask;
@@ -219,8 +219,8 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
         /// <summary>
         /// WARUM WIRD DAS GETESTET?
-        /// Der Service lÃ¤uft in einer Endlosschleife. Wenn der Benutzer in der UI Einstellungen
-        /// Ã¤ndert, sollen diese im *nÃ¤chsten* Zyklus automatisch Ã¼bernommen werden.
+        /// Der Service läuft in einer Endlosschleife. Wenn der Benutzer in der UI Einstellungen
+        /// ändert, sollen diese im *nächsten* Zyklus automatisch übernommen werden.
         /// </summary>
         [Fact]
         public async Task RunCycle_ShouldReloadConfig_BeforeEveryNewIteration()
@@ -233,8 +233,8 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
             int loadConfigCallCount = 0;
 
-            // FIX: Da LoadConfig() 3x pro Zyklus aufgerufen wird, mÃ¼ssen wir
-            // die Config1 fÃ¼r die ersten 3 Aufrufe zurÃ¼ckgeben.
+            // FIX: Da LoadConfig() 3x pro Zyklus aufgerufen wird, müssen wir
+            // die Config1 für die ersten 3 Aufrufe zurückgeben.
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(() =>
             {
                 loadConfigCallCount++;
@@ -244,9 +244,9 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             var cycleTask = _sut.StartAsync(request, () => Task.CompletedTask);
 
             // ACT
-            await AdvanceTimeAsync(6);  // Initial Delay Ã¼berstehen
-            await AdvanceTimeAsync(11); // Runtime Ã¼berstehen
-            await AdvanceTimeAsync(7);  // Cooldown Ã¼berstanden -> ZWEITER ZYKLUS STARTET HIER
+            await AdvanceTimeAsync(6);  // Initial Delay überstehen
+            await AdvanceTimeAsync(11); // Runtime überstehen
+            await AdvanceTimeAsync(7);  // Cooldown überstanden -> ZWEITER ZYKLUS STARTET HIER
 
             // ASSERT
             // Beim Start des zweiten Zyklus muss die neue URL (mit NewUser) aufgerufen werden!

@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Config;
 
-public record Computer
+public sealed record Computer
 {
     // Das Fragezeichen macht es nullable -> Es kann "null" sein
     public DateTime? NextRestartDate { get; set; }

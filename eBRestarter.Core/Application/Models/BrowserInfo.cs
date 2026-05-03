@@ -2,7 +2,7 @@ using eBRestarter.Core.Application.Enums;
 
 namespace eBRestarter.Core.Application.Models;
 
-public class BrowserInfo
+public sealed class BrowserInfo
 {
     public BrowserType Type { get; set; }
     public string Name { get; set; } = string.Empty;

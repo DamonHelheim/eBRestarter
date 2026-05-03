@@ -6,10 +6,6 @@ namespace eBRestarter.Core.Application.Interfaces.Authentication;
 /// </summary>
 public interface ICredentialValidationService
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Vertrag)
-    // =========================================================
-    #region PublicMethods
 
     /// <summary>
     /// Validiert Benutzername/Domain/Passwort gegen den lokalen Rechner oder die Domain.
@@ -19,6 +15,4 @@ public interface ICredentialValidationService
     /// <param name="password">Passwort</param>
     /// <returns>true wenn gültig, sonst false. Kann bei Domain-Fehlern Exception werfen.</returns>
     bool ValidateCredentials(string username, string domain, string password);
-
-    #endregion
 }

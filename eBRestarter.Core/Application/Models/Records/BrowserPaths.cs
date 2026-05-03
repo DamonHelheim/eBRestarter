@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
-public record BrowserPaths(
+public sealed record BrowserPaths(
     List<string> CacheDirs,
     List<string> CookiesDirs,
     List<string> ExtensionsDirs

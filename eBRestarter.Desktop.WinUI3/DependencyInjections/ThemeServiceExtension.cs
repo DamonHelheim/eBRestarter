@@ -9,16 +9,9 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections;
 /// </summary>
 public static class ThemeServiceExtension
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Extension)
-    // =========================================================
-    #region PublicMethods
-
     public static IServiceCollection AddThemeService(this IServiceCollection services)
     {
         services.AddSingleton<IThemeService, ThemeService>();
         return services;
     }
-
-    #endregion
 }

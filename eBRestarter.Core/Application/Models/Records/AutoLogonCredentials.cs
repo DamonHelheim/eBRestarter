@@ -1,3 +1,3 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
-public record AutoLogonCredentials(string Username, string Domain, string Password);
+public sealed record AutoLogonCredentials(string Username, string Domain, string Password);

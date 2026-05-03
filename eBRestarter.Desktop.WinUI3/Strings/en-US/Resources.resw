@@ -960,4 +960,7 @@ Do you want to restart now?</value>
   <data name="Options_ExtensionFolderOpenError_Message" xml:space="preserve">
     <value>The extension folder could not be opened or created: {0}</value>
   </data>
+  <data name="HTTPS_Timeout_Message" xml:space="preserve">
+    <value>The request has exceeded the time limit</value>
+  </data>
 </root>

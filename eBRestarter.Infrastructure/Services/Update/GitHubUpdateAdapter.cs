@@ -12,11 +12,9 @@ namespace eBRestarter.Infrastructure.Services.Update;
 
 public class GitHubUpdateAdapter(
     IRestClientService restClient,
-    IWindowsProcessControlService processService,
     ILogger<GitHubUpdateAdapter> logger) : IUpdateService
 {
     private readonly IRestClientService _restClient = restClient;
-    private readonly IWindowsProcessControlService _processService = processService;
     private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
 
     // Anpassen an dein Repository!
@@ -40,7 +38,7 @@ public class GitHubUpdateAdapter(
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
         {
-            _logger.LogWarning("Update-Check fehlgeschlagen: {Status}", response.StatusCode);
+            _logger.LogWarning("Update check failed: {Status}", response.StatusCode);
 
             return new UpdateInfo { IsUpdateAvailable = false, CurrentVersion = currentVersion.ToString() };
         }
@@ -61,11 +59,13 @@ public class GitHubUpdateAdapter(
 
             // 2. Download URL für das Asset finden (z.B. Installer.msi oder Setup.exe)
             string downloadUrl = string.Empty;
+
             if (root.TryGetProperty("assets", out JsonElement assets) && assets.ValueKind == JsonValueKind.Array)
             {
                 foreach (var asset in assets.EnumerateArray())
                 {
                     string name = asset.GetProperty("name").GetString() ?? "";
+
                     // Sucht nach .exe oder .msi
                     if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ||
                         name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
@@ -87,10 +87,12 @@ public class GitHubUpdateAdapter(
                 Changelog = root.GetProperty("body").GetString() ?? "",
                 PublishedAt = root.GetProperty("published_at").GetDateTime()
             };
+
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Fehler beim Parsen der GitHub Response.");
+            _logger.LogError(ex, "Error parsing the GitHub response.");
+
             return new UpdateInfo { IsUpdateAvailable = false };
         }
     }
@@ -99,7 +101,8 @@ public class GitHubUpdateAdapter(
     {
         if (string.IsNullOrEmpty(updateInfo.DownloadUrl))
         {
-            _logger.LogError("Keine Download-URL gefunden.");
+            _logger.LogError("No download URL found.");
+
             return;
         }
 
@@ -118,10 +121,14 @@ public class GitHubUpdateAdapter(
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "eBRestarter-App");
 
                 var data = await httpClient.GetByteArrayAsync(updateInfo.DownloadUrl);
+
                 await File.WriteAllBytesAsync(tempFile, data);
             }
 
-            _logger.LogInformation("Update heruntergeladen nach: {Path}", tempFile);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Update downloaded to: {Path}", tempFile);
+            }
 
             // Installer starten
             // Wir nutzen deinen ProcessService, aber wir müssen sicherstellen, dass wir Argumente übergeben können
@@ -143,6 +150,7 @@ public class GitHubUpdateAdapter(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Fehler beim Download/Installieren des Updates.");
+
             throw; // Werfe Fehler, damit ViewModel Bescheid weiß
         }
     }

@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Config;
 
-public record Browser
+public sealed record Browser
 {
     public bool StartBrowserWithProgrammStart { get; set; } = false;
     public bool CheckBrowserAliveRoutine { get; set; } = false;

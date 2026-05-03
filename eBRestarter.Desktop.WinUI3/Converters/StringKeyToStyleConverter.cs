@@ -9,17 +9,15 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// </summary>
 public partial class StringKeyToStyleConverter : IValueConverter
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API)
-    // =========================================================
-    #region PublicMethods
-
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is string styleKey && !string.IsNullOrEmpty(styleKey))
         {
             if (Application.Current.Resources.TryGetValue(styleKey, out object styleResource))
+            {
                 return styleResource as Style;
+            }
+
         }
         return null;
     }
@@ -28,6 +26,4 @@ public partial class StringKeyToStyleConverter : IValueConverter
     {
         throw new NotImplementedException();
     }
-
-    #endregion
 }

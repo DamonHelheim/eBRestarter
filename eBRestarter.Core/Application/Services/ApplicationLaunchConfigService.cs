@@ -17,10 +17,11 @@ public class ApplicationLaunchConfigService(IEVisitorConfigService configService
         DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
 
         if (nextDate == DateTime.Today && intervalDays > 0)
+        {
             nextDate = DateTime.Today.AddDays(intervalDays);
+        }
 
-        if (config.Browser != null)
-            config.Browser.NextBrowserDeleteCacheDate = nextDate;
+        config.Browser?.NextBrowserDeleteCacheDate = nextDate;
 
         _configService.SaveConfig(config);
 

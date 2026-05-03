@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Application.Models.Config;
 
-public record SettingsConfig
+public sealed record SettingsConfig
 {
     public string Theme { get; set; } = "Light";
     public int Language { get; set; }

@@ -8,11 +8,6 @@ namespace eBRestarter.Desktop.WinUI3.DependencyInjections;
 /// </summary>
 public static class ViewModelServiceExtensions
 {
-    // =========================================================
-    // 1. PUBLIC METHODS (API / Extension)
-    // =========================================================
-    #region PublicMethods
-
     public static IServiceCollection AddViewModels(this IServiceCollection services)
     {
         services.AddSingleton<MainViewModel>();
@@ -34,6 +29,4 @@ public static class ViewModelServiceExtensions
 
         return services;
     }
-
-    #endregion
 }

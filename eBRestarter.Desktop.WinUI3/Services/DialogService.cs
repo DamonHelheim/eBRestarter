@@ -13,19 +13,8 @@ namespace eBRestarter.Desktop.WinUI3.Services;
 
 public class DialogService : IDialogService
 {
-    // =========================================================
-    // 1. FIELDS & INJECTED SERVICES (Backing state / XamlRoot access)
-    // =========================================================
-    #region FieldsAndInjectedServices
 
-    private XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
-
-    #endregion
-
-    // =========================================================
-    // 2. PUBLIC METHODS
-    // =========================================================
-    #region PublicMethods
+    private static XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
 
     public async Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein")
     {
@@ -40,9 +29,13 @@ public class DialogService : IDialogService
                 XamlRoot = element.XamlRoot,
                 DefaultButton = ContentDialogButton.Primary
             };
+
             var result = await dialog.ShowAsync();
+
             return result == ContentDialogResult.Primary;
+
         }
+
         return false;
     }
 
@@ -70,8 +63,11 @@ public class DialogService : IDialogService
             CloseButtonText = "Nein",
             DefaultButton = ContentDialogButton.Primary
         };
+
         var result = await dialog.ShowAsync();
+
         return result == ContentDialogResult.Primary;
+
     }
 
     public async Task ShowAboutDialogAsync() => await ShowDialogInternalAsync<AboutDialog>();
@@ -87,10 +83,13 @@ public class DialogService : IDialogService
         {
             if (autoStart)
             {
-                dialog.Opened += async (s, e) =>
+                dialog.Opened += async (_, __) =>
                 {
-                    if (dialog.ViewModelDeleteBrowserContent != null)
+                    if (dialog.ViewModelDeleteBrowserContent != null) {
+
                         await dialog.ViewModelDeleteBrowserContent.RunAutoSequenceAsync();
+
+                    }
                 };
             }
         });
@@ -99,33 +98,38 @@ public class DialogService : IDialogService
     public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null!, string defaultDomain = null!)
     {
         AutoLogonDialog dialogInstance = null!;
+
         var result = await ShowDialogInternalAsync<AutoLogonDialog>(d =>
         {
             dialogInstance = d;
             d.SetDefaults(defaultUser, defaultDomain);
         });
-        if (result == ContentDialogResult.Primary)
+
+        if (result == ContentDialogResult.Primary) {
+
             return AutoLogonDialogResult.Save(dialogInstance.GetCredentials());
+
+        }
+
         if (result == ContentDialogResult.Secondary)
+        {
             return AutoLogonDialogResult.Deactivate();
+        }
+
         return null;
     }
 
-    #endregion
 
-    // =========================================================
-    // 3. PRIVATE HELPER METHODS (Internal helpers)
-    // =========================================================
-    #region PrivateHelperMethods
-
-    private async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
+    private static async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
     {
         var dialog = new T { XamlRoot = XamlRoot };
+
         configure?.Invoke(dialog);
+
         return await dialog.ShowAsync();
     }
 
-    private object CreateTitleContent(string title, DialogIcon icon)
+    private static object CreateTitleContent(string title, DialogIcon icon)
     {
         if (icon == DialogIcon.None) return title;
 
@@ -135,12 +139,14 @@ public class DialogService : IDialogService
             Spacing = 12,
             VerticalAlignment = VerticalAlignment.Center
         };
+
         var fontIcon = new FontIcon
         {
             FontFamily = new FontFamily("Segoe Fluent Icons"),
             FontSize = 24,
             VerticalAlignment = VerticalAlignment.Center
         };
+
         switch (icon)
         {
             case DialogIcon.Error:
@@ -163,6 +169,7 @@ public class DialogService : IDialogService
                 fontIcon.Glyph = "\uE9CE";
                 break;
         }
+
         var textBlock = new TextBlock
         {
             Text = title,
@@ -170,10 +177,11 @@ public class DialogService : IDialogService
             FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
             VerticalAlignment = VerticalAlignment.Center
         };
+
         stackPanel.Children.Add(fontIcon);
+
         stackPanel.Children.Add(textBlock);
+
         return stackPanel;
     }
-
-    #endregion
 }

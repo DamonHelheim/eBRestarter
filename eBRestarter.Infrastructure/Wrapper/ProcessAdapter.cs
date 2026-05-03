@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using System.Diagnostics;
 
 namespace eBRestarter.Infrastructure.Wrapper
@@ -19,6 +19,7 @@ namespace eBRestarter.Infrastructure.Wrapper
         public void Dispose()
         {
             _process.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

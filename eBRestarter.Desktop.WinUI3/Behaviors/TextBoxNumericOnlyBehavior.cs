@@ -10,20 +10,9 @@ namespace eBRestarter.Desktop.WinUI3.Behaviors;
 /// </summary>
 public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
 {
-    // =========================================================
-    // 1. CONSTANTS & STATICS (Shared regex for non-digit stripping)
-    // =========================================================
-    #region ConstantsAndStatics
 
     // SonarQube Fix: Timeout (100ms) und NonBacktracking hinzugefügt, um UI-Freezes durch ReDoS zu verhindern.
     private static readonly Regex _regex = new("[^0-9]+", RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
-
-    #endregion
-
-    // =========================================================
-    // 2. PROTECTED METHODS (Behavior lifecycle overrides)
-    // =========================================================
-    #region ProtectedMethods
 
     protected override void OnAttached()
     {
@@ -37,13 +26,6 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
         AssociatedObject.TextChanging -= OnTextChanging;
     }
 
-    #endregion
-
-    // =========================================================
-    // 3. PRIVATE HELPER METHODS (Event handlers and helpers)
-    // =========================================================
-    #region PrivateHelperMethods
-
     private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
         try
@@ -52,7 +34,7 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
             {
                 int pos = sender.SelectionStart;
                 sender.Text = _regex.Replace(sender.Text, "");
-                sender.SelectionStart = System.Math.Min(pos, sender.Text.Length);
+                sender.SelectionStart = Math.Min(pos, sender.Text.Length);
             }
         }
         catch (RegexMatchTimeoutException)
@@ -62,6 +44,4 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
             sender.Text = string.Empty;
         }
     }
-
-    #endregion
 }

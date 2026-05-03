@@ -27,17 +27,9 @@ namespace eBRestarter.Infrastructure.DependencyInjection;
 
 public static class InfrastructureServiceRegistration
 {
-    // =========================================================
-    // 1. PUBLIC & PROTECTED METHODS (API / Extension)
-    // =========================================================
-    #region PublicAndProtectedMethods
-
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddLogging(builder => builder.AddDebug());
-
-#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
-
         services.AddSingleton<IProcessWrapper, RealProcessWrapper>();
         services.AddSingleton<IWindowsProcessControlService, WindowsProcessService>();
         services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
@@ -52,9 +44,6 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IPathProvider, WindowsPathProvider>();
         services.AddSingleton<IApplicationLifetime, WindowsApplicationLifetime>();
         services.AddSingleton(TimeProvider.System);
-
-#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
-
         services.AddSingleton<WindowsWmiHardwareService>();
 
         services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
@@ -111,6 +100,4 @@ public static class InfrastructureServiceRegistration
 
         return services;
     }
-
-    #endregion
 }
