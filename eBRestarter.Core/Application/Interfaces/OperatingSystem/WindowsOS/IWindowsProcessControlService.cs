@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 public interface IWindowsProcessControlService
 {
@@ -13,7 +13,7 @@ public interface IWindowsProcessControlService
 
     void OpenUrlInBrowser(string exeFilePath, string arguments);
     void CloseApplication(string processName);
-    void CloseAllOpenPrograms();
+    Task CloseAllOpenProgramsAsync(int timeoutMilliseconds);
     void ShutdownComputer();
     bool IsProcessAlive(string processName);
 }

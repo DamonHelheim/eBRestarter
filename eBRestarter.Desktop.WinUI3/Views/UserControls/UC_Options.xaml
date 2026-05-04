@@ -255,13 +255,14 @@
 
                                 <TextBlock
                                     x:Name="tbl_restart_information"
+                                    x:Uid="RestartWarning"
                                     Width="336"
                                     Height="51"
                                     Margin="10,0,0,0"
                                     FontSize="12"
                                     Foreground="#de1043"
-                                    Text=""
-                                    TextWrapping="Wrap" />
+                                    TextWrapping="Wrap"
+                                    Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
                             </StackPanel>
 
                         </Border>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -962,5 +962,8 @@ Do you want to restart now?</value>
   </data>
   <data name="HTTPS_Timeout_Message" xml:space="preserve">
     <value>The request has exceeded the time limit</value>
+  </data>
+  <data name="RestartWarning.Text" xml:space="preserve">
+    <value>Warning: The automatic restart is at your own risk. The developer assumes no liability for potential data loss due to unsaved documents.</value>
   </data>
 </root>

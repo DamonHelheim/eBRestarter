@@ -72,7 +72,7 @@ public partial class ComputerRestartScheduler(
             // Wartet asynchron auf den nächsten Tick (blockiert keinen Thread!)
             while (await _timer!.WaitForNextTickAsync(token))
             {
-                CheckAndExecuteRestart();
+                await CheckAndExecuteRestartAsync();
             }
         }
         catch (OperationCanceledException)
@@ -85,7 +85,7 @@ public partial class ComputerRestartScheduler(
         }
     }
 
-    private void CheckAndExecuteRestart()
+    private async Task CheckAndExecuteRestartAsync()
     {
         // 1. Config laden (immer aktuell)
         var config = _configService.LoadConfig();
@@ -140,12 +140,12 @@ public partial class ComputerRestartScheduler(
 
             if (isCorrectDay && isCorrectTime)
             {
-                ExecuteRestartSequence();
+                await ExecuteRestartSequenceAsync();
             }
         }
     }
 
-    private void ExecuteRestartSequence()
+    private async Task ExecuteRestartSequenceAsync()
     {
         _logger.LogWarning("Automatischer Neustart wird eingeleitet...");
 
@@ -153,10 +153,7 @@ public partial class ComputerRestartScheduler(
         {
             // 1. Programme schließen (Sanft)
             _logger.LogInformation("Schließe offene Anwendungen...");
-            _processService.CloseAllOpenPrograms(); //
-
-            // Kurze Wartezeit (synchron hier okay, da wir im Hintergrund-Task sind)
-            Thread.Sleep(3000);
+            await _processService.CloseAllOpenProgramsAsync(30000); // 30 Sekunden Timeout
 
             // 2. Shutdown erzwingen
             _logger.LogInformation("Fahre System herunter...");
