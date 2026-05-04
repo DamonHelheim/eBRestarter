@@ -1,81 +1,119 @@
-# eBRestarter – Dein Autopilot für die eBesucher Surfbar 🚀
-**Die inoffizielle, clevere Lösung, um deine Punkteausbeute vollautomatisch, stabil und wartungsfrei zu maximieren.**
+# eBRestarter
+**Ein Automatisierungstool für die eBesucher Surfbar zur Optimierung von Stabilität und Leistung.**
 
 <!-- Hero Image: Ein großer, schicker Screenshot des Hauptfensters der App -->
 ![eBRestarter Hauptfenster - Übersicht](assets/hero_image.png)
 
-## 💡 Was ist eBRestarter?
-Jeder, der die eBesucher Surfbar nutzt, kennt das Problem: Manchmal bleibt die Surfbar hängen, stürzt ab oder ein zu voller Browser-Cache sorgt dafür, dass die Punkteausbeute drastisch sinkt. 
+## Über eBRestarter
+Bei der kontinuierlichen Nutzung der eBesucher Surfbar kann es gelegentlich zu Abstürzen, Aufhängern oder Leistungseinbußen durch einen vollen Browser-Cache kommen. 
 
-Hier kommt **eBRestarter** ins Spiel! Unsere Software überwacht deine Surfbar und startet den Browser in regelmäßigen, von dir gewählten Abständen automatisch neu. Gleichzeitig sorgt eine clevere Lösch-Routine dafür, dass Cache und Cookies rechtzeitig geleert werden. Das Ergebnis? Die Surfbar läuft ununterbrochen und deine Punkteausbeute bleibt konstant auf höchstem Niveau – ganz ohne dein ständiges Eingreifen!
+eBRestarter ist eine Softwarelösung, die den Betrieb der Surfbar überwacht und den Browser in regelmäßigen, benutzerdefinierten Abständen automatisch neu startet. Zusätzlich werden Cache und Cookies automatisiert bereinigt. Dadurch wird ein kontinuierlicher und stabiler Betrieb der Surfbar gewährleistet, ohne dass manuelle Eingriffe erforderlich sind.
 
-## 💎 Deine Vorteile auf einen Blick
-* **Konstante Punkteausbeute:** Ein voller Cache in der Surfbar führt oft zu schlechten Raten. Unsere automatisierte Lösch-Routine für Cache und Cookies hält deinen Browser frisch und den Punktefluss stabil.
-* **Nie wieder manuell neustarten:** Hängt sich die Surfbar auf, musst du nicht mehr selbst eingreifen. eBRestarter erledigt den Neustart vollautomatisch für dich und spart dir Zeit und Nerven.
-* **Alles im Blick:** Verfolge deine Einnahmen (stündlich, monatlich, jährlich) und behalte die volle Kontrolle über dein System.
+## Kernfunktionen und Vorteile
+* **Stabiler Betrieb:** 
+Eine automatisierte Bereinigung von Cache und Cookies verhindert Leistungseinbußen, die durch angesammelte temporäre Daten entstehen können.
+<br>
+* **Automatischer Neustart:** 
+Bei Hängern oder Ausfällen der Surfbar führt eBRestarter selbstständig einen Neustart durch und minimiert so Ausfallzeiten.
+<br>
+* **Punkte Statistiken:** 
+Überwachen Sie Ihre gesammelten Punkte (stündlich, monatlich, für das aktuelle Jahr) übersichtlich in einem zentralen Dashboard.
 
 ---
 
-## ✨ Highlights & Features
-Der Funktionsumfang teilt sich in automatisierte Prozesse für den Alltag und hilfreiche manuelle Werkzeuge für die Einrichtung:
+## Funktionsumfang
+Das Programm bietet sowohl automatisierte Hintergrundprozesse als auch Werkzeuge für die manuelle Konfiguration:
 
-### 🤖 Automatisierte Funktionen (Zurücklehnen & Genießen)
-* **Automatischer Browser-Neustart:** Du wählst das Zeitintervall, eBRestarter hält die Surfbar am Laufen.
-* **Automatischer Frühjahrsputz:** Verlauf, Cache und Cookies werden nach einem festen Zeitplan im Hintergrund gelöscht.
-* **Automatischer PC-Neustart:** Auf Wunsch startet die Software den gesamten Computer nach einem festgelegten Zeitplan (z.B. nachts) komplett neu, um das System frisch zu halten.
+### Automatisierte Prozesse
+* **Browser-Neustart:**
+Startet den Browser in festgelegten Intervallen automatisch neu.
+<br>
+* **Systembereinigung:**
+Verlauf, Cache und Cookies werden nach einem konfigurierten Zeitplan im Hintergrund gelöscht.
+<br>
+* **PC-Neustart:**
+Optional kann das gesamte System nach einem definierten Zeitplan (z.B. nachts) komplett neu gestartet werden.
 
 <!-- Screenshot: Die neue Chrome Erweiterung in Aktion oder das Einstellungsmenü dafür -->
 ![Tab-Restarter Browser-Erweiterung](assets/extension_preview.png)
 
-* **🧩 Tab-Restarter Browser-Erweiterung (NEU!):** Für alle Browser mit Chrome-Engine (z.B. Chrome, Edge, Brave, Vivaldi) bieten wir jetzt eine smarte Browser-Erweiterung:
-  * *Sturzsichere Tab-Überwachung:* Die Erweiterung prüft sekundengenau, ob der Tab noch aktiv surft. Friert die Seite ein, gerät sie in eine Endlosschleife oder gibt es Verbindungsfehler, lädt die Erweiterung die Surfbar sofort eigenständig neu.
-  * *Anti-Popup Kiosk-Modus:* Unerwünschte Werbe-Popups oder versehentlich geöffnete Zweit-Tabs werden gnadenlos im Bruchteil einer Sekunde geschlossen. Dein Browser bleibt zu 100% fokussiert!
+* **Tab-Restarter Browser-Erweiterung:** 
+Eine Begleiterweiterung für Chromium-basierte Browser (z.B. Chrome, Edge, Brave, Vivaldi):
+<br>
+  * *Tab-Überwachung:* 
+  Die Erweiterung erkennt eingefrorene Tabs, Endlosschleifen oder Verbindungsfehler und lädt die betroffene Seite bei Bedarf selbstständig neu.
+  <br>
+  * *Kiosk-Modus:* 
+  Unerwünschte Pop-ups oder versehentlich geöffnete Tabs werden automatisch geschlossen, um den Fokus auf die Surfbar zu wahren.
 
-### 📊 Statistiken & Monitoring
+### Monitoring & Statistiken
 <!-- Screenshot: Das Dashboard mit den Statistiken (Stündlich, Monatlich, Jahr) und der IP-Adresse -->
 ![Dashboard mit Punkte-Statistiken und IP-Anzeige](assets/statistics_dashboard.png)
 
-* **Punkte-Tracking:** Lass dir deine verdienten Punkte bequem und übersichtlich aufgeschlüsselt nach Stunde, Monat und Jahr anzeigen.
-* **Live-IP-Anzeige:** Deine aktuelle IP-Adresse ist jederzeit direkt in der Benutzeroberfläche sichtbar.
-* **API-Zugang:** Für Power-User! Verschaffe dir über unsere API-Schnittstelle direkten Zugriff auf deine Punkte-Statistiken und IP-Informationen, um sie in deine eigenen Dashboards einzubinden.
+* **API-Integration:** 
+Unterstützt die direkte Anbindung an die eBesucher-API zur Abfrage und Anzeige Ihrer Statistiken.
+<br>
+* **Auswertungen:**
+Detaillierte Aufschlüsselung der generierten Punkte nach Stunde, Monaten und aktuelles Jahr.
+<br>
+* **IP-Anzeige:**
+Die aktuelle öffentliche IP-Adresse wird kontinuierlich in der Benutzeroberfläche dargestellt.
 
-### ⚙️ Manuelle Funktionen (Volle Kontrolle)
+### Manuelle Werkzeuge
 <!-- Screenshot: Die Download- und Bereinigungstools -->
 ![Manuelle Tools und Browser-Downloader](assets/manual_tools.png)
 
-* **Integrierter Browser-Downloader:** Lade dir die passenden Browser bequem direkt über die eBRestarter-Software herunter.
-* **Add-on Installation:** Ein-Klick-Funktion zur schnellen manuellen Installation des eBesucher Add-ons.
-* **Manuelle Bereinigung:** Lösche Cookies und den Internet-Cache jederzeit auf Knopfdruck.
-* **Windows Auto-Login Guide:** Eine hilfreiche Anleitung zur Aktivierung der automatischen Windows-Anmeldung ist direkt integriert.
+* **Browser-Downloader:**
+Direkter Download unterstützter Browser bequem aus der Anwendung heraus.
+<br>
+* **Add-on Installation:**
+Integrierte Funktion zur unkomplizierten Installation des eBesucher Add-ons.
+<br>
+* **Manuelle Bereinigung:**
+Möglichkeit zum sofortigen Löschen von Cookies und Cache per Knopfdruck.
+<br>
+* **Windows Auto-Login Guide:**
+Enthält eine Anleitung zur Einrichtung der automatischen Windows-Anmeldung. (Hinweis: das gilt nur für Anmeldungen ohne Pin eingabe.)
 
 ---
 
-## 💻 Systemanforderungen
-Um eBRestarter optimal nutzen zu können, sollte dein System folgende Voraussetzungen erfüllen:
+## Systemanforderungen
 
 **Software:**
 * **Betriebssystem:** Windows 11 (Home/Pro, **nur 64-Bit**)
-  * *Intensiv getestet auf: Windows 11 (Version 23H2)*
+  * *Getestet auf: Windows 11 (Version 25H2)*
+  <br>
 * **Framework:** .NET 10.0 Runtime
 
 **Hardware:**
+
 * **Prozessor (CPU):** Intel oder AMD CPU mit 64-Bit-Architektur 
-  *(U.a. erfolgreich getestet auf: Intel N150)*
-* **Arbeitsspeicher (RAM):** 4 GB RAM werden empfohlen. Das Programm kann auch mit weniger Arbeitsspeicher laufen, jedoch übernehmen wir hierfür keine Garantie.
-* **Festplattenspeicher:** Mindestens 200 MB freier Speicherplatz für die Installation.
+  *(Erfolgreich getestet u.a. auf Intel N150)*
+<br>
+* **Arbeitsspeicher (RAM):** 4 GB RAM empfohlen (Betrieb mit weniger RAM auf eigene Verantwortung möglich).
+<br>
+* **Festplattenspeicher:** Mindestens 300 MB freier Speicherplatz.
 
-> **ℹ️ Wichtige Hinweise:** 
-> * **Mehrsprachig:** Die Software ist in **Deutsch** und **Englisch** verfügbar.
-> * **Plattform:** Es werden **ausschließlich Windows-Betriebssysteme** unterstützt (kein macOS, kein Linux).
+> **Hinweise:** 
+> * **Sprachen:** Die Software ist in Deutsch und Englisch verfügbar.
+> * **Kompatibilität:** Es werden ausschließlich Windows-Betriebssysteme unterstützt.
 
-## 🚀 So startest du
-Das Einrichten ist ein Kinderspiel:
+## Erste Schritte
 
-1. **Herunterladen:** Lade dir die neueste Version von eBRestarter herunter.
-2. **Voraussetzung prüfen:** Stelle sicher, dass du .NET 10 installiert hast.
-3. **Starten & Einrichten:** Führe die Anwendung aus. Nutze unsere praktischen manuellen Funktionen, um deinen Wunsch-Browser herunterzuladen und das eBesucher-Addon hinzuzufügen. Trage, falls gewünscht, deine API-Zugangsdaten ein, um die Statistiken freizuschalten.
-4. **Autopilot aktivieren:** Stelle deine gewünschten Intervalle für den Neustart und die Cache-Bereinigung ein (und aktiviere bei Bedarf die neue Browser-Erweiterung).
-5. **Zurücklehnen:** Klicke auf Start. Den Rest übernimmt ab sofort eBRestarter für dich!
+1. **Download:**
+Laden Sie die aktuelle Version von eBRestarter herunter.
+<br>
+2. **Voraussetzungen prüfen:**
+Stellen Sie sicher, dass die .NET 10 Runtime auf Ihrem System installiert ist.
+<br>
+3. **Einrichtung:**
+Starten Sie die Anwendung. Nutzen Sie die integrierten Werkzeuge, um den gewünschten Browser herunterzuladen und das Add-on zu installieren. Hinterlegen Sie optional Ihre API-Zugangsdaten für die Statistikfunktionen.
+<br>
+4. **Konfiguration:**
+Legen Sie die Intervalle für Neustarts und Bereinigungen fest und aktivieren Sie bei Bedarf die Browser-Erweiterung.
+<br>
+5. **Start:**
+Aktivieren Sie den automatisierten Betrieb über die Schaltfläche "Start".
 
 ---
-*Hinweis: eBRestarter ist ein inoffizielles Software-Tool und steht in keiner direkten Verbindung zur eBesucher GmbH.*
+*Hinweis: eBRestarter ist eine inoffizielle Software und steht in keiner direkten Verbindung zur eBesucher GmbH.*

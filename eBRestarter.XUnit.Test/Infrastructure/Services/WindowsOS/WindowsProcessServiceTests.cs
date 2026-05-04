@@ -1,4 +1,4 @@
-﻿using eBRestarter.Infrastructure.Services.WindowsOS;
+using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -200,7 +200,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         /// nicht anrühren und soll Prozesse ohne GUI (MainWindowHandle == 0) ignorieren.
         /// </summary>
         [Fact]
-        public void CloseAllOpenPrograms_ShouldIgnoreSystemAndHeadlessProcesses()
+        public async Task CloseAllOpenProgramsAsync_ShouldIgnoreSystemAndHeadlessProcesses()
         {
             // ARRANGE
             // HIER NEU: IProcess anstelle von IWrappedProcess
@@ -214,6 +214,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             var validAppMock = new Mock<IProcess>();
             validAppMock.Setup(p => p.ProcessName).Returns("Notepad");
             validAppMock.Setup(p => p.MainWindowHandle).Returns(new IntPtr(1234)); // Hat eine GUI
+            validAppMock.Setup(p => p.WaitForExitAsync()).Returns(Task.CompletedTask);
 
             // HIER NEU: Gibt ein IProcess[] Array zurück
             _mockProcessWrapper.Setup(w => w.GetProcesses()).Returns(new IProcess[]
@@ -224,17 +225,17 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             });
 
             // ACT
-            _sut.CloseAllOpenPrograms();
+            await _sut.CloseAllOpenProgramsAsync(5000);
 
             // ASSERT
             // Darf bei System nicht aufgerufen werden
-            systemMock.Verify(p => p.WaitForExit(It.IsAny<int>()), Times.Never);
+            systemMock.Verify(p => p.WaitForExitAsync(), Times.Never);
 
             // Darf bei Headless nicht aufgerufen werden
-            headlessMock.Verify(p => p.WaitForExit(It.IsAny<int>()), Times.Never);
+            headlessMock.Verify(p => p.WaitForExitAsync(), Times.Never);
 
-            // Bei der Valid App muss WaitForExit (max 5000ms) getriggert worden sein
-            validAppMock.Verify(p => p.WaitForExit(5000), Times.Once);
+            // Bei der Valid App muss WaitForExitAsync getriggert worden sein
+            validAppMock.Verify(p => p.WaitForExitAsync(), Times.Once);
 
             // Da wir 'using (process)' implementiert haben, muss Dispose aufgerufen worden sein
             validAppMock.Verify(p => p.Dispose(), Times.Once);
