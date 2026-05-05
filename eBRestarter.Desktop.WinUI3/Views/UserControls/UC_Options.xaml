@@ -84,6 +84,7 @@
                             VerticalAlignment="Center"
                             FontSize="14"
                             Foreground="{ThemeResource FontColor_1}" />
+
                     </StackPanel>
 
                 </PivotItem.Header>

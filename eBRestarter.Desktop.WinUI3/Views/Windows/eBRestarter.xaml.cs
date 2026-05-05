@@ -103,9 +103,6 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private void AppTitleBar_BackRequested(TitleBar sender, object args)
         {
-            ArgumentNullException.ThrowIfNull(sender);
-            ArgumentNullException.ThrowIfNull(args);
-
             // Prüft direkt am Frame, ob eine Rückwürtsnavigation müglich ist.
             if (NavigationFrame.CanGoBack)
             {
@@ -118,9 +115,6 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
         {
-            ArgumentNullException.ThrowIfNull(sender);
-            ArgumentNullException.ThrowIfNull(args);
-
             // Klappt das Navigationsmenü auf oder zu.
             NavView.IsPaneOpen = !NavView.IsPaneOpen;
         }

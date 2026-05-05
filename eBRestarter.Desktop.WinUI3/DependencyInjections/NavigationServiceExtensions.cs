@@ -13,7 +13,7 @@ public static class NavigationServiceExtensions
 
     public static IServiceCollection AddNavigationService(this IServiceCollection services)
     {
-        services.AddSingleton<INavigationService>(provider =>
+        services.AddSingleton<INavigationService>(_ =>
         {
             var navService = new NavigationService();
             navService.RegisterRoute("CommonOverview", typeof(P_CommonOverview));

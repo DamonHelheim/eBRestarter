@@ -227,6 +227,7 @@
                             Height="55"
                             HorizontalAlignment="Center"
                             Click="BtnGoToeVisitorAPI_Click"
+                            Command="{Binding GoToAPILoginCommand}"
                             FontSize="16">
 
                             <Grid ColumnSpacing="10">
