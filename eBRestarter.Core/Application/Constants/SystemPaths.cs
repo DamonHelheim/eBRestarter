@@ -6,8 +6,6 @@ public static class SystemPaths
     private const string ManufacturerName = "Skylar";
     private const string AppName = "eBRestarter";
 
-    // --- BASIS PFADE ---
-
     // Gibt dynamisch den korrekten Pfad zu "AppData/Local" zurück (z.B. C:\Users\User\AppData\Local)
     // Das ist viel sicherer als manuelles String-Basteln.
     private static string LocalAppData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -21,15 +19,9 @@ public static class SystemPaths
     // Der Download-Ordner: ...\Users\User\Downloads\
     public static string DownloadsPath => Path.Combine(UserProfile, "Downloads");
 
-
-    // --- DATEIEN IM DOWNLOAD ORDNER ---
-
     public static string FilenameFirefoxInstaller => Path.Combine(DownloadsPath, "Firefox installer x64.exe");
     public static string FilenameChromeInstaller => Path.Combine(DownloadsPath, "ChromeSetup x64.exe");
     public static string FilenameEdgeInstaller => Path.Combine(DownloadsPath, "MicrosoftEdgeEnterpriseX64.msi");
-
-
-    // --- DATEIEN IM APP DATA ORDNER ---
 
     public static string File_Path_eBRestarter_Settings => Path.Combine(ApplicationDataBasePath, "eBRestarterConfig.json");
     public static string File_Path_Time_Stamp_Delete_Process => Path.Combine(ApplicationDataBasePath, "DeleteDate.ini");

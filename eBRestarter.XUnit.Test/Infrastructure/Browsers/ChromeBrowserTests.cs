@@ -14,7 +14,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     public class ChromeBrowserTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// eBesucher muss ganz spezifische Ordner leeren (z. B. "Cache_Data", "IndexedDB").
         /// Wir müssen sicherstellen, dass die GetPaths() Methode genau diese Ordner für
         /// das Standard-Profil von Chrome generiert.

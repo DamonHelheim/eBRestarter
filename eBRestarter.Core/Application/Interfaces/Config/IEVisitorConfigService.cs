@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 
 namespace eBRestarter.Core.Application.Interfaces.Config;
 

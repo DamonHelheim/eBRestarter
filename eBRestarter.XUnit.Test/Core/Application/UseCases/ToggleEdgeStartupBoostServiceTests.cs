@@ -37,13 +37,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
                 _mockStartupService.Object,
                 _mockBrowserFactory.Object);
         }
-
-        // =========================================================
         // 1. IS ENABLED / IS INSTALLED - TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Status des Startup-Boosts 1:1 vom Windows-Service
         /// durchgereicht wird, ohne dass die Logik ihn verfälscht.
         /// </summary>
@@ -64,7 +60,6 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die UI muss wissen, ob Edge überhaupt installiert ist, bevor sie den Schalter anzeigt.
         /// Der Test prüft, ob der Service den Edge-Browser aus der Factory anfordert und
         /// dessen 'IsInstalled' Property korrekt auswertet.
@@ -86,13 +81,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
             // Verifizieren, dass explizit Edge angefordert wurde (nicht Chrome o.ä.)
             _mockBrowserFactory.Verify(f => f.Create(BrowserType.Edge), Times.Once);
         }
-
-        // =========================================================
         // 2. TOGGLE (UMSCHALTEN) - TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der "Happy Path": Wenn der Benutzer den Schalter umlegt (egal ob an oder aus),
         /// muss der Windows-Service mit exakt diesem Wert aufgerufen werden und eine
         /// Erfolgs-Response zurückliefern.
@@ -116,7 +107,6 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Fehlerbehandlung: Wenn es beim Ã„ndern der Registry/Richtlinie knallt
         /// (z.B. fehlende Admin-Rechte / UnauthorizedAccessException), darf die
         /// App nicht abstürzen. Das Response-Objekt muss den Fehler sauber verpacken.

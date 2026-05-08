@@ -24,13 +24,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
             _mockProvider = new Mock<INetworkProvider>();
             _sut = new WindowsNetworkInfoService(_mockProvider.Object);
         }
-
-        // =========================================================
         // 1. AVAILABILITY TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das Ergebnis des Providers direkt und ohne
         /// Modifikation weitergegeben wird.
         /// </summary>
@@ -48,13 +44,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
             // ASSERT
             result.ShouldBe(isAvailable);
         }
-
-        // =========================================================
         // 2. INTERFACE FILTERING TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist das Herzstück deiner Klasse. Hier prüfen wir alle Filter-Bedingungen
         /// gleichzeitig. Die Methode darf nur Netzwerkkarten durchlassen, die:
         /// - Status = UP haben
@@ -107,10 +99,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
             wifiStats.BytesReceived.ShouldBe(50);
             wifiStats.IsActive.ShouldBeTrue();
         }
-
-        // =========================================================
         // HELPER METHODEN
-        // =========================================================
 
         /// <summary>
         /// Erzeugt künstliche NetworkInterface-Objekte mit spezifischen Werten.

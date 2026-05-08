@@ -17,7 +17,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
     public class BrowserFactoryTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Factory nutzt ein 'switch'-Statement, um das Enum auf konkrete Klassen zu mappen.
         /// Ein simpler Kopierfehler im Code (z.B. Edge => gibt Chrome zurück) würde das Programm crashen.
         ///
@@ -34,9 +33,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
         [InlineData(BrowserType.Vivaldi, typeof(VivaldiBrowser))]
         public void Create_ShouldReturnCorrectBrowserInstance_ForValidBrowserType(BrowserType inputType, Type expectedClassType)
         {
-            // ==========================================
             // ARRANGE (Vorbereitung)
-            // ==========================================
             var mockServiceProvider = new Mock<IServiceProvider>();
 
             // Um die konkreten Browser zu erstellen, brauchen wir Dummy-Mocks für deren Konstruktoren
@@ -60,15 +57,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
             mockServiceProvider.Setup(sp => sp.GetService(typeof(VivaldiBrowser))).Returns(fakeVivaldi);
 
             var factory = new BrowserFactory(mockServiceProvider.Object);
-
-            // ==========================================
             // ACT (Ausführung)
-            // ==========================================
             var result = factory.Create(inputType);
-
-            // ==========================================
             // ASSERT (Prüfung)
-            // ==========================================
             // 1. Prüfen wir, ob überhaupt etwas zurückkam
             result.ShouldNotBeNull();
 
@@ -78,7 +69,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn in der Zukunft jemand im 'BrowserType' Enum einen neuen Browser (z.B. Opera) hinzufügt,
         /// aber vergisst, die Factory anzupassen, soll das Programm kontrolliert mit einer
         /// klaren NotSupportedException abbrechen, anstatt seltsame Fehler zu werfen.
@@ -90,19 +80,14 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
         [Fact]
         public void Create_ShouldThrowNotSupportedException_ForInvalidBrowserType()
         {
-            // ==========================================
             // ARRANGE
-            // ==========================================
             var mockServiceProvider = new Mock<IServiceProvider>();
             var factory = new BrowserFactory(mockServiceProvider.Object);
 
             // Wir "erfinden" einen ungültigen BrowserType, indem wir eine Zahl casten,
             // die gar nicht im Enum definiert ist.
             var invalidBrowserType = (BrowserType)999;
-
-            // ==========================================
             // ACT & ASSERT
-            // ==========================================
             // Shouldly fängt die Exception und prüft ihren Typ und (optional) die Nachricht
             var exception = Should.Throw<NotSupportedException>(() =>
             {

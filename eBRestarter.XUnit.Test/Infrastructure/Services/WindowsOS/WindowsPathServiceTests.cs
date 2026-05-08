@@ -25,13 +25,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
             _sut = new WindowsPathService(_mockPathProvider.Object);
         }
-
-        // =========================================================
         // 1. APPDATA PATH TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die App speichert ihre Daten nicht direkt im Basis-Ordner, sondern in einem
         /// Firmen- ("Skylar") und App-Unterordner ("eBRestarter"). Das muss korrekt verkettet werden.
         ///
@@ -54,13 +50,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             actualPath.ShouldBe(expectedPath);
         }
-
-        // =========================================================
         // 2. DOWNLOADS PATH TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Um den korrekten Download-Ordner des Nutzers zu finden, muss die Klasse vom
         /// UserProfile-Ordner ausgehen und "Downloads" anhängen.
         /// </summary>
@@ -79,13 +71,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             actualPath.ShouldBe(expectedPath);
         }
-
-        // =========================================================
         // 3. FILE PATH TESTS (Config & Log)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Konfigurationsdatei muss zwingend im AppData-Verzeichnis liegen und
         /// exakt "eBRestarterConfig.json" heißen.
         ///
@@ -111,7 +99,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Log-Datei muss zwingend im AppData-Verzeichnis liegen und "log.txt" heißen.
         /// </summary>
         [Fact]

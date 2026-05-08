@@ -39,7 +39,15 @@
 
                 <ToggleSwitch x:Uid="StartupBoostDialog_SwitchStatus"
                               IsOn="{Binding IsStartupBoostEnabled, Mode=TwoWay}"
+                              IsEnabled="{Binding IsAdministrator}"
                               HorizontalAlignment="Stretch"/>
+
+                <!-- Warnhinweis, wenn nicht als Admin gestartet -->
+                <InfoBar x:Uid="StartupBoostDialog_AdminWarning"
+                         IsOpen="{Binding IsNotAdministrator, Mode=OneWay}"
+                         Severity="Warning"
+                         IsClosable="False"
+                         Margin="0,10,0,0"/>
 
                 <InfoBar IsOpen="{Binding IsInfoBarOpen, Mode=TwoWay}"
                          Title="{Binding InfoBarTitle}"

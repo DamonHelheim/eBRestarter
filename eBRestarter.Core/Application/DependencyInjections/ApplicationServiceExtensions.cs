@@ -10,6 +10,7 @@ using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Domain.Services;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Core.Application.DependencyInjections;
@@ -35,6 +36,8 @@ public static class ApplicationServiceExtensions
         services.AddTransient<IScheduleBrowserCleanupUseCase, ScheduleBrowserCleanupService>();
         services.AddTransient<IGetSystemInformationUseCase, GetSystemInformationService>();
         services.AddTransient<IRemoveApiCredentialsUseCase, RemoveApiCredentialsService>();
+
+        services.AddValidatorsFromAssemblyContaining<ConfigureAutoLogonRequestValidator>();
 
         return services;
     }

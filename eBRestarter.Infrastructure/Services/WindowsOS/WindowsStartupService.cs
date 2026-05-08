@@ -25,8 +25,6 @@ public class WindowsStartupService(
     private const string StartupTaskId = "eBRestarterAutoStart";
 #pragma warning restore RCS1213 // Remove unused member declaration
 
-    // --- Constants for Registry Paths ---
-
     // Path for "Current User" Run-Key (Standard Autostart for the current user).
     private const string RegistryPathRun = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
 
@@ -164,10 +162,7 @@ public class WindowsStartupService(
             _logger.LogError(ex, "Error configuring AutoLogon settings.");
         }
     }
-
-    // ---------------------------------------------------------
     // PART 1: Autostart via Registry (Unpackaged)
-    // ---------------------------------------------------------
 
     public Task EnableAutoStartAsync()
     {

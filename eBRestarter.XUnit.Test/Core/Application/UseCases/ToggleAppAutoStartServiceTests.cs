@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using Moq;
 using Shouldly;
 using System.Threading.Tasks;
@@ -29,13 +29,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
                 _mockStartupManager.Object,
                 _mockConfigService.Object);
         }
-
-        // =========================================================
         // 1. INITIALISIERUNG & SYNCHRONISATION
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn in der Config "StartWithWindows = true" steht, aber Windows meldet,
         /// dass der Autostart nicht aktiv ist (z.B. weil der User ihn im Task-Manager deaktiviert hat
         /// oder es der erste Start ist), muss die App ihn im Betriebssystem (nach)aktivieren.
@@ -61,7 +57,6 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn Config und OS bereits übereinstimmen (beide true oder beide false)
         /// oder die Config false ist, soll keine unnötige Aktion im OS ausgeführt werden.
         /// </summary>
@@ -87,13 +82,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
             _mockStartupManager.Verify(s => s.EnableAutoStartAsync(), Times.Never);
             _mockStartupManager.Verify(s => s.DisableAutoStartAsync(), Times.Never);
         }
-
-        // =========================================================
         // 2. TOGGLE-AKTIONEN DURCH DEN BENUTZER
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Benutzer den Autostart in der UI aktiviert, müssen zwei Dinge passieren:
         /// 1. Der OS-Service muss aktiviert werden.
         /// 2. Die Änderung muss dauerhaft in der Config gespeichert werden.
@@ -124,7 +115,6 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das genaue Gegenteil zum vorherigen Test: Wenn der Benutzer deaktiviert,
         /// muss das OS den Eintrag löschen und die Config auf "false" gesetzt werden.
         /// </summary>

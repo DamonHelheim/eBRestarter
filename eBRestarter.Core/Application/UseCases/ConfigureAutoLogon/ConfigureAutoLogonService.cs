@@ -1,34 +1,41 @@
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using FluentResults;
+using FluentValidation;
 
 namespace eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 
 public class ConfigureAutoLogonService(
     IWindowsAutoLogonService autoLogonService,
-    ICredentialValidationService credentialValidationService) : IConfigureAutoLogonUseCase
+    ICredentialValidationService credentialValidationService,
+    IValidator<ConfigureAutoLogonRequest> validator) : IConfigureAutoLogonUseCase
 {
     private readonly IWindowsAutoLogonService _autoLogonService = autoLogonService;
     private readonly ICredentialValidationService _credentialValidationService = credentialValidationService;
+    private readonly IValidator<ConfigureAutoLogonRequest> _validator = validator;
 
-    public ConfigureAutoLogonResponse Execute(ConfigureAutoLogonRequest request)
+    public Result<AutoLogonResultStatus> Execute(ConfigureAutoLogonRequest request)
     {
+        var validationResult = _validator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail(new Error("Validation failed.")
+                .WithMetadata("Status", AutoLogonResultStatus.ValidationError));
+        }
+
         try
         {
             if (request.IsDeactivateAction)
             {
                 _autoLogonService.DisableAutoLogon();
-
-                return new ConfigureAutoLogonResponse(true, AutoLogonResultStatus.Deactivated);
+                return Result.Ok(AutoLogonResultStatus.Deactivated);
             }
 
-            // --- NEU: Den Windows Hello Check durchführen ---
             if (_autoLogonService.IsWindowsHelloPasswordlessEnabled())
             {
-                // Wenn aktiv, brechen wir sofort ab!
-                return new ConfigureAutoLogonResponse(false, AutoLogonResultStatus.WindowsHelloBlockActive,
-                    "Windows Hello Passwordless Mode ist aktiv. AutoLogon nicht möglich.");
+                return Result.Fail(new Error("Windows Hello Passwordless Mode ist aktiv. AutoLogon nicht möglich.")
+                    .WithMetadata("Status", AutoLogonResultStatus.WindowsHelloBlockActive));
             }
-            // ------------------------------------------------
 
             if (!string.IsNullOrWhiteSpace(request.Username) && request.Password != null)
             {
@@ -38,23 +45,27 @@ public class ConfigureAutoLogonService(
 
                 if (!isValid)
                 {
-                    return new ConfigureAutoLogonResponse(false, AutoLogonResultStatus.ValidationError);
+                    return Result.Fail(new Error("Invalid credentials.")
+                        .WithMetadata("Status", AutoLogonResultStatus.ValidationError));
                 }
 
                 _autoLogonService.EnableAutoLogon(request.Username, domain, request.Password);
 
-                return new ConfigureAutoLogonResponse(true, AutoLogonResultStatus.Activated);
+                return Result.Ok(AutoLogonResultStatus.Activated);
             }
 
-            return new ConfigureAutoLogonResponse(false, AutoLogonResultStatus.ValidationError, "Credentials missing.");
+            return Result.Fail(new Error("Credentials missing.")
+                .WithMetadata("Status", AutoLogonResultStatus.ValidationError));
         }
         catch (InvalidOperationException)
         {
-            return new ConfigureAutoLogonResponse(false, AutoLogonResultStatus.DomainError);
+            return Result.Fail(new Error("Domain error.")
+                .WithMetadata("Status", AutoLogonResultStatus.DomainError));
         }
         catch (Exception ex)
         {
-            return new ConfigureAutoLogonResponse(false, AutoLogonResultStatus.UnexpectedError, ex.Message);
+            return Result.Fail(new ExceptionalError(ex)
+                .WithMetadata("Status", AutoLogonResultStatus.UnexpectedError));
         }
     }
 }

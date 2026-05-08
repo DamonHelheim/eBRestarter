@@ -11,13 +11,10 @@ namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
         /// </summary>
         public class FormatExtensionsTests
         {
-        // =========================================================
         // 1. GRENZWERTE & STANDARD-KONVERTIERUNGEN
-        // =========================================================
 
         /// <summary>
         /// <para>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist der "Happy Path" und testet die Kernmathematik (Logarithmus zur Basis 1024).
         /// Es wird geprüft, ob die Schwellenwerte für die Umrechnung in die nächsthöhere
         /// Einheit (KB, MB, GB) exakt getroffen werden.
@@ -52,13 +49,9 @@ namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
             // Prüft, ob der berechnete String exakt mit dem erwarteten [InlineData]-Wert übereinstimmt.
             result.ShouldBe(expectedResult);
         }
-
-         // =========================================================
          // 2. NEGATIVE ZAHLEN
-         // =========================================================
 
          /// <summary>
-         /// WARUM WIRD DAS GETESTET?
          /// In der realen Welt gibt es keine "negativen Dateigrößen". Aber bei der Berechnung von
          /// Speicher-Differenzen (z. B. "Wie viel Platz wurde durch den Cleanup freigegeben?")
          /// können Deltas entstehen (z. B. -500 MB). Die Methode darf dabei nicht abstürzen (z. B.
@@ -75,14 +68,10 @@ namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
              // Assert
              result.ShouldBe(expectedResult);
          }
-
-        // =========================================================
         // 3. NACHKOMMASTELLEN (DECIMAL PLACES)
-        // =========================================================
 
         /// <summary>
         /// <para>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das dynamische String-Format (`$"n{decimalPlaces}"`) korrekt
         /// angewendet wird und mathematisches Runden funktioniert.
         /// </para>
@@ -109,14 +98,10 @@ namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
             twoDecimals.ShouldBe("1.25 MB"); // Prüft exakten Wert
             zeroDecimals.ShouldBe("1 MB"); // Prüft Abschneiden / Abrunden
         }
-
-        // =========================================================
         // 4. LOKALISIERUNG (CULTURE INFO)
-        // =========================================================
 
         /// <summary>
         /// <para>
-        /// WARUM WIRD DAS GETESTET?
         /// Ein klassisches Fehlerpotenzial in global genutzter Software sind unterschiedliche
         /// Dezimaltrennzeichen. Die Methode muss in der Lage sein, sich der Sprache des PCs anzupassen.
         /// </para>
@@ -143,14 +128,10 @@ namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
             germanResult.ShouldBe("1,5 KB"); // Prüft, ob ein Komma in Deutschland verwendet wird
             englishResult.ShouldBe("1.5 KB"); // Prüft, ob ein Punkt im Englischen verwendet wird
         }
-
-        // =========================================================
         // 5. EXTREM GROSSE ZAHLEN (OVERFLOW SCHUTZ)
-        // =========================================================
 
         /// <summary>
         /// <para>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist ein reiner "Edge Case" (Extremfall) Test.
         /// Wenn jemand die Methode mit der allergrößten Zahl aufruft, die ein C# `long` überhaupt
         /// fassen kann (ca. 9.2 Exabytes), darf das Programm nicht abstürzen (z.B. durch eine

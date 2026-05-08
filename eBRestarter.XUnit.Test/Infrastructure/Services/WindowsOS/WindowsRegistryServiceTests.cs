@@ -26,13 +26,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // Das verhindert, dass sich parallele Tests stören oder das Entwickler-System zugemüllt wird.
             _tempTestKey = $@"Software\eBRestarter_TestSandbox_{Guid.NewGuid()}";
         }
-
-        // =========================================================
         // 1. CURRENT USER TESTS (HKCU) - Schreiben, Lesen, Löschen
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass Werte korrekt in die CurrentUser-Registry geschrieben
         /// und exakt so wieder ausgelesen werden können.
         ///
@@ -56,7 +52,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein Wert gelöscht wird, darf er danach nicht mehr existieren. Die Methode
         /// darf außerdem nicht abstürzen, wenn der Wert bereits fehlt (throwOnMissingValue: false).
         /// </summary>
@@ -79,7 +74,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das Auslesen eines gesamten Registry-Schlüssels
         /// alle darin enthaltenen Werte als Dictionary zurückgibt.
         /// </summary>
@@ -103,7 +97,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein Schlüssel nicht existiert, darf die App nicht abstürzen,
         /// sondern muss ein leeres Dictionary zurückliefern.
         /// </summary>
@@ -117,13 +110,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             results.ShouldNotBeNull();
             results.ShouldBeEmpty();
         }
-
-        // =========================================================
         // 2. LOCAL MACHINE TESTS (HKLM)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das Lesen aus HKLM benötigt keine Adminrechte und muss immer funktionieren.
         /// Wir prüfen das, indem wir einen Schlüssel lesen, der in jedem Windows-System existiert.
         /// </summary>
@@ -144,7 +133,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das Schreiben in HKLM benötigt zwingend Administrator-Rechte.
         /// Der Test prüft, ob entweder der Wert erfolgreich geschrieben wird (wenn als Admin ausgeführt),
         /// oder ob die korrekte Sicherheitsausnahme geworfen wird (wenn als normaler User ausgeführt).
@@ -176,10 +164,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                     .ShouldBeTrue("Erwartete fehlende Berechtigung, da der Test-Runner nicht als Administrator läuft.");
             }
         }
-
-        // =========================================================
         // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
-        // =========================================================
         public void Dispose()
         {
             // Wir löschen den kompletten Sandbox-Ordner aus der Registry des aktuellen Benutzers.

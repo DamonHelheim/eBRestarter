@@ -17,7 +17,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     public class ChromiumBrowserBaseTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Chromium-Browser suchen Extensions in spezifischen Ordnern. Die Methode muss
         /// erkennen, wenn der Ordner für eine bestimmte Extension-ID auf der Festplatte existiert.
         ///
@@ -70,7 +69,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Nutzer die Extension gelöscht hat oder der Profil-Ordner leer ist,
         /// darf die Methode auf keinen Fall versehentlich 'true' zurückgeben.
         ///

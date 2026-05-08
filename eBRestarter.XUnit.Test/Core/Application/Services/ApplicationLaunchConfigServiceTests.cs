@@ -1,5 +1,5 @@
 using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.Services;
 using Moq;
 using Shouldly;
@@ -12,11 +12,9 @@ public class ApplicationLaunchConfigServiceTests
     [Fact]
     public void PrepareConfigForLaunch_WhenNextDeleteIsToday_RollsForwardAndReturnsPreferences()
     {
-        var browser = new Browser
-        {
-            DeleteBrowserCacheIntervalDays = 7,
-            NextBrowserDeleteCacheDate = DateTime.Today
-        };
+        var browser = new BrowserConfig();
+        browser.UpdateCleanupSettings(7, TimeProvider.System);
+        browser.SetNextCleanupDate(DateTime.Today);
         var config = new AppConfig
         {
             Browser = browser,

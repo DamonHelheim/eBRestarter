@@ -1,9 +1,9 @@
-namespace eBRestarter.Core.Application.Models.Config;
+namespace eBRestarter.Core.Domain.Entities;
 
-public sealed record AppConfig
+public class AppConfig
 {
     public string Username { get; set; } = string.Empty;
-    public Browser Browser { get; set; } = new();
+    public BrowserConfig Browser { get; set; } = new();
     public SettingsConfig Settings { get; set; } = new();
     public Computer Computer { get; set; } = new();
 }

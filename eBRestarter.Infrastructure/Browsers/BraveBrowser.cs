@@ -26,8 +26,6 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
 
     // Registry Key für Versionsprüfung
     protected override string RegistryKeyVersion => @"Software\BraveSoftware\Brave-Browser\BLBeacon";
-
-    // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
     public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 

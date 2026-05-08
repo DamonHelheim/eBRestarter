@@ -31,13 +31,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
             _sut = new WindowsSystemInfoService(_mockLogger.Object, _mockRegistry.Object);
         }
-
-        // =========================================================
         // 1. OS DISPLAY VERSION TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Registry-Key existiert, muss die Display-Version (z.B. "22H2" oder "21H1")
         /// exakt als String zurückgegeben werden.
         /// </summary>
@@ -56,7 +52,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Auf manchen (älteren) Systemen existiert der Key "DisplayVersion" vielleicht nicht.
         /// In diesem Fall darf es nicht knallen, sondern es muss "Unknown" zurückkommen.
         /// </summary>
@@ -78,7 +73,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn die Registry eine Exception wirft (z.B. Rechteproblem), muss die Methode
         /// den Fehler loggen und als Fallback "Error" zurückgeben.
         /// </summary>
@@ -97,13 +91,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // Wir prüfen nicht explizit den Logger mit Verify, da das Rückgabeergebnis bereits beweist,
             // dass der catch-Block erfolgreich betreten wurde.
         }
-
-        // =========================================================
         // 2. OS BUILD VERSION TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Methode setzt den Build-String aus zwei Teilen zusammen:
         /// Dem statischen Environment-Build und der Update Build Revision (UBR) aus der Registry.
         ///
@@ -129,7 +119,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Fehlt der UBR-Wert in der Registry, lautet der Fallback-Wert ".0".
         /// </summary>
         [Fact]
@@ -161,13 +150,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             result.ShouldBe("Error");
         }
-
-        // =========================================================
         // 3. STANDARD BROWSER TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die ProgId aus der Registry muss in lesbare Browsernamen übersetzt werden.
         ///
         /// WAS WIRD GETESTET?
@@ -195,7 +180,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn jemand manuell herumgepfuscht hat und HTTP/HTTPS verschiedene Browser haben,
         /// loggt der Service das, gewinnt aber die Information primär aus HTTP.
         /// </summary>
@@ -215,7 +199,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn gar kein Standard-Browser gesetzt ist (Wert = null oder leer),
         /// muss die Methode sofort mit "-" abbrechen.
         /// </summary>
@@ -237,7 +220,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der private Helper "GetRegistryValueAsString" fängt Exceptions ab.
         /// Wenn die Registry crasht, muss null geliefert werden, was in "-" resultiert.
         /// </summary>

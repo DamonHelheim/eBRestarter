@@ -25,13 +25,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             _tempTestDirectory = Path.Combine(Path.GetTempPath(), $"eB_FS_Test_{Guid.NewGuid()}");
             Directory.CreateDirectory(_tempTestDirectory);
         }
-
-        // =========================================================
         // 1. EXISTENCE TESTS (File & Directory)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Wrapper korrekte Booleans für physisch vorhandene
         /// und nicht vorhandene Dateien zurückgibt.
         ///
@@ -52,7 +48,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass Verzeichnisse korrekt erkannt werden.
         /// </summary>
         [Fact]
@@ -67,13 +62,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             _sut.DirectoryExists(existingDirPath).ShouldBeTrue();
             _sut.DirectoryExists(missingDirPath).ShouldBeFalse();
         }
-
-        // =========================================================
         // 2. PATH & ENVIRONMENT TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// CombinePaths muss Arrays von Strings plattformkonform verbinden.
         /// </summary>
         [Fact]
@@ -90,7 +81,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der Service hat eine eigene Fallback-Logik für Umgebungsvariablen (wie appdata).
         /// Diese muss korrekt in den Environment.SpecialFolder übersetzt werden.
         ///
@@ -121,13 +111,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             result.ShouldBeEmpty();
         }
-
-        // =========================================================
         // 3. DELETE TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Löschen ist eine destruktive Aktion. Wenn der Pfad leer ist, muss sofort abgebrochen
         /// und eine ArgumentException geworfen werden, um unvorhersehbares Verhalten zu vermeiden.
         /// </summary>
@@ -145,7 +131,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Kernfunktion: Die Datei muss danach physisch von der Festplatte verschwunden sein.
         /// </summary>
         [Fact]
@@ -164,13 +149,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             File.Exists(targetFile).ShouldBeFalse();
         }
-
-        // =========================================================
         // 4. READ / WRITE TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das Schreiben und anschließende Lesen von Strings
         /// über den Service ohne Datenverlust funktioniert.
         ///
@@ -193,7 +174,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// ReadAllLines muss die Datei zeilenweise splitten und als String-Array zurückgeben.
         /// </summary>
         [Fact]
@@ -212,10 +192,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             actualLines[0].ShouldBe("Zeile 1");
             actualLines[2].ShouldBe("Zeile 3");
         }
-
-        // =========================================================
         // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
-        // =========================================================
         public void Dispose()
         {
             // Sicherheits-Cleanup: Den temporären Ordner samt Inhalt löschen

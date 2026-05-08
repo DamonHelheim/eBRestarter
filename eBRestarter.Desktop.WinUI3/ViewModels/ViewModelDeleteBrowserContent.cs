@@ -5,7 +5,7 @@ using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -237,18 +237,18 @@ public partial class ViewModelDeleteBrowserContent : ObservableObject
                     ProgressText = $"{cleanupProgress.CurrentFile * 100 / cleanupProgress.TotalFiles} %";
             });
 
-            var response = await _deleteBrowserContentUseCase.ExecuteAsync(
+            var result = await _deleteBrowserContentUseCase.ExecuteAsync(
                 request,
                 progress,
                 _deleteBrowserContentCancellationTokenSource.Token);
 
-            if (response.ProcessConflict)
+            if (result.HasError<ProcessConflictError>())
             {
                 IsProcessConflict = true;
             }
-            else if (!response.Success)
+            else if (result.IsFailed)
             {
-                StatusText = response.ErrorMessage;
+                StatusText = result.Errors[0].Message;
             }
             else if (_isAutoMode)
             {

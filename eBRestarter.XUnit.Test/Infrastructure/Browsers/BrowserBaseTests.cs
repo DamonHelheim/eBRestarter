@@ -17,9 +17,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     /// </summary>
     public class BrowserBaseTests
     {
-        // =========================================================
         // 1. DER TEST-DUMMY
-        // =========================================================
 
         /// <summary>
         /// Da BrowserBase abstrakt ist, können wir nicht einfach 'new BrowserBase()' aufrufen.
@@ -54,13 +52,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
                 return CleanVersionString(raw);
             }
         }
-
-        // =========================================================
         // 2. DIE TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn wir die Browser-Version aus der Windows-Registry auslesen, schreiben verschiedene Browser
         /// oft "Müll" dazu (z. B. "120.0.1 (x64 de)"). Wenn wir versuchen, diesen String in ein C# Version-Objekt
         /// umzuwandeln, stürzt das Programm ab. Die Regex-Logik in CleanVersionString muss robust sein.
@@ -95,7 +89,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Start-Methode ist geschäftskritisch. Sie muss aus dem Executable-Pfad, der eBesucher-URL
         /// und möglichen Parametern einen fehlerfreien Aufruf für Windows zusammenbauen.
         /// Gleichzeitig wollen wir in einem Unit-Test NICHT, dass sich plötzlich ein echter Browser auf deinem Monitor öffnet!
@@ -149,7 +142,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Ein Nutzer könnte den Browser deinstalliert haben, aber unsere App glaubt noch, er sei da.
         /// In diesem Fall findet 'GetExecutablePath()' die Datei nicht und wirft eine FileNotFoundException.
         /// Unsere App darf deswegen nicht komplett abstürzen! Die Start-Methode hat dafür einen try-catch-Block.

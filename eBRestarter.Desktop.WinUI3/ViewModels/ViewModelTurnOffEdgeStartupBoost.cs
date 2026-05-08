@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -23,6 +24,7 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     private readonly IDialogService _dialogService;
     private readonly ILocalizationService _localizationService;
     private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
+    private readonly IOperatingSystemFacade _operatingSystemFacade;
 
     private bool _isRevertingState;
 
@@ -42,6 +44,12 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     [ObservableProperty]
     public partial InfoBarSeverity InfoBarSeverity { get; set; } = InfoBarSeverity.Informational;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotAdministrator))]
+    public partial bool IsAdministrator { get; set; }
+
+    public bool IsNotAdministrator => !IsAdministrator;
+
     /// <summary>
     /// Initializes the VM with startup and dialog services and reads the current Edge Startup Boost
     /// state so the toggle reflects the actual setting when the dialog opens.
@@ -49,16 +57,20 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     public ViewModelTurnOffEdgeStartupBoost(
         IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
         IDialogService dialogService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IOperatingSystemFacade operatingSystemFacade)
     {
         ArgumentNullException.ThrowIfNull(toggleEdgeStartupBoostUseCase);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(operatingSystemFacade);
 
         _toggleEdgeStartupBoostUseCase = toggleEdgeStartupBoostUseCase;
         _dialogService = dialogService;
         _localizationService = localizationService;
+        _operatingSystemFacade = operatingSystemFacade;
 
+        IsAdministrator = _operatingSystemFacade.WindowsSystemInfoService.IsUserAdministrator();
         IsStartupBoostEnabled = _toggleEdgeStartupBoostUseCase.IsEnabled();
     }
 

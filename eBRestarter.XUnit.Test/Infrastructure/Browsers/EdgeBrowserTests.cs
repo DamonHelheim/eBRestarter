@@ -8,13 +8,10 @@ using Xunit;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
-    // =========================================================
     // EDGE BROWSER TESTS
-    // =========================================================
     public class EdgeBrowserTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Bei Edge passiert oft der Fehler, dass man "Microsoft Edge" oder nur "Edge" als
         /// Verzeichnisnamen wählt. Der echte Ordnerbaum ist aber "Microsoft\Edge\User Data".
         ///

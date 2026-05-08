@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Domain.Services;
 
 namespace eBRestarter.Core.Application.Services;

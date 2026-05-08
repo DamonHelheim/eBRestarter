@@ -30,13 +30,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
             _sut = new WindowsProcessService(_mockLogger.Object, _mockProcessWrapper.Object);
         }
-
-        // =========================================================
         // 1. START EXECUTABLE TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das ProcessStartInfo-Objekt korrekt konfiguriert wird
         /// (korrekter Pfad und UseShellExecute = true).
         /// </summary>
@@ -55,13 +51,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 info.UseShellExecute == true
             )), Times.Once);
         }
-
-        // =========================================================
         // 2. MSI INSTALLER TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der MSI-Start ist komplex: Er muss den absoluten Pfad zur msiexec.exe nutzen (Security),
         /// Argumente setzen, Output umleiten und auf das Ende warten.
         ///
@@ -76,8 +68,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string msiPath = @"C:\Install\setup.msi";
             string expectedSystemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
             string expectedMsiExecPath = Path.Combine(expectedSystemFolder, "msiexec.exe");
-
-            // HIER NEU: Nutzt jetzt dein echtes IProcess Interface
             var mockProcess = new Mock<IProcess>();
 
             // Dummy-Streams für Output und Error
@@ -104,10 +94,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // 2. Prüfen, ob auf das Beenden gewartet wurde
             mockProcess.Verify(p => p.WaitForExit(), Times.Once);
         }
-
-        // =========================================================
         // 3. EXPLORER / BROWSER / SHUTDOWN TESTS
-        // =========================================================
 
         [Fact]
         public void OpenUrlInBrowser_ShouldPassUrlAsArgument()
@@ -161,10 +148,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 info.Arguments == $"\"{targetFolder}\""
             )), Times.Once);
         }
-
-        // =========================================================
         // 4. PROCESS MANAGEMENT TESTS (Kill, Check, Close)
-        // =========================================================
 
         [Fact]
         public void CloseApplication_ShouldCallKill_WhenProcessIsRunning()
@@ -195,7 +179,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die "CloseAllOpenPrograms" Methode darf kritische Prozesse wie "System" oder "Idle"
         /// nicht anrühren und soll Prozesse ohne GUI (MainWindowHandle == 0) ignorieren.
         /// </summary>
@@ -203,7 +186,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         public async Task CloseAllOpenProgramsAsync_ShouldIgnoreSystemAndHeadlessProcesses()
         {
             // ARRANGE
-            // HIER NEU: IProcess anstelle von IWrappedProcess
             var systemMock = new Mock<IProcess>();
             systemMock.Setup(p => p.ProcessName).Returns("System");
 
@@ -215,8 +197,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             validAppMock.Setup(p => p.ProcessName).Returns("Notepad");
             validAppMock.Setup(p => p.MainWindowHandle).Returns(new IntPtr(1234)); // Hat eine GUI
             validAppMock.Setup(p => p.WaitForExitAsync()).Returns(Task.CompletedTask);
-
-            // HIER NEU: Gibt ein IProcess[] Array zurück
             _mockProcessWrapper.Setup(w => w.GetProcesses()).Returns(new IProcess[]
             {
                 systemMock.Object,
@@ -240,20 +220,15 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // Da wir 'using (process)' implementiert haben, muss Dispose aufgerufen worden sein
             validAppMock.Verify(p => p.Dispose(), Times.Once);
         }
-
-        // =========================================================
         // 5. ASYNC PROCESS TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Prüft, ob der Task korrekt gewartet (await) wird.
         /// </summary>
         [Fact]
         public async Task StartExecutableAsync_ShouldAwaitProcessExit()
         {
             // ARRANGE
-            // HIER NEU: IProcess
             var mockProcess = new Mock<IProcess>();
             mockProcess.Setup(p => p.WaitForExitAsync()).Returns(Task.CompletedTask);
 
@@ -267,7 +242,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Laut deinem Code wird die Exception in der Async-Methode geloggt UND per 'throw' weitergeworfen.
         /// Wir prüfen, ob diese Exception tatsächlich oben ankommt.
         /// </summary>

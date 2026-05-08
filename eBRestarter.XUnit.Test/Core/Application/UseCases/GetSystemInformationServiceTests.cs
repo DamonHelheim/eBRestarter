@@ -33,13 +33,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
                 _mockOsEditionService.Object,
                 _mockSystemInfoService.Object);
         }
-
-        // =========================================================
         // 1. HAPPY PATH (ERFOLGREICHES MAPPING)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist der wichtigste Test. Er stellt sicher, dass alle Eigenschaften
         /// exakt an die richtige Stelle im SystemInformationResponse-Record gemappt werden
         /// und nichts vertauscht wird (z.B. OS-Build mit OS-Version).
@@ -100,13 +96,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
             _mockSystemInfoService.Verify(s => s.GetCurrentOsBuildVersion(), Times.Once);
             _mockSystemInfoService.Verify(s => s.GetCurrentStandardBrowserName(), Times.Once);
         }
-
-        // =========================================================
         // 2. EXCEPTION BUBBLING (FEHLER WEITERREICHEN)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der Service besitzt keinen eigenen try-catch-Block.
         /// Das bedeutet: Wenn einer der unterliegenden Services abstürzt (z.B. WMI Error bei der Hardware),
         /// muss die Exception ungefiltert an den Aufrufer (z.B. das ViewModel) hochblubbern.

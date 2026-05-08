@@ -9,10 +9,7 @@ namespace eBRestarter.Infrastructure.Browsers;
 
 public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> logger) : BrowserBase(os, logger)
 {
-    // --- Konstanten ---
     private const string EbesucherAddOnNameForFirefox = "{fef425dc-a60f-4484-954d-71ecf2544846}.xpi";
-
-    // --- Properties ---
     public override string DisplayName => "Firefox";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_firefox.png";
     public override string DownloadUrl => WebLinks.FirefoxDownloadLink;
@@ -20,10 +17,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
     public override BrowserType Type => BrowserType.Firefox;
     protected override string ProcessName => "firefox";
     protected override string RegistryKeyVersion => @"Software\Mozilla\Mozilla Firefox";
-
-    // ---------------------------------------------------------------------------------
     // PRÃœFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
-    // ---------------------------------------------------------------------------------
     public override bool IsExtensionInstalled(string? extensionId = null)
     {
         var paths = GetPaths();
@@ -53,10 +47,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
 
         return false;
     }
-
-    // ---------------------------------------------------------------------------------
     // PFADE: Cache, Cookies & Extensions für ALLE Profile ermitteln
-    // ---------------------------------------------------------------------------------
     public override BrowserPaths GetPaths()
     {
         var appData = _os.WindowsFileSystemService.GetEnvironmentPath("AppData"); // Roaming
@@ -97,19 +88,13 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
                 var folderName = new DirectoryInfo(profile.Path).Name;
                 fullProfilePathLocal = _os.WindowsFileSystemService.CombinePaths(firefoxLocalRoot, "Profiles", folderName);
             }
-
-            // --- CACHE (LocalAppData) ---
             // Pfad: ...\Profiles\xxxx.default\cache2\entries
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "cache2", "entries"));
             // Optional: Auch den StartupCache löschen
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "startupCache"));
-
-            // --- COOKIES (Roaming) ---
             // Pfad: ...\Profiles\xxxx.default\storage\default
             // (Firefox speichert Daten für Webseiten hier in Unterordnern)
             cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathRoaming, "storage", "default"));
-
-            // --- EXTENSIONS (Roaming) ---
             // Pfad: ...\Profiles\xxxx.default\extensions
             extensionsDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathRoaming, "extensions"));
         }
@@ -133,10 +118,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
     //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\sessionstore-backups
 
     //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\datareporting
-
-    // ---------------------------------------------------------------------------------
     // HELPER: profiles.ini Parsen
-    // ---------------------------------------------------------------------------------
 
     private class ProfileInfo
     {
@@ -209,10 +191,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
 
         return profiles;
     }
-
-    // ---------------------------------------------------------------------------------
     // EXECUTABLE PATHS (Deine bestehende Logik)
-    // ---------------------------------------------------------------------------------
     protected override List<string> ExecutablePaths
     {
         get

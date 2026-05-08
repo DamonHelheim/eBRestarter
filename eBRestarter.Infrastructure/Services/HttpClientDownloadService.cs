@@ -11,8 +11,6 @@ public class HttpClientDownloadService : IBrowserDownloadService
     public HttpClientDownloadService()
     {
         _httpClient = new HttpClient();
-
-        // --- FIX START ---
         // Wir täuschen dem Server vor, dass wir ein normaler Chrome-Browser auf Windows 10 sind.
         // Ohne das liefert der Brave-Server nur eine HTML-Seite (80KB) statt der EXE (1.2MB).
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36");
@@ -37,14 +35,11 @@ public class HttpClientDownloadService : IBrowserDownloadService
         var buffer = new byte[8192];
         long totalRead = 0;
         int bytesRead;
-
-        // --- THROTTLING LOGIK ---
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         // Wir wollen z.B. nur alle 100ms ein Update senden
         long lastUpdateTicks = 0;
         long updateIntervalTicks = Stopwatch.Frequency / 10; // 1/10 Sekunde (=100ms)
-        // ------------------------
 
         while ((bytesRead = await contentStream.ReadAsync(buffer, cancellationToken)) > 0)
         {

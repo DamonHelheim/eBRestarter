@@ -26,13 +26,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             _baseTestDir = Path.Combine(Path.GetTempPath(), $"FileDeletionTest_{Guid.NewGuid()}");
             Directory.CreateDirectory(_baseTestDir);
         }
-
-        // =========================================================
         // 1. COUNT FILES TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Vor dem Löschen muss die Gesamtzahl der Dateien ermittelt werden,
         /// um den Fortschrittsbalken zu initialisieren.
         /// </summary>
@@ -55,13 +51,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // ASSERT
             count.ShouldBe(3);
         }
-
-        // =========================================================
         // 2. DELETE FILES (ASYNC & PROGRESS) TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Dies ist der Hauptprozess. Wir müssen sicherstellen, dass:
         /// 1. Dateien wirklich gelöscht werden.
         /// 2. Verzeichnisse danach entfernt werden.
@@ -108,7 +100,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Benutzer auf "Abbrechen" klickt, muss der Löschvorgang sofort stoppen.
         /// </summary>
         [Fact]
@@ -137,13 +128,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // Da sofort abgebrochen wurde, müssen alle Dateien noch da sein
             Directory.GetFiles(_baseTestDir).Length.ShouldBe(10);
         }
-
-        // =========================================================
         // 3. SINGLE FILE DELETION
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Testet die einfache, synchrone Löschung einer einzelnen Datei.
         /// </summary>
         [Fact]
@@ -161,7 +148,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Methode darf keine Exception werfen, wenn die Datei gar nicht existiert.
         /// </summary>
         [Fact]
@@ -170,10 +156,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // ACT & ASSERT
             Should.NotThrow(() => _sut.DeleteSingleFile("C:\\NonExistentFile.xyz"));
         }
-
-        // =========================================================
         // CLEANUP
-        // =========================================================
         public void Dispose()
         {
             if (Directory.Exists(_baseTestDir))

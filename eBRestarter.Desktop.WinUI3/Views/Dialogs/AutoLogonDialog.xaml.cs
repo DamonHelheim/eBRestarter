@@ -14,8 +14,6 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
         {
             this.InitializeComponent();
         }
-
-        // --- NEU HINZUFüGEN ---
         public void SetDefaults(string user, string domain)
         {
             if (!string.IsNullOrEmpty(user))
@@ -28,7 +26,6 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
                 TxtDomain.Text = domain;
             }
         }
-        // ----------------------
 
         public AutoLogonCredentials GetCredentials()
         {

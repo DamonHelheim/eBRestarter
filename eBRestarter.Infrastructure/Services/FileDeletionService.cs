@@ -54,8 +54,6 @@ public class FileDeletionService : IFileDeletionService
                         File.Delete(file);
                         deletedCount++;
                         updateCounter++;
-
-                        // --- PERFORMANCE FIX: Drosselung ---
                         // Wir senden den Status nur, wenn 'reportInterval' erreicht ist
                         // ODER wenn es die allerletzte Datei ist (damit 100% sicher erreicht wird).
                         if (updateCounter >= reportInterval)
