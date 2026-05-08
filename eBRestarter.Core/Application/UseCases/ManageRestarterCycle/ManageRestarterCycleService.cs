@@ -5,6 +5,7 @@ using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Domain.Services;
+using FluentValidation;
 
 namespace eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
 
@@ -15,7 +16,8 @@ public class ManageRestarterCycleService(
     IEVisitorConfigService configService,
     IBrowserCleanupScheduleService browserCleanupScheduleService,
     TimeProvider timeProvider,
-    IWindowsProcessControlService processService) : IManageRestarterCycleUseCase // NEU: IWindowsProcessControlService injiziert
+    IWindowsProcessControlService processService,
+    IValidator<ManageRestarterCycleRequest> validator) : IManageRestarterCycleUseCase
 {
     private const string BaseUrl = WebLinks.EVisitorSurflink;
     private const int InitialDelaySeconds = 5;
@@ -26,7 +28,8 @@ public class ManageRestarterCycleService(
     private readonly IEVisitorConfigService _configService = configService;
     private readonly IBrowserCleanupScheduleService _browserCleanupScheduleService = browserCleanupScheduleService;
     private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly IWindowsProcessControlService _processService = processService; // NEU
+    private readonly IWindowsProcessControlService _processService = processService;
+    private readonly IValidator<ManageRestarterCycleRequest> _validator = validator;
 
     private CancellationTokenSource? _cts;
     private IBrowser? _currentBrowser;
@@ -35,6 +38,13 @@ public class ManageRestarterCycleService(
 
     public async Task StartAsync(ManageRestarterCycleRequest request, Func<Task> performCleanupCallback)
     {
+        var validationResult = _validator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            ReportProgress(RestartTaskState.Idle, 0, validationResult.Errors[0].ErrorMessage);
+            return;
+        }
+
         Stop(); // Ensure any previous run is stopped
 
         _cts = new CancellationTokenSource();
@@ -73,13 +83,7 @@ public class ManageRestarterCycleService(
 
         while (!token.IsCancellationRequested)
         {
-            // ====================================================================
-            // NEU: Config für den anstehenden Zyklus frisch laden
-            // ====================================================================
             var appConfig = _configService.LoadConfig();
-
-            // Da 'request' ein Record ist, können wir mit 'with' eine neue Kopie
-            // erstellen und dabei nur die aktualisierten Werte überschreiben!
             request = request with
             {
                 BrowserDisplayName = string.IsNullOrWhiteSpace(appConfig.Browser?.Selected) ? request.BrowserDisplayName : appConfig.Browser.Selected,
@@ -88,7 +92,6 @@ public class ManageRestarterCycleService(
                 PauseSeconds = appConfig.Browser?.RuntimePauseSeconds ?? request.PauseSeconds,
                 CheckBrowserAliveRoutine = appConfig.Browser?.CheckBrowserAliveRoutine ?? request.CheckBrowserAliveRoutine
             };
-            // ====================================================================
 
             // 2. Running Phase (Nutzt jetzt automatisch die taufrischen Settings!)
             LaunchBrowser(request);
@@ -125,11 +128,6 @@ public class ManageRestarterCycleService(
     private async Task<BrowserPhaseResult> RunBrowserPhaseAsync(ManageRestarterCycleRequest request, CancellationToken token)
     {
         string processName = GetProcessNameFromDisplayName(request.BrowserDisplayName);
-
-        // ====================================================================
-        // LAZY CONFIG RELOAD: Holt das aktuellste Lösch-Datum und Intervall
-        // für diesen Zyklus direkt aus der frischen Config!
-        // ====================================================================
         var appConfig = _configService.LoadConfig();
         bool isCleanupActive = appConfig.Browser?.DeleteBrowserCacheIntervalDays > 0;
         DateTime nextCleanupDate = appConfig.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MaxValue;
@@ -205,10 +203,6 @@ public class ManageRestarterCycleService(
 
     private async Task CheckAndExecuteBrowserCleanupAsync(Func<Task> performCleanupCallback, CancellationToken token)
     {
-        // ====================================================================
-        // LAZY CONFIG RELOAD: Wir laden frisch, bevor wir prüfen und speichern,
-        // damit wir keine anderen Nutzer-Settings versehentlich überschreiben!
-        // ====================================================================
         var appConfig = _configService.LoadConfig();
 
         var browser = appConfig.Browser;
@@ -226,7 +220,7 @@ public class ManageRestarterCycleService(
         var today = _timeProvider.GetLocalNow().Date;
         var newDate = _browserCleanupScheduleService.GetNextCleanupDateAfterRun(today, appConfig.Browser.DeleteBrowserCacheIntervalDays);
 
-        appConfig.Browser.NextBrowserDeleteCacheDate = newDate;
+        appConfig.Browser.SetNextCleanupDate(newDate);
         _configService.SaveConfig(appConfig);
     }
 

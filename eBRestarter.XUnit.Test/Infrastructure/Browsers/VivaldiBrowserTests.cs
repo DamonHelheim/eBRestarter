@@ -8,13 +8,10 @@ using Xunit;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
-    // =========================================================
     // VIVALDI BROWSER TESTS
-    // =========================================================
     public class VivaldiBrowserTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Vivaldi ist speziell: Es überschreibt die 'BrowserVersion' Property und sucht
         /// stattdessen in der Windows-Registry unter den Uninstall-Keys nach 'DisplayVersion'.
         /// Wir müssen sicherstellen, dass diese Kaskade (erst HKCU, dann HKLM, dann WOW64) funktioniert.
@@ -55,7 +52,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wir prüfen das korrekte Pfad-Mapping für Vivaldi. Vivaldi speichert seine
         /// Daten unter AppData\Local\Vivaldi\User Data.
         /// </summary>

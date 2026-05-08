@@ -71,10 +71,6 @@ namespace eBRestarter.Desktop.WinUI3
             {
                 return;
             }
-
-            // =========================================================================
-            // 1. KONFIGURATION (Persistenz) + SPRACHE + THEME (vor Fensterladen)
-            // =========================================================================
             StartupDisplayPreferences? launchConfig = null;
             try
             {
@@ -106,10 +102,6 @@ namespace eBRestarter.Desktop.WinUI3
             {
                 System.Diagnostics.Debug.WriteLine($"Fehler beim Laden des Themes: {ex.Message}");
             }
-
-            // =========================================================================
-            // 2. HINTERGRUND-SERVICES STARTEN
-            // =========================================================================
             try
             {
                 var restartScheduler = AppHost!.Services.GetRequiredService<IComputerRestartScheduler>();
@@ -119,10 +111,6 @@ namespace eBRestarter.Desktop.WinUI3
             {
                 System.Diagnostics.Debug.WriteLine($"Fehler beim Starten des ComputerRestartSchedulers: {ex.Message}");
             }
-
-            // =========================================================================
-            // 3. JETZT ERST DAS FENSTER ERSTELLEN (InitializeComponent zieht nun die richtigen Ressourcen)
-            // =========================================================================
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
 

@@ -36,8 +36,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
         /// <summary>
 
-        /// WARUM WIRD DAS GETESTET?
-
         /// Das ist der "Happy Path". Wenn der RestClient einen Erfolg meldet,
 
         /// muss die Methode 'true' und eine Erfolgsmeldung zurückgeben.
@@ -60,11 +58,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
         {
 
-            // ==========================================
-
             // ARRANGE
-
-            // ==========================================
 
             var mockRestClient = new Mock<IRestClientService>();
 
@@ -104,23 +98,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
             var apiService = new EVisitorApiAuthenticationService(mockRestClient.Object);
 
-
-
-            // ==========================================
-
             // ACT
-
-            // ==========================================
 
             var (isValid, message) = await apiService.VerifyCredentialsAsync(testUsername, testApiKey);
 
-
-
-            // ==========================================
-
             // ASSERT
-
-            // ==========================================
 
             isValid.ShouldBeTrue();
 
@@ -147,8 +129,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
 
         /// <summary>
-
-        /// WARUM WIRD DAS GETESTET?
 
         /// Wenn der Nutzer sich vertippt, meldet die API einen 401 Unauthorized Fehler.
 
@@ -219,8 +199,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
 
         /// <summary>
-
-        /// WARUM WIRD DAS GETESTET?
 
         /// Was passiert bei einem Timeout, wenn das Internet des Nutzers weg ist oder
 

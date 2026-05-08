@@ -22,7 +22,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         private readonly string _expectedStoragePath = Path.Combine(@"C:\FakeAppData", "Skylar", "eBRestarter", "eBRestarterConfig.json");
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn Zugangsdaten gespeichert werden, dürfen sie nicht verloren gehen. Wir müssen
         /// sicherstellen, dass das Objekt korrekt in einen JSON-String umgewandelt und an den
         /// richtigen Pfad auf der Festplatte (über den gemockten Service) geschrieben wird.
@@ -55,7 +54,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Beim Starten der App muss sie wissen, ob der Nutzer schon eingeloggt ist.
         /// Wenn die Config-Datei existiert, muss sie fehlerfrei ausgelesen und in ein
         /// C#-Objekt zurückverwandelt werden.
@@ -92,7 +90,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein neuer Nutzer die App zum ersten Mal öffnet, gibt es noch keine Datei.
         /// Die App darf dann nicht abstürzen, sondern muss geordnet 'null' zurückgeben.
         /// Auch wenn die Datei z. B. durch einen Virenscanner zerstört wurde (ungültiges JSON),
@@ -129,7 +126,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der Logout-Prozess muss zuverlässig die Datei von der Festplatte putzen,
         /// damit nach einem Neustart niemand automatisch eingeloggt wird.
         /// </summary>
@@ -151,13 +147,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             mockFileSystem.Verify(fs => fs.DeleteFile(_expectedStoragePath), Times.Once);
         }
-
-        // =========================================================
         // INTEGRATION-TESTS FÜR DIE LEGACY FUNKTION
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die ImportFromLegacyFile Methode nutzt direkt System.IO.File und den BinaryReader.
         /// Wir können das nicht mit Moq simulieren. Stattdessen machen wir einen Mini-Integrationstest
         /// und legen eine ECHTE temporäre Binärdatei an, um zu prüfen, ob die Auslese-Logik
@@ -209,7 +201,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Nutzer gar keine alte Binärdatei hat (weil er die App neu installiert),
         /// muss die Methode einfach 'null' zurückgeben und darf nicht abstürzen.
         /// </summary>

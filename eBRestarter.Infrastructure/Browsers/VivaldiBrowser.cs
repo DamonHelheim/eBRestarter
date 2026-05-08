@@ -27,8 +27,6 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
     // Vivaldi speichert Version oft im AutoUpdate Key oder Uninstall Key.
     // Falls "BLBeacon" bei Vivaldi nicht klappt, müsstest du hier @"Software\Vivaldi" prüfen.
     protected override string RegistryKeyVersion => @"Software\Vivaldi\BLBeacon";
-
-    // --- Extension / Add-On ---
     // Vivaldi unterstützt Chrome-Erweiterungen direkt aus dem Chrome Web Store
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
 

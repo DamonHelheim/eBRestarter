@@ -13,25 +13,21 @@ public class ScheduleBrowserCleanupService(
     {
         var config = _configService.LoadConfig();
 
-        config.Browser.DeleteBrowserCacheIntervalDays = request.IntervalDays;
-
         bool isActive = IsIntervalAllowed(request.IntervalDays);
-
-        DateTime? nextDate = null;
 
         if (isActive)
         {
-            nextDate = _timeProvider.GetLocalNow().Date.AddDays(request.IntervalDays);
-            config.Browser.NextBrowserDeleteCacheDate = nextDate.Value;
+            config.Browser.UpdateCleanupSettings(request.IntervalDays, _timeProvider);
         }
         else
         {
-            config.Browser.NextBrowserDeleteCacheDate = DateTime.MinValue;
+            config.Browser.UpdateCleanupSettings(0, _timeProvider);
+            config.Browser.SetNextCleanupDate(DateTime.MinValue);
         }
 
         _configService.SaveConfig(config);
 
-        return new ScheduleBrowserCleanupResponse(isActive, nextDate);
+        return new ScheduleBrowserCleanupResponse(isActive, isActive ? config.Browser.NextBrowserDeleteCacheDate : null);
     }
 
     private static bool IsIntervalAllowed(int days)

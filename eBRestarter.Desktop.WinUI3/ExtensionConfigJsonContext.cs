@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 
 namespace eBRestarter.Desktop.WinUI3;
 

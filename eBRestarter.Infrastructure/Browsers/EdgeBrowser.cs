@@ -20,8 +20,6 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
 
     // Registry Key für Versionsprüfung (ähnlich Chrome)
     protected override string RegistryKeyVersion => @"Software\Microsoft\Edge\BLBeacon";
-
-    // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "kjhejmaladginnedpoppohfnkionnghi";
 
     public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink; //"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";

@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.Security;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization; // WICHTIG: Für den Source Generator hinzugefügt
@@ -75,10 +75,7 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
                 // Der User muss ihn dann halt neu eingeben.
                 // Wir überschreiben den verschlüsselten Wert im RAM mit dem Ergebnis (Klartext oder leer).
 
-                config = config with
-                {
-                    Settings = config.Settings with { ApiKey = decryptedKey }
-                };
+                config.Settings.ApiKey = decryptedKey;
 
                 if (string.IsNullOrEmpty(decryptedKey))
                 {
@@ -86,8 +83,6 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
                 }
             }
 
-            // 3. Wir geben die Config zurück – mit allen importierten Settings,
-            // nur der Key fehlt eventuell.
             return config;
         }
         catch (JsonException)
@@ -120,19 +115,17 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
             {
                 Directory.CreateDirectory(directory);
             }
-
-            // --- VERSCHLÜSSELUNG ---
             // Wir wollen den Klartext-Key aus dem RAM nicht direkt speichern.
             // Wir erstellen eine Kopie des Config-Objekts nur für den Speichervorgang.
             var encryptedKey = _encryptionService.Encrypt(config.Settings.ApiKey);
 
-            var configToSave = config with
-            {
-                Settings = config.Settings with { ApiKey = encryptedKey }
-            };
+            string originalKey = config.Settings.ApiKey;
+            config.Settings.ApiKey = encryptedKey;
 
-            string jsonString = JsonSerializer.Serialize(configToSave, _jsonOptions);
+            string jsonString = JsonSerializer.Serialize(config, _jsonOptions);
             File.WriteAllText(filePath, jsonString);
+
+            config.Settings.ApiKey = originalKey;
 
             _logger.LogInformation("Konfiguration gespeichert.");
         }
@@ -154,9 +147,6 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
         SaveConfig(defaultConfig);
     }
 }
-
-// =========================================================
 // SOURCE GENERATOR KONTEXT (Für Release/Trim-Kompatibilität)
-// =========================================================
 [JsonSerializable(typeof(AppConfig))]
 internal partial class AppConfigJsonContext : JsonSerializerContext;

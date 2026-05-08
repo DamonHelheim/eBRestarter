@@ -10,15 +10,9 @@ public class RemoveApiCredentialsService(IEVisitorConfigService configService) :
     {
         var currentConfig = _configService.LoadConfig();
 
-        var newConfig = currentConfig with
-        {
-            Settings = currentConfig.Settings with
-            {
-                ApiUsername = string.Empty,
-                ApiKey = string.Empty
-            }
-        };
+        currentConfig.Settings.ApiUsername = string.Empty;
+        currentConfig.Settings.ApiKey = string.Empty;
 
-        _configService.SaveConfig(newConfig);
+        _configService.SaveConfig(currentConfig);
     }
 }

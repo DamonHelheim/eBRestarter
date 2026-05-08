@@ -23,7 +23,6 @@ public class ChromeBrowser(IOperatingSystemFacade os, ILogger<ChromeBrowser> log
     protected override string ProcessName => "chrome";
     // Chrome speichert Version oft unter HKCU\BLBeacon
     protected override string RegistryKeyVersion => @"Software\Google\Chrome\BLBeacon";
-    // --- NEU IMPLEMENTIERT ---
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
     public override string ExtensionInstallUrl => WebLinks.ChromeEVisitorAddOnLink;//"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 

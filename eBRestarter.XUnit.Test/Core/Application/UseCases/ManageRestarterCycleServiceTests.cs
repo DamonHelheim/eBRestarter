@@ -5,7 +5,7 @@ using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Domain.Services;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
@@ -45,9 +45,6 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
             _mockLocalizationService.Setup(l => l.GetString(It.IsAny<string>())).Returns((string key) => key);
             _mockBrowserFactory.Setup(f => f.Create(It.IsAny<BrowserType>())).Returns(_mockBrowser.Object);
-
-            // FIX 1: Browser = null, damit der Service im Test nicht 3600 Sekunden (1 RuntimeHour) erzwingt,
-            // sondern unsere Request-Parameter (10 Sekunden) respektiert!
             var dummyConfig = new AppConfig { Browser = null, Username = "TestUser" };
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
 
@@ -58,12 +55,9 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
                 _mockConfigService.Object,
                 _mockCleanupScheduleService.Object,
                 _fakeTimeProvider,
-                _mockProcessService.Object);
+                _mockProcessService.Object,
+                new ManageRestarterCycleRequestValidator());
         }
-
-        // =========================================================
-        // HILFSMETHODE: ZEIT-KONTROLLE (WICHTIGER FIX)
-        // =========================================================
 
         /// <summary>
         /// Spult die Zeit Schritt für Schritt vor und erlaubt der async/await StateMachine
@@ -74,19 +68,11 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             for (int i = 0; i < seconds; i++)
             {
                 _fakeTimeProvider.Advance(TimeSpan.FromSeconds(1));
-
-                // FIX 2: 10ms reales Warten. Task.Yield() reicht bei TimeProvider oft nicht aus,
-                // um dem ThreadPool Zeit zu geben, die fortgesetzten Tasks abzuarbeiten.
                 await Task.Delay(10);
             }
         }
 
-        // =========================================================
-        // 1. ZYKLUS-STEUERUNG & VERZÃ–GERUNGEN
-        // =========================================================
-
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass die Stop() Methode einen laufenden Zyklus sauber beendet,
         /// ohne dass die Anwendung durch eine unhandled TaskCanceledException abstürzt.
         /// </summary>
@@ -112,7 +98,6 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Dies ist der "Happy Path" Test. Er prüft, ob die gesamte Logik der zeitlichen
         /// Phasen (Verzögerung -> Starten -> Warten -> SchlieÃŸen) in der korrekten Reihenfolge abläuft.
         /// </summary>
@@ -141,12 +126,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             await cycleTask;
         }
 
-        // =========================================================
-        // 2. ALIVE CHECK (BROWSER CRASH)
-        // =========================================================
-
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der User die "CheckBrowserAliveRoutine" aktiviert hat, muss das Programm merken,
         /// wenn der Browser abgestürzt ist oder manuell geschlossen wurde.
         /// </summary>
@@ -173,12 +153,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             await cycleTask;
         }
 
-        // =========================================================
-        // 3. BROWSER CLEANUP
-        // =========================================================
-
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Prüft die automatisierte Browser-Bereinigung. Wenn der berechnete Tag erreicht ist,
         /// muss der Browser geschlossen und die Callback-Methode ausgeführt werden.
         /// </summary>
@@ -190,7 +165,9 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             bool callbackExecuted = false;
 
             // Hier geben wir gezielt ein Browser-Objekt mit, da wir explizit das Cleanup triggern wollen!
-            var dummyConfig = new AppConfig { Browser = new Browser { DeleteBrowserCacheIntervalDays = 7, NextBrowserDeleteCacheDate = DateTime.MinValue } };
+            var dummyConfig = new AppConfig { Browser = new BrowserConfig() };
+            dummyConfig.Browser.UpdateCleanupSettings(7, _fakeTimeProvider);
+            dummyConfig.Browser.SetNextCleanupDate(DateTime.MinValue);
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
             _mockCleanupScheduleService.Setup(c => c.ShouldRunCleanupNow(7, DateTime.MinValue)).Returns(true);
             _mockCleanupScheduleService.Setup(c => c.GetNextCleanupDateAfterRun(It.IsAny<DateTime>(), 7)).Returns(new DateTime(2050, 1, 1));
@@ -213,12 +190,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             _mockConfigService.Verify(c => c.SaveConfig(It.Is<AppConfig>(cfg => cfg.Browser.NextBrowserDeleteCacheDate.Year == 2050)), Times.Once);
         }
 
-        // =========================================================
-        // 4. LAZY CONFIG RELOAD (MID-CYCLE)
-        // =========================================================
-
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Der Service läuft in einer Endlosschleife. Wenn der Benutzer in der UI Einstellungen
         /// ändert, sollen diese im *nächsten* Zyklus automatisch übernommen werden.
         /// </summary>
@@ -232,9 +204,6 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             var config2 = new AppConfig { Username = "NewUser", Browser = null };
 
             int loadConfigCallCount = 0;
-
-            // FIX: Da LoadConfig() 3x pro Zyklus aufgerufen wird, müssen wir
-            // die Config1 für die ersten 3 Aufrufe zurückgeben.
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(() =>
             {
                 loadConfigCallCount++;

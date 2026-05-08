@@ -2,6 +2,8 @@ using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using FluentResults;
+using FluentValidation;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
@@ -9,37 +11,41 @@ public class DeleteBrowserContentService(
     IBrowserFactory browserFactory,
     IFileDeletionService fileDeletionService,
     IWindowsProcessControlService processService,
-    ILocalizationService localizationService) : IDeleteBrowserContentUseCase
+    ILocalizationService localizationService,
+    IValidator<DeleteBrowserContentRequest> validator) : IDeleteBrowserContentUseCase
 {
     private readonly IBrowserFactory _browserFactory = browserFactory;
     private readonly IFileDeletionService _fileDeletionService = fileDeletionService;
     private readonly IWindowsProcessControlService _processService = processService;
     private readonly ILocalizationService _localizationService = localizationService;
+    private readonly IValidator<DeleteBrowserContentRequest> _validator = validator;
 
-    public async Task<DeleteBrowserContentResponse> ExecuteAsync(
+    public async Task<Result> ExecuteAsync(
         DeleteBrowserContentRequest request,
         IProgress<DeleteBrowserContentProgress> progress,
         CancellationToken cancellationToken)
     {
+        var validationResult = _validator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return Result.Fail(validationResult.Errors[0].ErrorMessage);
+        }
+
         try
         {
             var browser = _browserFactory.Create(request.BrowserType);
-
             string processName = GetProcessNameByType(request.BrowserType);
 
-            // If forced close is requested, do it. Otherwise just check if running.
             if (request.ForceCloseProcess)
             {
                 progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_ClosingBrowser"), 0, 0));
-
                 _processService.CloseApplication(processName);
-
                 await Task.Delay(1000, cancellationToken);
             }
 
             if (_processService.IsProcessAlive(processName))
             {
-                return new DeleteBrowserContentResponse(false, true, _localizationService.GetString("Cleanup_BrowserRunning"));
+                return Result.Fail(new ProcessConflictError(_localizationService.GetString("Cleanup_BrowserRunning") ?? "Browser is running"));
             }
 
             var browserPaths = browser.GetPaths();
@@ -57,7 +63,7 @@ public class DeleteBrowserContentService(
 
             if (directoriesToDelete.Count == 0)
             {
-                return new DeleteBrowserContentResponse(false, false, _localizationService.GetString("Cleanup_NoPaths"));
+                return Result.Fail(_localizationService.GetString("Cleanup_NoPaths") ?? "No paths to clean");
             }
 
             progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Analyzing"), 0, 0));
@@ -74,11 +80,11 @@ public class DeleteBrowserContentService(
 
             progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Finished"), totalFiles, totalFiles));
 
-            return new DeleteBrowserContentResponse(true, false, string.Empty);
+            return Result.Ok();
         }
         catch (Exception ex)
         {
-            return new DeleteBrowserContentResponse(false, false, ex.Message);
+            return Result.Fail(new ExceptionalError(ex));
         }
     }
 

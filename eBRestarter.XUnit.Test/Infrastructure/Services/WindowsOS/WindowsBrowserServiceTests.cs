@@ -24,13 +24,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         {
             _mockBrowserFactory = new Mock<IBrowserFactory>();
         }
-
-        // =========================================================
         // 1. CONSTRUCTOR TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Dependency Injection Regel: Ein Service darf nicht instanziiert werden können,
         /// wenn seine zwingenden Abhängigkeiten (hier IBrowserFactory) null sind.
         ///
@@ -46,13 +42,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("browserFactory");
         }
-
-        // =========================================================
         // 2. MAPPING TESTS (Happy Path)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein Browser auf dem System installiert ist, müssen dessen korrekte Version
         /// und Pfade in das finale BrowserInfo-Objekt gemappt werden.
         ///
@@ -100,7 +92,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein Browser NICHT installiert ist, greift eine Fallback-Logik in deinem Service:
         /// Die Version wird hardcodiert auf "Nicht installiert" gesetzt, anstatt was auch immer
         /// das IBrowser-Objekt liefern würde.
@@ -134,13 +125,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // HIER IST DER KERN DES TESTS: Wurde die Fallback-Logik angewendet?
             firstBrowser.Version.ShouldBe("Nicht installiert");
         }
-
-        // =========================================================
         // 3. EXCEPTION HANDLING TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn du einen neuen Browser zum Enum hinzufügst, aber vergisst, ihn in der Factory
         /// zu registrieren, wirft die Factory (hoffentlich) eine NotSupportedException.
         /// Der Service darf dadurch NICHT abstürzen, sondern muss diesen Browser überspringen.
@@ -169,7 +156,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Ein Registry-Check in der jeweiligen Browser-Implementierung (z.B. ChromeBrowser)
         /// könnte fehlschlagen und eine allgemeine Exception (z.B. SecurityException) werfen.
         /// Auch dann darf der Rest des Programms nicht abstürzen, andere Browser sollen

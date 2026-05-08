@@ -28,13 +28,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
         {
             if (File.Exists(_tempFilePath)) File.Delete(_tempFilePath);
         }
-
-        // =========================================================
         // 1. DOWNLOAD LOGIK TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Prüft, ob der Service Daten vom Server liest und physisch korrekt auf die Festplatte schreibt.
         ///
         /// WAS WIRD GETESTET?
@@ -67,13 +63,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             var downloadedData = await File.ReadAllBytesAsync(_tempFilePath);
             downloadedData.ShouldBe(contentBytes);
         }
-
-        // =========================================================
         // 2. PROGRESS REPORTING TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die UI benötigt Fortschrittsmeldungen. Da du eine Drosselung (Throttling) eingebaut hast,
         /// müssen wir sicherstellen, dass trotz Drosselung am Ende 100% gemeldet werden.
         /// </summary>
@@ -104,13 +96,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             lastReport.Percentage.ShouldBe(100.0);
             lastReport.TotalBytes.ShouldBe(contentSize);
         }
-
-        // =========================================================
         // 3. ERROR & CANCELLATION TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Server einen Fehler (z.B. 404) liefert, muss der Service eine Exception werfen,
         /// damit der User informiert werden kann.
         /// </summary>
@@ -127,7 +115,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Benutzer den Download abbricht, muss der HttpClient-Request sofort gestoppt werden.
         /// </summary>
         [Fact]
@@ -143,10 +130,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
             await Should.ThrowAsync<OperationCanceledException>(async () =>
                 await sut.DownloadFileAsync("https://test.com", _tempFilePath, null!, cts.Token));
         }
-
-        // =========================================================
         // HELPER METHODEN
-        // =========================================================
 
         private void SetupMockResponse(HttpStatusCode statusCode, byte[] content)
         {

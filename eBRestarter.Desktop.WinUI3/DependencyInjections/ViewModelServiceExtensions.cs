@@ -15,7 +15,9 @@ public static class ViewModelServiceExtensions
         services.AddSingleton<ViewModelRestarterProperties>();
         services.AddSingleton<ViewModelGeneralOverview>();
         services.AddSingleton<ViewModelInstalledBrowsers>();
-        services.AddSingleton<ViewModelOptions>();
+        services.AddSingleton<ViewModelOptionsGeneral>();
+        services.AddSingleton<ViewModelOptionsApi>();
+        services.AddSingleton<ViewModelOptionsExtension>();
         services.AddSingleton<ViewModelInfocenter>();
         services.AddTransient<ViewModelAbout>();
 

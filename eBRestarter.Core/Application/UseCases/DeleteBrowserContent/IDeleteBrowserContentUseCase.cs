@@ -1,8 +1,10 @@
+using FluentResults;
+
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
 public interface IDeleteBrowserContentUseCase
 {
-    Task<DeleteBrowserContentResponse> ExecuteAsync(
+    Task<Result> ExecuteAsync(
         DeleteBrowserContentRequest request,
         IProgress<DeleteBrowserContentProgress> progress,
         CancellationToken cancellationToken);

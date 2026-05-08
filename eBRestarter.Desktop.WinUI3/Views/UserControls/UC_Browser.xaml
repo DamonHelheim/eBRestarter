@@ -93,8 +93,9 @@
 
             <TextBlock
                 x:Name="tbl_BrowserExist"
-                Canvas.Left="234"
-                Canvas.Top="-1"
+                Canvas.Left="230"
+                Canvas.Top="1"
+                FontFamily="Segoe Fluent Icons"
                 FontSize="25"
                 Foreground="{Binding InstallStateGlyphForeground}"
                 Text="{Binding InstallStateGlyph}"

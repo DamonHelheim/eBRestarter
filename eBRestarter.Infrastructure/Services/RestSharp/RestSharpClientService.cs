@@ -50,8 +50,6 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
             }
         }
 
-        // --- Helper Methoden ---
-
         private RestClient CreateClient(ApiRequest model)
         {
             var options = new RestClientOptions(model.Url)
@@ -86,8 +84,6 @@ namespace eBRestarter.Infrastructure.Services.RestSharp
                     StatusCode = rateCode
                 };
             }
-
-            // NEU: RestSharp internen Timeout (Client-seitig) abfangen!
             // Hier ist response.StatusCode in der Regel '0'
             if (response.ResponseStatus == ResponseStatus.TimedOut)
             {

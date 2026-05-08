@@ -124,7 +124,7 @@ public partial class ComputerRestartScheduler(
                     newTargetDate = today;
                 }
 
-                config.Computer.NextRestartDate = newTargetDate;
+                config.Computer.SetNextRestartDate(newTargetDate);
                 _configService.SaveConfig(config);
 
                 // UI informieren, dass sich das Datum verschoben hat

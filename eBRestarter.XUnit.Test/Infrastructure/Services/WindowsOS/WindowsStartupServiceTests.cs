@@ -38,13 +38,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
             _sut = new WindowsStartupService(_mockLogger.Object, _mockRegistry.Object, _mockProcessInfo.Object);
         }
-
-        // =========================================================
         // 1. AUTOSTART TESTS (Sync & Async)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass beim Aktivieren des Autostarts der exakte Pfad der
         /// laufenden .exe-Datei in den korrekten "Run"-Schlüssel geschrieben wird.
         ///
@@ -71,7 +67,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Autostart-Eintrag korrekt aus der Registry gelöscht wird.
         /// </summary>
         [Fact]
@@ -85,7 +80,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn ein Fehler bei der Registry auftritt (z.B. fehlende Berechtigungen),
         /// darf die Anwendung nicht crashen. Der Fehler muss gefangen und geloggt werden.
         /// </summary>
@@ -103,7 +97,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Prüft, ob IsAutoStartEnabledAsync korrekt auswertet, ob unser App-Schlüssel
         /// in den geladenen Registry-Werten existiert.
         /// </summary>
@@ -130,13 +123,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             result.ShouldBe(isEnabledInRegistry);
         }
-
-        // =========================================================
         // 2. EDGE STARTUP BOOST TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das Aktivieren/Deaktivieren des Edge-Boosts
         /// die korrekten Integer-Werte (1 = an, 0 = aus) als DWord in HKLM schreibt.
         /// </summary>
@@ -158,7 +147,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Prüft das Auslesen des Edge-Status. Standardverhalten laut deinem Code:
         /// 1 -> True, 0 -> False. Wenn nicht gesetzt (null) -> True.
         /// </summary>
@@ -179,13 +167,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             result.ShouldBe(expectedResult);
         }
-
-        // =========================================================
         // 3. AUTO LOGON TESTS (PasswordLess)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// AutoLogon und PasswordLess verhalten sich invers.
         /// Wenn AutoLogon aktiviert werden soll (true), muss PasswordLess deaktiviert werden (0).
         /// Wenn AutoLogon deaktiviert werden soll (false), muss PasswordLess aktiviert werden (2).
@@ -208,7 +192,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn das Setzen des AutoLogon in HKLM ohne Adminrechte fehlschlägt,
         /// darf der Prozess nicht abstürzen, sondern muss das sauber loggen.
         /// </summary>

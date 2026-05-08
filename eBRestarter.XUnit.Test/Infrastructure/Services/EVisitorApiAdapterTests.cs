@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Application.Models.Api;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.Constants;
 using eBRestarter.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
@@ -37,13 +37,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 _mockConfigService.Object,
                 _mockLogger.Object);
         }
-
-        // =========================================================
         // 1. IP INFO TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass das einfache JSON der IP-Schnittstelle korrekt
         /// in das IpInfoData-Record gemappt wird.
         /// </summary>
@@ -69,7 +65,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn die API streikt (z.B. Timeout oder HTTP 500) oder kaputtes JSON liefert,
         /// darf die App nicht abstürzen, sondern muss graceful "null" zurückgeben.
         /// </summary>
@@ -96,13 +91,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             resultFail.ShouldBeNull();
             resultInvalid.ShouldBeNull();
         }
-
-        // =========================================================
         // 2. EARNINGS: GUARD CLAUSES & CONFIG
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die API-Aufrufe kosten Zeit und Ressourcen. Wenn keine Zugangsdaten hinterlegt
         /// sind, muss der Prozess sofort abgebrochen werden.
         /// </summary>
@@ -122,13 +113,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // Sicherstellen, dass KEIN API Aufruf stattfand
             _mockRestClient.Verify(r => r.ExecuteGetAsync(It.IsAny<ApiRequest>()), Times.Never);
         }
-
-        // =========================================================
         // 3. EARNINGS: FULL WORKFLOW & PARSING
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist der Kern des Adapters. Er ruft drei Endpunkte parallel ab und muss
         /// Datums-Strings (ISO 8601), JSON-Objekte, JSON-Arrays und gemischte Datentypen
         /// (Zahlen vs. Strings wie "50.5") sauber in das EarningsData-Record überführen.
@@ -144,10 +131,8 @@ namespace eBRestarter.Tests.Infrastructure.Services
         {
             // ARRANGE
             var validConfig = new AppConfig();
-            validConfig = validConfig with
-            {
-                Settings = validConfig.Settings with { ApiUsername = "user", ApiKey = "pass" }
-            };
+            validConfig.Settings.ApiUsername = "user";
+            validConfig.Settings.ApiKey = "pass";
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(validConfig);
 
             // Dynamischer Mock für den RestClient
@@ -179,22 +164,16 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             result.ShouldNotBeNull();
-
-            // --- Check 1: Hourly Array (Heute) ---
             // "1" = Index 0, "3" = Index 2
             result.HourlyEarnings[0].ShouldBe(10.5);
             result.HourlyEarnings[2].ShouldBe(20.25);
             result.TodaySum.ShouldBe(30.75); // 10.5 + 20.25
-
-            // --- Check 2: Daily Array (Tage des Monats) ---
             // Januar 5 = Index 4. Werte: 100.0 + 50.5 (String-Parsing Test!) = 150.5
             result.DailyEarnings[4].ShouldBe(150.5);
             // Februar 15 = Index 14. Wert: 200.0
             result.DailyEarnings[14].ShouldBe(200.0);
 
             result.MonthlySum.ShouldBe(350.5); // Summe aller Daily-Werte
-
-            // --- Check 3: Monthly Array (Monate des Jahres) ---
             // Januar = Index 0 (100.0 + 50.5 = 150.5)
             result.MonthlyEarnings[0].ShouldBe(150.5);
             // Februar = Index 1 (200.0)
@@ -204,7 +183,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Du hast eine spezielle Fallback-Logik in GetHourlyEarningsRawAsync eingebaut,
         /// falls die API statt eines Objekts {"1": 10.5} plötzlich ein Array [10.5, 20.0] sendet.
         /// </summary>
@@ -213,7 +191,8 @@ namespace eBRestarter.Tests.Infrastructure.Services
         {
             // ARRANGE
             var validConfig = new AppConfig();
-            validConfig = validConfig with { Settings = validConfig.Settings with { ApiUsername = "u", ApiKey = "p" } };
+            validConfig.Settings.ApiUsername = "u";
+            validConfig.Settings.ApiKey = "p";
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(validConfig);
 
             _mockRestClient

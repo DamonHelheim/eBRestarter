@@ -20,13 +20,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         {
             _sut = new WindowsPathProvider();
         }
-
-        // =========================================================
         // 1. APPDATA / LOCALAPPDATA TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass GetAppDataDirectory den korrekten Pfad zum Roaming-AppData Ordner liefert.
         ///
         /// WAS WIRD GETESTET?
@@ -49,7 +45,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass GetLocalAppDataDirectory auf den lokalen AppData Ordner verweist.
         /// </summary>
         [Fact]
@@ -66,13 +61,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
-
-        // =========================================================
         // 2. USER PROFILE TEST
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Wrapper den korrekten Hauptordner des aktuellen Benutzers findet.
         /// </summary>
         [Fact]
@@ -89,13 +80,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
-
-        // =========================================================
         // 3. PROGRAM FILES TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass der Pfad für 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
         /// </summary>
         [Fact]
@@ -114,7 +101,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Stellt sicher, dass explizit der x86 (32-Bit) Programme-Ordner referenziert wird.
         /// </summary>
         [Fact]

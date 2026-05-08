@@ -8,7 +8,7 @@ using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Desktop.WinUI3.Messages;
@@ -306,8 +306,8 @@ public partial class ViewModelRestarterProperties : ObservableObject
         var scheduleUpdateResponse =
             _scheduleBrowserCleanupUseCase.UpdateSchedule(new ScheduleBrowserCleanupRequest(value.Days));
 
-        _currentConfig.Browser.DeleteBrowserCacheIntervalDays = value.Days;
-        _currentConfig.Browser.NextBrowserDeleteCacheDate = scheduleUpdateResponse.NextDate ?? DateTime.MinValue;
+        _currentConfig.Browser.UpdateCleanupSettings(value.Days, TimeProvider.System);
+        _currentConfig.Browser.SetNextCleanupDate(scheduleUpdateResponse.NextDate ?? DateTime.MinValue);
 
         if (scheduleUpdateResponse.IsActive && scheduleUpdateResponse.NextDate.HasValue)
         {

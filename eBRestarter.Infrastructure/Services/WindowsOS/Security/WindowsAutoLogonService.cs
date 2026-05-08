@@ -109,8 +109,6 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         return val == "1";
     }
 
-    // --- Private Helper & P/Invoke (Interne Logik) ---
-
     private static void SetLsaSecret(string keyName, string? value)
     {
         var objectAttributes = new LSA_OBJECT_ATTRIBUTES(); // Structs initialisieren standardmäßig auf 0/Null
@@ -180,8 +178,6 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
             Marshal.FreeHGlobal(lus.Buffer);
         }
     }
-
-    // --- P/Invoke Definitionen (müssen static extern sein) ---
 
     [StructLayout(LayoutKind.Sequential)]
     private struct LSA_UNICODE_STRING

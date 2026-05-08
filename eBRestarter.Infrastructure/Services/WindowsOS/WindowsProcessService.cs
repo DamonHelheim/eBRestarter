@@ -225,9 +225,16 @@ public partial class WindowsProcessService(ILogger<WindowsProcessService> logger
         var pendingTasks = new List<Task>();
         var processesToDispose = new List<IProcess>();
 
+        // LÖSUNG: Den eigenen Prozessnamen ermitteln, um Selbstmord zu verhindern!
+        string currentProcessName = Process.GetCurrentProcess().ProcessName;
+
         foreach (var process in processes)
         {
-            if (process.ProcessName == "System" || process.ProcessName == "Idle")
+            // System-Prozesse, den Windows Explorer UND SICH SELBST ausschließen!
+            if (process.ProcessName == "System" ||
+                process.ProcessName == "Idle" ||
+                process.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase) ||
+                process.ProcessName.Equals(currentProcessName, StringComparison.OrdinalIgnoreCase))
             {
                 process.Dispose();
                 continue;
@@ -286,8 +293,6 @@ public partial class WindowsProcessService(ILogger<WindowsProcessService> logger
             }
         }
     }
-
-    // --- Native Importe (P/Invoke) ---
 
     /// <summary>
     /// Importiert die Funktion <c>PostMessage</c> aus der <c>user32.dll</c>.

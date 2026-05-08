@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using Microsoft.Extensions.Logging;
 using System.Runtime.Versioning;
 
@@ -101,5 +101,12 @@ public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, 
         if (progId.Contains("Brave", StringComparison.OrdinalIgnoreCase)) return "Brave";
 
         return "-";
+    }
+
+    public bool IsUserAdministrator()
+    {
+        using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+        var principal = new System.Security.Principal.WindowsPrincipal(identity);
+        return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
     }
 }

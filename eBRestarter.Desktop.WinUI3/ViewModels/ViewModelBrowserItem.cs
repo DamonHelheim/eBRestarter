@@ -8,7 +8,7 @@ using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -37,9 +37,9 @@ public partial class ViewModelBrowserItem : ObservableObject
 
     private const string InstalledIndicatorForegroundColorHex = "#7ED422";
 
-    private const string InstallStateGlyphInstalledCharacter = "\u2713";
+    private const string InstallStateGlyphInstalledCharacter = "\uE73E";
 
-    private const string InstallStateGlyphNotInstalledCharacter = "\u2717";
+    private const string InstallStateGlyphNotInstalledCharacter = "\uE711";
 
     private const string NotInstalledIndicatorForegroundColorHex = "#E40E87";
 

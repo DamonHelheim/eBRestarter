@@ -86,15 +86,9 @@ public partial class ViewModelActivateApi : ObservableObject
             if (isValid)
             {
                 var currentConfig = _configService.LoadConfig();
-                var newConfig = currentConfig with
-                {
-                    Settings = currentConfig.Settings with
-                    {
-                        ApiUsername = Username ?? string.Empty,
-                        ApiKey = ApiKey ?? string.Empty
-                    }
-                };
-                _configService.SaveConfig(newConfig);
+                currentConfig.Settings.ApiUsername = Username ?? string.Empty;
+                currentConfig.Settings.ApiKey = ApiKey ?? string.Empty;
+                _configService.SaveConfig(currentConfig);
                 StatusMessage = _localizationService.GetString("ActivateApi_Success");
                 StatusColor = "#7ED422";
 

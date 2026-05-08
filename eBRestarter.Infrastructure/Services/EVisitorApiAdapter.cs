@@ -64,8 +64,6 @@ public class EVisitorApiAdapter(
         var username = config.Settings.ApiUsername;
         var apiKey = config.Settings.ApiKey;
         var now = DateTime.Now;
-
-        // --- ZEITRÄUME BERECHNEN ---
         // 1. Monat: Erster des aktuellen Monats 00:00:00 bis Jetzt
         var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
 
@@ -74,7 +72,6 @@ public class EVisitorApiAdapter(
 
         try
         {
-            // --- PARALLELE API AUFRUFE (Performance!) ---
             var tHourly = GetHourlyEarningsRawAsync(username, apiKey);
 
             // Details (Array) für den aktuellen Monat (Tage 1-31)
@@ -84,8 +81,6 @@ public class EVisitorApiAdapter(
             var tYearlyDetails = GetMonthlyEarningsRawAsync(username, apiKey, startOfYear, now);
 
             await Task.WhenAll(tHourly, tMonthlyDetails, tYearlyDetails);
-
-            // --- ERGEBNISSE ZUSAMMENSETZEN ---
             double[] hourlyArray = tHourly.Result;      // 24h (Heute)
             double[] dailyArray = tMonthlyDetails.Result; // Tage des Monats
             double[] monthlyArray = tYearlyDetails.Result; // 12 Monate des Jahres
@@ -106,8 +101,6 @@ public class EVisitorApiAdapter(
             return null;
         }
     }
-
-    // --- INTERNE HELPER METHODEN ---
 
     private async Task<double[]> GetHourlyEarningsRawAsync(string username, string apiKey)
     {
@@ -131,8 +124,6 @@ public class EVisitorApiAdapter(
 
             // Unser Ziel-Array immer direkt mit 24 Feldern initialisieren
             double[] hourly = new double[24];
-
-            // NEU: Verarbeitung als JSON-Objekt (z.B. {"1": 685.3, "2": 507.7})
             if (root.ValueKind == JsonValueKind.Object)
             {
                 foreach (var property in root.EnumerateObject())
@@ -229,8 +220,6 @@ public class EVisitorApiAdapter(
             return dailyEarnings;
         }
     }
-
-    // NEU: Jahresübersicht (12 Monate)
     private async Task<double[]> GetMonthlyEarningsRawAsync(string username, string apiKey, DateTime start, DateTime end)
     {
         long unixStart = ((DateTimeOffset)start).ToUnixTimeSeconds();

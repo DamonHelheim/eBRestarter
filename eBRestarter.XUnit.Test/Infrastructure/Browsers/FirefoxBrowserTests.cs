@@ -15,7 +15,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     public class FirefoxBrowserTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Firefox verwaltet seine Profile in einer 'profiles.ini'. Diese kann sowohl
         /// relative Pfade (Standard) als auch absolute Pfade (Benutzer hat das Profil auf eine andere Festplatte verschoben) enthalten.
         /// Wenn unsere Parsing-Logik hier fehlschlägt, leert eBesucher die falschen Ordner oder das Programm stürzt ab.
@@ -28,9 +27,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         [Fact]
         public void GetPaths_ShouldParseProfilesIni_AndGeneratePathsForRelativeAndAbsoluteProfiles()
         {
-            // ==========================================
             // ARRANGE (Vorbereitung der Test-Umgebung)
-            // ==========================================
             var mockOs = new Mock<IOperatingSystemFacade>();
             var mockLogger = new Mock<ILogger<FirefoxBrowser>>();
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
@@ -68,15 +65,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 
             mockOs.Setup(os => os.WindowsFileSystemService).Returns(mockFileSystem.Object);
             var firefoxBrowser = new FirefoxBrowser(mockOs.Object, mockLogger.Object);
-
-            // ==========================================
             // ACT (Ausführung der Logik)
-            // ==========================================
             var paths = firefoxBrowser.GetPaths();
-
-            // ==========================================
             // ASSERT (Prüfung der Ergebnisse)
-            // ==========================================
 
             // Prüfung für Profile0 (Relativ):
             // Wir erwarten, dass der Cache in LocalAppData liegt und Cookies/Extensions in Roaming (AppData)
@@ -92,7 +83,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Im Gegensatz zu Chrome nutzt Firefox für Extensions standardmäßig Dateien mit der Endung .xpi.
         /// Wir müssen sicherstellen, dass die FirefoxBrowser-Klasse diese komprimierte Datei korrekt sucht.
         ///
@@ -103,9 +93,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         [Fact]
         public void IsExtensionInstalled_ShouldReturnTrue_WhenXpiFileExists()
         {
-            // ==========================================
             // ARRANGE
-            // ==========================================
             var mockOs = new Mock<IOperatingSystemFacade>();
             var mockLogger = new Mock<ILogger<FirefoxBrowser>>();
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
@@ -134,20 +122,13 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 
             mockOs.Setup(os => os.WindowsFileSystemService).Returns(mockFileSystem.Object);
             var firefoxBrowser = new FirefoxBrowser(mockOs.Object, mockLogger.Object);
-
-            // ==========================================
             // ACT
-            // ==========================================
             bool isInstalled = firefoxBrowser.IsExtensionInstalled();
-
-            // ==========================================
             // ASSERT
-            // ==========================================
             isInstalled.ShouldBeTrue();
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Bei Entwickler-Profilen oder Sideloading kann eine Firefox-Extension als entpackter Ordner (ohne .xpi Endung) vorliegen.
         /// Die Methode muss auch diesen "Fallback"-Fall abdecken.
         ///
@@ -159,9 +140,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         [Fact]
         public void IsExtensionInstalled_ShouldReturnTrue_WhenExtractedFolderExists()
         {
-            // ==========================================
             // ARRANGE
-            // ==========================================
             var mockOs = new Mock<IOperatingSystemFacade>();
             var mockLogger = new Mock<ILogger<FirefoxBrowser>>();
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
@@ -192,15 +171,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 
             mockOs.Setup(os => os.WindowsFileSystemService).Returns(mockFileSystem.Object);
             var firefoxBrowser = new FirefoxBrowser(mockOs.Object, mockLogger.Object);
-
-            // ==========================================
             // ACT
-            // ==========================================
             bool isInstalled = firefoxBrowser.IsExtensionInstalled();
-
-            // ==========================================
             // ASSERT
-            // ==========================================
             isInstalled.ShouldBeTrue();
         }
     }

@@ -13,8 +13,6 @@ public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger log
 
     // Muss von Chrome/Edge/Brave implementiert werden
     protected abstract string ExtensionId { get; }
-
-    // --- Implementierung der abstrakten Methode aus BrowserBase ---
     public override bool IsExtensionInstalled(string? extensionId = null)
     {
         // Wenn keine spezifische ID übergeben wurde, nimm die Standard-ID des Browsers

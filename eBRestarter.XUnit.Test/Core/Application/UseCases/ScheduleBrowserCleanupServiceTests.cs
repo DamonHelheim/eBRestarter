@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
 using Shouldly;
@@ -29,13 +29,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
                 _mockConfigService.Object,
                 _fakeTimeProvider);
         }
-
-        // =========================================================
         // 1. GÜLTIGE INTERVALLE (AKTIVIERUNG)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Die Anwendung erlaubt nur spezifische Intervalle für die Bereinigung (1, 3, 7, 14 Tage).
         /// Wenn ein gültiges Intervall gewählt wird, muss das nächste Datum exakt
         /// berechnet, in der Config gespeichert und in der Response zurückgegeben werden.
@@ -53,7 +49,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
             _fakeTimeProvider.SetUtcNow(testDate);
 
             // 2. Mock-Setup für die Config
-            var dummyConfig = new AppConfig { Browser = new Browser() };
+            var dummyConfig = new AppConfig { Browser = new BrowserConfig() };
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
 
             // Callback-Trick, um das gespeicherte Objekt abzufangen
@@ -81,13 +77,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
 
             _mockConfigService.Verify(c => c.SaveConfig(It.IsAny<AppConfig>()), Times.Once);
         }
-
-        // =========================================================
         // 2. UNGÜLTIGE INTERVALLE (DEAKTIVIERUNG)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der User ein nicht-unterstütztes Intervall (wie 0, 5 oder -1) übergibt,
         /// muss die Bereinigung deaktiviert werden. Das nächste Datum wird auf MinValue gesetzt.
         /// </summary>
@@ -100,7 +92,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
         public void UpdateSchedule_ShouldDeactivate_AndClearNextDate_WhenIntervalIsInvalid(int invalidIntervalDays)
         {
             // ARRANGE
-            var dummyConfig = new AppConfig { Browser = new Browser() };
+            var dummyConfig = new AppConfig { Browser = new BrowserConfig() };
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
 
             AppConfig? savedConfig = null;
@@ -126,13 +118,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
 
             _mockConfigService.Verify(c => c.SaveConfig(It.IsAny<AppConfig>()), Times.Once);
         }
-
-        // =========================================================
         // 3. FEHLERBEHANDLUNG
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Da die Geschäftslogik keinen eigenen Try-Catch-Block besitzt, müssen
         /// Systemfehler (z. B. wenn die config.json gesperrt ist) ungehindert nach
         /// oben an den Aufrufer weitergegeben werden (Exception Bubbling).

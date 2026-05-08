@@ -1,8 +1,6 @@
 using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Desktop.WinUI3.Models;
-
-// NEU: Das Ergebnis des Dialogs
 public sealed class AutoLogonDialogResult
 {
     public bool IsDeactivateAction { get; set; } // Wurde "Deaktivieren" geklickt?

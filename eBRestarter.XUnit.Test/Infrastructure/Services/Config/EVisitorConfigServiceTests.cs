@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.Security;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Infrastructure.Services.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -37,13 +37,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             // Wir weisen den PathService an, immer unsere sichere, temporäre Datei zurückzugeben
             _mockPathService.Setup(p => p.GetConfigFilePath()).Returns(_tempFilePath);
         }
-
-        // =========================================================
         // 1. SAVE TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn wir die Konfiguration speichern, darf der API-Key niemals im Klartext auf der Festplatte landen!
         ///
         /// WAS WIRD GETESTET?
@@ -58,10 +54,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
 
             // Dummy Config erstellen (ohne Umlaute, um System.Text.Json Unicode-Escaping zu umgehen!)
             var configToSave = new AppConfig();
-            configToSave = configToSave with
-            {
-                Settings = configToSave.Settings with { ApiKey = "SecretPlaintextKey123" }
-            };
+            configToSave.Settings.ApiKey = "SecretPlaintextKey123";
 
             // Mock für die Verschlüsselung
             // Wir nutzen It.IsAny<string>(), um absolut sicherzugehen, dass der Mock auch feuert,
@@ -83,13 +76,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             savedJson.ShouldContain("EncryptedSecretData789"); // Der verschlüsselte Wert MUSS drin sein
             savedJson.ShouldNotContain("SecretPlaintextKey123"); // Der Klartext DARF NICHT drin sein
         }
-
-        // =========================================================
         // 2. LOAD TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Beim allerersten Start der App gibt es noch keine config.json.
         /// Das Programm darf nicht abstürzen, sondern muss eine neue Standard-Config erstellen.
         ///
@@ -115,7 +104,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn eine Datei existiert und gültig ist, muss der darin verschlüsselte API-Key
         /// wieder in Klartext verwandelt werden, damit das Programm ihn nutzen kann.
         ///
@@ -148,7 +136,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Nutzer den USB-Stick mit der App an einen anderen PC steckt, schlägt die Entschlüsselung
         /// (Windows DPAPI) fehl. Die App darf nicht crashen, sondern muss den Key leeren.
         ///
@@ -183,7 +170,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn die JSON-Datei manuell bearbeitet wurde (z.B. Tippfehler, Klammer vergessen),
         /// wirft System.Text.Json eine JsonException. Das muss sauber abgefangen werden.
         ///
@@ -205,13 +191,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             result.ShouldNotBeNull(); // Ein sauberes Default-Objekt
             // Keine Exception ist nach außen gedrungen!
         }
-
-        // =========================================================
         // 3. RESET TESTS
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// ResetConfig muss eine fehlerhafte oder alte Config-Datei kompromisslos
         /// durch die Werkseinstellungen überschreiben.
         /// </summary>
@@ -231,10 +213,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             newContent.ShouldNotContain("Alte, kaputte Daten");
             newContent.ShouldContain("{"); // Muss JSON sein
         }
-
-        // =========================================================
         // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
-        // =========================================================
         public void Dispose()
         {
             // Wir löschen die temporäre Test-Datei restlos von der Festplatte

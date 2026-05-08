@@ -175,7 +175,7 @@
     <value>Automatisierte Aufgaben</value>
   </data>
   <data name="TSStartBrowserWithProgrammStart.OffContent" xml:space="preserve">
-    <value>Mit Programmstart, Restarter starten aus</value>
+    <value>Mit Programmstart, Restarter starten</value>
   </data>
   <data name="StartupEdgeBoost_Info.Text" xml:space="preserve">
     <value>Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)</value>
@@ -265,13 +265,13 @@
     <value>API Schnittstelle deaktivieren</value>
   </data>
   <data name="TSStartBrowserWithProgrammStart.OnContent" xml:space="preserve">
-    <value>Mit Programmstart, Restarter starten an</value>
+    <value>Mit Programmstart, Restarter starten</value>
   </data>
   <data name="TSCheckBrowserIsAlive.OnContent" xml:space="preserve">
-    <value>Prüfe, ob Browser geschlossen wurde an</value>
+    <value>Prüfe, ob Browser geschlossen wurde</value>
   </data>
   <data name="TSCheckBrowserIsAlive.OffContent" xml:space="preserve">
-    <value>Prüfe, ob Browser geschlossen wurde aus</value>
+    <value>Prüfe, ob Browser geschlossen wurde</value>
   </data>
   <data name="Installed_browser.Text" xml:space="preserve">
     <value>Installierte Browser</value>
@@ -965,5 +965,11 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
   </data>
   <data name="RestartWarning.Text" xml:space="preserve">
     <value>Achtung: Der automatische Neustart erfolgt auf eigene Gefahr. Der Entwickler übernimmt keine Haftung für möglichen Datenverlust durch ungespeicherte Dokumente.</value>
+  </data>
+  <data name="StartupBoostDialog_AdminWarning.Title" xml:space="preserve">
+    <value>Administrator-Rechte erforderlich</value>
+  </data>
+  <data name="StartupBoostDialog_AdminWarning.Message" xml:space="preserve">
+    <value>Bitte starte die eBRestarter Software als Administrator, um diese Einstellung (Registry) ändern zu können.</value>
   </data>
 </root>

@@ -32,13 +32,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // Der Server läuft auf einem zufälligen, freien Port (z.B. localhost:51234).
             _server = WireMockServer.Start();
         }
-
-        // =========================================================
         // 1. ASYNC TESTS (ExecuteGetAsync)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Das ist der "Happy Path". Wenn die API sauber antwortet (HTTP 200),
         /// muss der Service den Inhalt (Body) extrahieren und als erfolgreich markieren.
         ///
@@ -71,7 +67,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Viele APIs haben Rate Limits. Wenn wir zu viele Anfragen stellen, müssen wir rechtzeitig drosseln.
         /// Deine eigene Logik prüft, ob "X-Ratelimit-Remaining" kleiner oder gleich 10 ist.
         ///
@@ -100,7 +95,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn die API einen Fehler wirft (z.B. fehlende Berechtigung), darf die App nicht abstürzen.
         /// Der HTTP-Fehlercode muss in unseren eigenen ResponseCode-Enum übersetzt und der Fehler geloggt werden.
         ///
@@ -128,7 +122,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn Benutzername und Passwort übergeben werden, muss der Client diese als
         /// Base64-codierten Basic-Auth Header an die API senden.
         ///
@@ -163,7 +156,6 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Netzwerkverbindungen können hängen bleiben. Der Client muss nach der konfigurierten Zeit (TimeoutSeconds)
         /// abbrechen und darf den Thread nicht endlos blockieren.
         ///
@@ -189,13 +181,9 @@ namespace eBRestarter.Tests.Infrastructure.Services
             Assert.False(result.IsSuccess);
             Assert.True(result.StatusCode == ResponseCode.HTTPTimeout || result.StatusCode == ResponseCode.GeneralExceptionError);
         }
-
-        // =========================================================
         // 2. SYNC TESTS (ExecuteGet)
-        // =========================================================
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wir stellen auch eine synchrone Methode zur Verfügung. Diese muss exakt dieselben
         /// Ergebnisse liefern wie die asynchrone Variante.
         ///
@@ -219,10 +207,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
             Assert.Equal(ResponseCode.Success, result.StatusCode);
             Assert.Equal("Sync Content", result.Content);
         }
-
-        // =========================================================
         // 3. HELPER METHODEN
-        // =========================================================
 
         private void VerifyLoggerWarningWasCalled()
         {
@@ -235,10 +220,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                     It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
                 Times.Once);
         }
-
-        // =========================================================
         // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
-        // =========================================================
         public void Dispose()
         {
             // Server nach jedem Test ordnungsgemäÃŸ herunterfahren,

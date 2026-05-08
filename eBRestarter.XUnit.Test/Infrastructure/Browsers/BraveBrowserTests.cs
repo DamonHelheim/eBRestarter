@@ -8,13 +8,10 @@ using Xunit;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
-    // =========================================================
     // BRAVE BROWSER TESTS
-    // =========================================================
     public class BraveBrowserTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Auch wenn Brave fast identisch zu Chrome ist, hat es einen etwas exotischeren
         /// Root-Pfad: AppData\Local\BraveSoftware\Brave-Browser\User Data.
         /// Ein simpler Vertipper im Code würde dazu führen, dass der Cache nie gelöscht wird.

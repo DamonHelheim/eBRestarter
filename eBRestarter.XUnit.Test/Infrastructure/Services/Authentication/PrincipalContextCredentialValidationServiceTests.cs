@@ -16,7 +16,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
     public class PrincipalContextCredentialValidationServiceTests
     {
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Nutzer sich lokal am PC anmeldet (Domain = Computername), muss das System
         /// zwingend den ContextType.Machine nutzen, da sonst die Anmeldung fehlschlägt.
         ///
@@ -54,7 +53,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn sich der Nutzer an einer echten Firmendomain anmeldet (z. B. "MEINEFIRMA"),
         /// muss zwingend ContextType.Domain genutzt werden.
         ///
@@ -90,7 +88,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Wenn der Domain-Controller (Server) der Firma offline ist, wirft die Windows-API
         /// eine 'PrincipalServerDownException'. Deine Klasse soll das fangen und in eine eigene
         /// 'InvalidOperationException' mit dem Text "PrincipalServerDown" übersetzen.
@@ -123,7 +120,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         }
 
         /// <summary>
-        /// WARUM WIRD DAS GETESTET?
         /// Jede andere Art von Fehler (z.B. falsches Passwort, Account gesperrt, Netzwerkfehler)
         /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zurückgegeben werden.
         /// Die App darf nicht abstürzen!
