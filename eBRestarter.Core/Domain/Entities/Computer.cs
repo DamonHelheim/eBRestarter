@@ -4,9 +4,9 @@ namespace eBRestarter.Core.Domain.Entities;
 
 public class Computer
 {
-    public DateTime? NextRestartDate { get; private set; }
-    public int ComputerRestartIntervalDays { get; private set; }
-    public int RestartClockTime { get; private set; }
+    public DateTime? NextRestartDate { get; set; }
+    public int ComputerRestartIntervalDays { get; set; }
+    public int RestartClockTime { get; set; }
 
     public Computer() { }
 

@@ -40,7 +40,7 @@
 
             <controls:TitleBar.IconSource>
 
-                <FontIconSource Foreground="{ThemeResource FontColor_1}" Glyph="&#xE895;" />
+                <FontIconSource Glyph="&#xE895;" />
 
             </controls:TitleBar.IconSource>
 

@@ -14,7 +14,7 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
         {
             this.InitializeComponent();
         }
-        public void SetDefaults(string user, string domain)
+        public void SetDefaults(string user, string domain, bool isPasswordlessEnabled = false, bool isAdmin = false)
         {
             if (!string.IsNullOrEmpty(user))
             {
@@ -25,7 +25,28 @@ namespace eBRestarter.Desktop.WinUI3.Views.Dialogs
             {
                 TxtDomain.Text = domain;
             }
+
+            if (isPasswordlessEnabled)
+            {
+                if (!isAdmin)
+                {
+                    AdminWarningInfoBar.IsOpen = true;
+                    IsPrimaryButtonEnabled = false;
+                }
+                else
+                {
+                    CbDisablePasswordless.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+                    CbDisablePasswordless.IsChecked = true;
+                }
+            }
+            else if (isAdmin)
+            {
+                CbRestorePasswordless.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            }
         }
+
+        public bool DisablePasswordlessMode => CbDisablePasswordless.IsChecked ?? false;
+        public bool RestorePasswordlessMode => CbRestorePasswordless.IsChecked ?? false;
 
         public AutoLogonCredentials GetCredentials()
         {

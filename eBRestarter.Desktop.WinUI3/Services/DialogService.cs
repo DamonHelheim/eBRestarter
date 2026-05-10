@@ -1,4 +1,4 @@
-﻿using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Views.Dialogs;
 using Microsoft.UI;
@@ -15,6 +15,7 @@ public class DialogService : IDialogService
 {
 
     private static XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
+    private static ElementTheme CurrentTheme => (App.MainWindoweBRestarter?.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default;
 
     public async Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein")
     {
@@ -27,6 +28,7 @@ public class DialogService : IDialogService
                 PrimaryButtonText = yesButtonText,
                 CloseButtonText = noButtonText,
                 XamlRoot = element.XamlRoot,
+                RequestedTheme = element.RequestedTheme,
                 DefaultButton = ContentDialogButton.Primary
             };
 
@@ -44,6 +46,7 @@ public class DialogService : IDialogService
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
+            RequestedTheme = CurrentTheme,
             Title = CreateTitleContent(title, icon),
             Content = message,
             CloseButtonText = "Schließen",
@@ -57,6 +60,7 @@ public class DialogService : IDialogService
         var dialog = new ContentDialog
         {
             XamlRoot = XamlRoot,
+            RequestedTheme = CurrentTheme,
             Title = CreateTitleContent(title, icon),
             Content = message,
             PrimaryButtonText = "Ja",
@@ -94,25 +98,25 @@ public class DialogService : IDialogService
         });
     }
 
-    public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null!, string defaultDomain = null!)
+    public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(string defaultUser = null!, string defaultDomain = null!, bool isPasswordlessEnabled = false, bool isAdmin = false)
     {
         AutoLogonDialog dialogInstance = null!;
 
         var result = await ShowDialogInternalAsync<AutoLogonDialog>(d =>
         {
             dialogInstance = d;
-            d.SetDefaults(defaultUser, defaultDomain);
+            d.SetDefaults(defaultUser, defaultDomain, isPasswordlessEnabled, isAdmin);
         });
 
         if (result == ContentDialogResult.Primary) {
 
-            return AutoLogonDialogResult.Save(dialogInstance.GetCredentials());
+            return AutoLogonDialogResult.Save(dialogInstance.GetCredentials(), dialogInstance.DisablePasswordlessMode);
 
         }
 
         if (result == ContentDialogResult.Secondary)
         {
-            return AutoLogonDialogResult.Deactivate();
+            return AutoLogonDialogResult.Deactivate(dialogInstance.RestorePasswordlessMode);
         }
 
         return null;
@@ -121,7 +125,10 @@ public class DialogService : IDialogService
 
     private static async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
     {
-        var dialog = new T { XamlRoot = XamlRoot };
+        var dialog = new T { 
+            XamlRoot = XamlRoot,
+            RequestedTheme = CurrentTheme
+        };
 
         configure?.Invoke(dialog);
 
