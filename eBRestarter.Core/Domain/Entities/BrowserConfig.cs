@@ -9,8 +9,8 @@ public class BrowserConfig
     public string Selected { get; set; } = string.Empty;
     public int RuntimeHours { get; set; } = 1;
     public int RuntimePauseSeconds { get; set; } = 20;
-    public int DeleteBrowserCacheIntervalDays { get; private set; }
-    public DateTime NextBrowserDeleteCacheDate { get; private set; }
+    public int DeleteBrowserCacheIntervalDays { get; set; }
+    public DateTime NextBrowserDeleteCacheDate { get; set; }
 
     public BrowserConfig() { }
 

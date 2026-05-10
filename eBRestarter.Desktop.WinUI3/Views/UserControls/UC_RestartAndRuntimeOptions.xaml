@@ -32,7 +32,7 @@
                     x:Name="tbl_Restart_and_Runtime_Option"
                     x:Uid="Restart_And_Runtime_Options"
                     VerticalAlignment="Center"
-                    FontSize="18"
+                    FontSize="17"
                     FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}" />
             </StackPanel>

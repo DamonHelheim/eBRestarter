@@ -24,4 +24,31 @@ public static class AppWindowHelper
         window.ExtendsContentIntoTitleBar = true;
         window.SetTitleBar(null);
     }
+
+    /// <summary>
+    /// Updates the title bar button colors based on the requested theme.
+    /// </summary>
+    public static void UpdateTitleBarTheme(this Window window, ElementTheme theme)
+    {
+        var titleBar = window.AppWindow.TitleBar;
+
+        if (theme == ElementTheme.Dark)
+        {
+            titleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
+            titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.White;
+            titleBar.ButtonHoverBackgroundColor = Microsoft.UI.ColorHelper.FromArgb(51, 255, 255, 255);
+            titleBar.ButtonPressedForegroundColor = Microsoft.UI.Colors.White;
+            titleBar.ButtonPressedBackgroundColor = Microsoft.UI.ColorHelper.FromArgb(77, 255, 255, 255);
+            titleBar.ButtonInactiveForegroundColor = Microsoft.UI.Colors.Gray;
+        }
+        else
+        {
+            titleBar.ButtonForegroundColor = Microsoft.UI.Colors.Black;
+            titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.Black;
+            titleBar.ButtonHoverBackgroundColor = Microsoft.UI.ColorHelper.FromArgb(51, 0, 0, 0);
+            titleBar.ButtonPressedForegroundColor = Microsoft.UI.Colors.Black;
+            titleBar.ButtonPressedBackgroundColor = Microsoft.UI.ColorHelper.FromArgb(77, 0, 0, 0);
+            titleBar.ButtonInactiveForegroundColor = Microsoft.UI.Colors.Gray;
+        }
+    }
 }

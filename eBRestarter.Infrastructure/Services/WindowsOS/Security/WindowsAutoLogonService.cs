@@ -100,6 +100,34 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         return false;
     }
 
+    public void SetWindowsHelloPasswordlessState(bool enable)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device", true);
+            if (key != null)
+            {
+                int valueToSet = enable ? 2 : 0;
+                key.SetValue("DevicePasswordLessBuildVersion", valueToSet, RegistryValueKind.DWord);
+                _logger.LogInformation("Windows Hello Passwordless Mode wurde auf {State} ({Value}) gesetzt.", enable ? "Aktiv" : "Inaktiv", valueToSet);
+            }
+            else
+            {
+                _logger.LogWarning("Registry-Key für PasswordLess Device nicht gefunden. Erstelle ihn nicht neu, da dies systemspezifisch ist.");
+            }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogError(ex, "Fehlende Rechte zum Ändern des PasswordLess Registry-Keys. Programm muss als Administrator ausgeführt werden.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unerwarteter Fehler beim Setzen des PasswordLess Registry-Keys.");
+            throw;
+        }
+    }
+
     public bool IsAutoLogonEnabled()
     {
         using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, false);

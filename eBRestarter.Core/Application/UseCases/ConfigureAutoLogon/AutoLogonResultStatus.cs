@@ -7,5 +7,6 @@ public enum AutoLogonResultStatus
     WindowsHelloBlockActive,
     ValidationError,
     DomainError,
-    UnexpectedError
+    UnexpectedError,
+    AdminRequired
 }

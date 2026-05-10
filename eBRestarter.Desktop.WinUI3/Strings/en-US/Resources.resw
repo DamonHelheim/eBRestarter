@@ -220,7 +220,7 @@
     <value>Windows</value>
   </data>
   <data name="Start_eV_Restarter_with_Windows.Text" xml:space="preserve">
-    <value>Start eV Restarter with Windows</value>
+    <value>Start eVRestarter with Windows</value>
   </data>
   <data name="Computer_restart_options.Text" xml:space="preserve">
     <value>Computer restart options</value>
@@ -964,12 +964,15 @@ Do you want to restart now?</value>
     <value>The request has exceeded the time limit</value>
   </data>
   <data name="RestartWarning.Text" xml:space="preserve">
-    <value>Warning: The automatic restart is at your own risk. The developer assumes no liability for potential data loss due to unsaved documents.</value>
+    <value>Important Note: The automatic restart is performed at your own risk. Please be aware that all active applications, background processes, and network connections will be interrupted. The developer assumes no liability for any resulting data loss or aborted operations.</value>
   </data>
   <data name="StartupBoostDialog_AdminWarning.Title" xml:space="preserve">
     <value>Administrator rights required</value>
   </data>
   <data name="StartupBoostDialog_AdminWarning.Message" xml:space="preserve">
-    <value>Please run the eBRestarter software as Administrator to change this (registry) setting.</value>
+    <value>Please run the eVRestarter software as Administrator to change this (registry) setting.</value>
+  </data>
+  <data name="API_isNotEnabled" xml:space="preserve">
+    <value>Points statistics are not visible because the API is not enabled.</value>
   </data>
 </root>

@@ -41,7 +41,8 @@
                     x:Uid="AutomatedTasks"
                     Width="212"
                     Margin="10,15,0,0"
-                    FontSize="18"
+                    FontSize="17"
+                    FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}"
                     TextWrapping="Wrap" />
             </StackPanel>
@@ -55,54 +56,7 @@
                     Width="304"
                     Margin="10,0,0,0"
                     Foreground="{ThemeResource FontColor_1}"
-                    IsOn="{Binding StartBrowserWithProgramStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
-                    <!--<ToggleSwitch.Resources>
-
-                    -->
-                    <!--  TRACK / HINTERGRUND: AUS  -->
-                    <!--
-                        <SolidColorBrush x:Key="ToggleSwitchFillOff"               Color="#D2D5D6" />
-                        <SolidColorBrush x:Key="ToggleSwitchFillOffPointerOver"    Color="#FF505050" />
-                        <SolidColorBrush x:Key="ToggleSwitchFillOffPressed"        Color="#FF303030" />
-
-                    -->
-                    <!--  KNOPF: AUS  -->
-                    <!--
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOff"           Color="#FF00B894" />
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPointerOver" Color="#FF1ED3AE" />
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOffPressed"    Color="#FF009973" />
-
-                    -->
-                    <!--  TRACK / HINTERGRUND: AN  -->
-                    <!--
-                        <SolidColorBrush x:Key="ToggleSwitchFillOn"                Color="#FF00B894" />
-                        <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"     Color="#FF1ED3AE" />
-                        <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"         Color="#FF009973" />
-
-                    -->
-                    <!--  KNOPF: AN  -->
-                    <!--
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOn"            Color="White" />
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver" Color="White" />
-                        <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed"     Color="White" />
-
-
-                        <SolidColorBrush x:Key="ToggleSwitchBackgroundFillOff"     Color="Black" />
-
-                    -->
-                    <!--  optional: Ränder ausblenden  -->
-                    <!--
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOff"             Color="#19aabd" />
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOffPointerOver"  Color="Transparent" />
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOffPressed"      Color="Transparent" />
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOn"              Color="Transparent" />
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver"   Color="Transparent" />
-                        <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed"       Color="Transparent" />
-
-                    </ToggleSwitch.Resources>-->
-
-                </ToggleSwitch>
+                    IsOn="{Binding StartBrowserWithProgramStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ToggleSwitch
                     x:Name="TSCheckBrowserIsAlive"
@@ -141,35 +95,8 @@
                 FontSize="14"
                 ItemsSource="{Binding BrowserDeleteCacheOptionList}"
                 PlaceholderText="Browser delete cache options"
-                RequestedTheme="{ThemeResource GeneralRequestedTheme}"
                 SelectedIndex="0"
-                SelectedItem="{Binding SelectedDeleteBrowserCacheOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
-                <!--<ComboBox.Resources>
-                -->
-                <!--  Normal  -->
-                <!--
-                    <SolidColorBrush x:Key="ComboBoxBackground" Color="#DCDCDC" />
-                    <SolidColorBrush x:Key="ComboBoxForeground" Color="White" />
-                    <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="White" />
-
-                -->
-                <!--  Hover  -->
-                <!--
-                    <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="Black" />
-                    <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White" />
-                    <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="White" />
-
-                -->
-                <!--  Pressed  -->
-                <!--
-                    <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="Black" />
-                    <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="White" />
-                    <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="White" />
-
-                </ComboBox.Resources>-->
-
-            </ComboBox>
+                SelectedItem="{Binding SelectedDeleteBrowserCacheOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         </Grid>
 

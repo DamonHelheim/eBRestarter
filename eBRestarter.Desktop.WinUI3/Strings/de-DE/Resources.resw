@@ -220,7 +220,7 @@
     <value>Windows</value>
   </data>
   <data name="Start_eV_Restarter_with_Windows.Text" xml:space="preserve">
-    <value>eB Restarter mit Windows starten</value>
+    <value>eBRestarter mit Windows starten</value>
   </data>
   <data name="Computer_restart_options.Text" xml:space="preserve">
     <value>Computer Neustartoptionen</value>
@@ -964,12 +964,15 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
     <value>Die Anfrage hat das Zeitlimit Überschritten</value>
   </data>
   <data name="RestartWarning.Text" xml:space="preserve">
-    <value>Achtung: Der automatische Neustart erfolgt auf eigene Gefahr. Der Entwickler übernimmt keine Haftung für möglichen Datenverlust durch ungespeicherte Dokumente.</value>
+    <value>Wichtiger Hinweis: Der automatische Neustart erfolgt auf eigene Gefahr. Bitte beachten Sie, dass dabei sämtliche aktiven Programme, Hintergrundprozesse und Netzwerkverbindungen unterbrochen werden. Der Entwickler übernimmt keine Haftung für daraus resultierende Datenverluste oder abgebrochene Vorgänge.</value>
   </data>
   <data name="StartupBoostDialog_AdminWarning.Title" xml:space="preserve">
     <value>Administrator-Rechte erforderlich</value>
   </data>
   <data name="StartupBoostDialog_AdminWarning.Message" xml:space="preserve">
     <value>Bitte starte die eBRestarter Software als Administrator, um diese Einstellung (Registry) ändern zu können.</value>
+  </data>
+  <data name="API_isNotEnabled" xml:space="preserve">
+    <value>Punkte Statistik nicht sichtbar, da API nicht aktiviert ist.</value>
   </data>
 </root>

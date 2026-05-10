@@ -129,7 +129,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             ComputerRestartClockTimeMin = 1;
             ComputerRestartClockTimeMax = 23;
-            ComputerRestartClockTime = _currentConfig.Computer.RestartClockTime;
+
+            int initialClockTime = Math.Clamp(_currentConfig.Computer.RestartClockTime, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
+            if (_currentConfig.Computer.RestartClockTime != initialClockTime)
+            {
+                _currentConfig.Computer.UpdateRestartSettings(
+                    _currentConfig.Computer.ComputerRestartIntervalDays,
+                    initialClockTime,
+                    TimeProvider.System);
+            }
+            ComputerRestartClockTime = initialClockTime;
 
             int configDays = _currentConfig.Computer.ComputerRestartIntervalDays;
             int configLanguageIndex = _currentConfig.Settings.Language;
@@ -205,13 +214,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string currentUser = Environment.UserName;
             string currentDomain = Environment.UserDomainName;
 
-            var autoLogonDialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain);
+            bool isPasswordlessEnabled = _operatingSystemFacade.WindowsAutoLogonService.IsWindowsHelloPasswordlessEnabled();
+            bool isAdmin = _operatingSystemFacade.WindowsSystemInfoService.IsUserAdministrator();
+
+            var autoLogonDialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain, isPasswordlessEnabled, isAdmin);
 
             if (autoLogonDialogResult == null)
                 return;
 
             var configureAutoLogonRequest = new ConfigureAutoLogonRequest(
                 IsDeactivateAction: autoLogonDialogResult.IsDeactivateAction,
+                DisablePasswordlessMode: autoLogonDialogResult.DisablePasswordlessMode,
+                RestorePasswordlessMode: autoLogonDialogResult.RestorePasswordlessMode,
                 Username: autoLogonDialogResult.Credentials?.Username,
                 Domain: autoLogonDialogResult.Credentials?.Domain,
                 Password: autoLogonDialogResult.Credentials?.Password);
@@ -243,6 +257,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     await _dialogService.ShowMessageAsync(
                         _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorTitle"),
                         _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorMessage"),
+                        DialogIcon.Error);
+                }
+                else if (status == AutoLogonResultStatus.AdminRequired)
+                {
+                    await _dialogService.ShowMessageAsync(
+                        _localizationService.GetString("General_Error"),
+                        "Es sind Administratorrechte erforderlich, um diese Aktion auszuführen. Bitte starten Sie die Anwendung als Administrator.",
                         DialogIcon.Error);
                 }
                 else if (status == AutoLogonResultStatus.ValidationError)
@@ -331,9 +352,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 return;
             }
 
+            int validClockTime = Math.Clamp(ComputerRestartClockTime, ComputerRestartClockTimeMin, ComputerRestartClockTimeMax);
+
             _currentConfig.Computer.UpdateRestartSettings(
                 value.Days,
-                _currentConfig.Computer.RestartClockTime,
+                validClockTime,
                 TimeProvider.System); // Or inject TimeProvider
             UpdateRestartUiState();
             SaveSettings();

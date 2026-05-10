@@ -8,11 +8,13 @@ public class OperatingSystemFacade(
     IWindowsSystemInfoService windowsSystemInfoService,
     IWindowsRegistryService windowsRegistryService,
     IWindowsStartupManagerService windowsStartupManagerService,
-    IWindowsFileSystemService windowsFileSystemService) : IOperatingSystemFacade
+    IWindowsFileSystemService windowsFileSystemService,
+    IWindowsAutoLogonService windowsAutoLogonService) : IOperatingSystemFacade
 {
     public IWindowsProcessControlService WindowsProcessControlService { get; } = windowsProcessControlService;
     public IWindowsSystemInfoService WindowsSystemInfoService { get; } = windowsSystemInfoService;
     public IWindowsRegistryService WindowsRegistryService { get; } = windowsRegistryService;
     public IWindowsStartupManagerService WindowsStartupManagerService { get; } = windowsStartupManagerService;
     public IWindowsFileSystemService WindowsFileSystemService { get; } = windowsFileSystemService;
+    public IWindowsAutoLogonService WindowsAutoLogonService { get; } = windowsAutoLogonService;
 }

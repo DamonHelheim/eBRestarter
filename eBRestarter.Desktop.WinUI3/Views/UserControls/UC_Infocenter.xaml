@@ -92,6 +92,7 @@
                         InformationRow3="{Binding OsBuildText, Mode=OneWay}"
                         InformationRowForeground="{ThemeResource FontColor_1}"
                         TitleForeground="{ThemeResource FontColor_1}" />
+
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal">

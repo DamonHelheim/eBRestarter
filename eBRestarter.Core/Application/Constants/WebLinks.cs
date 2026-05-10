@@ -17,7 +17,7 @@ public static class WebLinks
 
     public const string VivaldiDownloadLinkDE = "https://vivaldi.com/download/Vivaldi.x64.exe";
 
-    public const string FirefoxEVisitorAddOnLink = "https://addons.mozilla.org/de/firefox/addon/ebesucher-addon1/";
+    public const string FirefoxEVisitorAddOnLink = "https://addons.mozilla.org/en-US/android/addon/surf-click/";
     public const string ChromeEVisitorAddOnLink = "https://chromewebstore.google.com/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
     public const string EdgeEVisitorAddOnLink = "https://microsoftedge.microsoft.com/addons/search/ebesucher";
 

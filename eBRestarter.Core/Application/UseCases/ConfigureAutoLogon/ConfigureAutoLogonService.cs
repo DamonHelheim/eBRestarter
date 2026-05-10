@@ -7,10 +7,12 @@ namespace eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 
 public class ConfigureAutoLogonService(
     IWindowsAutoLogonService autoLogonService,
+    IWindowsSystemInfoService windowsSystemInfoService,
     ICredentialValidationService credentialValidationService,
     IValidator<ConfigureAutoLogonRequest> validator) : IConfigureAutoLogonUseCase
 {
     private readonly IWindowsAutoLogonService _autoLogonService = autoLogonService;
+    private readonly IWindowsSystemInfoService _windowsSystemInfoService = windowsSystemInfoService;
     private readonly ICredentialValidationService _credentialValidationService = credentialValidationService;
     private readonly IValidator<ConfigureAutoLogonRequest> _validator = validator;
 
@@ -27,8 +29,28 @@ public class ConfigureAutoLogonService(
         {
             if (request.IsDeactivateAction)
             {
+                if (request.RestorePasswordlessMode)
+                {
+                    if (!_windowsSystemInfoService.IsUserAdministrator())
+                    {
+                        return Result.Fail(new Error("Administrator rights required to restore passwordless mode.")
+                            .WithMetadata("Status", AutoLogonResultStatus.AdminRequired));
+                    }
+                    _autoLogonService.SetWindowsHelloPasswordlessState(true);
+                }
+
                 _autoLogonService.DisableAutoLogon();
                 return Result.Ok(AutoLogonResultStatus.Deactivated);
+            }
+
+            if (request.DisablePasswordlessMode)
+            {
+                if (!_windowsSystemInfoService.IsUserAdministrator())
+                {
+                    return Result.Fail(new Error("Administrator rights required to disable passwordless mode.")
+                        .WithMetadata("Status", AutoLogonResultStatus.AdminRequired));
+                }
+                _autoLogonService.SetWindowsHelloPasswordlessState(false);
             }
 
             if (_autoLogonService.IsWindowsHelloPasswordlessEnabled())

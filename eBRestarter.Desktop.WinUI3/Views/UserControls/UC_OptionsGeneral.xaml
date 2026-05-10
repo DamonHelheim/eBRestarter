@@ -34,6 +34,7 @@
 
             <Border
                 Grid.Column="0"
+                Height="auto"
                 Margin="0,0,24,0"
                 Padding="16"
                 Background="{ThemeResource DashletBackgroundColor_2}"
@@ -92,7 +93,6 @@
                         DisplayMemberPath="DisplayText"
                         FontSize="16"
                         ItemsSource="{Binding ComputerRestartList}"
-                        RequestedTheme="{ThemeResource GeneralRequestedTheme}"
                         SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <StackPanel
@@ -121,6 +121,7 @@
                             Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <Grid Margin="0,-5,0,0">
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -139,6 +140,7 @@
                                 Foreground="Gray"
                                 Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" />
                         </Grid>
+
                     </StackPanel>
 
                     <TextBlock
@@ -152,14 +154,16 @@
                         x:Name="tbl_restart_information"
                         x:Uid="RestartWarning"
                         Width="336"
-                        Height="51"
+                        Height="auto"
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         FontSize="12"
                         Foreground="#de1043"
                         TextWrapping="Wrap"
                         Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+
                 </StackPanel>
+
             </Border>
 
             <Border
@@ -264,7 +268,6 @@
                             DisplayMemberPath="DisplayText"
                             FontSize="16"
                             ItemsSource="{Binding LanguageList}"
-                            RequestedTheme="{ThemeResource GeneralRequestedTheme}"
                             SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
                 </StackPanel>

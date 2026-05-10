@@ -41,7 +41,8 @@
                     x:Uid="eVisitorUsername"
                     Height="27"
                     Margin="10,5,0,0"
-                    FontSize="20"
+                    FontSize="17"
+                    FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}"
                     TextWrapping="Wrap" />
 
@@ -56,7 +57,6 @@
                     Height="35"
                     Margin="20,5,0,0"
                     HorizontalAlignment="Left"
-                    BorderBrush="Transparent"
                     Command="{Binding RegisterToEVisitorCommand}"
                     FontSize="16" />
 

@@ -165,6 +165,7 @@
                     </StackPanel>
 
                     <StackPanel>
+
                         <TextBlock
                             x:Uid="BrowserExtension_Language"
                             Margin="0,0,0,4"
@@ -176,6 +177,7 @@
                             DisplayMemberPath="DisplayText"
                             ItemsSource="{Binding ExtensionLanguages}"
                             SelectedItem="{Binding SelectedExtensionLanguage, Mode=TwoWay}" />
+
                     </StackPanel>
 
                     <Border

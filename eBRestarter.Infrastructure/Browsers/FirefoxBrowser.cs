@@ -17,7 +17,8 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
     public override BrowserType Type => BrowserType.Firefox;
     protected override string ProcessName => "firefox";
     protected override string RegistryKeyVersion => @"Software\Mozilla\Mozilla Firefox";
-    // PRÃœFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
+
+    // PRÜFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
     public override bool IsExtensionInstalled(string? extensionId = null)
     {
         var paths = GetPaths();
@@ -90,11 +91,14 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
             }
             // Pfad: ...\Profiles\xxxx.default\cache2\entries
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "cache2", "entries"));
+
             // Optional: Auch den StartupCache löschen
             cacheDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathLocal, "startupCache"));
+
             // Pfad: ...\Profiles\xxxx.default\storage\default
             // (Firefox speichert Daten für Webseiten hier in Unterordnern)
             cookiesDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathRoaming, "storage", "default"));
+
             // Pfad: ...\Profiles\xxxx.default\extensions
             extensionsDirs.Add(_os.WindowsFileSystemService.CombinePaths(fullProfilePathRoaming, "extensions"));
         }

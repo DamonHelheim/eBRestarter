@@ -32,6 +32,24 @@
                      IsClosable="False"
                      Margin="0,0,0,20"/>
 
+            <InfoBar x:Name="AdminWarningInfoBar"
+                     Title="Administratorrechte erforderlich"
+                     Message="Die kennwortlose Anmeldung (Windows Hello) ist aktiv. Um AutoLogon zu aktivieren, starten Sie die Anwendung bitte als Administrator."
+                     Severity="Error" 
+                     IsOpen="False" 
+                     IsClosable="False"
+                     Margin="0,0,0,16"/>
+
+            <CheckBox x:Name="CbDisablePasswordless"
+                      Content="Kennwortlose Anmeldung (Windows Hello) deaktivieren, um AutoLogon zu erlauben"
+                      Visibility="Collapsed"
+                      Margin="0,0,0,16"/>
+
+            <CheckBox x:Name="CbRestorePasswordless"
+                      Content="Kennwortlose Anmeldung (Windows Hello) wiederherstellen"
+                      Visibility="Collapsed"
+                      Margin="0,0,0,16"/>
+
             <TextBox x:Name="TxtUsername" 
                      x:Uid="AutoLogon_InputUser" />
 

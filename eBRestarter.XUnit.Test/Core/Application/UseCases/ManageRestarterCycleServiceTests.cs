@@ -143,7 +143,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             var cycleTask = _sut.StartAsync(request, () => Task.CompletedTask);
 
             // ACT
-            await AdvanceTimeAsync(6); // Ãœber den InitialDelay drüber
+            await AdvanceTimeAsync(6); // Über den InitialDelay drüber
             await AdvanceTimeAsync(4); // Innerhalb der Running Phase greift der Alive-Check ab
 
             // ASSERT

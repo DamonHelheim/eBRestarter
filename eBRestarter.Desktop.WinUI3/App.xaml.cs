@@ -92,18 +92,6 @@ namespace eBRestarter.Desktop.WinUI3
 
             try
             {
-                var themeService = AppHost!.Services.GetRequiredService<IThemeService>();
-                string themeToSet = launchConfig != null && !string.IsNullOrEmpty(launchConfig.ThemeName)
-                    ? launchConfig.ThemeName
-                    : "Light";
-                themeService.SetTheme(themeToSet);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Fehler beim Laden des Themes: {ex.Message}");
-            }
-            try
-            {
                 var restartScheduler = AppHost!.Services.GetRequiredService<IComputerRestartScheduler>();
                 restartScheduler.StartScheduler();
             }
@@ -113,6 +101,20 @@ namespace eBRestarter.Desktop.WinUI3
             }
             MainWindoweBRestarter = AppHost!.Services.GetRequiredService<EBRestarter>();
             AppDispatcherQueue = MainWindoweBRestarter.DispatcherQueue;
+
+            try
+            {
+                var themeService = AppHost!.Services.GetRequiredService<IThemeService>();
+                string themeToSet = launchConfig != null && !string.IsNullOrEmpty(launchConfig.ThemeName)
+                    ? launchConfig.ThemeName
+                    : "Light";
+
+                themeService.SetTheme(themeToSet);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Fehler beim Laden des Themes: {ex.Message}");
+            }
 
             MainWindoweBRestarter.Activate();
         }
