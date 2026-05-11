@@ -316,7 +316,7 @@
     <value>Browser Downloadverlinkungen</value>
   </data>
   <data name="About_eV_Restarter.Text" xml:space="preserve">
-    <value>Über eB Restarter</value>
+    <value>Über eBRestarter</value>
   </data>
   <data name="AppTitleBar.Title" xml:space="preserve">
     <value>eBRestarter</value>
@@ -448,7 +448,7 @@
     <value>Installation</value>
   </data>
   <data name="Install_DialogQuestion" xml:space="preserve">
-    <value>Möchtest du installieren?</value>
+    <value>Möchtest du den ausgewählten Browser installieren?</value>
   </data>
   <data name="Install_FinishedTitle" xml:space="preserve">
     <value>Installation beendet</value>
@@ -679,7 +679,7 @@
     <value>Windows-Spezifikation</value>
   </data>
   <data name="Infocenter_BtnAbout.Text" xml:space="preserve">
-    <value>Über eB Restarter</value>
+    <value>Über eBRestarter</value>
   </data>
   <data name="About_Loading" xml:space="preserve">
     <value>Lade...</value>
