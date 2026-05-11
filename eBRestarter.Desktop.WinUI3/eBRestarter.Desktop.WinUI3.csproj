@@ -360,12 +360,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1721" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260416003" />
-	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.1" />
+	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.2" />
 	<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
 	<PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.7" />
-	<PackageReference Include="WinUI3XamlPreview" Version="0.8.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Images\" />

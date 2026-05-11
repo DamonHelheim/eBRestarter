@@ -67,10 +67,6 @@ namespace eBRestarter.Desktop.WinUI3
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            if (await WinUI3XamlPreview.Preview.IsXamlPreviewLaunched())
-            {
-                return;
-            }
             StartupDisplayPreferences? launchConfig = null;
             try
             {

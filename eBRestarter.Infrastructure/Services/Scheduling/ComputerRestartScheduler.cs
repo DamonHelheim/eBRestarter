@@ -116,12 +116,12 @@ public partial class ComputerRestartScheduler(
                 // Wenn wir heute schon NACH der RestartClockTime sind, addiere die Interval-Tage auf heute.
                 if (now.Hour >= config.Computer.RestartClockTime)
                 {
-                    newTargetDate = today.AddDays(config.Computer.ComputerRestartIntervalDays);
+                    newTargetDate = today.AddDays(config.Computer.ComputerRestartIntervalDays).AddHours(config.Computer.RestartClockTime);
                 }
                 else
                 {
                     // Wenn wir heute noch VOR der Zeit sind, wäre der Restart eigentlich heute (passiert selten in dieser Logik-Branch, aber sicher ist sicher)
-                    newTargetDate = today;
+                    newTargetDate = today.AddHours(config.Computer.RestartClockTime);
                 }
 
                 config.Computer.SetNextRestartDate(newTargetDate);

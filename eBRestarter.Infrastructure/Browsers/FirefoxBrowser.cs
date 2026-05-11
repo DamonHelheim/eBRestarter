@@ -9,7 +9,7 @@ namespace eBRestarter.Infrastructure.Browsers;
 
 public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> logger) : BrowserBase(os, logger)
 {
-    private const string EbesucherAddOnNameForFirefox = "{fef425dc-a60f-4484-954d-71ecf2544846}.xpi";
+    private const string EbesucherAddOnNameForFirefox = "{76e6445a-74a5-4c26-9afc-95dae514cb77}.xpi";
     public override string DisplayName => "Firefox";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_firefox.png";
     public override string DownloadUrl => WebLinks.FirefoxDownloadLink;
