@@ -199,7 +199,7 @@
     <value>Additional options</value>
   </data>
   <data name="No_Browsers_Installed.Text" xml:space="preserve">
-    <value>No browsers installed:</value>
+    <value>No browsers installed.</value>
   </data>
   <data name="Delete_browser_content.Content" xml:space="preserve">
     <value>Delete browser content</value>
@@ -760,7 +760,7 @@
     <value>Next deletion process:</value>
   </data>
   <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
-    <value>on {0:MM/dd/yyyy} at 1 AM</value>
+    <value>on {0:MM/dd/yyyy} at 0 AM.</value>
   </data>
   <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Close</value>
@@ -974,5 +974,8 @@ Do you want to restart now?</value>
   </data>
   <data name="API_isNotEnabled" xml:space="preserve">
     <value>Points statistics are not visible because the API is not enabled.</value>
+  </data>
+  <data name="AboutDialog_QARole.Text" xml:space="preserve">
+    <value>Quality Assurance</value>
   </data>
 </root>

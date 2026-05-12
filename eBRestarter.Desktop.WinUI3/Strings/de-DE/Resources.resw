@@ -199,7 +199,7 @@
     <value>Zusatzoptionen</value>
   </data>
   <data name="No_Browsers_Installed.Text" xml:space="preserve">
-    <value>Keine Browser installiert</value>
+    <value>Keine Browser installiert.</value>
   </data>
   <data name="Delete_browser_content.Content" xml:space="preserve">
     <value>Browserinhalte löschen</value>
@@ -760,7 +760,7 @@
     <value>Nächster Löschvorgang:</value>
   </data>
   <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
-    <value>am {0:dd.MM.yyyy} um 1 Uhr</value>
+    <value>am {0:dd.MM.yyyy} um 0 Uhr.</value>
   </data>
   <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
     <value>Schließen</value>
@@ -974,5 +974,8 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
   </data>
   <data name="API_isNotEnabled" xml:space="preserve">
     <value>Punkte Statistik nicht sichtbar, da API nicht aktiviert ist.</value>
+  </data>
+  <data name="AboutDialog_QARole.Text" xml:space="preserve">
+    <value>Qualitätssicherung</value>
   </data>
 </root>
