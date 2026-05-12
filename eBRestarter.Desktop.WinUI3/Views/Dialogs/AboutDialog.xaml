@@ -41,6 +41,14 @@
             <TextBlock x:Uid="AboutDialog_DevName" HorizontalAlignment="Center" />
 
             <TextBlock
+                x:Uid="AboutDialog_QARole"
+                HorizontalAlignment="Center"
+                FontWeight="Bold" />
+
+            <TextBlock x:Uid="AboutDialog_DevName" HorizontalAlignment="Center" />
+
+
+            <TextBlock
                 x:Uid="AboutDialog_AssetsHeader"
                 Margin="0,20,0,10"
                 HorizontalAlignment="Center"

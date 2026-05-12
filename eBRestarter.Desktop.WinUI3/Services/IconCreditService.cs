@@ -42,7 +42,6 @@ public class IconCreditService : IIconCreditService
             CreateCredit("Icon made by manshagraphics from www.flaticon.com", IntersectionPath + "api.png", FlaticonUrl + "api_9002406"),
             CreateCredit("Icon made by Circlon Tech from www.flaticon.com", LightThemePath + "workstation_light_theme.png", FlaticonUrl + "workstation_8039540"),
             CreateCredit("Icon made by apien from www.flaticon.com", LightThemePath + "calendar_light_theme.png", FlaticonUrl + "calendar_18349418"),
-            CreateCredit("Icon made by Lizel Arina from www.flaticon.com", LightThemePath + "note_light_theme.png", FlaticonUrl + "note_7710761"),
             CreateCredit("Icon made by Heisenberg_jr from www.flaticon.com", LightThemePath + "send-data-light_theme.png", FlaticonUrl + "send-data_8053605"),
             CreateCredit("Icon made by Fuzzee from www.flaticon.com", IntersectionPath + "plus.png", FlaticonUrl + "add_2724647"),
             CreateCredit("Icon made by Syahrul Ramadhany from www.flaticon.com", LightThemePath + "windows_light_theme.png", FlaticonUrl + "window_3494371"),

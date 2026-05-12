@@ -93,6 +93,7 @@
                 VerticalAlignment="Top"
                 DisplayMemberPath="DisplayText"
                 FontSize="14"
+                IsEnabled="{Binding DeleteBrowserContentCommandIsEnabled}"
                 ItemsSource="{Binding BrowserDeleteCacheOptionList}"
                 PlaceholderText="Browser delete cache options"
                 SelectedIndex="0"

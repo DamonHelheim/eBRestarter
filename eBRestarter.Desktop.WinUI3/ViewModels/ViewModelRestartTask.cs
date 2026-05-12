@@ -7,12 +7,17 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
+using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
@@ -35,6 +40,8 @@ public partial class ViewModelRestartTask : ObservableObject,
 
     private readonly IDialogService _dialogService;
 
+    private readonly IBrowserService _browserService;
+
     private readonly ILocalizationService _localizationService;
 
     private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
@@ -48,6 +55,11 @@ public partial class ViewModelRestartTask : ObservableObject,
     private int _runtimeSeconds = 3600;
 
     private readonly DispatcherQueue _dispatcherQueue;
+
+    private readonly DispatcherTimer _browserCheckTimer;
+
+    [ObservableProperty]
+    public partial bool HasInstalledBrowsers { get; set; } = true;
 
     [ObservableProperty]
     public partial string ChosenBrowser { get; set; }
@@ -86,19 +98,22 @@ public partial class ViewModelRestartTask : ObservableObject,
         IEVisitorConfigService configService,
         IDialogService dialogService,
         ILocalizationService localizationService,
-        IRestartTaskDisplayStateService restartTaskDisplayStateService)
+        IRestartTaskDisplayStateService restartTaskDisplayStateService,
+        IBrowserService browserService)
     {
         ArgumentNullException.ThrowIfNull(manageRestarterCycleUseCase);
         ArgumentNullException.ThrowIfNull(configService);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
         ArgumentNullException.ThrowIfNull(restartTaskDisplayStateService);
+        ArgumentNullException.ThrowIfNull(browserService);
 
         _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
         _configService = configService;
         _dialogService = dialogService;
         _localizationService = localizationService;
         _restartTaskDisplayStateService = restartTaskDisplayStateService;
+        _browserService = browserService;
 
         _dispatcherQueue =
             DispatcherQueue.GetForCurrentThread()
@@ -120,6 +135,27 @@ public partial class ViewModelRestartTask : ObservableObject,
             IsActive = true;
             StartLoop();
         }
+
+        _browserCheckTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(5)
+        };
+
+        _browserCheckTimer.Tick += async (_, _) =>
+        {
+            try
+            {
+                await CheckInstalledBrowsersAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        };
+
+        _browserCheckTimer.Start();
+
+        CheckInstalledBrowsersAsync().Forget();
     }
 
     [RelayCommand]
@@ -242,5 +278,28 @@ public partial class ViewModelRestartTask : ObservableObject,
     private void StopLoop()
     {
         _manageRestarterCycleUseCase.Stop();
+    }
+
+    private async Task CheckInstalledBrowsersAsync()
+    {
+        IEnumerable<BrowserInfo>? installedBrowsers =
+            await Task.Run(() => _browserService.GetInstalledBrowsersAsync()).ConfigureAwait(false);
+
+        bool hasInstalledBrowsers =
+            installedBrowsers != null && installedBrowsers.Any(browser => browser.IsInstalled);
+
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            if (HasInstalledBrowsers != hasInstalledBrowsers)
+            {
+                HasInstalledBrowsers = hasInstalledBrowsers;
+                
+                if (!hasInstalledBrowsers && IsActive)
+                {
+                    IsActive = false;
+                    StopLoop();
+                }
+            }
+        });
     }
 }

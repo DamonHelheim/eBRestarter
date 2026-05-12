@@ -123,7 +123,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     _currentConfig.Computer.SetNextRestartDate(_computerRestartDateService.GetNextRestartDate(
                         _currentConfig.Computer.ComputerRestartIntervalDays,
                         _currentConfig.Computer.RestartClockTime));
-                    _eVisitorConfigService.SaveConfig(_currentConfig);
+                    SaveSettings();
                 }
             }
 
@@ -444,7 +444,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private void SaveSettings()
         {
-            _eVisitorConfigService.SaveConfig(_currentConfig);
+            var freshConfig = _eVisitorConfigService.LoadConfig();
+            
+            freshConfig.Computer.UpdateRestartSettings(_currentConfig.Computer.ComputerRestartIntervalDays, _currentConfig.Computer.RestartClockTime, TimeProvider.System);
+            freshConfig.Computer.SetNextRestartDate(_currentConfig.Computer.NextRestartDate);
+            freshConfig.Settings.Language = _currentConfig.Settings.Language;
+            freshConfig.Settings.StartWithWindows = _currentConfig.Settings.StartWithWindows;
+
+            _eVisitorConfigService.SaveConfig(freshConfig);
         }
 
         private void SaveThemeConfig(string theme)

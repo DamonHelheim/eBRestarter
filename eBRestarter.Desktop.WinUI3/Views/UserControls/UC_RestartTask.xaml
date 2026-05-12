@@ -248,7 +248,8 @@
                 CommandParameter="{Binding ElementName=tbtn_StartTimerSchudeler, Path=IsChecked}"
                 Content="{Binding IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
                 Foreground="White"
-                IsChecked="{Binding IsActive, Mode=TwoWay}">
+                IsChecked="{Binding IsActive, Mode=TwoWay}"
+                IsEnabled="{Binding HasInstalledBrowsers}">
 
                 <ToggleButton.Resources>
 
