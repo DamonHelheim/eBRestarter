@@ -67,6 +67,12 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
     private bool _isApiConfigured;
 
+    /// <summary>
+    /// Setze dies auf true, um für Screenshots automatisch Fake-Werte (Chart und BTP-Summen) zu generieren.
+    /// Nach dem Erstellen der Screenshots einfach wieder auf false setzen.
+    /// </summary>
+    public bool UseScreenshotFakeData { get; set; } = false;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(XAxes))]
     [NotifyPropertyChangedFor(nameof(ChartTitle))]
@@ -108,23 +114,29 @@ public partial class ViewModelGeneralOverview : ObservableObject
     [ObservableProperty]
     public partial ObservableCollection<ISeries> Series { get; set; }
 
-    /// <summary>Localized chart title based on selected pivot (hourly/daily/yearly) and current date.</summary>
     public string ChartTitle
     {
         get
         {
-            if (!_isApiConfigured)
+            if (!_isApiConfigured && !UseScreenshotFakeData)
             {
                 return _localizationService.GetString("API_isNotEnabled");
             }
 
-            return SelectedPivotIndex switch
+            string title = SelectedPivotIndex switch
             {
                 0 => string.Format(_localizationService.GetString("Chart_TitleHourly"), DateTime.Now.ToString("dd.MM.yyyy")),
                 1 => string.Format(_localizationService.GetString("Chart_TitleDaily"), DateTime.Now.ToString("MMMM")),
                 2 => string.Format(_localizationService.GetString("Chart_TitleYearly"), DateTime.Now.ToString("yyyy")),
                 _ => _localizationService.GetString("Chart_TitleOverview")
             };
+
+            if (UseScreenshotFakeData)
+            {
+                title += _localizationService.GetString("Chart_FakeDataMode");
+            }
+
+            return title;
         }
     }
 
@@ -168,6 +180,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
                 LabelsDensity = 1,
                 SeparatorsPaint = new SolidColorPaint(new SKColor(40, 40, 40)) { StrokeThickness = 1 },
                 MinStep = YAxisMinStep,
+                MinLimit = 0,
                 TextSize = 12
             }
         ];
@@ -257,13 +270,18 @@ public partial class ViewModelGeneralOverview : ObservableObject
     {
         try
         {
-            Task<EarningsData?> earningsTask = _eVisitorApiService.GetEarningsAsync();
-            Task<IpInfoData?> ipInfoTask = _eVisitorApiService.GetIpInfoAsync();
+            IpInfoData? ipInfo = null;
 
-            await Task.WhenAll(earningsTask, ipInfoTask);
+            if (!UseScreenshotFakeData)
+            {
+                Task<EarningsData?> earningsTask = _eVisitorApiService.GetEarningsAsync();
+                Task<IpInfoData?> ipInfoTask = _eVisitorApiService.GetIpInfoAsync();
 
-            _cachedEarnings = await earningsTask;
-            IpInfoData? ipInfo = await ipInfoTask;
+                await Task.WhenAll(earningsTask, ipInfoTask);
+
+                _cachedEarnings = await earningsTask;
+                ipInfo = await ipInfoTask;
+            }
 
             _dispatcherQueue.TryEnqueue(() =>
             {
@@ -275,7 +293,14 @@ public partial class ViewModelGeneralOverview : ObservableObject
                     CountryName = ipInfo.CountryName;
                 }
 
-                if (_cachedEarnings != null)
+                if (UseScreenshotFakeData)
+                {
+                    EarningsThisDaySum = $"BTP: {16450:N0}";
+                    EarningsThisMonthSum = $"BTP: {425800:N0}";
+                    EarningsThisYearSum = $"BTP: {5120000:N0}";
+                    UpdateChartData();
+                }
+                else if (_cachedEarnings != null)
                 {
                     EarningsThisDaySum = $"BTP: {_cachedEarnings.TodaySum:N0}";
                     EarningsThisMonthSum = $"BTP: {_cachedEarnings.MonthlySum:N0}";
@@ -333,15 +358,43 @@ public partial class ViewModelGeneralOverview : ObservableObject
     /// <summary>Maps cached earnings to the chart series for the current pivot (hourly/daily/monthly); resizes collection if needed and only updates changed values.</summary>
     private void UpdateChartData()
     {
-        if (_cachedEarnings == null) return;
+        if (_cachedEarnings == null && !UseScreenshotFakeData) return;
 
-        double[] earningsValuesForPivot = SelectedPivotIndex switch
+        double[] earningsValuesForPivot;
+
+        if (UseScreenshotFakeData)
         {
-            0 => _cachedEarnings.HourlyEarnings,
-            1 => _cachedEarnings.DailyEarnings,
-            2 => _cachedEarnings.MonthlyEarnings,
-            _ => []
-        };
+            var rnd = new Random(SelectedPivotIndex); // Fester Seed, damit sich die Werte beim Hin- und Herschalten nicht ändern
+            int count = SelectedPivotIndex switch
+            {
+                0 => 24, // 24 Stunden
+                1 => DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month), // Tage im aktuellen Monat
+                2 => 12, // 12 Monate
+                _ => 0
+            };
+
+            earningsValuesForPivot = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                earningsValuesForPivot[i] = SelectedPivotIndex switch
+                {
+                    0 => rnd.Next(500, 801), // Stundenwerte
+                    1 => rnd.Next(12000, 17001), // Tageswerte im Monat
+                    2 => rnd.Next(500000, 650001), // Monatswerte im Jahr
+                    _ => 0
+                };
+            }
+        }
+        else
+        {
+            earningsValuesForPivot = SelectedPivotIndex switch
+            {
+                0 => _cachedEarnings!.HourlyEarnings,
+                1 => _cachedEarnings!.DailyEarnings,
+                2 => _cachedEarnings!.MonthlyEarnings,
+                _ => []
+            };
+        }
 
         while (_chartValues.Count < earningsValuesForPivot.Length)
         {

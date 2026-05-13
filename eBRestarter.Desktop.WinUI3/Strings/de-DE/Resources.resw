@@ -978,4 +978,7 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
   <data name="AboutDialog_QARole.Text" xml:space="preserve">
     <value>Qualitätssicherung</value>
   </data>
+  <data name="Chart_FakeDataMode" xml:space="preserve">
+    <value> (Test-Modus)</value>
+  </data>
 </root>

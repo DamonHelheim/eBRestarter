@@ -1,103 +1,119 @@
 # eBRestarter
+**Ein Automatisierungstool für die eBesucher Surfbar zur Optimierung von Stabilität und Leistung.**
 
-**A robust, automated orchestration tool for the eBesucher Surfbar, built with Clean Architecture, DDD principles, and WinUI 3.**
+<!-- Hero Image: Ein großer, schicker Screenshot des Hauptfensters der App -->
+![eBRestarter Hauptfenster - Übersicht](assets/hero_image.png)
 
-![eBRestarter Main Window](assets/hero_image.png)
+## Über eBRestarter
+Bei der kontinuierlichen Nutzung der eBesucher Surfbar kann es gelegentlich zu Abstürzen, Aufhängern oder Leistungseinbußen durch einen vollen Browser-Cache kommen. 
 
-## Overview
+eBRestarter ist eine Softwarelösung, die den Betrieb der Surfbar überwacht und den Browser in regelmäßigen, benutzerdefinierten Abständen automatisch neu startet. Zusätzlich werden Cache und Cookies automatisiert bereinigt. Dadurch wird ein kontinuierlicher und stabiler Betrieb der Surfbar gewährleistet, ohne dass manuelle Eingriffe erforderlich sind.
 
-eBRestarter is a desktop application designed to ensure continuous, stable operation of the eBesucher Surfbar by automating browser restarts, managing system resources, and clearing cache/cookies. 
-
-This project was built to demonstrate professional-level competency in modern C# development, showcasing **Clean Architecture**, **Domain-Driven Design (DDD)**, and **SOLID principles** within a Windows desktop environment.
-
-## Architecture
-
-The application is structured using **Clean Architecture**, separating the core business rules from infrastructure and UI concerns.
-
-```mermaid
-graph TD
-    subgraph UI ["Presentation Layer (WinUI 3)"]
-        Views["Views (XAML)"]
-        ViewModels["ViewModels (MVVM Toolkit)"]
-        DI["Dependency Injection"]
-    end
-
-    subgraph Application ["Application Layer"]
-        UseCases["Use Cases (CQRS-style)"]
-        Interfaces["Interfaces (Ports)"]
-        Validation["FluentValidation"]
-        Results["FluentResults"]
-    end
-
-    subgraph Domain ["Domain Layer"]
-        Entities["Rich Entities (AppConfig, BrowserConfig)"]
-        DomainServices["Domain Services"]
-    end
-
-    subgraph Infrastructure ["Infrastructure Layer"]
-        OS["Windows OS Facades (P/Invoke, Registry)"]
-        Browsers["Browser Implementations"]
-        API["REST API Adapters"]
-        Config["Configuration Persistence"]
-    end
-
-    UI --> Application
-    Infrastructure --> Application
-    Application --> Domain
-    
-    classDef layer fill:transparent,stroke:#333,stroke-width:2px;
-    class UI,Application,Domain,Infrastructure layer;
-```
-
-### Key Architectural Decisions
-
-1. **Clean Architecture & Dependency Inversion:** The Core project has zero dependencies on the UI or Infrastructure. All OS-level interactions (Registry, Process Management, File System) are abstracted behind interfaces in the Application layer and implemented in the Infrastructure layer.
-2. **Rich Domain Model:** Configuration settings (`AppConfig`, `Computer`, `BrowserConfig`) are modeled as Domain Entities with encapsulated state and built-in business logic (e.g., calculating next restart dates).
-3. **Result Pattern:** The Application layer uses `FluentResults` to avoid exception-driven control flow. Use Cases return `Result<T>` instead of throwing exceptions, ensuring robust error handling.
-4. **Validation:** `FluentValidation` is used to validate all Use Case requests before execution.
-5. **MVVM Pattern:** The WinUI 3 frontend strictly adheres to MVVM, utilizing the `CommunityToolkit.Mvvm` for source-generated properties and commands. God classes have been refactored into smaller, focused ViewModels.
-
-## Tech Stack
-
-- **Framework:** .NET 10.0
-- **UI:** WinUI 3 (Windows App SDK)
-- **Architecture:** Clean Architecture, DDD
-- **Libraries:**
-  - `CommunityToolkit.Mvvm` (State management)
-  - `FluentResults` (Error handling)
-  - `FluentValidation` (Request validation)
-  - `RestSharp` (API communication)
-  - `Moq` & `Shouldly` (Testing)
-- **Testing:** xUnit (35+ test files covering Use Cases, Domain logic, and Infrastructure adapters)
-
-## Getting Started (Developers)
-
-### Prerequisites
-- Windows 11 (64-bit)
-- Visual Studio 2022 (latest preview for .NET 10 support) or JetBrains Rider
-- Windows App SDK workload installed
-
-### Building the Project
-1. Clone the repository.
-2. Open `eBRestarter.sln` in Visual Studio.
-3. Set `eBRestarter.Desktop.WinUI3` as the startup project.
-4. Build and run (F5).
-
-### Running Tests
-The project includes a comprehensive test suite located in `eBRestarter.XUnit.Test`.
-Run the tests via the Visual Studio Test Explorer or using the .NET CLI:
-```bash
-dotnet test
-```
-*Note: The test suite uses `Microsoft.Extensions.Time.Testing.FakeTimeProvider` to deterministically test time-based background tasks without actual delays.*
-
-## Features
-
-- **Automated Browser Orchestration:** Starts, monitors, and gracefully closes Chromium/Firefox browsers.
-- **System Cleanup:** Automatically clears browser cache and cookies based on a configurable schedule.
-- **Process Monitoring:** Detects browser crashes and initiates cooldown/restart cycles.
-- **OS Integration:** Manages Windows Auto-Logon and Startup settings via Registry and P/Invoke.
-- **API Integration:** Connects to the eBesucher REST API to fetch live earning statistics.
+## Kernfunktionen und Vorteile
+* **Stabiler Betrieb:** 
+Eine automatisierte Bereinigung von Cache und Cookies verhindert Leistungseinbußen, die durch angesammelte temporäre Daten entstehen können.
+<br>
+* **Automatischer Neustart:** 
+Bei Hängern oder Ausfällen der Surfbar führt eBRestarter selbstständig einen Neustart durch und minimiert so Ausfallzeiten.
+<br>
+* **Punkte Statistiken:** 
+Überwachen Sie Ihre gesammelten Punkte (stündlich, monatlich, für das aktuelle Jahr) übersichtlich in einem zentralen Dashboard.
 
 ---
-*Disclaimer: eBRestarter is an unofficial tool and is not affiliated with eBesucher GmbH.*
+
+## Funktionsumfang
+Das Programm bietet sowohl automatisierte Hintergrundprozesse als auch Werkzeuge für die manuelle Konfiguration:
+
+### Automatisierte Prozesse
+* **Browser-Neustart:**
+Startet den Browser in festgelegten Intervallen automatisch neu.
+<br>
+* **Systembereinigung:**
+Verlauf, Cache und Cookies werden nach einem konfigurierten Zeitplan im Hintergrund gelöscht.
+<br>
+* **PC-Neustart:**
+Optional kann das gesamte System nach einem definierten Zeitplan (z.B. nachts) komplett neu gestartet werden.
+
+<!-- Screenshot: Die neue Chrome Erweiterung in Aktion oder das Einstellungsmenü dafür -->
+![Tab-Restarter Browser-Erweiterung](assets/extension_preview.png)
+
+* **Tab-Restarter Browser-Erweiterung:** 
+Eine Begleiterweiterung für Chromium-basierte Browser (z.B. Chrome, Edge, Brave, Vivaldi):
+<br>
+  * *Tab-Überwachung:* 
+  Die Erweiterung erkennt eingefrorene Tabs, Endlosschleifen oder Verbindungsfehler und lädt die betroffene Seite bei Bedarf selbstständig neu.
+  <br>
+  * *Kiosk-Modus:* 
+  Unerwünschte Pop-ups oder versehentlich geöffnete Tabs werden automatisch geschlossen, um den Fokus auf die Surfbar zu wahren.
+
+### Monitoring & Statistiken
+<!-- Screenshot: Das Dashboard mit den Statistiken (Stündlich, Monatlich, Jahr) und der IP-Adresse -->
+![Dashboard mit Punkte-Statistiken und IP-Anzeige](assets/statistics_dashboard.png)
+
+* **API-Integration:** 
+Unterstützt die direkte Anbindung an die eBesucher-API zur Abfrage und Anzeige Ihrer Statistiken.
+<br>
+* **Auswertungen:**
+Detaillierte Aufschlüsselung der generierten Punkte nach Stunde, Monaten und aktuelles Jahr.
+<br>
+* **IP-Anzeige:**
+Die aktuelle öffentliche IP-Adresse wird kontinuierlich in der Benutzeroberfläche dargestellt.
+
+### Manuelle Werkzeuge
+<!-- Screenshot: Die Download- und Bereinigungstools -->
+![Manuelle Tools und Browser-Downloader](assets/manual_tools.png)
+
+* **Browser-Downloader:**
+Direkter Download unterstützter Browser bequem aus der Anwendung heraus.
+<br>
+* **Add-on Installation:**
+Integrierte Funktion zur unkomplizierten Installation des eBesucher Add-ons.
+<br>
+* **Manuelle Bereinigung:**
+Möglichkeit zum sofortigen Löschen von Cookies und Cache per Knopfdruck.
+<br>
+* **Windows Auto-Login Guide:**
+Enthält die Möglichkeite zur Einrichtung der automatischen Windows-Anmeldung. (Hinweis: das gilt nur für Anmeldungen ohne Pin eingabe.)
+
+---
+
+## Systemanforderungen
+
+**Software:**
+* **Betriebssystem:** Windows 11 (Home/Pro, **nur 64-Bit**)
+  * *Getestet auf: Windows 11 (Version 25H2)*
+
+* **Framework:** .NET 10.0 Runtime
+
+**Hardware:**
+
+* **Prozessor (CPU):** Intel oder AMD CPU mit 64-Bit-Architektur 
+  *(Erfolgreich getestet u.a. auf Intel N150)*
+<br>
+* **Arbeitsspeicher (RAM):** 4 GB RAM empfohlen (Betrieb mit weniger RAM auf eigene Verantwortung möglich).
+<br>
+* **Festplattenspeicher:** Mindestens 300 MB freier Speicherplatz.
+
+> **Hinweise:** 
+> * **Sprachen:** Die Software ist in Deutsch und Englisch verfügbar.
+> * **Kompatibilität:** Es werden ausschließlich Windows-Betriebssysteme unterstützt.
+
+## Erste Schritte
+
+1. **Download:**
+Laden Sie die aktuelle Version von eBRestarter herunter.
+<br>
+2. **Voraussetzungen prüfen:**
+Stellen Sie sicher, dass die .NET 10 Runtime auf Ihrem System installiert ist.
+<br>
+3. **Einrichtung:**
+Starten Sie die Anwendung. Nutzen Sie die integrierten Werkzeuge, um den gewünschten Browser herunterzuladen und das Add-on zu installieren. Hinterlegen Sie optional Ihre API-Zugangsdaten für die Statistikfunktionen.
+<br>
+4. **Konfiguration:**
+Legen Sie die Intervalle für Neustarts und Bereinigungen fest und aktivieren Sie bei Bedarf die Browser-Erweiterung.
+<br>
+5. **Start:**
+Aktivieren Sie den automatisierten Betrieb über die Schaltfläche "Start".
+
+---
+*Hinweis: eBRestarter ist eine inoffizielle Software und steht in keiner direkten Verbindung zur TurboAd GmbH.*

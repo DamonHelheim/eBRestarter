@@ -978,4 +978,7 @@ Do you want to restart now?</value>
   <data name="AboutDialog_QARole.Text" xml:space="preserve">
     <value>Quality Assurance</value>
   </data>
+  <data name="Chart_FakeDataMode" xml:space="preserve">
+    <value> (Test Mode)</value>
+  </data>
 </root>
