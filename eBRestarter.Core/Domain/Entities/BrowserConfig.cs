@@ -1,5 +1,3 @@
-using System;
-
 namespace eBRestarter.Core.Domain.Entities;
 
 public class BrowserConfig

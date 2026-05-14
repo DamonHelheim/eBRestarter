@@ -1,11 +1,10 @@
-﻿using System.Net.NetworkInformation;
+using System.Net.NetworkInformation;
 
-namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS
+namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+
+// Abstrahiert die statischen Systemaufrufe
+public interface INetworkProvider
 {
-    // Abstrahiert die statischen Systemaufrufe
-    public interface INetworkProvider
-    {
-        bool GetIsNetworkAvailable();
-        NetworkInterface[] GetAllNetworkInterfaces();
-    }
+    bool CheckIsNetworkAvailable();
+    NetworkInterface[] RetrieveAllNetworkInterfaces();
 }

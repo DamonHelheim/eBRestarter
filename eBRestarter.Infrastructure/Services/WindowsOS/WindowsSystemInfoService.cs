@@ -15,12 +15,12 @@ public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, 
     private readonly ILogger<WindowsSystemInfoService> _logger = logger;
     private readonly IWindowsRegistryService _registry = registry; // Der Wrapper
 
-    public string GetCurrentOsDisplayVersion()
+    public string RetrieveCurrentOsDisplayVersion()
     {
         try
         {
             // Refactoring: Nutzung des Wrappers statt Registry.GetValue
-            var versionObj = _registry.GetLocalMachineValue(RegistryPathCurrentVersion, "DisplayVersion");
+            var versionObj = _registry.RetrieveLocalMachineValue(RegistryPathCurrentVersion, "DisplayVersion");
 
             var version = versionObj?.ToString();
 
@@ -33,12 +33,12 @@ public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, 
         }
     }
 
-    public string GetCurrentOsBuildVersion()
+    public string RetrieveCurrentOsBuildVersion()
     {
         try
         {
             // Refactoring: Nutzung des Wrappers für den "UBR" Wert (Update Build Revision)
-            var ubrObj = _registry.GetLocalMachineValue(RegistryPathCurrentVersion, "UBR");
+            var ubrObj = _registry.RetrieveLocalMachineValue(RegistryPathCurrentVersion, "UBR");
 
             string ubr = ubrObj?.ToString() ?? "0";
 
@@ -53,7 +53,7 @@ public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, 
         }
     }
 
-    public string GetCurrentStandardBrowserName()
+    public string RetrieveCurrentStandardBrowserName()
     {
         // 1. ProgId auslesen über Wrapper (HKCU)
         string? progIdHttp = GetRegistryValueAsString(RegistryPathUserChoiceHttp, "ProgId");
@@ -80,7 +80,7 @@ public class WindowsSystemInfoService(ILogger<WindowsSystemInfoService> logger, 
     {
         try
         {
-            return _registry.GetCurrentUserValue(subKey, valueName)?.ToString();
+            return _registry.RetrieveCurrentUserValue(subKey, valueName)?.ToString();
         }
         catch (Exception ex)
         {

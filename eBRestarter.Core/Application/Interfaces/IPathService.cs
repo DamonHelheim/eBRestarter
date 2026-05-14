@@ -1,9 +1,9 @@
-﻿namespace eBRestarter.Core.Application.Interfaces;
+namespace eBRestarter.Core.Application.Interfaces;
 
 public interface IPathService
 {
-    string GetAppDataPath();
-    string GetDownloadsPath();
-    string GetConfigFilePath();
-    string GetLogFilePath();
+    string RetrieveAppDataPath();
+    string RetrieveDownloadsPath();
+    string RetrieveConfigFilePath();
+    string RetrieveLogFilePath();
 }

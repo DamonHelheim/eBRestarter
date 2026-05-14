@@ -1,11 +1,12 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Browsers.Abstract;
+
 public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger logger) : BrowserBase(os, logger)
 {
 
-    // Diese Werte mÃ¼ssen die konkreten Klassen liefern
+    // Diese Werte müssen die konkreten Klassen liefern
     protected abstract string ExeFileName { get; }          // e. g. "chrome.exe"
     protected abstract string BrowserRegistryName { get; }  // e.g. "Google Chrome"
     protected abstract string UninstallSubKey { get; }      // e.g. "Google Chrome" oder "BraveSoftware Brave-Browser"
@@ -13,46 +14,6 @@ public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger log
 
     // Muss von Chrome/Edge/Brave implementiert werden
     protected abstract string ExtensionId { get; }
-    public override bool IsExtensionInstalled(string? extensionId = null)
-    {
-        // Wenn keine spezifische ID Ã¼bergeben wurde, nimm die Standard-ID des Browsers
-        var idToCheck = string.IsNullOrEmpty(extensionId) ? ExtensionId : extensionId;
-
-        if (string.IsNullOrEmpty(idToCheck)) return false;
-
-        var paths = GetPaths();
-
-        // Wenn keine Extensions-Ordner gefunden wurden (z.B. keine Profile), ist auch nix installiert
-        if (paths.ExtensionsDirs == null || paths.ExtensionsDirs.Count == 0) return false;
-
-        // Wir prÃ¼fen JEDEN gefundenen Profil-Extensions-Ordner
-        foreach (var extensionsDir in paths.ExtensionsDirs)
-        {
-            if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
-
-            // Logik fÃ¼r Inkonsistenz-Behebung:
-            // Manche Subklassen (z. B. Brave) geben Pfad INKL. ID zurÃ¼ck.
-            // Andere (z. B. Chrome/Edge, wenn korrigiert) geben nur den ".../Extensions" Ordner zurÃ¼ck.
-
-            // Fall A: Der Pfad endet bereits auf die ID (Brave-Style)
-            if (extensionsDir.EndsWith(idToCheck, StringComparison.OrdinalIgnoreCase))
-            {
-                // Der Ordner existiert ja schon (oben geprÃ¼ft), also ist sie da.
-                // (Optional kÃ¶nnte man noch prÃ¼fen, ob Version-Unterordner drin sind)
-                return true;
-            }
-
-            // Fall B: Der Pfad ist nur der "Extensions"-Ordner -> Wir mÃ¼ssen die ID anhÃ¤ngen
-            var fullExtensionPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
-
-            if (_os.WindowsFileSystemService.DirectoryExists(fullExtensionPath))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     protected override List<string> ExecutablePaths
     {
@@ -62,13 +23,13 @@ public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger log
 
             // 1. App Paths
             var appPathKey = $@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{ExeFileName}";
-            var appPath = _os.WindowsRegistryService.GetLocalMachineValue(appPathKey, "")?.ToString();
+            var appPath = _os.WindowsRegistryService.RetrieveLocalMachineValue(appPathKey, "")?.ToString();
 
             if (!string.IsNullOrEmpty(appPath)) { paths.Add(appPath); }
 
             // 2. StartMenuInternet
             var clientKey = $@"SOFTWARE\Clients\StartMenuInternet\{BrowserRegistryName}\shell\open\command";
-            var clientPath = _os.WindowsRegistryService.GetLocalMachineValue(clientKey, "")?.ToString();
+            var clientPath = _os.WindowsRegistryService.RetrieveLocalMachineValue(clientKey, "")?.ToString();
 
             if (!string.IsNullOrEmpty(clientPath)) { paths.Add(clientPath.Replace("\"", "").Trim()); }
 
@@ -80,11 +41,54 @@ public abstract class ChromiumBrowserBase(IOperatingSystemFacade os, ILogger log
             // 4. Standardpfade
             var pathPart = _os.WindowsFileSystemService.CombinePaths(ProgramFilesSubPath, ExeFileName);
 
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles"), pathPart));
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles(x86)"), pathPart));
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData"), pathPart));
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("ProgramFiles"), pathPart));
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("ProgramFiles(x86)"), pathPart));
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData"), pathPart));
 
             return [.. paths.Distinct()];
         }
     }
+
+    public override bool IsExtensionInstalled(string? extensionId = null)
+    {
+        // Wenn keine spezifische ID übergeben wurde, nimm die Standard-ID des Browsers
+        var idToCheck = string.IsNullOrEmpty(extensionId) ? ExtensionId : extensionId;
+
+        if (string.IsNullOrEmpty(idToCheck)) return false;
+
+        var paths = ResolvePaths();
+
+        // Wenn keine Extensions-Ordner gefunden wurden (z.B. keine Profile), ist auch nix installiert
+        if (paths.ExtensionsDirs == null || paths.ExtensionsDirs.Count == 0) return false;
+
+        // Wir prüfen JEDEN gefundenen Profil-Extensions-Ordner
+        foreach (var extensionsDir in paths.ExtensionsDirs)
+        {
+            if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
+
+            // Logik für Inkonsistenz-Behebung:
+            // Manche Subklassen (z. B. Brave) geben Pfad INKL. ID zurück.
+            // Andere (z. B. Chrome/Edge, wenn korrigiert) geben nur den ".../Extensions" Ordner zurück.
+
+            // Fall A: Der Pfad endet bereits auf die ID (Brave-Style)
+            if (extensionsDir.EndsWith(idToCheck, StringComparison.OrdinalIgnoreCase))
+            {
+                // Der Ordner existiert ja schon (oben geprüft), also ist sie da.
+                // (Optional könnte man noch prüfen, ob Version-Unterordner drin sind)
+                return true;
+            }
+
+            // Fall B: Der Pfad ist nur der "Extensions"-Ordner -> Wir müssen die ID anhängen
+            var fullExtensionPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
+
+            if (_os.WindowsFileSystemService.DirectoryExists(fullExtensionPath))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
+
+

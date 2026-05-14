@@ -1,11 +1,17 @@
-﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using System.Net.NetworkInformation;
 
-namespace eBRestarter.Infrastructure.Services.WindowsOS
+namespace eBRestarter.Infrastructure.Services.WindowsOS;
+
+public class NetworkProvider : INetworkProvider
 {
-    public class NetworkProvider : INetworkProvider
+    public bool CheckIsNetworkAvailable()
     {
-        public bool GetIsNetworkAvailable() => NetworkInterface.GetIsNetworkAvailable();
-        public NetworkInterface[] GetAllNetworkInterfaces() => NetworkInterface.GetAllNetworkInterfaces();
+        return NetworkInterface.GetIsNetworkAvailable();
+    }
+
+    public NetworkInterface[] RetrieveAllNetworkInterfaces()
+    {
+        return NetworkInterface.GetAllNetworkInterfaces();
     }
 }

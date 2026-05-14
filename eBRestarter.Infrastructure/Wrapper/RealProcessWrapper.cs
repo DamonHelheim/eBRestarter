@@ -1,22 +1,22 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using System.Diagnostics;
 
 namespace eBRestarter.Infrastructure.Wrapper;
 
 /// <summary>
-/// Die konkrete Implementierung von <see cref="IProcessWrapper"/> fÃ¼r die Laufzeitumgebung.
+/// Die konkrete Implementierung von <see cref="IProcessWrapper"/> für die Laufzeitumgebung.
 /// <br/>
 /// <b>Zweck:</b> Dient als "Thin Wrapper" um die statische Klasse <see cref="Process"/>.
-/// Dies ermÃ¶glicht es, Systemaufrufe in Unit-Tests zu mocken, indem im Test eine andere Implementierung
+/// Dies ermöglicht es, Systemaufrufe in Unit-Tests zu mocken, indem im Test eine andere Implementierung
 /// des Interfaces verwendet wird.
 /// </summary>
 public class RealProcessWrapper : IProcessWrapper
 {
     /// <summary>
     /// Startet eine Prozessressource, die durch den Parameter <see cref="ProcessStartInfo"/> angegeben wird,
-    /// und verknÃ¼pft die Ressource mit einer neuen <see cref="Process"/>-Komponente.
+    /// und verknüpft die Ressource mit einer neuen <see cref="Process"/>-Komponente.
     /// </summary>
-    /// <param name="info">Die <see cref="ProcessStartInfo"/>, die Startdaten (Dateiname, Argumente etc.) enthÃ¤lt.</param>
+    /// <param name="info">Die <see cref="ProcessStartInfo"/>, die Startdaten (Dateiname, Argumente etc.) enthält.</param>
     /// <returns>
     /// Eine neue <see cref="Process"/>-Komponente, die der Prozessressource zugeordnet ist,
     /// oder <c>null</c>, wenn keine Prozessressource gestartet wurde.
@@ -26,7 +26,7 @@ public class RealProcessWrapper : IProcessWrapper
         var process = Process.Start(info);
 
         // Wenn der Start erfolgreich war, verpacken wir den echten Prozess in unseren Adapter
-        if (process != null)
+        if (process is not null)
         {
             return new ProcessAdapter(process);
         }
@@ -35,10 +35,10 @@ public class RealProcessWrapper : IProcessWrapper
     }
 
     /// <summary>
-    /// PrÃ¼ft, ob aktuell mindestens eine Instanz eines Prozesses mit dem angegebenen Namen lÃ¤uft.
+    /// Prüft, ob aktuell mindestens eine Instanz eines Prozesses mit dem angegebenen Namen läuft.
     /// </summary>
     /// <param name="name">Der freundliche Name des Prozesses (ohne die Erweiterung .exe).</param>
-    /// <returns><c>true</c>, wenn der Prozess lÃ¤uft; andernfalls <c>false</c>.</returns>
+    /// <returns><c>true</c>, wenn der Prozess läuft; andernfalls <c>false</c>.</returns>
     public bool IsProcessRunning(string name)
     {
         // Leitet direkt an die statische .NET API weiter
@@ -50,8 +50,8 @@ public class RealProcessWrapper : IProcessWrapper
     /// </summary>
     /// <param name="name">Der Name des Prozesses, der beendet werden soll.</param>
     /// <remarks>
-    /// Diese Methode enthÃ¤lt <b>kein Exception-Handling</b>. Fehler (z.B. "Zugriff verweigert")
-    /// werden an den Aufrufer (den Service) weitergereicht und mÃ¼ssen dort behandelt werden.
+    /// Diese Methode enthält <b>kein Exception-Handling</b>. Fehler (z.B. "Zugriff verweigert")
+    /// werden an den Aufrufer (den Service) weitergereicht und müssen dort behandelt werden.
     /// </remarks>
     public void KillProcess(string name)
     {
@@ -69,7 +69,7 @@ public class RealProcessWrapper : IProcessWrapper
     {
         var processes = Process.GetProcesses();
 
-        // HIER IST DIE LÃ–SUNG: Wir nehmen jeden echten Prozess (p) und stecken ihn in den ProcessAdapter.
+        // HIER IST DIE LÖSUNG: Wir nehmen jeden echten Prozess (p) und stecken ihn in den ProcessAdapter.
         // Das Ergebnis wandeln wir in ein Array von IProcess um.
         return [.. processes.Select(p => (IProcess)new ProcessAdapter(p))];
     }

@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Browsers;
 using Microsoft.Extensions.Logging;
@@ -18,12 +18,12 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     {
         /// <summary>
         /// Chromium-Browser suchen Extensions in spezifischen Ordnern. Die Methode muss
-        /// erkennen, wenn der Ordner fÃ¼r eine bestimmte Extension-ID auf der Festplatte existiert.
+        /// erkennen, wenn der Ordner für eine bestimmte Extension-ID auf der Festplatte existiert.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir simulieren, dass GetPaths() einen Extension-Ordner zurÃ¼ckgibt.
+        /// Wir simulieren, dass ResolvePaths() einen Extension-Ordner zurückgibt.
         /// Wir bringen dem FileSystem-Mock bei, dass dieser Ordner inkl. der Extension-ID
-        /// physisch auf der Platte liegt. Die Methode MUSS dann 'true' zurÃ¼ckgeben.
+        /// physisch auf der Platte liegt. Die Methode MUSS dann 'true' zurückgeben.
         /// </summary>
         [Fact]
         public void IsExtensionInstalled_ShouldReturnTrue_WhenExtensionFolderExists()
@@ -35,20 +35,20 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 
             // 1. LocalAppData vorgeben
             string localAppData = @"C:\Users\Test\AppData\Local";
-            mockFileSystem.Setup(fs => fs.GetEnvironmentPath("LocalAppData")).Returns(localAppData);
+            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(localAppData);
 
-            // 2. WICHTIG: Einen universellen Mock fÃ¼r CombinePaths bauen,
+            // 2. WICHTIG: Einen universellen Mock für CombinePaths bauen,
             // der beliebig viele Strings mit "\" zusammenklebt.
             mockFileSystem
                 .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
                 .Returns<string[]>(paths => string.Join(@"\", paths));
 
-            // 3. Damit ChromeBrowser.GetPaths() Ã¼berhaupt Pfade zurÃ¼ckgibt,
-            // mÃ¼ssen wir vortÃ¤uschen, dass das "Default"-Profil existiert!
+            // 3. Damit ChromeBrowser.ResolvePaths() überhaupt Pfade zurückgibt,
+            // müssen wir vortäuschen, dass das "Default"-Profil existiert!
             string defaultProfilePath = $@"{localAppData}\Google\Chrome\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(defaultProfilePath)).Returns(true);
 
-            // 4. Den Pfad der Extension definieren (wie er von GetPaths() generiert wird)
+            // 4. Den Pfad der Extension definieren (wie er von ResolvePaths() generiert wird)
             string chromeExtensionId = "agchmcconfdfcenopioeilpgjngelefk"; // ID aus ChromeBrowser.cs
             string expectedExtensionDir = $@"{defaultProfilePath}\Extensions\{chromeExtensionId}";
 
@@ -60,8 +60,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var chromeBrowser = new ChromeBrowser(mockOs.Object, mockLogger.Object);
 
             // ACT
-            // ChromeBrowser holt erst GetPaths() -> Findet das "Default" Profil -> Generiert den Extension-Pfad.
-            // ChromiumBrowserBase iteriert dann darÃ¼ber und prÃ¼ft, ob der Pfad existiert -> JA!
+            // ChromeBrowser holt erst ResolvePaths() -> Findet das "Default" Profil -> Generiert den Extension-Pfad.
+            // ChromiumBrowserBase iteriert dann darüber und prüft, ob der Pfad existiert -> JA!
             bool result = chromeBrowser.IsExtensionInstalled();
 
             // ASSERT
@@ -69,8 +69,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// Wenn der Nutzer die Extension gelÃ¶scht hat oder der Profil-Ordner leer ist,
-        /// darf die Methode auf keinen Fall versehentlich 'true' zurÃ¼ckgeben.
+        /// Wenn der Nutzer die Extension gelöscht hat oder der Profil-Ordner leer ist,
+        /// darf die Methode auf keinen Fall versehentlich 'true' zurückgeben.
         ///
         /// WAS WIRD GETESTET?
         /// Wir simulieren, dass der Ordner mit der Extension-ID NICHT existiert (Returns false).
@@ -83,7 +83,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockLogger = new Mock<ILogger<ChromeBrowser>>();
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
 
-            mockFileSystem.Setup(fs => fs.GetEnvironmentPath(It.IsAny<string>())).Returns(@"C:\FakeAppData");
+            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath(It.IsAny<string>())).Returns(@"C:\FakeAppData");
 
             // WICHTIG: Die Methode fragt ab, ob der kombinierte Pfad existiert. Wir sagen NEIN.
             mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);

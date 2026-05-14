@@ -11,13 +11,13 @@ namespace eBRestarter.Infrastructure.Services
     {
         private readonly ILogger<WindowsWmiHardwareService> _logger = logger;
 
-        public async Task<HardwareInfo> GetHardwareInfoAsync()
+        public async Task<HardwareInfo> RetrieveHardwareInfoAsync()
         {
             return await Task.Run(() =>
             {
-                var cpu = GetWmiValue("Win32_Processor", "Name") ?? "N/A";
-                var gpu = GetWmiValue("Win32_VideoController", "Name") ?? "N/A";
-                var ramRaw = GetWmiValue("Win32_OperatingSystem", "TotalVisibleMemorySize");
+                var cpu = RetrieveWmiValue("Win32_Processor", "Name") ?? "N/A";
+                var gpu = RetrieveWmiValue("Win32_VideoController", "Name") ?? "N/A";
+                var ramRaw = RetrieveWmiValue("Win32_OperatingSystem", "TotalVisibleMemorySize");
 
                 string ramFormatted = "N/A";
 
@@ -36,13 +36,13 @@ namespace eBRestarter.Infrastructure.Services
             });
         }
 
-        public async Task<string> GetOsEditionAsync()
+        public async Task<string> RetrieveOsEditionAsync()
         {
-            return await Task.Run(() => GetWmiValue("Win32_OperatingSystem", "Caption") ?? "Windows (Unkwone)");
+            return await Task.Run(() => RetrieveWmiValue("Win32_OperatingSystem", "Caption") ?? "Windows (Unkwone)");
         }
 
         // Private Hilfsmethode, um Code-Duplizierung zu vermeiden (DRY Principle)
-        private string? GetWmiValue(string wmiClass, string property)
+        private string? RetrieveWmiValue(string wmiClass, string property)
         {
             try
             {

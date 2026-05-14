@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 
 namespace eBRestarter.Infrastructure.Services;
 
@@ -28,55 +28,25 @@ public class FileDeletionService : IFileDeletionService
     {
         await Task.Run(() =>
         {
-            int deletedCount = 0;
-            // Variable für das Drosseln der Updates
-            const int reportInterval = 10; // Nur alle 50 Dateien die UI updaten
-            int updateCounter = 0;
+            var context = new DeletionContext
+            {
+                DeletedCount = 0,
+                UpdateCounter = 0,
+                ReportInterval = 10,
+                StatusReporter = statusReporter,
+                ValueReporter = valueReporter,
+                Token = token
+            };
 
             foreach (var dir in directories)
             {
-                if (!Directory.Exists(dir)) continue;
-
-                string[] files;
-
-                try { files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories); }
-
-                catch { continue; }
-
-                foreach (var file in files)
-                {
-                    if (token.IsCancellationRequested) return;
-
-                    try
-                    {
-                        if (file.Contains("moz-extension")) continue;
-
-                        File.Delete(file);
-                        deletedCount++;
-                        updateCounter++;
-                        // Wir senden den Status nur, wenn 'reportInterval' erreicht ist
-                        // ODER wenn es die allerletzte Datei ist (damit 100% sicher erreicht wird).
-                        if (updateCounter >= reportInterval)
-                        {
-                            statusReporter.Report($"Lösche: {Path.GetFileName(file)}");
-                            valueReporter.Report(deletedCount);
-                            updateCounter = 0; // Reset
-                        }
-                    }
-                    catch { /* Ignorieren */ }
-                }
-
-                // Ordner löschen
                 if (token.IsCancellationRequested) return;
-
-                // So wird der Ordner NUR gelöscht, wenn er leer ist.
-                // Wenn eine "moz-extension" Datei übrig blieb, bleibt auch der Ordner bestehen.
-                try { Directory.Delete(dir, false); } catch { }
+                ProcessDirectory(dir, context);
             }
 
             // AM ENDE: Einmal final 100% / Fertig melden, falls durch das Intervall was fehlte
             statusReporter.Report("Abschließe Bereinigung...");
-            valueReporter.Report(deletedCount);
+            valueReporter.Report(context.DeletedCount);
 
         }, token);
     }
@@ -88,5 +58,60 @@ public class FileDeletionService : IFileDeletionService
             try { File.Delete(filePath); } catch { }
         }
     }
+
+    private static void ProcessDirectory(string dir, DeletionContext context)
+    {
+        if (!Directory.Exists(dir)) return;
+
+        string[] files;
+
+        try { files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories); }
+        catch { return; }
+
+        foreach (var file in files)
+        {
+            if (context.Token.IsCancellationRequested) return;
+            ProcessFile(file, context);
+        }
+
+        // Ordner löschen
+        if (context.Token.IsCancellationRequested) return;
+
+        // So wird der Ordner NUR gelöscht, wenn er leer ist.
+        // Wenn eine "moz-extension" Datei übrig blieb, bleibt auch der Ordner bestehen.
+        try { Directory.Delete(dir, false); } catch { }
+    }
+
+    private static void ProcessFile(string file, DeletionContext context)
+    {
+        try
+        {
+            if (file.Contains("moz-extension")) return;
+
+            File.Delete(file);
+            context.DeletedCount++;
+            context.UpdateCounter++;
+
+            // Wir senden den Status nur, wenn 'reportInterval' erreicht ist
+            if (context.UpdateCounter >= context.ReportInterval)
+            {
+                context.StatusReporter.Report($"Lösche: {Path.GetFileName(file)}");
+                context.ValueReporter.Report(context.DeletedCount);
+                context.UpdateCounter = 0; // Reset
+            }
+        }
+        catch { /* Ignorieren */ }
+    }
+
+    private sealed class DeletionContext
+    {
+        public int DeletedCount { get; set; }
+        public int UpdateCounter { get; set; }
+        public int ReportInterval { get; set; }
+        public IProgress<string> StatusReporter { get; set; } = null!;
+        public IProgress<int> ValueReporter { get; set; } = null!;
+        public CancellationToken Token { get; set; }
+    }
+
 }
 

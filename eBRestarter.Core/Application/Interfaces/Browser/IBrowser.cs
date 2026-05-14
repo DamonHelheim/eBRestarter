@@ -11,16 +11,16 @@ public interface IBrowser
     string DownloadUrl { get; }
 
     BrowserType Type { get; }
+    string ProcessName { get; }
     string BrowserVersion { get; }
     bool IsInstalled { get; }
+    string ExtensionInstallUrl { get; } // NEU: Link zum Store
+
     void Start(string url, string arguments = "");
     void Close();
 
     // Cache & Pfad Infos
-    BrowserPaths GetPaths();
+    BrowserPaths ResolvePaths();
 
-    bool IsExtensionInstalled(string extensionId); // NEU
-    string ExtensionInstallUrl { get; } // NEU: Link zum Store
-
-
+    bool IsExtensionInstalled(string? extensionId = null); // NEU
 }

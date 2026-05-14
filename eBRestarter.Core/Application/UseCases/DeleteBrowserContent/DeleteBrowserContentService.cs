@@ -23,7 +23,7 @@ public class DeleteBrowserContentService(
     public async Task<Result> ExecuteAsync(
         DeleteBrowserContentRequest request,
         IProgress<DeleteBrowserContentProgress> progress,
-        CancellationToken cancellationToken)
+        CancellationToken cancel)
     {
         var validationResult = _validator.Validate(request);
         if (!validationResult.IsValid)
@@ -34,21 +34,21 @@ public class DeleteBrowserContentService(
         try
         {
             var browser = _browserFactory.Create(request.BrowserType);
-            string processName = GetProcessNameByType(request.BrowserType);
+            var processName = browser.ProcessName;
 
             if (request.ForceCloseProcess)
             {
-                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_ClosingBrowser"), 0, 0));
+                progress.Report(new DeleteBrowserContentProgress(_localizationService.RetrieveString("Cleanup_ClosingBrowser"), 0, 0));
                 _processService.CloseApplication(processName);
-                await Task.Delay(1000, cancellationToken);
+                await Task.Delay(1000, cancel);
             }
 
             if (_processService.IsProcessAlive(processName))
             {
-                return Result.Fail(new ProcessConflictError(_localizationService.GetString("Cleanup_BrowserRunning") ?? "Browser is running"));
+                return Result.Fail(new ProcessConflictError(_localizationService.RetrieveString("Cleanup_BrowserRunning") ?? "Browser is running"));
             }
 
-            var browserPaths = browser.GetPaths();
+            var browserPaths = browser.ResolvePaths();
             var directoriesToDelete = new List<string>();
 
             if (request.DeleteCache && browserPaths.CacheDirs?.Count > 0)
@@ -63,10 +63,10 @@ public class DeleteBrowserContentService(
 
             if (directoriesToDelete.Count == 0)
             {
-                return Result.Fail(_localizationService.GetString("Cleanup_NoPaths") ?? "No paths to clean");
+                return Result.Fail(_localizationService.RetrieveString("Cleanup_NoPaths") ?? "No paths to clean");
             }
 
-            progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Analyzing"), 0, 0));
+            progress.Report(new DeleteBrowserContentProgress(_localizationService.RetrieveString("Cleanup_Analyzing"), 0, 0));
 
             int totalFiles = await _fileDeletionService.CountFilesAsync(directoriesToDelete);
 
@@ -74,11 +74,11 @@ public class DeleteBrowserContentService(
                 progress.Report(new DeleteBrowserContentProgress(status, 0, totalFiles)));
 
             var fileProgress = new Progress<int>(count =>
-                progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Running") ?? "Delete...", count, totalFiles)));
+                progress.Report(new DeleteBrowserContentProgress(_localizationService.RetrieveString("Cleanup_Running") ?? "Delete...", count, totalFiles)));
 
-            await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, fileProgress, cancellationToken);
+            await _fileDeletionService.DeleteFilesAsync(directoriesToDelete, statusProgress, fileProgress, cancel);
 
-            progress.Report(new DeleteBrowserContentProgress(_localizationService.GetString("Cleanup_Finished"), totalFiles, totalFiles));
+            progress.Report(new DeleteBrowserContentProgress(_localizationService.RetrieveString("Cleanup_Finished"), totalFiles, totalFiles));
 
             return Result.Ok();
         }
@@ -86,18 +86,5 @@ public class DeleteBrowserContentService(
         {
             return Result.Fail(new ExceptionalError(ex));
         }
-    }
-
-    private static string GetProcessNameByType(BrowserType type)
-    {
-        return type switch
-        {
-            BrowserType.Chrome => "chrome",
-            BrowserType.Firefox => "firefox",
-            BrowserType.Edge => "msedge",
-            BrowserType.Brave => "brave",
-            BrowserType.Vivaldi => "vivaldi",
-            _ => string.Empty
-        };
     }
 }

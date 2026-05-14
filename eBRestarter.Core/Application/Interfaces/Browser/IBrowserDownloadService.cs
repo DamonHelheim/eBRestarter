@@ -8,5 +8,5 @@ public interface IBrowserDownloadService
         string url,
         string destinationPath,
         IProgress<DownloadProgressStatus> progress,
-        CancellationToken cancellationToken);
+        CancellationToken cancel);
 }

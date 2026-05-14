@@ -6,7 +6,7 @@ namespace eBRestarter.Infrastructure.Services;
 
 public class AppInfoService : IAppInfoService
 {
-    public string GetAppVersion()
+    public string RetrieveAppVersion()
     {
         // WinUI 3 Apps nutzen oft Package.Current.Id.Version,
         // aber für Desktop-Apps funktioniert Reflection weiterhin gut:

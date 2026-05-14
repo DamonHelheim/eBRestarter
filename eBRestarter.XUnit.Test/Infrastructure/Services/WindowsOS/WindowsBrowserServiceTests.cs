@@ -74,7 +74,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 .Returns(mockInstalledBrowser.Object);
 
             // ACT
-            var result = await service.GetInstalledBrowsersAsync();
+            var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
             var browserList = result.ToList();
@@ -116,7 +116,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 .Returns(mockUninstalledBrowser.Object);
 
             // ACT
-            var result = await service.GetInstalledBrowsersAsync();
+            var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
             var firstBrowser = result.First();
@@ -148,7 +148,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 .Throws<NotSupportedException>();
 
             // ACT
-            var result = await service.GetInstalledBrowsersAsync();
+            var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
             // Die Schleife fängt den Fehler auf ('continue'), daher kommt eine leere Liste zurück
@@ -181,7 +181,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 .Returns(buggyBrowserMock.Object);
 
             // ACT
-            var result = await service.GetInstalledBrowsersAsync();
+            var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
             // Methode darf nicht abstürzen, fängt den Fehler ab und liefert eine leere Liste

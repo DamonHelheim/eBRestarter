@@ -8,13 +8,13 @@ namespace eBRestarter.Infrastructure.Services;
 /// </summary>
 public class WindowsAppVersionInfoService : IAppVersionInfoService
 {
-    public string GetAppVersion()
+    public string RetrieveAppVersion()
     {
         // Da die App nun Unpackaged (klassische .exe) ist,
         // lesen wir die Version direkt aus den Metadaten der Assembly aus.
         var assemblyVersion = Assembly.GetEntryAssembly()?.GetName().Version;
 
-        if (assemblyVersion != null)
+        if (assemblyVersion is not null)
         {
             return $"{assemblyVersion.Major}.{assemblyVersion.Minor}.{assemblyVersion.Build}.{assemblyVersion.Revision}";
         }

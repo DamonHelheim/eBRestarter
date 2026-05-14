@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Application.Interfaces.Security;
+namespace eBRestarter.Core.Application.Interfaces.Security;
 
 public interface IEncryptionService
 {

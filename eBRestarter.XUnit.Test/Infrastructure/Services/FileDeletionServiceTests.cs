@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Infrastructure.Services;
+using eBRestarter.Infrastructure.Services;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ namespace eBRestarter.Tests.Infrastructure.Services
 {
     /// <summary>
     /// Testet den FileDeletionService.
-    /// Da der Service physische Dateien lÃ¶scht, arbeiten wir in einem temporÃ¤ren
-    /// Verzeichnis, um die echte LÃ¶schlogik und die Fortschrittsmeldung zu validieren.
+    /// Da der Service physische Dateien löscht, arbeiten wir in einem temporären
+    /// Verzeichnis, um die echte Löschlogik und die Fortschrittsmeldung zu validieren.
     /// </summary>
     public class FileDeletionServiceTests : IDisposable
     {
@@ -29,7 +29,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
         // 1. COUNT FILES TESTS
 
         /// <summary>
-        /// Vor dem LÃ¶schen muss die Gesamtzahl der Dateien ermittelt werden,
+        /// Vor dem Löschen muss die Gesamtzahl der Dateien ermittelt werden,
         /// um den Fortschrittsbalken zu initialisieren.
         /// </summary>
         [Fact]
@@ -54,11 +54,11 @@ namespace eBRestarter.Tests.Infrastructure.Services
         // 2. DELETE FILES (ASYNC & PROGRESS) TESTS
 
         /// <summary>
-        /// Dies ist der Hauptprozess. Wir mÃ¼ssen sicherstellen, dass:
-        /// 1. Dateien wirklich gelÃ¶scht werden.
+        /// Dies ist der Hauptprozess. Wir müssen sicherstellen, dass:
+        /// 1. Dateien wirklich gelöscht werden.
         /// 2. Verzeichnisse danach entfernt werden.
         /// 3. Fortschrittsberichte (Progress) gesendet werden.
-        /// 4. "moz-extension" Dateien wie gewÃ¼nscht ignoriert (nicht gelÃ¶scht) werden.
+        /// 4. "moz-extension" Dateien wie gewünscht ignoriert (nicht gelöscht) werden.
         /// </summary>
         [Fact]
         public async Task DeleteFilesAsync_ShouldCleanUpEverything_ExceptExclusions()
@@ -87,20 +87,20 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 CancellationToken.None);
 
             // ASSERT
-            File.Exists(normalFile).ShouldBeFalse("Normale Datei sollte gelÃ¶scht sein.");
+            File.Exists(normalFile).ShouldBeFalse("Normale Datei sollte gelöscht sein.");
             File.Exists(protectedFile).ShouldBeTrue("moz-extension Datei sollte ignoriert worden sein.");
 
-            // Da das Verzeichnis nicht leer war (protectedFile blieb Ã¼brig),
+            // Da das Verzeichnis nicht leer war (protectedFile blieb übrig),
             // sollte Directory.Delete(dir, true) im catch landen oder fehlschlagen,
             // je nachdem wie robust die Implementierung ist.
 
             // Check Progress
-            statusUpdates.ShouldContain("AbschlieÃŸe Bereinigung...");
+            statusUpdates.ShouldContain("Abschließe Bereinigung...");
             progressUpdates.ShouldNotBeEmpty();
         }
 
         /// <summary>
-        /// Wenn der Benutzer auf "Abbrechen" klickt, muss der LÃ¶schvorgang sofort stoppen.
+        /// Wenn der Benutzer auf "Abbrechen" klickt, muss der Löschvorgang sofort stoppen.
         /// </summary>
         [Fact]
         public async Task DeleteFilesAsync_ShouldStop_WhenCanceled()
@@ -118,20 +118,20 @@ namespace eBRestarter.Tests.Infrastructure.Services
             // ACT
             cts.Cancel(); // Wir brechen ab, BEVOR die Task startet
 
-            // Da Task.Run das Token prÃ¼ft und bei Abbruch wirft, fangen wir das hier ab
+            // Da Task.Run das Token prüft und bei Abbruch wirft, fangen wir das hier ab
             var exception = await Record.ExceptionAsync(async () =>
                 await _sut.DeleteFilesAsync(new List<string> { _baseTestDir }, statusReporter, valueReporter, cts.Token)
             );
 
             // ASSERT
             exception.ShouldBeOfType<TaskCanceledException>();
-            // Da sofort abgebrochen wurde, mÃ¼ssen alle Dateien noch da sein
+            // Da sofort abgebrochen wurde, müssen alle Dateien noch da sein
             Directory.GetFiles(_baseTestDir).Length.ShouldBe(10);
         }
         // 3. SINGLE FILE DELETION
 
         /// <summary>
-        /// Testet die einfache, synchrone LÃ¶schung einer einzelnen Datei.
+        /// Testet die einfache, synchrone Löschung einer einzelnen Datei.
         /// </summary>
         [Fact]
         public void DeleteSingleFile_ShouldWork_IfFileExists()

@@ -9,12 +9,6 @@ namespace eBRestarter.Infrastructure.Browsers;
 
 public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
-    // Implementierung der abstrakten Properties für die Suchstrategie
-    protected override string ExeFileName => "vivaldi.exe";
-    protected override string BrowserRegistryName => "Vivaldi";
-    protected override string UninstallSubKey => "Vivaldi";
-    protected override string ProgramFilesSubPath => @"Vivaldi\Application";
-
     public override BrowserType Type => BrowserType.Vivaldi;
     public override string DisplayName => "Vivaldi";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/icons8_vivaldi.png"; // Bitte stelle sicher, dass dieses Icon existiert
@@ -22,15 +16,6 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
     // Annahme: Du fügst diesen Link noch in deine WebLinks Konstanten ein
     public override string DownloadUrl => WebLinks.VivaldiDownloadLinkDE;
 
-    protected override string ProcessName => "vivaldi";
-
-    // Vivaldi speichert Version oft im AutoUpdate Key oder Uninstall Key.
-    // Falls "BLBeacon" bei Vivaldi nicht klappt, müsstest du hier @"Software\Vivaldi" prüfen.
-    protected override string RegistryKeyVersion => @"Software\Vivaldi\BLBeacon";
-    // Vivaldi unterstützt Chrome-Erweiterungen direkt aus dem Chrome Web Store
-    protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
-
-    // Nutzt den Chrome Web Store Link
     public override string ExtensionInstallUrl => WebLinks.ChromeEVisitorAddOnLink;
 
     public override string BrowserVersion
@@ -43,14 +28,14 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
             string uninstallPathWow = $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{UninstallSubKey}";
 
             // 2. Im Current User (HKCU) suchen (Standard bei Vivaldi)
-            var version = _os.WindowsRegistryService.GetCurrentUserValue(uninstallPathCU, "DisplayVersion");
+            var version = _os.WindowsRegistryService.RetrieveCurrentUserValue(uninstallPathCU, "DisplayVersion");
 
             // 3. Falls nicht gefunden, in Local Machine (HKLM) suchen
-            version ??= _os.WindowsRegistryService.GetLocalMachineValue(uninstallPathLM, "DisplayVersion")
-                       ?? _os.WindowsRegistryService.GetLocalMachineValue(uninstallPathWow, "DisplayVersion");
+            version ??= _os.WindowsRegistryService.RetrieveLocalMachineValue(uninstallPathLM, "DisplayVersion")
+                ?? _os.WindowsRegistryService.RetrieveLocalMachineValue(uninstallPathWow, "DisplayVersion");
 
             // 4. Wenn wir die Vivaldi-Version gefunden haben, bereinigen und zurückgeben
-            if (version != null && !string.IsNullOrEmpty(version.ToString()))
+            if (version is not null && !string.IsNullOrEmpty(version.ToString()))
             {
                 return CleanVersionString(version.ToString());
             }
@@ -61,9 +46,26 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
         }
     }
 
-    public override BrowserPaths GetPaths()
+    // Implementierung der abstrakten Properties für die Suchstrategie
+    protected override string ExeFileName => "vivaldi.exe";
+    protected override string BrowserRegistryName => "Vivaldi";
+    protected override string UninstallSubKey => "Vivaldi";
+    protected override string ProgramFilesSubPath => @"Vivaldi\Application";
+
+    public override string ProcessName => "vivaldi";
+
+    // Vivaldi speichert Version oft im AutoUpdate Key oder Uninstall Key.
+    // Falls "BLBeacon" bei Vivaldi nicht klappt, müsstest du hier @"Software\Vivaldi" prüfen.
+    protected override string RegistryKeyVersion => @"Software\Vivaldi\BLBeacon";
+    // Vivaldi unterstützt Chrome-Erweiterungen direkt aus dem Chrome Web Store
+    protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
+
+    // Nutzt den Chrome Web Store Link
+
+
+    public override BrowserPaths ResolvePaths()
     {
-        var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
+        var localAppData = _os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData");
 
         // Das ist der Wurzel-Ordner für ALLE Daten bei Vivaldi
         // Pfad: C:\Users\Username\AppData\Local\Vivaldi\User Data
@@ -111,3 +113,5 @@ public class VivaldiBrowser(IOperatingSystemFacade os, ILogger<VivaldiBrowser> l
         return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
     }
 }
+
+

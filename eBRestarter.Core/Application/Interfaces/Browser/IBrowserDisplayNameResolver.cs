@@ -15,6 +15,6 @@ public interface IBrowserDisplayNameResolver
     /// <param name="displayName">Anzeigename oder leer/null</param>
     /// <param name="defaultDisplayText">Lokalisierten Text für "Nicht gewählt" (zum Abgleich)</param>
     /// <returns>BrowserType, bei unbekannt/leer Fallback auf Chrome</returns>
-    BrowserType GetBrowserTypeFromDisplayName(string displayName, string defaultDisplayText);
+    BrowserType ResolveBrowserTypeFromDisplayName(string displayName, string defaultDisplayText);
 
 }

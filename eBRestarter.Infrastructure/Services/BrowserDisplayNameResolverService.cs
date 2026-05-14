@@ -6,7 +6,7 @@ namespace eBRestarter.Infrastructure.Services;
 public class BrowserDisplayNameResolverService : IBrowserDisplayNameResolver
 {
 
-    public BrowserType GetBrowserTypeFromDisplayName(string displayName, string defaultDisplayText)
+    public BrowserType ResolveBrowserTypeFromDisplayName(string displayName, string defaultDisplayText)
     {
 
         if (string.IsNullOrWhiteSpace(displayName) || displayName == defaultDisplayText || displayName == "Nicht gewählt")

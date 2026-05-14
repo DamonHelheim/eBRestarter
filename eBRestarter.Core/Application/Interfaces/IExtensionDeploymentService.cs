@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Application.Interfaces;
+namespace eBRestarter.Core.Application.Interfaces;
 
 public interface IBrowserExtensionDeploymentService
 {
@@ -9,8 +9,8 @@ public interface IBrowserExtensionDeploymentService
     void EnsureExtensionIsDeployed();
 
     /// <summary>
-    /// Gibt den aktuellen Pfad zum Ordner der Erweiterung zurück (Debug vs. Release).
+    /// Gibt den aktuellen Pfad zum Ordner der Erweiterung zur�ck (Debug vs. Release).
     /// </summary>
     /// <returns>Der absolute Pfad zum Extension-Ordner.</returns>
-    string GetExtensionFolderPath();
+    string RetrieveExtensionFolderPath();
 }

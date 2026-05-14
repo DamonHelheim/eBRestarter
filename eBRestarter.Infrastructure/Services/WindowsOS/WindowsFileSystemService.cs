@@ -1,19 +1,23 @@
 ﻿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using System.Runtime.Versioning;
+using System;
+using System.IO;
 
 namespace eBRestarter.Infrastructure.Services.WindowsOS;
 
-[SupportedOSPlatform("windows")]
+/// <summary>
+/// Implementiert den Zugriff auf das Windows-Dateisystem.
+/// </summary>
 public class WindowsFileSystemService : IWindowsFileSystemService
 {
     public bool FileExists(string path) => File.Exists(path);
+    
     public bool DirectoryExists(string path) => Directory.Exists(path);
+    
     public string CombinePaths(params string[] paths) => Path.Combine(paths);
-    public string GetEnvironmentPath(string variable)
+    
+    public string ResolveEnvironmentPath(string variable)
     {
-        // Deine Logik aus dem alten Helper
         var path = Environment.GetEnvironmentVariable(variable);
-
         if (!string.IsNullOrEmpty(path)) return path;
 
         return variable.ToLower() switch
@@ -26,23 +30,14 @@ public class WindowsFileSystemService : IWindowsFileSystemService
         };
     }
 
-    /// <summary>
-    /// Löscht die Datei am angegebenen Pfad.
-    /// </summary>
-    /// <param name="path">Der vollständige Pfad zur Datei.</param>
-    /// <exception cref="ArgumentException">Wenn der Pfad leer ist.</exception>
-    /// <exception cref="IOException">Wenn die Datei gerade verwendet wird.</exception>
-    /// <exception cref="UnauthorizedAccessException">Wenn Schreibrechte fehlen.</exception>
     public void DeleteFile(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
-            throw new ArgumentException("Pfad darf nicht leer sein.", nameof(path));
+            throw new ArgumentException("Pfad darf nicht null oder leer sein.", nameof(path));
         }
 
-        // File.Delete wirft keine Exception, falls die Datei schon weg ist.
-        // Das spart uns eine "if (Exists)" Abfrage und Race-Conditions.
-        File.Delete(path);
+        if (File.Exists(path)) File.Delete(path);
     }
 
     public void WriteAllText(string path, string content)
@@ -52,15 +47,26 @@ public class WindowsFileSystemService : IWindowsFileSystemService
 
     public string ReadAllText(string path)
     {
-        var content = File.ReadAllText(path);
-
-        return content;
+        return File.ReadAllText(path);
     }
 
     public string[] ReadAllLines(string path)
     {
-        var content = File.ReadAllLines(path);
+        return File.ReadAllLines(path);
+    }
 
-        return content;
+    public void CreateDirectory(string path)
+    {
+        Directory.CreateDirectory(path);
+    }
+
+    public string? GetDirectoryName(string path)
+    {
+        return Path.GetDirectoryName(path);
+    }
+
+    public Stream OpenRead(string path)
+    {
+        return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
     }
 }

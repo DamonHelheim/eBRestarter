@@ -5,7 +5,6 @@ namespace eBRestarter.Desktop.WinUI3.Services;
 
 public class LanguageService : ILanguageService
 {
-
     public string CurrentLanguageCode => ApplicationLanguages.PrimaryLanguageOverride;
 
     public void SetLanguage(string languageCode)

@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Infrastructure.Services.WindowsOS;
+using eBRestarter.Infrastructure.Services.WindowsOS;
 using Shouldly;
 using System;
 using System.IO;
@@ -9,7 +9,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// <summary>
     /// Testet den WindowsFileSystemService.
     /// Da diese Klasse die unterste Ebene darstellt und System.IO wrappt,
-    /// fÃ¼hren wir hier echte Dateioperationen in einem isolierten, temporÃ¤ren Ordner durch.
+    /// führen wir hier echte Dateioperationen in einem isolierten, temporären Ordner durch.
     /// </summary>
     public class WindowsFileSystemServiceTests : IDisposable
     {
@@ -20,19 +20,19 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         {
             _sut = new WindowsFileSystemService();
 
-            // FÃ¼r JEDEN Testdurchlauf einen einzigartigen, temporÃ¤ren Ordner erstellen
-            // So stÃ¶ren sich parallele Tests nicht gegenseitig.
+            // Für JEDEN Testdurchlauf einen einzigartigen, temporären Ordner erstellen
+            // So stören sich parallele Tests nicht gegenseitig.
             _tempTestDirectory = Path.Combine(Path.GetTempPath(), $"eB_FS_Test_{Guid.NewGuid()}");
             Directory.CreateDirectory(_tempTestDirectory);
         }
         // 1. EXISTENCE TESTS (File & Directory)
 
         /// <summary>
-        /// Stellt sicher, dass der Wrapper korrekte Booleans fÃ¼r physisch vorhandene
-        /// und nicht vorhandene Dateien zurÃ¼ckgibt.
+        /// Stellt sicher, dass der Wrapper korrekte Booleans für physisch vorhandene
+        /// und nicht vorhandene Dateien zurückgibt.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir prÃ¼fen eine existierende Datei (wird vorher erstellt) und einen Fantasie-Pfad.
+        /// Wir prüfen eine existierende Datei (wird vorher erstellt) und einen Fantasie-Pfad.
         /// </summary>
         [Fact]
         public void FileExists_ShouldReturnCorrectBoolean()
@@ -72,7 +72,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         {
             // ACT
             // Hinweis: Um sicherzugehen, dass Path.Combine das Laufwerk als absoluten Pfad
-            // versteht, Ã¼bergibt man das Root-Verzeichnis mit Backslash (C:\).
+            // versteht, übergibt man das Root-Verzeichnis mit Backslash (C:\).
             string result = _sut.CombinePaths(@"C:\", "Ordner", "Datei.txt");
 
             // ASSERT
@@ -81,12 +81,12 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Der Service hat eine eigene Fallback-Logik fÃ¼r Umgebungsvariablen (wie appdata).
-        /// Diese muss korrekt in den Environment.SpecialFolder Ã¼bersetzt werden.
+        /// Der Service hat eine eigene Fallback-Logik für Umgebungsvariablen (wie appdata).
+        /// Diese muss korrekt in den Environment.SpecialFolder übersetzt werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir fragen bekannte KÃ¼rzel ("appdata", "programfiles") ab und prÃ¼fen,
-        /// ob ein gÃ¼ltiger, nicht leerer Pfad zurÃ¼ckkommt.
+        /// Wir fragen bekannte Kürzel ("appdata", "programfiles") ab und prüfen,
+        /// ob ein gültiger, nicht leerer Pfad zurückkommt.
         /// </summary>
         [Theory]
         [InlineData("appdata")]
@@ -95,18 +95,18 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         public void GetEnvironmentPath_ShouldReturnValidPath_ForKnownVariables(string variable)
         {
             // ACT
-            string result = _sut.GetEnvironmentPath(variable);
+            string result = _sut.ResolveEnvironmentPath(variable);
 
             // ASSERT
             result.ShouldNotBeNullOrWhiteSpace();
-            Path.IsPathRooted(result).ShouldBeTrue("Der zurÃ¼ckgegebene Pfad muss ein absoluter Systempfad sein.");
+            Path.IsPathRooted(result).ShouldBeTrue("Der zurückgegebene Pfad muss ein absoluter Systempfad sein.");
         }
 
         [Fact]
         public void GetEnvironmentPath_ShouldReturnEmptyString_ForUnknownVariables()
         {
             // ACT
-            string result = _sut.GetEnvironmentPath("GibtsNicht_12345");
+            string result = _sut.ResolveEnvironmentPath("GibtsNicht_12345");
 
             // ASSERT
             result.ShouldBeEmpty();
@@ -114,7 +114,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 3. DELETE TESTS
 
         /// <summary>
-        /// LÃ¶schen ist eine destruktive Aktion. Wenn der Pfad leer ist, muss sofort abgebrochen
+        /// Löschen ist eine destruktive Aktion. Wenn der Pfad leer ist, muss sofort abgebrochen
         /// und eine ArgumentException geworfen werden, um unvorhersehbares Verhalten zu vermeiden.
         /// </summary>
         [Theory]
@@ -152,8 +152,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 4. READ / WRITE TESTS
 
         /// <summary>
-        /// Stellt sicher, dass das Schreiben und anschlieÃŸende Lesen von Strings
-        /// Ã¼ber den Service ohne Datenverlust funktioniert.
+        /// Stellt sicher, dass das Schreiben und anschließende Lesen von Strings
+        /// über den Service ohne Datenverlust funktioniert.
         ///
         /// WAS WIRD GETESTET?
         /// Wir nutzen den Service zum Schreiben und lesen ihn sofort danach wieder aus.
@@ -174,7 +174,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// ReadAllLines muss die Datei zeilenweise splitten und als String-Array zurÃ¼ckgeben.
+        /// ReadAllLines muss die Datei zeilenweise splitten und als String-Array zurückgeben.
         /// </summary>
         [Fact]
         public void ReadAllLines_ShouldReturnStringArray()
@@ -192,10 +192,10 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             actualLines[0].ShouldBe("Zeile 1");
             actualLines[2].ShouldBe("Zeile 3");
         }
-        // CLEANUP (wird nach JEDEM Test automatisch ausgefÃ¼hrt)
+        // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
         public void Dispose()
         {
-            // Sicherheits-Cleanup: Den temporÃ¤ren Ordner samt Inhalt lÃ¶schen
+            // Sicherheits-Cleanup: Den temporären Ordner samt Inhalt löschen
             if (Directory.Exists(_tempTestDirectory))
             {
                 try

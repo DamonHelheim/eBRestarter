@@ -72,7 +72,14 @@ public static class InfrastructureServiceRegistration
 
         services.AddSingleton<IPathService, WindowsPathService>();
 
-        services.AddSingleton<IEVisitorConfigService, EVisitorConfigService>();
+        services.AddSingleton<EVisitorConfigService>();
+
+        services.AddSingleton<IEVisitorConfigService>(provider =>
+            new EncryptedEVisitorConfigServiceDecorator(
+                provider.GetRequiredService<EVisitorConfigService>(),
+                provider.GetRequiredService<IEncryptionService>(),
+                provider.GetRequiredService<ILogger<EncryptedEVisitorConfigServiceDecorator>>()
+            ));
 
         services.AddSingleton<IAppInfoService, AppInfoService>();
 

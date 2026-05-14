@@ -64,7 +64,7 @@ public partial class ViewModelInfocenter : ObservableObject
         _dialogService = dialogService;
         _localizationService = localizationService;
 
-        string loadingPlaceholder = _localizationService.GetString(InfocenterLoadingResourceKey);
+        string loadingPlaceholder = _localizationService.RetrieveString(InfocenterLoadingResourceKey);
         BrowserText = loadingPlaceholder;
         GraphicsText = loadingPlaceholder;
         OsBuildText = loadingPlaceholder;
@@ -109,18 +109,18 @@ public partial class ViewModelInfocenter : ObservableObject
         {
             var systemInformation = await _getSystemInformationUseCase.ExecuteAsync();
 
-            ProcessorText = $"{_localizationService.GetString("Infocenter_ProcessorPrefix")} {systemInformation.ProcessorName}";
-            GraphicsText = $"{_localizationService.GetString("Infocenter_GraphicsPrefix")} {systemInformation.GraphicsCardName}";
-            RamText = $"{_localizationService.GetString("Infocenter_RamPrefix")} {systemInformation.InstalledRam}";
-            OsEditionText = $"{_localizationService.GetString("Infocenter_EditionPrefix")} {systemInformation.OsEdition}";
-            OsVersionText = $"{_localizationService.GetString("Infocenter_VersionPrefix")} {systemInformation.OsDisplayVersion}";
-            OsBuildText = $"{_localizationService.GetString("Infocenter_BuildPrefix")} {systemInformation.OsBuildVersion}";
-            BrowserText = $"{_localizationService.GetString("Infocenter_BrowserPrefix")} {systemInformation.StandardBrowserName}";
+            ProcessorText = $"{_localizationService.RetrieveString("Infocenter_ProcessorPrefix")} {systemInformation.ProcessorName}";
+            GraphicsText = $"{_localizationService.RetrieveString("Infocenter_GraphicsPrefix")} {systemInformation.GraphicsCardName}";
+            RamText = $"{_localizationService.RetrieveString("Infocenter_RamPrefix")} {systemInformation.InstalledRam}";
+            OsEditionText = $"{_localizationService.RetrieveString("Infocenter_EditionPrefix")} {systemInformation.OsEdition}";
+            OsVersionText = $"{_localizationService.RetrieveString("Infocenter_VersionPrefix")} {systemInformation.OsDisplayVersion}";
+            OsBuildText = $"{_localizationService.RetrieveString("Infocenter_BuildPrefix")} {systemInformation.OsBuildVersion}";
+            BrowserText = $"{_localizationService.RetrieveString("Infocenter_BrowserPrefix")} {systemInformation.StandardBrowserName}";
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            string failureMessage = _localizationService.GetString(InfocenterLoadFailedResourceKey);
+            string failureMessage = _localizationService.RetrieveString(InfocenterLoadFailedResourceKey);
             BrowserText = failureMessage;
             GraphicsText = failureMessage;
             OsBuildText = failureMessage;

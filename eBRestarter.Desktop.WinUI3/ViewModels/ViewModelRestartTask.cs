@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -120,8 +120,8 @@ public partial class ViewModelRestartTask : ObservableObject,
             ?? throw new InvalidOperationException(
                 $"{nameof(ViewModelRestartTask)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
 
-        ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser");
-        StatusInfoText = _localizationService.GetString("Task_StatusReady");
+        ChosenBrowser = _localizationService.RetrieveString("Task_DefaultBrowser");
+        StatusInfoText = _localizationService.RetrieveString("Task_StatusReady");
 
         _manageRestarterCycleUseCase.ProgressChanged += OnCycleProgressChanged;
 
@@ -166,8 +166,8 @@ public partial class ViewModelRestartTask : ObservableObject,
         if (string.IsNullOrEmpty(appConfig.Username))
         {
             await _dialogService.ShowMessageAsync(
-                _localizationService.GetString("Task_Username"),
-                _localizationService.GetString("Task_NoUsernameFound"),
+                _localizationService.RetrieveString("Task_Username"),
+                _localizationService.RetrieveString("Task_NoUsernameFound"),
                 DialogIcon.Error);
 
             IsActive = false;
@@ -211,7 +211,7 @@ public partial class ViewModelRestartTask : ObservableObject,
     {
         var appConfig = _configService.LoadConfig();
 
-        var currentConfigState = _restartTaskDisplayStateService.GetInitialState(appConfig);
+        var currentConfigState = _restartTaskDisplayStateService.RetrieveInitialState(appConfig);
 
         Username = currentConfigState.Username;
         ChosenBrowser = currentConfigState.ChosenBrowser;
@@ -283,17 +283,17 @@ public partial class ViewModelRestartTask : ObservableObject,
     private async Task CheckInstalledBrowsersAsync()
     {
         IEnumerable<BrowserInfo>? installedBrowsers =
-            await Task.Run(() => _browserService.GetInstalledBrowsersAsync()).ConfigureAwait(false);
+            await Task.Run(() => _browserService.FindInstalledBrowsersAsync()).ConfigureAwait(false);
 
         bool hasInstalledBrowsers =
-            installedBrowsers != null && installedBrowsers.Any(browser => browser.IsInstalled);
+            installedBrowsers?.Any(browser => browser.IsInstalled) == true;
 
         _dispatcherQueue.TryEnqueue(() =>
         {
             if (HasInstalledBrowsers != hasInstalledBrowsers)
             {
                 HasInstalledBrowsers = hasInstalledBrowsers;
-                
+
                 if (!hasInstalledBrowsers && IsActive)
                 {
                     IsActive = false;

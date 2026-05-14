@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
 public interface IWindowsStartupManagerService
 {
@@ -8,7 +8,7 @@ public interface IWindowsStartupManagerService
 
     void EnableAutoStart();
     void DisableAutoStart();
-    Dictionary<string, object> GetStartupEntries();
+    Dictionary<string, object> RetrieveStartupEntries();
 
     // Edge & AutoLogon Logik passt hier gut rein oder in einen "SystemConfigService"
     void SetEdgeStartupBoost(bool enable);

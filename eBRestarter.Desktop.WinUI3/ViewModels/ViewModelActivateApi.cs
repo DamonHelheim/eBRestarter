@@ -75,7 +75,7 @@ public partial class ViewModelActivateApi : ObservableObject
     private async Task Submit()
     {
         IsBusy = true;
-        StatusMessage = _localizationService.GetString("ActivateApi_Checking");
+        StatusMessage = _localizationService.RetrieveString("ActivateApi_Checking");
 
         try
         {
@@ -89,7 +89,7 @@ public partial class ViewModelActivateApi : ObservableObject
                 currentConfig.Settings.ApiUsername = Username ?? string.Empty;
                 currentConfig.Settings.ApiKey = ApiKey ?? string.Empty;
                 _configService.SaveConfig(currentConfig);
-                StatusMessage = _localizationService.GetString("ActivateApi_Success");
+                StatusMessage = _localizationService.RetrieveString("ActivateApi_Success");
                 StatusColor = "#7ED422";
 
                 WeakReferenceMessenger.Default.Send(new ApiCredentialsUpdatedMessage());
@@ -116,7 +116,7 @@ public partial class ViewModelActivateApi : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
         {
-            StatusMessage = _localizationService.GetString("ActivateApi_FileNotFound");
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_FileNotFound");
             StatusColor = "#E40E87";
             return;
         }
@@ -129,12 +129,12 @@ public partial class ViewModelActivateApi : ObservableObject
             var importedKey = reader.ReadString();
             Username = importedUser;
             ApiKey = importedKey;
-            StatusMessage = _localizationService.GetString("ActivateApi_ImportSuccess");
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_ImportSuccess");
             StatusColor = "{ThemeResource SystemFillColorSuccessBrush}";
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ObjectDisposedException)
         {
-            StatusMessage = _localizationService.GetString("ActivateApi_ImportError");
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_ImportError");
             StatusColor = "#E40E87";
             Username = string.Empty;
             ApiKey = string.Empty;

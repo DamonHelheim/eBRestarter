@@ -60,18 +60,18 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
                 InstalledRam = "32 GB"
             };
 
-            _mockHardwareService.Setup(s => s.GetHardwareInfoAsync()).ReturnsAsync(fakeHardware);
+            _mockHardwareService.Setup(s => s.RetrieveHardwareInfoAsync()).ReturnsAsync(fakeHardware);
 
 
-            _mockHardwareService.Setup(s => s.GetHardwareInfoAsync()).ReturnsAsync(fakeHardware);
+            _mockHardwareService.Setup(s => s.RetrieveHardwareInfoAsync()).ReturnsAsync(fakeHardware);
 
             // 2. OS Edition Mock
-            _mockOsEditionService.Setup(s => s.GetOsEditionAsync()).ReturnsAsync("Windows 11 Pro");
+            _mockOsEditionService.Setup(s => s.RetrieveOsEditionAsync()).ReturnsAsync("Windows 11 Pro");
 
             // 3. System Info Mock (Sync-Aufrufe)
-            _mockSystemInfoService.Setup(s => s.GetCurrentOsDisplayVersion()).Returns("23H2");
-            _mockSystemInfoService.Setup(s => s.GetCurrentOsBuildVersion()).Returns("22631.3296");
-            _mockSystemInfoService.Setup(s => s.GetCurrentStandardBrowserName()).Returns("Firefox");
+            _mockSystemInfoService.Setup(s => s.RetrieveCurrentOsDisplayVersion()).Returns("23H2");
+            _mockSystemInfoService.Setup(s => s.RetrieveCurrentOsBuildVersion()).Returns("22631.3296");
+            _mockSystemInfoService.Setup(s => s.RetrieveCurrentStandardBrowserName()).Returns("Firefox");
 
             // ACT
             var result = await _sut.ExecuteAsync();
@@ -90,11 +90,11 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
             result.StandardBrowserName.ShouldBe("Firefox");
 
             // Überprüfen, dass die Services auch wirklich aufgerufen wurden
-            _mockHardwareService.Verify(s => s.GetHardwareInfoAsync(), Times.Once);
-            _mockOsEditionService.Verify(s => s.GetOsEditionAsync(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.GetCurrentOsDisplayVersion(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.GetCurrentOsBuildVersion(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.GetCurrentStandardBrowserName(), Times.Once);
+            _mockHardwareService.Verify(s => s.RetrieveHardwareInfoAsync(), Times.Once);
+            _mockOsEditionService.Verify(s => s.RetrieveOsEditionAsync(), Times.Once);
+            _mockSystemInfoService.Verify(s => s.RetrieveCurrentOsDisplayVersion(), Times.Once);
+            _mockSystemInfoService.Verify(s => s.RetrieveCurrentOsBuildVersion(), Times.Once);
+            _mockSystemInfoService.Verify(s => s.RetrieveCurrentStandardBrowserName(), Times.Once);
         }
         // 2. EXCEPTION BUBBLING (FEHLER WEITERREICHEN)
 
@@ -109,7 +109,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
             // ARRANGE
             // Wir simulieren, dass der Hardware-Service einen Fehler wirft
             _mockHardwareService
-                .Setup(s => s.GetHardwareInfoAsync())
+                .Setup(s => s.RetrieveHardwareInfoAsync())
                 .ThrowsAsync(new UnauthorizedAccessException("WMI Access Denied"));
 
             // ACT & ASSERT

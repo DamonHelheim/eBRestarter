@@ -16,7 +16,7 @@ public class BrowserCleanupScheduleService(TimeProvider timeProvider) : IBrowser
     }
 
     /// <inheritdoc />
-    public DateTime GetNextCleanupDateAfterRun(DateTime fromDate, int intervalDays)
+    public DateTime CalculateNextCleanupDateAfterRun(DateTime fromDate, int intervalDays)
     {
         return fromDate.AddDays(intervalDays);
     }

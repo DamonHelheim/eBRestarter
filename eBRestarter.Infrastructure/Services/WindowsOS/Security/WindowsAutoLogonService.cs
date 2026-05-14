@@ -25,13 +25,13 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
 
             key.SetValue("DefaultUserName", username, RegistryValueKind.String);
 
-            if (!string.IsNullOrEmpty(domain))
+            if (string.IsNullOrEmpty(domain))
             {
-                key.SetValue("DefaultDomainName", domain, RegistryValueKind.String);
+                key.DeleteValue("DefaultDomainName", false);
             }
             else
             {
-                key.DeleteValue("DefaultDomainName", false);
+                key.SetValue("DefaultDomainName", domain, RegistryValueKind.String);
             }
 
             // WICHTIG: Klartext-Passwort aus Registry löschen, falls vorhanden
@@ -48,9 +48,7 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Fehler beim Aktivieren von AutoLogon.");
-
-            throw;
+            throw new InvalidOperationException("Fehler beim Aktivieren von AutoLogon.", ex);
         }
     }
 
@@ -80,7 +78,7 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
             // Der genaue Pfad, in dem Windows 11 die "Nur Windows Hello zulassen"-Einstellung speichert
             using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device", false);
 
-            if (key != null)
+            if (key is not null)
             {
                 var val = key.GetValue("DevicePasswordLessBuildVersion");
 
@@ -105,26 +103,28 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         try
         {
             using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device", true);
-            if (key != null)
+
+            if (key is null)
             {
-                int valueToSet = enable ? 2 : 0;
-                key.SetValue("DevicePasswordLessBuildVersion", valueToSet, RegistryValueKind.DWord);
-                _logger.LogInformation("Windows Hello Passwordless Mode wurde auf {State} ({Value}) gesetzt.", enable ? "Aktiv" : "Inaktiv", valueToSet);
+                _logger.LogWarning("Registry-Key für PasswordLess Device nicht gefunden. Erstelle ihn nicht neu, da dies systemspezifisch ist.");
             }
             else
             {
-                _logger.LogWarning("Registry-Key für PasswordLess Device nicht gefunden. Erstelle ihn nicht neu, da dies systemspezifisch ist.");
+                int valueToSet = enable ? 2 : 0;
+                key.SetValue("DevicePasswordLessBuildVersion", valueToSet, RegistryValueKind.DWord);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Windows Hello Passwordless Mode wurde auf {State} ({Value}) gesetzt.", enable ? "Aktiv" : "Inaktiv", valueToSet);
+                }
             }
         }
         catch (UnauthorizedAccessException ex)
         {
-            _logger.LogError(ex, "Fehlende Rechte zum Ändern des PasswordLess Registry-Keys. Programm muss als Administrator ausgeführt werden.");
-            throw;
+            throw new UnauthorizedAccessException("Fehlende Rechte zum Ändern des PasswordLess Registry-Keys. Programm muss als Administrator ausgeführt werden.", ex);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unerwarteter Fehler beim Setzen des PasswordLess Registry-Keys.");
-            throw;
+            throw new InvalidOperationException("Unerwarteter Fehler beim Setzen des PasswordLess Registry-Keys.", ex);
         }
     }
 
@@ -137,15 +137,28 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         return val == "1";
     }
 
+    [LibraryImport("advapi32.dll")]
+    private static partial uint LsaOpenPolicy(ref IntPtr SystemName, ref LsaObjectAttributes ObjectAttributes, uint DesiredAccess, out IntPtr PolicyHandle);
+
+    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
+    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LsaUnicodeString KeyName, ref LsaUnicodeString PrivateData);
+
+    // Überladung zum Löschen (IntPtr für null)
+    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
+    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LsaUnicodeString KeyName, IntPtr PrivateData);
+
+    [LibraryImport("advapi32.dll")]
+    private static partial uint LsaClose(IntPtr ObjectHandle);
+
     private static void SetLsaSecret(string keyName, string? value)
     {
-        var objectAttributes = new LSA_OBJECT_ATTRIBUTES(); // Structs initialisieren standardmäßig auf 0/Null
+        var objectAttributes = new LsaObjectAttributes(); // Structs initialisieren standardmäßig auf 0/Null
 
         var localsystem = IntPtr.Zero;
         var secretKey = InitLsaString(keyName);
-        var secretValue = (value != null) ? InitLsaString(value) : new LSA_UNICODE_STRING(); // Leeres Struct für Löschung
+        var secretValue = value is null ? new LsaUnicodeString() : InitLsaString(value); // Leeres Struct für Löschung
 
-        IntPtr lsaPolicyHandle = IntPtr.Zero;
+        var lsaPolicyHandle = IntPtr.Zero;
 
         const uint access = 0x00000020 | 0x00000800; // POLICY_CREATE_SECRET | POLICY_LOOKUP_NAMES
 
@@ -155,20 +168,20 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         {
             try
             {
-                if (value != null)
-                {
-                    result = LsaStorePrivateData(lsaPolicyHandle, ref secretKey, ref secretValue);
-                }
-                else
+                if (value is null)
                 {
                     // Zum Löschen nutzen wir die Überladung mit IntPtr.Zero oder übergeben NULL je nach Definition.
                     // P/Invoke Trick: Wir nutzen hier eine zweite Definition oder IntPtr.Zero für den Value
                     result = LsaStorePrivateData(lsaPolicyHandle, ref secretKey, IntPtr.Zero);
                 }
+                else
+                {
+                    result = LsaStorePrivateData(lsaPolicyHandle, ref secretKey, ref secretValue);
+                }
 
                 if (result != 0)
                 {
-                    throw new Exception($"LsaStorePrivateData Fehlercode: {result}");
+                    throw new InvalidOperationException($"LsaStorePrivateData Fehlercode: {result}");
                 }
 
             }
@@ -179,19 +192,19 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
                 // Speicher freigeben
                 FreeLsaString(secretKey);
 
-                if (value != null) { FreeLsaString(secretValue); }
+                if (value is not null) { FreeLsaString(secretValue); }
             }
         }
         else
         {
-            throw new Exception($"LsaOpenPolicy Fehlercode: {result}");
+            throw new InvalidOperationException($"LsaOpenPolicy Fehlercode: {result}");
         }
     }
 
-    private static LSA_UNICODE_STRING InitLsaString(string s)
+    private static LsaUnicodeString InitLsaString(string s)
     {
         // Sauberere Implementierung mit Marshal
-        return new LSA_UNICODE_STRING
+        return new LsaUnicodeString
         {
             Length = (ushort)(s.Length * 2),
             MaximumLength = (ushort)((s.Length + 1) * 2),
@@ -199,7 +212,7 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         };
     }
 
-    private static void FreeLsaString(LSA_UNICODE_STRING lus)
+    private static void FreeLsaString(LsaUnicodeString lus)
     {
         if (lus.Buffer != IntPtr.Zero)
         {
@@ -208,7 +221,7 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct LSA_UNICODE_STRING
+    private struct LsaUnicodeString
     {
         public UInt16 Length;
         public UInt16 MaximumLength;
@@ -216,7 +229,7 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct LSA_OBJECT_ATTRIBUTES
+    private struct LsaObjectAttributes
     {
         public int Length;
         public IntPtr RootDirectory;
@@ -226,16 +239,4 @@ public partial class WindowsAutoLogonService(ILogger<WindowsAutoLogonService> lo
         public IntPtr SecurityQualityOfService;
     }
 
-    [LibraryImport("advapi32.dll")]
-    private static partial uint LsaOpenPolicy(ref IntPtr SystemName, ref LSA_OBJECT_ATTRIBUTES ObjectAttributes, uint DesiredAccess, out IntPtr PolicyHandle);
-
-    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
-    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, ref LSA_UNICODE_STRING PrivateData);
-
-    // Überladung zum Löschen (IntPtr für null)
-    [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
-    private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LSA_UNICODE_STRING KeyName, IntPtr PrivateData);
-
-    [LibraryImport("advapi32.dll")]
-    private static partial uint LsaClose(IntPtr ObjectHandle);
 }

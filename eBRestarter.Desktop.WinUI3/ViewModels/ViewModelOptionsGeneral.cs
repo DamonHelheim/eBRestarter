@@ -5,12 +5,10 @@ using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Application.Interfaces.Update;
-using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -120,7 +118,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 var targetDateTime = _currentConfig.Computer.NextRestartDate.Value.Date.AddHours(_currentConfig.Computer.RestartClockTime);
                 if (DateTime.Now >= targetDateTime)
                 {
-                    _currentConfig.Computer.SetNextRestartDate(_computerRestartDateService.GetNextRestartDate(
+                    _currentConfig.Computer.SetNextRestartDate(_computerRestartDateService.RetrieveNextRestartDate(
                         _currentConfig.Computer.ComputerRestartIntervalDays,
                         _currentConfig.Computer.RestartClockTime));
                     SaveSettings();
@@ -165,17 +163,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (response.IsUpdateAvailable)
                 {
                     IsUpdateAvailable = true;
-                    string messageFormat = _localizationService.GetString("Options_UpdateAvailable");
+                    string messageFormat = _localizationService.RetrieveString("Options_UpdateAvailable");
                     UpdateMessage = string.Format(messageFormat, response.LatestVersion);
 
-                    string promptFormat = _localizationService.GetString("Options_UpdatePrompt_Message");
+                    string promptFormat = _localizationService.RetrieveString("Options_UpdatePrompt_Message");
                     string dialogMessage = string.Format(promptFormat, UpdateMessage);
 
                     bool userWantsUpdate = await _dialogService.ShowConfirmationAsync(
-                        _localizationService.GetString("Options_UpdateAvailable_Title"),
+                        _localizationService.RetrieveString("Options_UpdateAvailable_Title"),
                         dialogMessage,
-                        _localizationService.GetString("General_Yes"),
-                        _localizationService.GetString("General_No"));
+                        _localizationService.RetrieveString("General_Yes"),
+                        _localizationService.RetrieveString("General_No"));
 
                     if (userWantsUpdate)
                     {
@@ -188,17 +186,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     UpdateMessage = string.Empty;
 
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString("Options_UpdateNoUpdate_Title"),
-                        _localizationService.GetString("Options_UpdateNoUpdate_Message"),
+                        _localizationService.RetrieveString("Options_UpdateNoUpdate_Title"),
+                        _localizationService.RetrieveString("Options_UpdateNoUpdate_Message"),
                         DialogIcon.Information);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                string errorFormat = _localizationService.GetString("Options_UpdateCheckError_Message");
+                string errorFormat = _localizationService.RetrieveString("Options_UpdateCheckError_Message");
                 await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString("Options_UpdateError_Title"),
+                    _localizationService.RetrieveString("Options_UpdateError_Title"),
                     string.Format(errorFormat, ex.Message),
                     DialogIcon.Error);
             }
@@ -237,14 +235,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (result.Value == AutoLogonResultStatus.Deactivated)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString("General_Info"),
-                        _localizationService.GetString("Options_AutoLogon_Deactivated"));
+                        _localizationService.RetrieveString("General_Info"),
+                        _localizationService.RetrieveString("Options_AutoLogon_Deactivated"));
                 }
                 else if (result.Value == AutoLogonResultStatus.Activated)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString("General_Success"),
-                        _localizationService.GetString("Options_AutoLogon_Success"));
+                        _localizationService.RetrieveString("General_Success"),
+                        _localizationService.RetrieveString("Options_AutoLogon_Success"));
                 }
             }
             else
@@ -255,34 +253,34 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (status == AutoLogonResultStatus.WindowsHelloBlockActive)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorTitle"),
-                        _localizationService.GetString("Options_AutoLogon_WindowsHelloErrorMessage"),
+                        _localizationService.RetrieveString("Options_AutoLogon_WindowsHelloErrorTitle"),
+                        _localizationService.RetrieveString("Options_AutoLogon_WindowsHelloErrorMessage"),
                         DialogIcon.Error);
                 }
                 else if (status == AutoLogonResultStatus.AdminRequired)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString("General_Error"),
+                        _localizationService.RetrieveString("General_Error"),
                         "Es sind Administratorrechte erforderlich, um diese Aktion auszuführen. Bitte starten Sie die Anwendung als Administrator.",
                         DialogIcon.Error);
                 }
                 else if (status == AutoLogonResultStatus.ValidationError)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString(GeneralErrorKey),
-                        _localizationService.GetString("Options_AutoLogon_ValidationError"));
+                        _localizationService.RetrieveString(GeneralErrorKey),
+                        _localizationService.RetrieveString("Options_AutoLogon_ValidationError"));
                 }
                 else if (status == AutoLogonResultStatus.DomainError)
                 {
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString(GeneralErrorKey),
-                        _localizationService.GetString("Options_AutoLogon_DomainError"));
+                        _localizationService.RetrieveString(GeneralErrorKey),
+                        _localizationService.RetrieveString("Options_AutoLogon_DomainError"));
                 }
                 else
                 {
-                    string errorFormat = _localizationService.GetString("General_UnexpectedError");
+                    string errorFormat = _localizationService.RetrieveString("General_UnexpectedError");
                     await _dialogService.ShowMessageAsync(
-                        _localizationService.GetString(GeneralErrorKey),
+                        _localizationService.RetrieveString(GeneralErrorKey),
                         string.Format(errorFormat, error.Message));
                 }
             }
@@ -380,10 +378,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 _languageService.SetLanguage(newLanguageCode);
 
                 bool restartNow = await _dialogService.ShowConfirmationAsync(
-                    _localizationService.GetString("Options_LanguageChanged_Restart_Title"),
-                    _localizationService.GetString("Options_LanguageChanged_Restart_Message"),
-                    _localizationService.GetString("General_Yes"),
-                    _localizationService.GetString("General_No"));
+                    _localizationService.RetrieveString("Options_LanguageChanged_Restart_Title"),
+                    _localizationService.RetrieveString("Options_LanguageChanged_Restart_Message"),
+                    _localizationService.RetrieveString("General_Yes"),
+                    _localizationService.RetrieveString("General_No"));
 
                 if (restartNow)
                 {
@@ -425,9 +423,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                string errorFormat = _localizationService.GetString("Options_UpdateFailed_Message");
+                string errorFormat = _localizationService.RetrieveString("Options_UpdateFailed_Message");
                 await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString("Options_UpdateFailed_Title"),
+                    _localizationService.RetrieveString("Options_UpdateFailed_Title"),
                     string.Format(errorFormat, ex.Message),
                     DialogIcon.Error);
             }
@@ -445,7 +443,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private void SaveSettings()
         {
             var freshConfig = _eVisitorConfigService.LoadConfig();
-            
+
             freshConfig.Computer.UpdateRestartSettings(_currentConfig.Computer.ComputerRestartIntervalDays, _currentConfig.Computer.RestartClockTime, TimeProvider.System);
             freshConfig.Computer.SetNextRestartDate(_currentConfig.Computer.NextRestartDate);
             freshConfig.Settings.Language = _currentConfig.Settings.Language;
@@ -474,7 +472,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             if (days == 0)
             {
-                RestartStatusText = _localizationService.GetString("Options_RestartStatus_None");
+                RestartStatusText = _localizationService.RetrieveString("Options_RestartStatus_None");
             }
             else
             {
@@ -484,7 +482,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     targetDate = DateTime.Today.AddDays(days).AddHours(ComputerRestartClockTime);
                 }
 
-                string messageFormat = _localizationService.GetString("Options_RestartStatus_Scheduled");
+                string messageFormat = _localizationService.RetrieveString("Options_RestartStatus_Scheduled");
                 RestartStatusText = string.Format(messageFormat, targetDate.ToString("dd.MM.yyyy"), targetDate.ToString("HH"));
             }
         }

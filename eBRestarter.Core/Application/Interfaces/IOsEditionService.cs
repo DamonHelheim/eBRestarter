@@ -1,7 +1,7 @@
-ï»¿namespace eBRestarter.Core.Application.Interfaces;
+namespace eBRestarter.Core.Application.Interfaces;
 
-// ErgÃ¤nzung zum bestehenden Registry-Service fÃ¼r WMI-spezifische OS-Daten
+// Ergänzung zum bestehenden Registry-Service für WMI-spezifische OS-Daten
 public interface IOsEditionService
 {
-    Task<string> GetOsEditionAsync();
+    Task<string> RetrieveOsEditionAsync();
 }

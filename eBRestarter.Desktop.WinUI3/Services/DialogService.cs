@@ -1,4 +1,5 @@
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Views.Dialogs;
 using Microsoft.UI;
@@ -7,7 +8,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Threading.Tasks;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.Services;
 
@@ -88,7 +88,8 @@ public class DialogService : IDialogService
             {
                 dialog.Opened += async (_, __) =>
                 {
-                    if (dialog.ViewModelDeleteBrowserContent != null) {
+                    if (dialog.ViewModelDeleteBrowserContent != null)
+                    {
 
                         await dialog.ViewModelDeleteBrowserContent.RunAutoSequenceAsync();
 
@@ -108,7 +109,8 @@ public class DialogService : IDialogService
             d.SetDefaults(defaultUser, defaultDomain, isPasswordlessEnabled, isAdmin);
         });
 
-        if (result == ContentDialogResult.Primary) {
+        if (result == ContentDialogResult.Primary)
+        {
 
             return AutoLogonDialogResult.Save(dialogInstance.GetCredentials(), dialogInstance.DisablePasswordlessMode);
 
@@ -125,7 +127,8 @@ public class DialogService : IDialogService
 
     private static async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
     {
-        var dialog = new T { 
+        var dialog = new T
+        {
             XamlRoot = XamlRoot,
             RequestedTheme = CurrentTheme
         };

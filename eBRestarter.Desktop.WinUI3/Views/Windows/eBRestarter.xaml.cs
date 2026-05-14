@@ -1,7 +1,6 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using eBRestarter.Desktop.WinUI3.ViewModels;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -83,7 +82,7 @@ namespace eBRestarter.Desktop.WinUI3
                 presenter.Maximize();
             }
 
-            TxbVersion.Text = "v" + _iAppVersionInfoService?.GetAppVersion();
+            TxbVersion.Text = "v" + _iAppVersionInfoService?.RetrieveAppVersion();
 
             //// 1. Fenster-Handle holen
             //IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -129,23 +128,9 @@ namespace eBRestarter.Desktop.WinUI3
             ArgumentNullException.ThrowIfNull(sender);
             ArgumentNullException.ThrowIfNull(args);
 
-            //// Spezialfall: Der Benutzer hat auf "Einstellungen" (Zahnrad unten) geklickt.
-            //if (args.IsSettingsInvoked)
-            //{
-            //    // Hier künnte spüter die Navigation zur Einstellungsseite erfolgen.
-            //    _navigationService.NavigateTo("Settings", transitionInfo: _defaultTransition);
-            //    return;
-            //}
-
-            // Standardfall: Ein normales Menü-Item wurde geklickt.
-            // Wir extrahieren den "Tag" aus dem XAML (z.B. Tag="Options").
-
             if (args.InvokedItemContainer is NavigationViewItem nvi
                 && nvi.Tag is string tag)
             {
-                // 2. DIP (Dependency Inversion Principle):
-                // Das Fenster entscheidet nicht, welche Klasse geladen wird.
-                // Es übergibt nur den Befehl "Navigiere zu Tag X" an den Service.
                 _navigationService.NavigateTo(
                     tag,
                     parameter: null!,

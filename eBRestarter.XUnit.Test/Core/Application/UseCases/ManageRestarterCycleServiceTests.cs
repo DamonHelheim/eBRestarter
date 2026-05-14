@@ -43,7 +43,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
 
             _fakeTimeProvider = new FakeTimeProvider();
 
-            _mockLocalizationService.Setup(l => l.GetString(It.IsAny<string>())).Returns((string key) => key);
+            _mockLocalizationService.Setup(l => l.RetrieveString(It.IsAny<string>())).Returns((string key) => key);
             _mockBrowserFactory.Setup(f => f.Create(It.IsAny<BrowserType>())).Returns(_mockBrowser.Object);
             var dummyConfig = new AppConfig { Browser = null, Username = "TestUser" };
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
@@ -106,7 +106,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
         {
             // ARRANGE
             var request = new ManageRestarterCycleRequest("Firefox", "TestUser", 10, 5, false);
-            _mockDisplayNameResolver.Setup(r => r.GetBrowserTypeFromDisplayName(It.IsAny<string>(), It.IsAny<string>())).Returns(BrowserType.Firefox);
+            _mockDisplayNameResolver.Setup(r => r.ResolveBrowserTypeFromDisplayName(It.IsAny<string>(), It.IsAny<string>())).Returns(BrowserType.Firefox);
 
             var cycleTask = _sut.StartAsync(request, () => Task.CompletedTask);
 
@@ -170,7 +170,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.UseCases
             dummyConfig.Browser.SetNextCleanupDate(DateTime.MinValue);
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(dummyConfig);
             _mockCleanupScheduleService.Setup(c => c.ShouldRunCleanupNow(7, DateTime.MinValue)).Returns(true);
-            _mockCleanupScheduleService.Setup(c => c.GetNextCleanupDateAfterRun(It.IsAny<DateTime>(), 7)).Returns(new DateTime(2050, 1, 1));
+            _mockCleanupScheduleService.Setup(c => c.CalculateNextCleanupDateAfterRun(It.IsAny<DateTime>(), 7)).Returns(new DateTime(2050, 1, 1));
 
             var cycleTask = _sut.StartAsync(request, () =>
             {

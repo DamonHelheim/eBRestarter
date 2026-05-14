@@ -1,4 +1,3 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.RestClient;
 using eBRestarter.Core.Application.Interfaces.Update;
 using eBRestarter.Core.Application.Models.Api;
@@ -14,15 +13,15 @@ public class GitHubUpdateAdapter(
     IRestClientService restClient,
     ILogger<GitHubUpdateAdapter> logger) : IUpdateService
 {
-    private readonly IRestClientService _restClient = restClient;
-    private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
-
     // Anpassen an dein Repository!
     private const string RepoOwner = "DamonHelheim";
     private const string RepoName = "eBRestarter";
 
-    // GitHub API URL fÃ¼r das allerneueste Release
+    // GitHub API URL für das allerneueste Release
     private const string GitHubApiUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
+
+    private readonly IRestClientService _restClient = restClient;
+    private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
 
     public async Task<UpdateInfo> CheckForUpdateAsync()
     {
@@ -50,15 +49,15 @@ public class GitHubUpdateAdapter(
 
             // 1. Version aus dem Tag lesen (z.B. "v1.2.0" -> "1.2.0")
             string tagName = root.GetProperty("tag_name").GetString() ?? "0.0.0";
-            string cleanVersion = tagName.TrimStart('v'); // "v" entfernen falls vorhanden
+            var cleanVersion = tagName.TrimStart('v'); // "v" entfernen falls vorhanden
 
             if (!Version.TryParse(cleanVersion, out Version? latestVersion))
             {
                 return new UpdateInfo { IsUpdateAvailable = false, CurrentVersion = currentVersion.ToString() };
             }
 
-            // 2. Download URL fÃ¼r das Asset finden (z.B. Installer.msi oder Setup.exe)
-            string downloadUrl = string.Empty;
+            // 2. Download URL für das Asset finden (z.B. Installer.msi oder Setup.exe)
+            var downloadUrl = string.Empty;
 
             if (root.TryGetProperty("assets", out JsonElement assets) && assets.ValueKind == JsonValueKind.Array)
             {
@@ -109,10 +108,10 @@ public class GitHubUpdateAdapter(
         try
         {
             // Pfad zum Temp Ordner
-            string tempFile = Path.Combine(Path.GetTempPath(), $"eBRestarter_Update_{updateInfo.LatestVersion}.exe");
+            var tempFile = Path.Combine(Path.GetTempPath(), $"eBRestarter_Update_{updateInfo.LatestVersion}.exe");
 
             // WICHTIG: Hier brauchen wir einen Download, der Binary Data speichert.
-            // Dein aktueller RestClient gibt Strings zurÃ¼ck. FÃ¼r Dateien nutzen wir besser HttpClient direkt
+            // Dein aktueller RestClient gibt Strings zurück. Für Dateien nutzen wir besser HttpClient direkt
             // oder erweitern den RestClient. Hier der Einfachheit halber HttpClient:
 
             using (var httpClient = new HttpClient())
@@ -131,27 +130,27 @@ public class GitHubUpdateAdapter(
             }
 
             // Installer starten
-            // Wir nutzen deinen ProcessService, aber wir mÃ¼ssen sicherstellen, dass wir Argumente Ã¼bergeben kÃ¶nnen
+            // Wir nutzen deinen ProcessService, aber wir müssen sicherstellen, dass wir Argumente übergeben können
             // oder wir nutzen Process.Start direkt hier, da es ein sehr spezifischer Infrastruktur-Case ist.
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = tempFile,
                 UseShellExecute = true,
-                // Argumente fÃ¼r "Silent Install" falls gewÃ¼nscht (hÃ¤ngt vom Installer ab)
+                // Argumente für "Silent Install" falls gewünscht (hängt vom Installer ab)
                 // Arguments = "/passive"
             };
 
             Process.Start(startInfo);
 
-            // App beenden, damit der Installer Dateien Ã¼berschreiben kann
+            // App beenden, damit der Installer Dateien überschreiben kann
             Environment.Exit(0);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Fehler beim Download/Installieren des Updates.");
 
-            throw; // Werfe Fehler, damit ViewModel Bescheid weiÃŸ
+            throw; // Werfe Fehler, damit ViewModel Bescheid weiß
         }
     }
 }

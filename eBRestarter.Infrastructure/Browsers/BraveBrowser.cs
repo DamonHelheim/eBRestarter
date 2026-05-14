@@ -9,29 +9,29 @@ namespace eBRestarter.Infrastructure.Browsers;
 
 public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logger) : ChromiumBrowserBase(os, logger)
 {
-
-    protected override string ExeFileName => "brave.exe";
-    protected override string BrowserRegistryName => "Brave"; // Oder "BraveSoftware Brave-Browser", je nach Registry
-    protected override string UninstallSubKey => "BraveSoftware Brave-Browser";
-    protected override string ProgramFilesSubPath => @"BraveSoftware\Brave-Browser\Application";
-
     public override string DisplayName => "Brave";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_brave.png";
     public override string DownloadUrl => WebLinks.BraveDownloadLinkDE;
 
     public override BrowserType Type => BrowserType.Brave;
 
+    public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
+
+    protected override string ExeFileName => "brave.exe";
+    protected override string BrowserRegistryName => "Brave"; // Oder "BraveSoftware Brave-Browser", je nach Registry
+    protected override string UninstallSubKey => "BraveSoftware Brave-Browser";
+    protected override string ProgramFilesSubPath => @"BraveSoftware\Brave-Browser\Application";
+
     // Brave nutzt "brave" als Prozessnamen
-    protected override string ProcessName => "brave";
+    public override string ProcessName => "brave";
 
     // Registry Key für Versionsprüfung
     protected override string RegistryKeyVersion => @"Software\BraveSoftware\Brave-Browser\BLBeacon";
     protected override string ExtensionId => "agchmcconfdfcenopioeilpgjngelefk";
-    public override string ExtensionInstallUrl => "https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 
-    public override BrowserPaths GetPaths()
+    public override BrowserPaths ResolvePaths()
     {
-        var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
+        var localAppData = _os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData");
 
         // Das ist der Wurzel-Ordner für ALLE Daten
         var userDataRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "BraveSoftware", "Brave-Browser", "User Data");
@@ -53,10 +53,6 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
 
         }
 
-        // Check Profile X (Dafür bräuchtest du eigentlich Directory.GetDirectories,
-        // ich nutze hier eine fiktive Methode deines FileServices oder System.IO)
-        // Da deine IWindowsFileSystemService-Schnittstelle hier nicht voll sichtbar ist,
-        // nutzen wir System.IO direkt oder du musst es in deinen Service wrappen:
         try
         {
             var dirs = Directory.GetDirectories(userDataRoot, "Profile *");
@@ -65,7 +61,7 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
         }
         catch { /* Fehlerbehandlung falls Ordner nicht existiert */ }
 
-        // 2. Für jedes gefundene Profil die Pfade generieren
+        // Für jedes gefundene Profil die Pfade generieren
         foreach (var profilePath in allProfileFolders)
         {
             // CACHE: Du wolltest speziell "Service Worker" (und meistens auch "Cache")
@@ -102,3 +98,5 @@ public class BraveBrowser(IOperatingSystemFacade os, ILogger<BraveBrowser> logge
     //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Cache
     //C:\Users\Workstation\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\Network
 }
+
+

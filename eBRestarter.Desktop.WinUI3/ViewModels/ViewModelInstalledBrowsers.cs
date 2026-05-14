@@ -15,7 +15,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Installed Browsers" page. Keeps a list of <see cref="ViewModelBrowserItem"/>
-/// in sync with <see cref="IBrowserService.GetInstalledBrowsersAsync"/>: updates existing items
+/// in sync with <see cref="IBrowserService.FindInstalledBrowsersAsync"/>: updates existing items
 /// when install state or version changes and adds new items when a new browser type appears.
 /// Refreshes on a timer so the list stays current (e.g. after download/install).
 /// </summary>
@@ -94,7 +94,7 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
     /// </summary>
     public async Task LoadBrowsersSmartAsync()
     {
-        var freshBrowserInfos = await _browserService.GetInstalledBrowsersAsync();
+        var freshBrowserInfos = await _browserService.FindInstalledBrowsersAsync();
 
         foreach (var installedBrowserInfo in freshBrowserInfos)
         {

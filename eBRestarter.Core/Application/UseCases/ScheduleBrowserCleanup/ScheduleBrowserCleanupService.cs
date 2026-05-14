@@ -13,7 +13,7 @@ public class ScheduleBrowserCleanupService(
     {
         var config = _configService.LoadConfig();
 
-        bool isActive = IsIntervalAllowed(request.IntervalDays);
+        var isActive = IsIntervalAllowed(request.IntervalDays);
 
         if (isActive)
         {

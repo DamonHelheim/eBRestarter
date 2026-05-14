@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.Authentication;
+using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Infrastructure.Services.Authentication;
 using Moq;
 using Shouldly;
@@ -10,18 +10,18 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {
     /// <summary>
     /// Testet die Logik zur Validierung von Windows-/Domain-Anmeldedaten.
-    /// Wir prÃ¼fen, ob je nach Domain der richtige Kontext gewÃ¤hlt wird und ob
-    /// die speziellen Active-Directory-Exceptions korrekt Ã¼bersetzt werden.
+    /// Wir prüfen, ob je nach Domain der richtige Kontext gewählt wird und ob
+    /// die speziellen Active-Directory-Exceptions korrekt übersetzt werden.
     /// </summary>
     public class PrincipalContextCredentialValidationServiceTests
     {
         /// <summary>
         /// Wenn der Nutzer sich lokal am PC anmeldet (Domain = Computername), muss das System
-        /// zwingend den ContextType.Machine nutzen, da sonst die Anmeldung fehlschlÃ¤gt.
+        /// zwingend den ContextType.Machine nutzen, da sonst die Anmeldung fehlschlägt.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir Ã¼bergeben als Domain den Namen des aktuellen Computers (Environment.MachineName).
-        /// Wir prÃ¼fen mit Moq, ob der Wrapper exakt mit ContextType.Machine aufgerufen wurde.
+        /// Wir übergeben als Domain den Namen des aktuellen Computers (Environment.MachineName).
+        /// Wir prüfen mit Moq, ob der Wrapper exakt mit ContextType.Machine aufgerufen wurde.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseMachineContext_WhenDomainIsLocalComputer()
@@ -44,7 +44,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde ContextType.Machine an das System Ã¼bergeben?
+            // WICHTIGSTER CHECK: Wurde ContextType.Machine an das System übergeben?
             mockAdService.Verify(ad => ad.ValidateCredentials(
                 ContextType.Machine, // <-- Darauf kommt es an!
                 localMachineName,
@@ -57,8 +57,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         /// muss zwingend ContextType.Domain genutzt werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir Ã¼bergeben eine beliebige Domain, die nicht der Computername ist.
-        /// Wir prÃ¼fen mit Moq, ob der Wrapper mit ContextType.Domain aufgerufen wurde.
+        /// Wir übergeben eine beliebige Domain, die nicht der Computername ist.
+        /// Wir prüfen mit Moq, ob der Wrapper mit ContextType.Domain aufgerufen wurde.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseDomainContext_WhenDomainIsDifferentFromMachineName()
@@ -79,7 +79,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde ContextType.Domain an das System Ã¼bergeben?
+            // WICHTIGSTER CHECK: Wurde ContextType.Domain an das System übergeben?
             mockAdService.Verify(ad => ad.ValidateCredentials(
                 ContextType.Domain, // <-- Darauf kommt es an!
                 someDomain,
@@ -90,11 +90,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         /// <summary>
         /// Wenn der Domain-Controller (Server) der Firma offline ist, wirft die Windows-API
         /// eine 'PrincipalServerDownException'. Deine Klasse soll das fangen und in eine eigene
-        /// 'InvalidOperationException' mit dem Text "PrincipalServerDown" Ã¼bersetzen.
+        /// 'InvalidOperationException' mit dem Text "PrincipalServerDown" übersetzen.
         ///
         /// WAS WIRD GETESTET?
         /// Wir zwingen den Mock dazu, genau diese spezifische Exception zu werfen.
-        /// Dann prÃ¼fen wir mit Shouldly, ob die Ã¼bersetzte Exception nach auÃŸen dringt.
+        /// Dann prüfen wir mit Shouldly, ob die übersetzte Exception nach außen dringt.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldThrowInvalidOperationException_WhenServerIsDown()
@@ -110,7 +110,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             var service = new PrincipalContextCredentialValidationService(mockAdService.Object);
 
             // ACT & ASSERT
-            // Wir fangen die Exception ab und prÃ¼fen ihren Typ und Inhalt
+            // Wir fangen die Exception ab und prüfen ihren Typ und Inhalt
             var exception = Should.Throw<InvalidOperationException>(() =>
             {
                 service.ValidateCredentials("TestUser", "DOMAIN", "Password");
@@ -121,12 +121,12 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
         /// <summary>
         /// Jede andere Art von Fehler (z.B. falsches Passwort, Account gesperrt, Netzwerkfehler)
-        /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zurÃ¼ckgegeben werden.
-        /// Die App darf nicht abstÃ¼rzen!
+        /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zurückgegeben werden.
+        /// Die App darf nicht abstürzen!
         ///
         /// WAS WIRD GETESTET?
-        /// Wir lassen den Mock eine allgemeine Exception werfen und prÃ¼fen,
-        /// ob der Try-Catch-Block hÃ¤lt und 'false' zurÃ¼ckkommt.
+        /// Wir lassen den Mock eine allgemeine Exception werfen und prüfen,
+        /// ob der Try-Catch-Block hält und 'false' zurückkommt.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldReturnFalse_OnAnyOtherException()

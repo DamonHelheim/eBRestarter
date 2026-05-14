@@ -9,6 +9,6 @@ public class ComputerRestartDateService(IRestartCalculationService restartCalcul
     private readonly IRestartCalculationService _restartCalculation = restartCalculationService;
 
     /// <inheritdoc />
-    public DateTime GetNextRestartDate(int intervalDays, int restartClockTime) =>
-        _restartCalculation.GetNextRestartDate(intervalDays, restartClockTime);
+    public DateTime RetrieveNextRestartDate(int intervalDays, int restartClockTime) =>
+        _restartCalculation.RetrieveNextRestartDate(intervalDays, restartClockTime);
 }
