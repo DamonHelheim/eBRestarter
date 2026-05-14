@@ -1,3 +1,4 @@
+#pragma warning disable T0046
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Services;
 using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;

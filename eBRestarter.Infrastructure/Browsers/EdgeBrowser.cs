@@ -12,17 +12,17 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
     public override string DisplayName => "Edge";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_edge.png";
     public override string DownloadUrl => WebLinks.EdgeDownloadLinkDE;
+    public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink;
 
     public override BrowserType Type => BrowserType.Edge;
 
     // Edge nutzt "msedge" als Prozessnamen
-    protected override string ProcessName => "msedge";
+    public override string ProcessName => "msedge";
 
     // Registry Key für Versionsprüfung (ähnlich Chrome)
     protected override string RegistryKeyVersion => @"Software\Microsoft\Edge\BLBeacon";
     protected override string ExtensionId => "kjhejmaladginnedpoppohfnkionnghi";
 
-    public override string ExtensionInstallUrl => WebLinks.EdgeEVisitorAddOnLink; //"https://chrome.google.com/webstore/detail/ebesucher-addon/agchmcconfdfcenopioeilpgjngelefk";
 
     protected override string ExeFileName => "msedge.exe";
 
@@ -35,9 +35,9 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
     // C:\Program Files (x86)\Microsoft\Edge\Application
     protected override string ProgramFilesSubPath => @"Microsoft\Edge\Application";
 
-    public override BrowserPaths GetPaths()
+    public override BrowserPaths ResolvePaths()
     {
-        var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData");
+        var localAppData = _os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData");
 
         // Das ist der Wurzel-Ordner für ALLE Daten
         var userDataRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "Microsoft", "Edge", "User Data");
@@ -46,7 +46,7 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
         var cookiesDirs = new List<string>();
         var extensionsDirs = new List<string>();
 
-        // 1. Wir suchen alle Profil-Ordner
+        // Wir suchen alle Profil-Ordner
         // Wir nehmen 'Default' UND alle Ordner, die mit 'Profile' beginnen (z.B. 'Profile 1')
         var allProfileFolders = new List<string>();
 
@@ -57,10 +57,6 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
             allProfileFolders.Add(defaultPath);
         }
 
-        // Check Profile X (Dafür bräuchtest du eigentlich Directory.GetDirectories,
-        // ich nutze hier eine fiktive Methode deines FileServices oder System.IO)
-        // Da deine IWindowsFileSystemService-Schnittstelle hier nicht voll sichtbar ist,
-        // nutzen wir System.IO direkt oder du musst es in deinen Service wrappen:
         try
         {
             var dirs = Directory.GetDirectories(userDataRoot, "Profile *");
@@ -105,3 +101,5 @@ public class EdgeBrowser(IOperatingSystemFacade os, ILogger<EdgeBrowser> logger)
     //C:\Users\Workstation\AppData\Local\Microsoft\Edge\User Data\Profile 4\Cache
     //C:\Users\Workstation\AppData\Local\Microsoft\Edge\User Data\Profile 4\Network
 }
+
+

@@ -5,7 +5,6 @@ using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Desktop.WinUI3.Messages;
-using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
@@ -120,20 +119,20 @@ public partial class ViewModelGeneralOverview : ObservableObject
         {
             if (!_isApiConfigured && !UseScreenshotFakeData)
             {
-                return _localizationService.GetString("API_isNotEnabled");
+                return _localizationService.RetrieveString("API_isNotEnabled");
             }
 
             string title = SelectedPivotIndex switch
             {
-                0 => string.Format(_localizationService.GetString("Chart_TitleHourly"), DateTime.Now.ToString("dd.MM.yyyy")),
-                1 => string.Format(_localizationService.GetString("Chart_TitleDaily"), DateTime.Now.ToString("MMMM")),
-                2 => string.Format(_localizationService.GetString("Chart_TitleYearly"), DateTime.Now.ToString("yyyy")),
-                _ => _localizationService.GetString("Chart_TitleOverview")
+                0 => string.Format(_localizationService.RetrieveString("Chart_TitleHourly"), DateTime.Now.ToString("dd.MM.yyyy")),
+                1 => string.Format(_localizationService.RetrieveString("Chart_TitleDaily"), DateTime.Now.ToString("MMMM")),
+                2 => string.Format(_localizationService.RetrieveString("Chart_TitleYearly"), DateTime.Now.ToString("yyyy")),
+                _ => _localizationService.RetrieveString("Chart_TitleOverview")
             };
 
             if (UseScreenshotFakeData)
             {
-                title += _localizationService.GetString("Chart_FakeDataMode");
+                title += _localizationService.RetrieveString("Chart_FakeDataMode");
             }
 
             return title;
@@ -170,13 +169,13 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
         _isApiConfigured = !string.IsNullOrEmpty(_configService.LoadConfig().Settings.ApiKey);
 
-        CurrentDay = _localizationService.GetString("General_Today");
+        CurrentDay = _localizationService.RetrieveString("General_Today");
 
         YAxes =
         [
             new Axis
             {
-                Name = _localizationService.GetString("Chart_YAxisPoints"),
+                Name = _localizationService.RetrieveString("Chart_YAxisPoints"),
                 LabelsDensity = 1,
                 SeparatorsPaint = new SolidColorPaint(new SKColor(40, 40, 40)) { StrokeThickness = 1 },
                 MinStep = YAxisMinStep,
@@ -193,7 +192,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
         _mainColumnSeries = new ColumnSeries<ObservableValue>
         {
             Values = _chartValues,
-            Name = _localizationService.GetString("Chart_SeriesEarnings"),
+            Name = _localizationService.RetrieveString("Chart_SeriesEarnings"),
             Rx = ColumnSeriesCornerRadius,
             Ry = ColumnSeriesCornerRadius,
             Fill = new SolidColorPaint(new SKColor(0, 120, 215)),
@@ -241,17 +240,17 @@ public partial class ViewModelGeneralOverview : ObservableObject
         switch (SelectedPivotIndex)
         {
             case 0:
-                xAxis.Name = _localizationService.GetString("Chart_XAxisTime");
+                xAxis.Name = _localizationService.RetrieveString("Chart_XAxisTime");
                 break;
 
             case 1:
-                xAxis.Name = _localizationService.GetString("Chart_XAxisDay");
+                xAxis.Name = _localizationService.RetrieveString("Chart_XAxisDay");
                 xAxis.Labels = [.. Enumerable.Range(1, 31).Select(index => index.ToString())];
                 break;
 
             case 2:
-                xAxis.Name = _localizationService.GetString("Chart_XAxisMonth");
-                string monthsString = _localizationService.GetString("Chart_MonthsShort");
+                xAxis.Name = _localizationService.RetrieveString("Chart_XAxisMonth");
+                string monthsString = _localizationService.RetrieveString("Chart_MonthsShort");
                 xAxis.Labels = !string.IsNullOrEmpty(monthsString)
                     ? monthsString.Split(',')
                     : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
@@ -274,8 +273,8 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
             if (!UseScreenshotFakeData)
             {
-                Task<EarningsData?> earningsTask = _eVisitorApiService.GetEarningsAsync();
-                Task<IpInfoData?> ipInfoTask = _eVisitorApiService.GetIpInfoAsync();
+                Task<EarningsData?> earningsTask = _eVisitorApiService.RetrieveEarningsAsync();
+                Task<IpInfoData?> ipInfoTask = _eVisitorApiService.RetrieveIpInfoAsync();
 
                 await Task.WhenAll(earningsTask, ipInfoTask);
 
@@ -314,7 +313,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
                 CurrentYear = now.ToString("yyyy");
 
                 var nextRefresh = now.AddMinutes(60 - now.Minute + EarningsRefreshTriggerMinute);
-                var nextRefreshTimeFormat = _localizationService.GetString("General_NextRefresh");
+                var nextRefreshTimeFormat = _localizationService.RetrieveString("General_NextRefresh");
                 ClockNextEarningsRefresh = _isApiConfigured
                     ? string.Format(nextRefreshTimeFormat, nextRefresh.ToString("HH:mm"))
                     : "-";
@@ -360,53 +359,60 @@ public partial class ViewModelGeneralOverview : ObservableObject
     {
         if (_cachedEarnings == null && !UseScreenshotFakeData) return;
 
-        double[] earningsValuesForPivot;
+        double[] earningsValuesForPivot = UseScreenshotFakeData
+            ? GenerateFakeEarningsData()
+            : GetRealEarningsData();
 
-        if (UseScreenshotFakeData)
+        SyncChartValues(earningsValuesForPivot);
+    }
+
+    private double[] GenerateFakeEarningsData()
+    {
+        var rnd = new Random(SelectedPivotIndex); // Fester Seed, damit sich die Werte beim Hin- und Herschalten nicht ändern
+        int count = SelectedPivotIndex switch
         {
-            var rnd = new Random(SelectedPivotIndex); // Fester Seed, damit sich die Werte beim Hin- und Herschalten nicht ändern
-            int count = SelectedPivotIndex switch
+            0 => 24, // 24 Stunden
+            1 => DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month), // Tage im aktuellen Monat
+            2 => 12, // 12 Monate
+            _ => 0
+        };
+
+        var earningsValuesForPivot = new double[count];
+        for (int i = 0; i < count; i++)
+        {
+            earningsValuesForPivot[i] = SelectedPivotIndex switch
             {
-                0 => 24, // 24 Stunden
-                1 => DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month), // Tage im aktuellen Monat
-                2 => 12, // 12 Monate
+                0 => rnd.Next(500, 801), // Stundenwerte
+                1 => rnd.Next(12000, 17001), // Tageswerte im Monat
+                2 => rnd.Next(500000, 650001), // Monatswerte im Jahr
                 _ => 0
             };
-
-            earningsValuesForPivot = new double[count];
-            for (int i = 0; i < count; i++)
-            {
-                earningsValuesForPivot[i] = SelectedPivotIndex switch
-                {
-                    0 => rnd.Next(500, 801), // Stundenwerte
-                    1 => rnd.Next(12000, 17001), // Tageswerte im Monat
-                    2 => rnd.Next(500000, 650001), // Monatswerte im Jahr
-                    _ => 0
-                };
-            }
         }
-        else
+        return earningsValuesForPivot;
+    }
+
+    private double[] GetRealEarningsData()
+    {
+        return SelectedPivotIndex switch
         {
-            earningsValuesForPivot = SelectedPivotIndex switch
-            {
-                0 => _cachedEarnings!.HourlyEarnings,
-                1 => _cachedEarnings!.DailyEarnings,
-                2 => _cachedEarnings!.MonthlyEarnings,
-                _ => []
-            };
-        }
+            0 => _cachedEarnings!.HourlyEarnings,
+            1 => _cachedEarnings!.DailyEarnings,
+            2 => _cachedEarnings!.MonthlyEarnings,
+            _ => []
+        };
+    }
 
+    private void SyncChartValues(double[] earningsValuesForPivot)
+    {
         while (_chartValues.Count < earningsValuesForPivot.Length)
         {
             _chartValues.Add(new ObservableValue(0));
         }
 
-
         while (_chartValues.Count > earningsValuesForPivot.Length)
         {
             _chartValues.RemoveAt(_chartValues.Count - 1);
         }
-
 
         for (int index = 0; index < earningsValuesForPivot.Length; index++)
         {
@@ -417,6 +423,6 @@ public partial class ViewModelGeneralOverview : ObservableObject
         }
     }
 
-   [RelayCommand] private void GoToAPILogin() => _navigationService.NavigateTo("Options", parameter: 1);
+    [RelayCommand] private void GoToAPILogin() => _navigationService.NavigateTo("Options", parameter: 1);
 
 }

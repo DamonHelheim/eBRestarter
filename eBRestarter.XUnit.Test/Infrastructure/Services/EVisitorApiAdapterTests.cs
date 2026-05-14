@@ -54,7 +54,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 .ReturnsAsync(new ApiResponse { IsSuccess = true, Content = json });
 
             // ACT
-            var result = await _sut.GetIpInfoAsync();
+            var result = await _sut.RetrieveIpInfoAsync();
 
             // ASSERT
             result.ShouldNotBeNull();
@@ -77,7 +77,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 .ReturnsAsync(new ApiResponse { IsSuccess = false });
 
             // ACT 1
-            var resultFail = await _sut.GetIpInfoAsync();
+            var resultFail = await _sut.RetrieveIpInfoAsync();
 
             // ARRANGE - Fall 2: Defektes JSON
             _mockRestClient
@@ -85,7 +85,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 .ReturnsAsync(new ApiResponse { IsSuccess = true, Content = "Kein { gueltiges ] JSON" });
 
             // ACT 2
-            var resultInvalid = await _sut.GetIpInfoAsync();
+            var resultInvalid = await _sut.RetrieveIpInfoAsync();
 
             // ASSERT
             resultFail.ShouldBeNull();
@@ -106,7 +106,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(emptyConfig);
 
             // ACT
-            var result = await _sut.GetEarningsAsync();
+            var result = await _sut.RetrieveEarningsAsync();
 
             // ASSERT
             result.ShouldBeNull();
@@ -160,7 +160,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 });
 
             // ACT
-            var result = await _sut.GetEarningsAsync();
+            var result = await _sut.RetrieveEarningsAsync();
 
             // ASSERT
             result.ShouldNotBeNull();
@@ -209,7 +209,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 });
 
             // ACT
-            var result = await _sut.GetEarningsAsync();
+            var result = await _sut.RetrieveEarningsAsync();
 
             // ASSERT
             result.ShouldNotBeNull();

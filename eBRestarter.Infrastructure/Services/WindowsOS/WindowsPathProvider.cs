@@ -4,13 +4,13 @@ namespace eBRestarter.Infrastructure.Services.WindowsOS;
 
 public class WindowsPathProvider : IPathProvider
 {
-    public string GetAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+    public string RetrieveAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-    public string GetLocalAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    public string RetrieveLocalAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-    public string GetUserProfileDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    public string RetrieveUserProfileDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-    public string GetProgramFilesDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+    public string RetrieveProgramFilesDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
-    public string GetProgramFilesX86Directory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+    public string RetrieveProgramFilesX86Directory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 }

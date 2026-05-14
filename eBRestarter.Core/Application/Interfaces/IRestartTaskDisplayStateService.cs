@@ -12,5 +12,5 @@ public interface IRestartTaskDisplayStateService
     /// <summary>
     /// Baut das Anzeige-DTO aus der aktuellen Config (inkl. Cache-Lösch-Status und formatierte Texte).
     /// </summary>
-    RestartTaskDisplayState GetInitialState(AppConfig config);
+    RestartTaskDisplayState RetrieveInitialState(AppConfig config);
 }

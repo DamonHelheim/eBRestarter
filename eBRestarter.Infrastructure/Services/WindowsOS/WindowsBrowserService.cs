@@ -9,7 +9,7 @@ public class WindowsBrowserService(IBrowserFactory browserFactory) : IBrowserSer
 {
     private readonly IBrowserFactory _browserFactory = browserFactory ?? throw new ArgumentNullException(nameof(browserFactory));
 
-    public async Task<IEnumerable<BrowserInfo>> GetInstalledBrowsersAsync()
+    public async Task<IEnumerable<BrowserInfo>> FindInstalledBrowsersAsync()
     {
         var browsers = new List<BrowserInfo>();
 

@@ -7,5 +7,5 @@ public interface IDeleteBrowserContentUseCase
     Task<Result> ExecuteAsync(
         DeleteBrowserContentRequest request,
         IProgress<DeleteBrowserContentProgress> progress,
-        CancellationToken cancellationToken);
+        CancellationToken cancel);
 }

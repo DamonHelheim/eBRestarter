@@ -19,7 +19,7 @@ public class EVisitorApiAdapter(
     private readonly IEVisitorConfigService _configService = configService;
     private readonly ILogger<EVisitorApiAdapter> _logger = logger;
 
-    public async Task<IpInfoData?> GetIpInfoAsync()
+    public async Task<IpInfoData?> RetrieveIpInfoAsync()
     {
         var request = new ApiRequest
         {
@@ -38,10 +38,10 @@ public class EVisitorApiAdapter(
             var root = doc.RootElement;
 
             return new IpInfoData(
-                IpAddress: GetStringSafe(root, "ip"),
-                Hostname: GetStringSafe(root, "host"),
-                CountryCode: GetStringSafe(root, "countryCode"),
-                CountryName: GetStringSafe(root, "countryName")
+                IpAddress: RetrieveStringSafe(root, "ip"),
+                Hostname: RetrieveStringSafe(root, "host"),
+                CountryCode: RetrieveStringSafe(root, "countryCode"),
+                CountryName: RetrieveStringSafe(root, "countryName")
             );
         }
         catch (Exception ex)
@@ -51,12 +51,12 @@ public class EVisitorApiAdapter(
         }
     }
 
-    public async Task<EarningsData?> GetEarningsAsync()
+    public async Task<EarningsData?> RetrieveEarningsAsync()
     {
         var config = _configService.LoadConfig();
 
-        if (string.IsNullOrWhiteSpace(config.Settings.ApiUsername) ||
-            string.IsNullOrWhiteSpace(config.Settings.ApiKey))
+        if (string.IsNullOrWhiteSpace(config.Settings.ApiUsername)
+            || string.IsNullOrWhiteSpace(config.Settings.ApiKey))
         {
             return null;
         }
@@ -65,33 +65,31 @@ public class EVisitorApiAdapter(
         var apiKey = config.Settings.ApiKey;
         var now = DateTime.Now;
         // 1. Monat: Erster des aktuellen Monats 00:00:00 bis Jetzt
-        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0);
+        var startOfMonth = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Local);
 
         // 2. Jahr: Erster Januar des aktuellen Jahres 00:00:00 bis Jetzt
-        var startOfYear = new DateTime(now.Year, 1, 1, 0, 0, 0);
+        var startOfYear = new DateTime(now.Year, 1, 1, 0, 0, 0, DateTimeKind.Local);
 
         try
         {
-            var tHourly = GetHourlyEarningsRawAsync(username, apiKey);
+            var tHourly = RetrieveHourlyEarningsRawAsync(username, apiKey);
 
             // Details (Array) für den aktuellen Monat (Tage 1-31)
-            var tMonthlyDetails = GetDailyEarningsRawAsync(username, apiKey, startOfMonth, now);
+            var tMonthlyDetails = RetrieveDailyEarningsRawAsync(username, apiKey, startOfMonth, now);
 
             // Details (Array) für das aktuelle Jahr (Monate Jan-Dez)
-            var tYearlyDetails = GetMonthlyEarningsRawAsync(username, apiKey, startOfYear, now);
+            var tYearlyDetails = RetrieveMonthlyEarningsRawAsync(username, apiKey, startOfYear, now);
 
             await Task.WhenAll(tHourly, tMonthlyDetails, tYearlyDetails);
-            double[] hourlyArray = tHourly.Result;      // 24h (Heute)
-            double[] dailyArray = tMonthlyDetails.Result; // Tage des Monats
-            double[] monthlyArray = tYearlyDetails.Result; // 12 Monate des Jahres
+            var hourlyArray = tHourly.Result;      // 24h (Heute)
+            var dailyArray = tMonthlyDetails.Result; // Tage des Monats
+            var monthlyArray = tYearlyDetails.Result; // 12 Monate des Jahres
 
-            double monthlySum = dailyArray.Sum();
-            double yearlySum = monthlyArray.Sum();
-            double todaySum = hourlyArray.Sum();
+            var monthlySum = dailyArray.Sum();
+            var yearlySum = monthlyArray.Sum();
+            var todaySum = hourlyArray.Sum();
 
             // Erweitere dein EarningsData Record um die neuen Arrays, wenn du Charts willst!
-            // return new EarningsData(hourlyArray, dailyArray, monthlyArray, yearlySum, monthlySum, todaySum);
-
             // Aktuell passend zu deinem Record (Summen):
             return new EarningsData(hourlyArray, dailyArray, monthlyArray , yearlySum, monthlySum, todaySum);
         }
@@ -102,7 +100,7 @@ public class EVisitorApiAdapter(
         }
     }
 
-    private async Task<double[]> GetHourlyEarningsRawAsync(string username, string apiKey)
+    private async Task<double[]> RetrieveHourlyEarningsRawAsync(string username, string apiKey)
     {
         var request = new ApiRequest
         {
@@ -119,35 +117,7 @@ public class EVisitorApiAdapter(
 
         try
         {
-            using var doc = JsonDocument.Parse(response.Content);
-            var root = doc.RootElement;
-
-            // Unser Ziel-Array immer direkt mit 24 Feldern initialisieren
-            double[] hourly = new double[24];
-            if (root.ValueKind == JsonValueKind.Object)
-            {
-                foreach (var property in root.EnumerateObject())
-                {
-                    // String-Key (z.B. "1") in eine Zahl parsen
-                    if (int.TryParse(property.Name, out int hour) && hour >= 1 && hour <= 24)
-                    {
-                        // Wert abgreifen und auf den korrekten Array-Index (Stunde - 1) legen
-                        hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0;
-                    }
-                }
-            }
-            // FALLBACK: Falls die API doch mal ein echtes Array sendet [685.3, 507.7]
-            else if (root.ValueKind == JsonValueKind.Array)
-            {
-                var parsedArray = root.EnumerateArray()
-                                      .Select(element => element.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0)
-                                      .ToArray();
-
-                // Nur maximal 24 Werte rüberkopieren, um Exceptions zu vermeiden
-                Array.Copy(parsedArray, hourly, Math.Min(parsedArray.Length, 24));
-            }
-
-            return hourly;
+            return ParseHourlyEarningsJson(response.Content);
         }
         catch (Exception ex)
         {
@@ -156,10 +126,54 @@ public class EVisitorApiAdapter(
         }
     }
 
-    private async Task<double[]> GetDailyEarningsRawAsync(string username, string apiKey, DateTime start, DateTime end)
+    private static double[] ParseHourlyEarningsJson(string content)
     {
-        long unixStart = ((DateTimeOffset)start).ToUnixTimeSeconds();
-        long unixEnd = ((DateTimeOffset)end).ToUnixTimeSeconds();
+        using var doc = JsonDocument.Parse(content);
+        var root = doc.RootElement;
+
+        // Unser Ziel-Array immer direkt mit 24 Feldern initialisieren
+        double[] hourly = new double[24];
+
+        if (root.ValueKind == JsonValueKind.Object)
+        {
+            ParseHourlyEarningsFromJsonObject(root, hourly);
+        }
+        // FALLBACK: Falls die API doch mal ein echtes Array sendet [685.3, 507.7]
+        else if (root.ValueKind == JsonValueKind.Array)
+        {
+            ParseHourlyEarningsFromJsonArray(root, hourly);
+        }
+
+        return hourly;
+    }
+
+    private static void ParseHourlyEarningsFromJsonObject(JsonElement root, double[] hourly)
+    {
+        foreach (var property in root.EnumerateObject())
+        {
+            // String-Key (z.B. "1") in eine Zahl parsen
+            if (int.TryParse(property.Name, out int hour) && hour >= 1 && hour <= 24)
+            {
+                // Wert abgreifen und auf den korrekten Array-Index (Stunde - 1) legen
+                hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0;
+            }
+        }
+    }
+
+    private static void ParseHourlyEarningsFromJsonArray(JsonElement root, double[] hourly)
+    {
+        var parsedArray = root.EnumerateArray()
+            .Select(x => x.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0)
+            .ToArray();
+
+        // Nur maximal 24 Werte rüberkopieren, um Exceptions zu vermeiden
+        Array.Copy(parsedArray, hourly, Math.Min(parsedArray.Length, 24));
+    }
+
+    private async Task<double[]> RetrieveDailyEarningsRawAsync(string username, string apiKey, DateTime start, DateTime end)
+    {
+        var unixStart = ((DateTimeOffset)start).ToUnixTimeSeconds();
+        var unixEnd = ((DateTimeOffset)end).ToUnixTimeSeconds();
 
         string url = $"{ApiWebLinks.EarningsThisMonth}{unixStart}-{unixEnd}";
 
@@ -171,7 +185,7 @@ public class EVisitorApiAdapter(
             Password = apiKey
         };
 
-        int daysInMonth = DateTime.DaysInMonth(start.Year, start.Month);
+        var daysInMonth = DateTime.DaysInMonth(start.Year, start.Month);
         var dailyEarnings = new double[daysInMonth];
 
         var response = await _restClient.ExecuteGetAsync(request);
@@ -182,29 +196,7 @@ public class EVisitorApiAdapter(
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
-            var root = doc.RootElement;
-
-            if (root.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in root.EnumerateArray())
-                {
-                    if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
-                    {
-                        string dateStr = dateProp.GetString() ?? "";
-
-                        // LÖSUNG 1: Normales TryParse kann das W3C-Format (ISO 8601) nativ verarbeiten!
-                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
-                        {
-                            int dayIndex = date.Day - 1;
-                            if (dayIndex >= 0 && dayIndex < daysInMonth)
-                            {
-                                // LÖSUNG 2: Unbedingt += nutzen, um alle Einträge des Tages aufzusummieren!
-                                dailyEarnings[dayIndex] += GetValueSafe(item);
-                            }
-                        }
-                    }
-                }
-            }
+            ParseDailyEarningsFromJsonArray(doc.RootElement, dailyEarnings, daysInMonth);
 
             // Auf 2 Nachkommastellen runden, um Floating-Point-Artefakte zu vermeiden
             for (int i = 0; i < dailyEarnings.Length; i++)
@@ -220,10 +212,11 @@ public class EVisitorApiAdapter(
             return dailyEarnings;
         }
     }
-    private async Task<double[]> GetMonthlyEarningsRawAsync(string username, string apiKey, DateTime start, DateTime end)
+
+    private async Task<double[]> RetrieveMonthlyEarningsRawAsync(string username, string apiKey, DateTime start, DateTime end)
     {
-        long unixStart = ((DateTimeOffset)start).ToUnixTimeSeconds();
-        long unixEnd = ((DateTimeOffset)end).ToUnixTimeSeconds();
+        var unixStart = ((DateTimeOffset)start).ToUnixTimeSeconds();
+        var unixEnd = ((DateTimeOffset)end).ToUnixTimeSeconds();
 
         string url = $"{ApiWebLinks.EarningsThisMonth}{unixStart}-{unixEnd}";
 
@@ -245,29 +238,7 @@ public class EVisitorApiAdapter(
         try
         {
             using var doc = JsonDocument.Parse(response.Content);
-            var root = doc.RootElement;
-
-            if (root.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in root.EnumerateArray())
-                {
-                    if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
-                    {
-                        string dateStr = dateProp.GetString() ?? "";
-
-                        // LÖSUNG: Flexibles TryParse nutzen, um das ISO/W3C Format ("2026-03-14T20:00:00+00:00") zu verstehen
-                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
-                        {
-                            int monthIndex = date.Month - 1; // 0-11
-                            if (monthIndex >= 0 && monthIndex < 12)
-                            {
-                                // PERFEKT: Das Aufaddieren hast du hier schon richtig implementiert!
-                                monthlyEarnings[monthIndex] += GetValueSafe(item);
-                            }
-                        }
-                    }
-                }
-            }
+            ParseMonthlyEarningsFromJsonArray(doc.RootElement, monthlyEarnings);
 
             // Auf 2 Nachkommastellen runden, um Floating-Point-Artefakte zu vermeiden
             for (int i = 0; i < monthlyEarnings.Length; i++)
@@ -284,8 +255,56 @@ public class EVisitorApiAdapter(
         }
     }
 
+    private static void ParseDailyEarningsFromJsonArray(JsonElement root, double[] dailyEarnings, int daysInMonth)
+    {
+        if (root.ValueKind != JsonValueKind.Array) return;
+
+        foreach (var item in root.EnumerateArray())
+        {
+            if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
+            {
+                string dateStr = dateProp.GetString() ?? "";
+
+                // LÖSUNG 1: Normales TryParse kann das W3C-Format (ISO 8601) nativ verarbeiten!
+                if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
+                {
+                    int dayIndex = date.Day - 1;
+                    if (dayIndex >= 0 && dayIndex < daysInMonth)
+                    {
+                        // LÖSUNG 2: Unbedingt += nutzen, um alle Einträge des Tages aufzusummieren!
+                        dailyEarnings[dayIndex] += RetrieveValueSafe(item);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void ParseMonthlyEarningsFromJsonArray(JsonElement root, double[] monthlyEarnings)
+    {
+        if (root.ValueKind != JsonValueKind.Array) return;
+
+        foreach (var item in root.EnumerateArray())
+        {
+            if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
+            {
+                string dateStr = dateProp.GetString() ?? "";
+
+                // LÖSUNG: Flexibles TryParse nutzen, um das ISO/W3C Format ("2026-03-14T20:00:00+00:00") zu verstehen
+                if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
+                {
+                    int monthIndex = date.Month - 1; // 0-11
+                    if (monthIndex >= 0 && monthIndex < 12)
+                    {
+                        // PERFEKT: Das Aufaddieren hast du hier schon richtig implementiert!
+                        monthlyEarnings[monthIndex] += RetrieveValueSafe(item);
+                    }
+                }
+            }
+        }
+    }
+
     // Helper um Value als Number oder String zu lesen
-    private static double GetValueSafe(JsonElement item)
+    private static double RetrieveValueSafe(JsonElement item)
     {
         if (item.TryGetProperty("value", out JsonElement valProp))
         {
@@ -293,8 +312,8 @@ public class EVisitorApiAdapter(
             {
                 return valProp.GetDouble();
             }
-            else if (valProp.ValueKind == JsonValueKind.String &&
-                     double.TryParse(valProp.GetString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double dVal))
+            else if (valProp.ValueKind == JsonValueKind.String
+                      && double.TryParse(valProp.GetString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double dVal))
             {
                 return dVal;
             }
@@ -302,10 +321,10 @@ public class EVisitorApiAdapter(
         return 0.0;
     }
 
-    private static string GetStringSafe(JsonElement element, string propertyName)
+    private static string RetrieveStringSafe(JsonElement element, string propertyName)
     {
-        if (element.TryGetProperty(propertyName, out JsonElement prop) &&
-            prop.ValueKind == JsonValueKind.String)
+        if (element.TryGetProperty(propertyName, out JsonElement prop)
+            && prop.ValueKind == JsonValueKind.String)
         {
             return prop.GetString() ?? "-";
         }

@@ -1,37 +1,27 @@
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.Security;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Text.Json;
-using System.Text.Json.Serialization; // WICHTIG: Für den Source Generator hinzugefügt
+using System.Text.Json.Serialization;
 
 namespace eBRestarter.Infrastructure.Services.Config;
 
 /// <summary>
-/// Implementiert den Konfigurations-Service basierend auf JSON-Dateien.
-/// <br/>
-/// <b>Architektur-Layer:</b> Infrastructure (Adapter)
-/// <br/>
-/// <b>Verantwortlichkeit:</b> Lädt und speichert die <see cref="AppConfig"/> in eine JSON-Datei im Dateisystem.
-/// Kapselt die Serialisierungs-Logik (System.Text.Json) und den Dateizugriff.
+/// Implementiert den Basis-Konfigurations-Service basierend auf JSON-Dateien im Dateisystem.
+/// Vollständig entkoppelt von System.IO über den IWindowsFileSystemService (Repository-Pattern).
 /// </summary>
-/// <remarks>
-/// Initialisiert eine neue Instanz des <see cref="EVisitorConfigService"/>.
-/// </remarks>
-/// <param name="pathService">Service zum Ermitteln des Speicherpfads (z.B. AppData).</param>
-/// <param name="encryptionService">Service zur Ver-/Entschlüsselung sensibler Daten.</param>
-/// <param name="logger">Logger für Fehler- und Statusmeldungen.</param>
-public class EVisitorConfigService(IPathService pathService, IEncryptionService encryptionService, ILogger<EVisitorConfigService> logger) : IEVisitorConfigService
+public class EVisitorConfigService(
+    IPathService pathService, 
+    IWindowsFileSystemService fileSystem,
+    ILogger<EVisitorConfigService> logger) : IEVisitorConfigService
 {
     private readonly IPathService _pathService = pathService;
-    private readonly IEncryptionService _encryptionService = encryptionService;
+    private readonly IWindowsFileSystemService _fileSystem = fileSystem;
     private readonly ILogger<EVisitorConfigService> _logger = logger;
 
-    // Optionen für die JSON-Serialisierung.
-    // WriteIndented: Erzeugt lesbares JSON (mit Zeilenumbrüchen).
-    // PropertyNameCaseInsensitive: Ignoriert Groß-/Kleinschreibung beim Laden (Robustheit).
-    // TypeInfoResolver: Nutzt den Source Generator, damit es im Release-Modus (Trimmed) nicht abstürzt!
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
@@ -40,15 +30,13 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
     };
 
     /// <summary>
-    /// Lädt die aktuelle Konfiguration aus der Datei.
-    /// Falls die Datei nicht existiert oder fehlerhaft ist, wird eine Standard-Konfiguration zurückgegeben.
+    /// Lädt die Roh-Konfiguration aus der JSON-Datei über das FileSystem-Repository.
     /// </summary>
-    /// <returns>Das geladene <see cref="AppConfig"/>-Objekt oder ein neues Standard-Objekt bei Fehlern.</returns>
     public AppConfig LoadConfig()
     {
-        var filePath = _pathService.GetConfigFilePath();
+        var filePath = _pathService.RetrieveConfigFilePath();
 
-        if (!File.Exists(filePath))
+        if (!_fileSystem.FileExists(filePath))
         {
             var defaultConfig = new AppConfig();
             SaveConfig(defaultConfig);
@@ -57,75 +45,38 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
 
         try
         {
-            // 1. JSON lesen (Das klappt auch auf einem fremden PC, da nur Text)
-            string jsonString = File.ReadAllText(filePath);
-
-            // Hier sind alle Einstellungen (Theme, User etc.) geladen!
-            // Der ApiKey enthält jetzt aber noch den verschlüsselten "Müll".
-            var config = JsonSerializer.Deserialize<AppConfig>(jsonString, _jsonOptions) ?? new AppConfig();
-
-            // 2. Versuchen zu entschlüsseln
-            if (!string.IsNullOrEmpty(config.Settings.ApiKey))
-            {
-                // Decrypt fängt intern Fehler ab und gibt string.Empty zurück,
-                // wenn es nicht entschlüsselt werden kann (z.B. falscher PC).
-                var decryptedKey = _encryptionService.Decrypt(config.Settings.ApiKey);
-
-                // Wenn decryptedKey leer ist (wegen PC-Wechsel), ist das okay.
-                // Der User muss ihn dann halt neu eingeben.
-                // Wir überschreiben den verschlüsselten Wert im RAM mit dem Ergebnis (Klartext oder leer).
-
-                config.Settings.ApiKey = decryptedKey;
-
-                if (string.IsNullOrEmpty(decryptedKey))
-                {
-                    _logger.LogWarning("API Key konnte nicht entschlüsselt werden (evtl. PC gewechselt). Der Key muss neu eingegeben werden.");
-                }
-            }
-
-            return config;
+            var jsonString = _fileSystem.ReadAllText(filePath);
+            return JsonSerializer.Deserialize<AppConfig>(jsonString, _jsonOptions) ?? new AppConfig();
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
-            _logger.LogError("Config-Datei ist kein gültiges JSON.");
-
+            _logger.LogError(ex, "Config-Datei ist kein gültiges JSON.");
             return new AppConfig();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Kritischer Fehler beim Laden.");
-
+            _logger.LogError(ex, "Kritischer Fehler beim Laden der Konfiguration.");
             return new AppConfig();
         }
     }
 
     /// <summary>
-    /// Speichert das übergebene Konfigurationsobjekt als JSON-Datei.
-    /// Erstellt automatisch das Zielverzeichnis, falls es fehlt.
+    /// Speichert die Konfiguration über das FileSystem-Repository.
     /// </summary>
-    /// <param name="config">Das zu speichernde Konfigurationsobjekt.</param>
     public void SaveConfig(AppConfig config)
     {
         try
         {
-            var filePath = _pathService.GetConfigFilePath();
-            var directory = Path.GetDirectoryName(filePath);
+            var filePath = _pathService.RetrieveConfigFilePath();
+            var directory = _fileSystem.GetDirectoryName(filePath);
 
-            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            if (!string.IsNullOrEmpty(directory) && !_fileSystem.DirectoryExists(directory))
             {
-                Directory.CreateDirectory(directory);
+                _fileSystem.CreateDirectory(directory);
             }
-            // Wir wollen den Klartext-Key aus dem RAM nicht direkt speichern.
-            // Wir erstellen eine Kopie des Config-Objekts nur für den Speichervorgang.
-            var encryptedKey = _encryptionService.Encrypt(config.Settings.ApiKey);
 
-            string originalKey = config.Settings.ApiKey;
-            config.Settings.ApiKey = encryptedKey;
-
-            string jsonString = JsonSerializer.Serialize(config, _jsonOptions);
-            File.WriteAllText(filePath, jsonString);
-
-            config.Settings.ApiKey = originalKey;
+            var jsonString = JsonSerializer.Serialize(config, _jsonOptions);
+            _fileSystem.WriteAllText(filePath, jsonString);
 
             _logger.LogInformation("Konfiguration gespeichert.");
         }
@@ -136,17 +87,16 @@ public class EVisitorConfigService(IPathService pathService, IEncryptionService 
     }
 
     /// <summary>
-    /// Setzt die Konfiguration auf die werksseitigen Standardwerte zurück und überschreibt die Datei.
+    /// Setzt die Konfiguration auf Standardwerte zurück.
     /// </summary>
     public void ResetConfig()
     {
         _logger.LogWarning("Konfiguration wird auf Standardwerte zurückgesetzt.");
-
         var defaultConfig = new AppConfig();
-
         SaveConfig(defaultConfig);
     }
 }
+
 // SOURCE GENERATOR KONTEXT (Für Release/Trim-Kompatibilität)
 [JsonSerializable(typeof(AppConfig))]
 internal partial class AppConfigJsonContext : JsonSerializerContext;

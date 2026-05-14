@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Constants;
+using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces;
 
 namespace eBRestarter.Infrastructure.Services;
@@ -8,7 +8,7 @@ public class BrowserExtensionDeploymentService : IBrowserExtensionDeploymentServ
     public void EnsureExtensionIsDeployed()
     {
 #if !DEBUG
-        string targetPath = GetExtensionFolderPath();
+        string targetPath = RetrieveExtensionFolderPath();
         // Der Ursprungsordner, der read-only im Installationsverzeichnis liegt:
         string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TabRestarterExtension");
 
@@ -21,11 +21,11 @@ public class BrowserExtensionDeploymentService : IBrowserExtensionDeploymentServ
 #endif
     }
 
-    public string GetExtensionFolderPath()
+    public string RetrieveExtensionFolderPath()
     {
 #if DEBUG
         // Im Debug-Modus gehen wir 6 Ebenen nach oben in den Solution-Root-Ordner.
-        string solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\"));
+        var solutionDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\..\..\"));
         return Path.Combine(solutionDirectory, "eBRestarter.TabRestarterExtension", "TabRestarterExtension");
 #else
         // Im Release-Modus: Extension im AppData-Ordner des Users

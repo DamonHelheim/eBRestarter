@@ -1,9 +1,8 @@
-﻿using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.AccountManagement;
 
-namespace eBRestarter.Core.Application.Interfaces.Authentication
+namespace eBRestarter.Core.Application.Interfaces.Authentication;
+
+public interface IActiveDirectoryService
 {
-    public interface IActiveDirectoryService
-    {
-        bool ValidateCredentials(ContextType contextType, string domain, string username, string password);
-    }
+    bool ValidateCredentials(ContextType contextType, string domain, string username, string password);
 }

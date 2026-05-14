@@ -4,5 +4,5 @@ namespace eBRestarter.Core.Application.Interfaces;
 
 public interface IHardwareInfoService
 {
-    Task<HardwareInfo> GetHardwareInfoAsync();
+    Task<HardwareInfo> RetrieveHardwareInfoAsync();
 }

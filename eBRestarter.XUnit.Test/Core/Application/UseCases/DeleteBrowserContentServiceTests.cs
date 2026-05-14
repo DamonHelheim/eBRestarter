@@ -30,7 +30,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             _mockLocalizationService = new Mock<ILocalizationService>();
 
             _mockLocalizationService
-                .Setup(l => l.GetString(It.IsAny<string>()))
+                .Setup(l => l.RetrieveString(It.IsAny<string>()))
                 .Returns((string key) => key);
 
             _sut = new DeleteBrowserContentService(
@@ -48,6 +48,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progress = new Progress<DeleteBrowserContentProgress>();
 
             var mockBrowser = new Mock<IBrowser>();
+            mockBrowser.Setup(b => b.ProcessName).Returns("chrome");
             _mockBrowserFactory.Setup(f => f.Create(BrowserType.Chrome)).Returns(mockBrowser.Object);
 
             _mockProcessService.Setup(p => p.IsProcessAlive("chrome")).Returns(true);
@@ -68,8 +69,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progress = new Progress<DeleteBrowserContentProgress>(p => progressUpdates.Add(p));
 
             var mockBrowser = new Mock<IBrowser>();
+            mockBrowser.Setup(b => b.ProcessName).Returns("msedge");
 
-            mockBrowser.Setup(b => b.GetPaths()).Returns(new BrowserPaths(
+            mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
                 new List<string> { "C:\\Cache" },
                 new List<string>(),
                 new List<string>()));
@@ -92,8 +94,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progress = new Progress<DeleteBrowserContentProgress>();
 
             var mockBrowser = new Mock<IBrowser>();
+            mockBrowser.Setup(b => b.ProcessName).Returns("firefox");
 
-            mockBrowser.Setup(b => b.GetPaths()).Returns(new BrowserPaths(
+            mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
                 new List<string> { "C:\\Cache" },
                 new List<string> { "C:\\Cookies" },
                 new List<string>()));
@@ -116,8 +119,9 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progress = new Progress<DeleteBrowserContentProgress>(p => progressUpdates.Add(p));
 
             var mockBrowser = new Mock<IBrowser>();
+            mockBrowser.Setup(b => b.ProcessName).Returns("brave");
 
-            mockBrowser.Setup(b => b.GetPaths()).Returns(new BrowserPaths(
+            mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
                 new List<string> { "C:\\Brave\\Cache" },
                 new List<string> { "C:\\Brave\\Cookies" },
                 new List<string>()));
@@ -157,3 +161,4 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
         }
     }
 }
+

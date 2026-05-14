@@ -81,7 +81,7 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     [RelayCommand]
     private async Task CopyAndOpenEdge()
     {
-        string dialogTitle = _localizationService.GetString("StartupBoostDialog.Title");
+        string dialogTitle = _localizationService.RetrieveString("StartupBoostDialog.Title");
 
         if (_toggleEdgeStartupBoostUseCase.IsEdgeInstalled())
         {
@@ -91,14 +91,14 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
 
             await _dialogService.ShowMessageAsync(
                 dialogTitle,
-                _localizationService.GetString("StartupBoostDialog_CopyMessage"),
+                _localizationService.RetrieveString("StartupBoostDialog_CopyMessage"),
                 DialogIcon.Information);
         }
         else
         {
             await _dialogService.ShowMessageAsync(
                 dialogTitle,
-                _localizationService.GetString("Browser_NotInstalled"),
+                _localizationService.RetrieveString("Browser_NotInstalled"),
                 DialogIcon.Error);
         }
     }
@@ -119,10 +119,10 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
 
         if (toggleResponse.Success)
         {
-            InfoBarTitle = _localizationService.GetString("StartupBoostDialog_SuccessTitle");
+            InfoBarTitle = _localizationService.RetrieveString("StartupBoostDialog_SuccessTitle");
             InfoBarMessage = toggleResponse.NewState
-                ? _localizationService.GetString("StartupBoostDialog_SuccessStatus_Activated")
-                : _localizationService.GetString("StartupBoostDialog_SuccessMessage");
+                ? _localizationService.RetrieveString("StartupBoostDialog_SuccessStatus_Activated")
+                : _localizationService.RetrieveString("StartupBoostDialog_SuccessMessage");
             InfoBarSeverity = InfoBarSeverity.Success;
         }
         else
@@ -131,7 +131,7 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
             IsStartupBoostEnabled = toggleResponse.NewState;
             _isRevertingState = false;
 
-            InfoBarTitle = _localizationService.GetString("StartupBoostDialog_ErrorTitle");
+            InfoBarTitle = _localizationService.RetrieveString("StartupBoostDialog_ErrorTitle");
             InfoBarMessage = toggleResponse.ErrorMessage ?? string.Empty;
             InfoBarSeverity = InfoBarSeverity.Error;
         }

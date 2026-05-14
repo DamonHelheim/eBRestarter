@@ -1,4 +1,4 @@
-Ôªøusing eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using Moq;
 using Shouldly;
@@ -9,7 +9,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
     /// Testet den WindowsPathService.
-    /// Hier pr√ºfen wir, ob die Klasse die Basis-Pfade (aus dem IPathProvider)
+    /// Hier pr¸fen wir, ob die Klasse die Basis-Pfade (aus dem IPathProvider)
     /// korrekt mit den App-spezifischen Ordnern und Dateinamen kombiniert.
     /// </summary>
     public class WindowsPathServiceTests
@@ -32,20 +32,20 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         /// Firmen- ("Skylar") und App-Unterordner ("eBRestarter"). Das muss korrekt verkettet werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir geben der Klasse einen Fake-Basis-Pfad und pr√ºfen, ob "Skylar" und "eBRestarter"
-        /// fehlerfrei angeh√§ngt werden.
+        /// Wir geben der Klasse einen Fake-Basis-Pfad und pr¸fen, ob "Skylar" und "eBRestarter"
+        /// fehlerfrei angeh‰ngt werden.
         /// </summary>
         [Fact]
         public void GetAppDataPath_ShouldCombineLocalAppData_WithSkylarAndAppFolder()
         {
             // ARRANGE
             string fakeLocalAppData = @"C:\FakeUsers\Max\AppData\Local";
-            _mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(fakeLocalAppData);
+            _mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(fakeLocalAppData);
 
             string expectedPath = Path.Combine(fakeLocalAppData, "Skylar", "eBRestarter");
 
             // ACT
-            string actualPath = _sut.GetAppDataPath();
+            string actualPath = _sut.RetrieveAppDataPath();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -54,19 +54,19 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
         /// <summary>
         /// Um den korrekten Download-Ordner des Nutzers zu finden, muss die Klasse vom
-        /// UserProfile-Ordner ausgehen und "Downloads" anh√§ngen.
+        /// UserProfile-Ordner ausgehen und "Downloads" anh‰ngen.
         /// </summary>
         [Fact]
         public void GetDownloadsPath_ShouldCombineUserProfile_WithDownloadsFolder()
         {
             // ARRANGE
             string fakeUserProfile = @"C:\FakeUsers\Max";
-            _mockPathProvider.Setup(p => p.GetUserProfileDirectory()).Returns(fakeUserProfile);
+            _mockPathProvider.Setup(p => p.RetrieveUserProfileDirectory()).Returns(fakeUserProfile);
 
             string expectedPath = Path.Combine(fakeUserProfile, "Downloads");
 
             // ACT
-            string actualPath = _sut.GetDownloadsPath();
+            string actualPath = _sut.RetrieveDownloadsPath();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -75,44 +75,44 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
         /// <summary>
         /// Die Konfigurationsdatei muss zwingend im AppData-Verzeichnis liegen und
-        /// exakt "eBRestarterConfig.json" hei√üen.
+        /// exakt "eBRestarterConfig.json" heiﬂen.
         ///
         /// WAS WIRD GETESTET?
-        /// Da GetConfigFilePath intern GetAppDataPath aufruft, m√ºssen wir auch hier den
-        /// LocalAppData-Pfad mocken. Danach pr√ºfen wir die gesamte Kette.
+        /// Da RetrieveConfigFilePath intern RetrieveAppDataPath aufruft, m¸ssen wir auch hier den
+        /// LocalAppData-Pfad mocken. Danach pr¸fen wir die gesamte Kette.
         /// </summary>
         [Fact]
         public void GetConfigFilePath_ShouldCombineAppDataPath_WithConfigFileName()
         {
             // ARRANGE
             string fakeLocalAppData = @"C:\FakeUsers\Max\AppData\Local";
-            _mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(fakeLocalAppData);
+            _mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(fakeLocalAppData);
 
             // Der erwartete Pfad baut sich aus Base + Skylar + eBRestarter + Config.json zusammen
             string expectedPath = Path.Combine(fakeLocalAppData, "Skylar", "eBRestarter", "eBRestarterConfig.json");
 
             // ACT
-            string actualPath = _sut.GetConfigFilePath();
+            string actualPath = _sut.RetrieveConfigFilePath();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
         }
 
         /// <summary>
-        /// Die Log-Datei muss zwingend im AppData-Verzeichnis liegen und "log.txt" hei√üen.
+        /// Die Log-Datei muss zwingend im AppData-Verzeichnis liegen und "log.txt" heiﬂen.
         /// </summary>
         [Fact]
         public void GetLogFilePath_ShouldCombineAppDataPath_WithLogFileName()
         {
             // ARRANGE
             string fakeLocalAppData = @"C:\FakeUsers\Max\AppData\Local";
-            _mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(fakeLocalAppData);
+            _mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(fakeLocalAppData);
 
             // Der erwartete Pfad baut sich aus Base + Skylar + eBRestarter + log.txt zusammen
             string expectedPath = Path.Combine(fakeLocalAppData, "Skylar", "eBRestarter", "log.txt");
 
             // ACT
-            string actualPath = _sut.GetLogFilePath();
+            string actualPath = _sut.RetrieveLogFilePath();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);

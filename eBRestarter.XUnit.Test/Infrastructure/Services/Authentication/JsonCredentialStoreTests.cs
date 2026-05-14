@@ -11,25 +11,13 @@ using Xunit;
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {
     /// <summary>
-    /// Testet den JsonCredentialStore, der API-Zugangsdaten auf der Festplatte speichert,
-    /// lädt, löscht und alte Binärdateien importiert.
+    /// Testet den JsonCredentialStore unter Verwendung von Mocking,
+    /// vollständig losgelöst von I/O-Kopplungen (Repository-Pattern).
     /// </summary>
     public class JsonCredentialStoreTests
     {
-        // Hilfsvariable für den erwarteten Pfad, damit wir ihn nicht überall hartkodieren müssen.
-        // Path.Combine verhält sich je nach Betriebssystem leicht anders (Slashes),
-        // daher bauen wir ihn hier dynamisch genau so auf, wie die Klasse es tut.
         private readonly string _expectedStoragePath = Path.Combine(@"C:\FakeAppData", "Skylar", "eBRestarter", "eBRestarterConfig.json");
 
-        /// <summary>
-        /// Wenn Zugangsdaten gespeichert werden, dürfen sie nicht verloren gehen. Wir müssen
-        /// sicherstellen, dass das Objekt korrekt in einen JSON-String umgewandelt und an den
-        /// richtigen Pfad auf der Festplatte (über den gemockten Service) geschrieben wird.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir übergeben ein gültiges ApiCredentials-Objekt. Dann prüfen wir, ob WriteAllText
-        /// exakt einmal mit dem korrekten Pfad und dem gültigen JSON-String aufgerufen wurde.
-        /// </summary>
         [Fact]
         public void SaveCredentials_ShouldSerializeToJson_AndWriteToFile()
         {
@@ -37,31 +25,23 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
 
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
 
             var store = new JsonCredentialStore(mockFileSystem.Object, mockPathProvider.Object);
             var credentials = new ApiCredentials("TestUser", "TestKey123");
 
-            // Erwartetes JSON (genau so, wie System.Text.Json es standardmäßig serialisiert)
             string expectedJson = JsonSerializer.Serialize(credentials);
 
             // ACT
             store.SaveCredentials(credentials);
 
             // ASSERT
-            // Verify prüft, ob die Methode exakt 1x mit den korrekten Parametern gefeuert wurde.
             mockFileSystem.Verify(fs => fs.WriteAllText(_expectedStoragePath, expectedJson), Times.Once);
         }
 
-        /// <summary>
-        /// Beim Starten der App muss sie wissen, ob der Nutzer schon eingeloggt ist.
-        /// Wenn die Config-Datei existiert, muss sie fehlerfrei ausgelesen und in ein
-        /// C#-Objekt zurückverwandelt werden.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren, dass die Datei existiert und einen korrekten JSON-String enthält.
-        /// Die Methode muss das korrekte ApiCredentials-Objekt zurückgeben.
-        /// </summary>
         [Fact]
         public void LoadCredentials_ShouldReturnCredentials_WhenFileExistsAndIsValidJson()
         {
@@ -69,12 +49,13 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
 
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
 
-            // Die simulierte Datei existiert
             mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(true);
 
-            // Der Inhalt der simulierten Datei
             string fakeJson = "{\"Username\":\"TestUser\",\"ApiKey\":\"TestKey123\"}";
             mockFileSystem.Setup(fs => fs.ReadAllText(_expectedStoragePath)).Returns(fakeJson);
 
@@ -89,26 +70,20 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             result.ApiKey.ShouldBe("TestKey123");
         }
 
-        /// <summary>
-        /// Wenn ein neuer Nutzer die App zum ersten Mal öffnet, gibt es noch keine Datei.
-        /// Die App darf dann nicht abstürzen, sondern muss geordnet 'null' zurückgeben.
-        /// Auch wenn die Datei z. B. durch einen Virenscanner zerstört wurde (ungültiges JSON),
-        /// darf das Programm nicht crashen (Try-Catch greift).
-        ///
-        /// WAS WIRD GETESTET?
-        /// Fall 1: Datei fehlt -> Ergebnis null.
-        /// Fall 2: Datei existiert, aber JSON ist kaputt -> Ergebnis null.
-        /// </summary>
         [Theory]
-        [InlineData(false, null)] // Datei existiert nicht
-        [InlineData(true, "Kein Gültiges JSON {")] // Datei existiert, aber JSON ist kaputt
+        [InlineData(false, null)]
+        [InlineData(true, "Kein Gültiges JSON {")]
         public void LoadCredentials_ShouldReturnNull_WhenFileIsMissingOrBroken(bool fileExists, string? fileContent)
         {
             // ARRANGE
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
 
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
+
             mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(fileExists);
 
             if (fileContent != null)
@@ -125,10 +100,6 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             result.ShouldBeNull();
         }
 
-        /// <summary>
-        /// Der Logout-Prozess muss zuverlässig die Datei von der Festplatte putzen,
-        /// damit nach einem Neustart niemand automatisch eingeloggt wird.
-        /// </summary>
         [Fact]
         public void ClearCredentials_ShouldDeleteFile_WhenFileExists()
         {
@@ -136,7 +107,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
 
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
+
             mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(true);
 
             var store = new JsonCredentialStore(mockFileSystem.Object, mockPathProvider.Object);
@@ -147,63 +122,41 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             mockFileSystem.Verify(fs => fs.DeleteFile(_expectedStoragePath), Times.Once);
         }
-        // INTEGRATION-TESTS FÜR DIE LEGACY FUNKTION
 
-        /// <summary>
-        /// Die ImportFromLegacyFile Methode nutzt direkt System.IO.File und den BinaryReader.
-        /// Wir können das nicht mit Moq simulieren. Stattdessen machen wir einen Mini-Integrationstest
-        /// und legen eine ECHTE temporäre Binärdatei an, um zu prüfen, ob die Auslese-Logik
-        /// von früher (BinaryReader.ReadString) noch korrekt funktioniert.
-        /// </summary>
         [Fact]
         public void ImportFromLegacyFile_ShouldReadBinaryFileCorrectly()
         {
             // ARRANGE
-            // Mocks für die restliche Klasse, die in diesem Test aber kaum gebraucht werden
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
 
             var store = new JsonCredentialStore(mockFileSystem.Object, mockPathProvider.Object);
 
-            // Wir legen eine echte, temporäre Datei in Windows an
-            string tempFilePath = Path.GetTempFileName();
-
-            try
+            var ms = new MemoryStream();
+            using (var writer = new BinaryWriter(ms, System.Text.Encoding.UTF8, leaveOpen: true))
             {
-                // Wir schreiben Binärdaten in die Datei, exakt so,
-                // wie es das alte eBRestarter System gemacht hat.
-                using (var writer = new BinaryWriter(File.Open(tempFilePath, FileMode.OpenOrCreate)))
-                {
-                    writer.Write("LegacyUser");
-                    writer.Write("LegacyKey999");
-                }
-
-                // ACT
-                // Jetzt testen wir unsere Import-Methode auf die echte Datei
-                var result = store.ImportFromLegacyFile(tempFilePath);
-
-                // ASSERT
-                result.ShouldNotBeNull();
-                result.Username.ShouldBe("LegacyUser");
-                result.ApiKey.ShouldBe("LegacyKey999");
+                writer.Write("LegacyUser");
+                writer.Write("LegacyKey999");
             }
-            finally
-            {
-                // CLEANUP: Egal ob der Test fehlschlägt oder durchgeht,
-                // wir MÜSSEN die echte Datei am Ende wieder löschen,
-                // damit wir die Festplatte des Test-Rechners nicht zumüllen!
-                if (File.Exists(tempFilePath))
-                {
-                    File.Delete(tempFilePath);
-                }
-            }
+            ms.Position = 0;
+
+            mockFileSystem.Setup(fs => fs.FileExists("legacyPath")).Returns(true);
+            mockFileSystem.Setup(fs => fs.OpenRead("legacyPath")).Returns(ms);
+
+            // ACT
+            var result = store.ImportFromLegacyFile("legacyPath");
+
+            // ASSERT
+            result.ShouldNotBeNull();
+            result.Username.ShouldBe("LegacyUser");
+            result.ApiKey.ShouldBe("LegacyKey999");
         }
 
-        /// <summary>
-        /// Wenn der Nutzer gar keine alte Binärdatei hat (weil er die App neu installiert),
-        /// muss die Methode einfach 'null' zurückgeben und darf nicht abstürzen.
-        /// </summary>
         [Fact]
         public void ImportFromLegacyFile_ShouldReturnNull_WhenFileDoesNotExist()
         {
@@ -211,17 +164,17 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
             var mockPathProvider = new Mock<IPathProvider>();
 
-            // FEHLERBEHEBUNG: Auch hier müssen wir dem Konstruktor einen Pfad vorgaukeln,
-            // sonst stürzt Path.Combine direkt ab, weil GetLocalAppDataDirectory 'null' liefert!
-            mockPathProvider.Setup(p => p.GetLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockFileSystem
+                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
+                .Returns((string[] paths) => Path.Combine(paths));
+
+            mockFileSystem.Setup(fs => fs.FileExists("nonExistentPath")).Returns(false);
 
             var store = new JsonCredentialStore(mockFileSystem.Object, mockPathProvider.Object);
 
-            // Ein Pfad, der garantiert nicht existiert
-            string nonExistentPath = Path.Combine(Path.GetTempPath(), "definitely_not_existing_file.bin");
-
             // ACT
-            var result = store.ImportFromLegacyFile(nonExistentPath);
+            var result = store.ImportFromLegacyFile("nonExistentPath");
 
             // ASSERT
             result.ShouldBeNull();

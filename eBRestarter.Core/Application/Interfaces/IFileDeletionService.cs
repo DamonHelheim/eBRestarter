@@ -1,13 +1,13 @@
-ï»¿namespace eBRestarter.Core.Application.Interfaces;
+namespace eBRestarter.Core.Application.Interfaces;
 
 public interface IFileDeletionService
 {
-    // ZÃ¤hlt Dateien in einem Verzeichnis rekursiv
+    // Zählt Dateien in einem Verzeichnis rekursiv
     Task<int> CountFilesAsync(List<string> directories);
 
-    // LÃ¶scht Dateien und meldet Fortschritt
+    // Löscht Dateien und meldet Fortschritt
     Task DeleteFilesAsync(List<string> directories, IProgress<string> statusReporter, IProgress<int> valueReporter, CancellationToken token);
 
-    // Einzelne Datei lÃ¶schen (fÃ¼r Firefox Cookies)
+    // Einzelne Datei löschen (für Firefox Cookies)
     void DeleteSingleFile(string filePath);
 }

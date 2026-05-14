@@ -1,4 +1,4 @@
-﻿//using eBRestarter.Core.Application.Interfaces.Authentication;
+//using eBRestarter.Core.Application.Interfaces.Authentication;
 //using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 //using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 //using Moq;

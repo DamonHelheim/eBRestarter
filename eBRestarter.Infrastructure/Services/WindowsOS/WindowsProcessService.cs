@@ -230,67 +230,81 @@ public partial class WindowsProcessService(ILogger<WindowsProcessService> logger
 
         foreach (var process in processes)
         {
-            // System-Prozesse, den Windows Explorer UND SICH SELBST ausschließen!
-            if (process.ProcessName == "System" ||
-                process.ProcessName == "Idle" ||
-                process.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase) ||
-                process.ProcessName.Equals(currentProcessName, StringComparison.OrdinalIgnoreCase))
+            if (ShouldIgnoreProcess(process, currentProcessName))
             {
                 process.Dispose();
                 continue;
             }
 
-            try
-            {
-                if (process.MainWindowHandle != IntPtr.Zero)
-                {
-                    PostMessage(process.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-                    pendingTasks.Add(process.WaitForExitAsync());
-                    processesToDispose.Add(process);
-                }
-                else
-                {
-                    process.Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Fehler beim Senden von WM_CLOSE an Prozess {Name}", process.ProcessName);
-                process.Dispose();
-            }
+            TryCloseProcess(process, pendingTasks, processesToDispose);
         }
 
         if (pendingTasks.Count > 0)
         {
-            if (_logger.IsEnabled(LogLevel.Information))
+            await WaitForProcessesToCloseAsync(pendingTasks, processesToDispose, timeoutMilliseconds);
+        }
+    }
+
+    private static bool ShouldIgnoreProcess(IProcess process, string currentProcessName)
+    {
+        return process.ProcessName == "System"
+                     || process.ProcessName == "Idle"
+                     || process.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase)
+                     || process.ProcessName.Equals(currentProcessName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void TryCloseProcess(IProcess process, List<Task> pendingTasks, List<IProcess> processesToDispose)
+    {
+        try
+        {
+            if (process.MainWindowHandle != IntPtr.Zero)
             {
-                _logger.LogInformation("Warte auf das Schließen von {Count} Programmen (Timeout: {Timeout}ms)...", pendingTasks.Count, timeoutMilliseconds);
-            }
-
-            var allTasksFinished = Task.WhenAll(pendingTasks);
-            var timeoutTask = Task.Delay(timeoutMilliseconds);
-
-            var finishedTask = await Task.WhenAny(allTasksFinished, timeoutTask);
-
-            if (finishedTask == timeoutTask)
-            {
-                if (_logger.IsEnabled(LogLevel.Warning))
-                {
-                    _logger.LogWarning("Timeout beim Warten auf das Beenden der Programme erreicht.");
-                }
+                PostMessage(process.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                pendingTasks.Add(process.WaitForExitAsync());
+                processesToDispose.Add(process);
             }
             else
             {
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-                    _logger.LogInformation("Alle Programme wurden erfolgreich sanft geschlossen.");
-                }
-            }
-
-            foreach (var process in processesToDispose)
-            {
                 process.Dispose();
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Fehler beim Senden von WM_CLOSE an Prozess {Name}", process.ProcessName);
+            process.Dispose();
+        }
+    }
+
+    private async Task WaitForProcessesToCloseAsync(List<Task> pendingTasks, List<IProcess> processesToDispose, int timeoutMilliseconds)
+    {
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Warte auf das Schließen von {Count} Programmen (Timeout: {Timeout}ms)...", pendingTasks.Count, timeoutMilliseconds);
+        }
+
+        var allTasksFinished = Task.WhenAll(pendingTasks);
+        var timeoutTask = Task.Delay(timeoutMilliseconds);
+
+        var finishedTask = await Task.WhenAny(allTasksFinished, timeoutTask);
+
+        if (finishedTask == timeoutTask)
+        {
+            if (_logger.IsEnabled(LogLevel.Warning))
+            {
+                _logger.LogWarning("Timeout beim Warten auf das Beenden der Programme erreicht.");
+            }
+        }
+        else
+        {
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Alle Programme wurden erfolgreich sanft geschlossen.");
+            }
+        }
+
+        foreach (var process in processesToDispose)
+        {
+            process.Dispose();
         }
     }
 
@@ -357,8 +371,8 @@ public partial class WindowsProcessService(ILogger<WindowsProcessService> logger
             string args = $"\"{folderPath}\"";
 
             // SonarQube Fix: Absoluten Pfad zur explorer.exe aus dem Windows-Hauptordner holen
-            string windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-            string explorerPath = Path.Combine(windowsFolder, "explorer.exe");
+            var windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            var explorerPath = Path.Combine(windowsFolder, "explorer.exe");
 
             _processWrapper.Start(new ProcessStartInfo
             {

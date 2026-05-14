@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using Microsoft.Extensions.Logging;
@@ -15,8 +15,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// <summary>
     /// Testet den WindowsStartupService.
     /// Dank der sauberen Architektur (IWindowsRegistryService, IProcessInfoService)
-    /// kÃ¶nnen wir hier alle Registry-Zugriffe und Pfad-Ermittlungen vollstÃ¤ndig mocken,
-    /// ohne das echte System des Entwicklers zu verÃ¤ndern.
+    /// können wir hier alle Registry-Zugriffe und Pfad-Ermittlungen vollständig mocken,
+    /// ohne das echte System des Entwicklers zu verändern.
     /// </summary>
     public class WindowsStartupServiceTests
     {
@@ -25,7 +25,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         private readonly Mock<IProcessInfoService> _mockProcessInfo;
         private readonly WindowsStartupService _sut;
 
-        // Konstanten, die in der Originalklasse verwendet werden (fÃ¼r prÃ¤zise Verification)
+        // Konstanten, die in der Originalklasse verwendet werden (für präzise Verification)
         private const string RegistryPathRun = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
         private const string RegistryPathEdgePolicies = @"SOFTWARE\Policies\Microsoft\Edge";
         private const string RegistryPathPasswordLess = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device";
@@ -42,10 +42,10 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
         /// <summary>
         /// Stellt sicher, dass beim Aktivieren des Autostarts der exakte Pfad der
-        /// laufenden .exe-Datei in den korrekten "Run"-SchlÃ¼ssel geschrieben wird.
+        /// laufenden .exe-Datei in den korrekten "Run"-Schlüssel geschrieben wird.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir geben Ã¼ber den ProcessInfo-Mock einen Fake-Pfad zurÃ¼ck und prÃ¼fen,
+        /// Wir geben über den ProcessInfo-Mock einen Fake-Pfad zurück und prüfen,
         /// ob der Registry-Service exakt diesen Pfad speichert.
         /// </summary>
         [Fact]
@@ -67,7 +67,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Stellt sicher, dass der Autostart-Eintrag korrekt aus der Registry gelÃ¶scht wird.
+        /// Stellt sicher, dass der Autostart-Eintrag korrekt aus der Registry gelöscht wird.
         /// </summary>
         [Fact]
         public void DisableAutoStart_ShouldDeleteRegistryKey()
@@ -97,7 +97,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// PrÃ¼ft, ob IsAutoStartEnabledAsync korrekt auswertet, ob unser App-SchlÃ¼ssel
+        /// Prüft, ob IsAutoStartEnabledAsync korrekt auswertet, ob unser App-Schlüssel
         /// in den geladenen Registry-Werten existiert.
         /// </summary>
         [Theory]
@@ -112,10 +112,10 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             {
                 fakeRegistryEntries.Add("eBRestarter", @"C:\Path\eB.exe");
             }
-            // Wir fÃ¼gen Rauschen hinzu, um sicherzustellen, dass er nach dem richtigen Key sucht
+            // Wir fügen Rauschen hinzu, um sicherzustellen, dass er nach dem richtigen Key sucht
             fakeRegistryEntries.Add("SomeOtherApp", @"C:\Other\app.exe");
 
-            _mockRegistry.Setup(r => r.GetCurrentUserValues(RegistryPathRun)).Returns(fakeRegistryEntries);
+            _mockRegistry.Setup(r => r.RetrieveCurrentUserValues(RegistryPathRun)).Returns(fakeRegistryEntries);
 
             // ACT
             bool result = await _sut.IsAutoStartEnabledAsync();
@@ -147,7 +147,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// PrÃ¼ft das Auslesen des Edge-Status. Standardverhalten laut deinem Code:
+        /// Prüft das Auslesen des Edge-Status. Standardverhalten laut deinem Code:
         /// 1 -> True, 0 -> False. Wenn nicht gesetzt (null) -> True.
         /// </summary>
         [Theory]
@@ -158,7 +158,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         public void IsEdgeStartupBoostEnabled_ShouldReturnExpectedResult(object? registryValue, bool expectedResult)
         {
             // ARRANGE
-            _mockRegistry.Setup(r => r.GetLocalMachineValue(RegistryPathEdgePolicies, "StartupBoostEnabled"))
+            _mockRegistry.Setup(r => r.RetrieveLocalMachineValue(RegistryPathEdgePolicies, "StartupBoostEnabled"))
                          .Returns(registryValue);
 
             // ACT
@@ -192,8 +192,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Wenn das Setzen des AutoLogon in HKLM ohne Adminrechte fehlschlÃ¤gt,
-        /// darf der Prozess nicht abstÃ¼rzen, sondern muss das sauber loggen.
+        /// Wenn das Setzen des AutoLogon in HKLM ohne Adminrechte fehlschlägt,
+        /// darf der Prozess nicht abstürzen, sondern muss das sauber loggen.
         /// </summary>
         [Fact]
         public void SetAutoLogon_ShouldCatchUnauthorizedAccessException_Gracefully()
@@ -203,7 +203,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                          .Throws(new UnauthorizedAccessException("Need Admin Rights"));
 
             // ACT & ASSERT
-            // Die Methode fÃ¤ngt die Exception spezifisch ab, crasht also nicht.
+            // Die Methode fängt die Exception spezifisch ab, crasht also nicht.
             Should.NotThrow(() => _sut.SetAutoLogon(true));
         }
     }

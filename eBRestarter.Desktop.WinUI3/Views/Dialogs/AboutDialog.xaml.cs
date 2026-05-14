@@ -15,13 +15,6 @@ public sealed partial class AboutDialog : ContentDialog
     {
         this.InitializeComponent();
 
-        // HIER HOLST DU DAS VIEWMODEL
-        // Entweder per Dependency Injection (App.Services...) oder manuell:
-
-        // Manuell (Quick & Dirty zum Testen):
-        // ViewModel = new AboutViewModel(new Infrastructure.Services.AppInfoService());
-
-        // Besser via DI (wenn vorhanden):
         ViewModelAbout = App.AppHost!.Services.GetRequiredService<ViewModelAbout>();
 
         this.DataContext = ViewModelAbout;

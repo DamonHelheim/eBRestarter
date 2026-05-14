@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Constants;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Browsers.Abstract;
 using Microsoft.Extensions.Logging;
@@ -10,49 +10,72 @@ namespace eBRestarter.Infrastructure.Browsers;
 public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> logger) : BrowserBase(os, logger)
 {
     private const string EbesucherAddOnNameForFirefox = "{76e6445a-74a5-4c26-9afc-95dae514cb77}.xpi";
+
     public override string DisplayName => "Firefox";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_firefox.png";
     public override string DownloadUrl => WebLinks.FirefoxDownloadLink;
     public override string ExtensionInstallUrl => WebLinks.FirefoxEVisitorAddOnLink;
     public override BrowserType Type => BrowserType.Firefox;
-    protected override string ProcessName => "firefox";
+
+    protected override List<string> ExecutablePaths
+    {
+        get
+        {
+            var paths = new List<string>();
+
+            // 1. REGISTRY: Dynamic Lookup
+            var hkcuPath = RetrievePathFromMozillaRegistry(false);
+
+            if (!string.IsNullOrEmpty(hkcuPath))
+            {
+
+                paths.Add(hkcuPath);
+            }
+
+            var hklmPath = RetrievePathFromMozillaRegistry(true);
+
+            if (!string.IsNullOrEmpty(hklmPath))
+            {
+                paths.Add(hklmPath);
+            }
+
+            // 2. STANDARDPFADE (Fallback)
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("ProgramFiles"), @"Mozilla Firefox\firefox.exe"));
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("ProgramFiles(x86)"), @"Mozilla Firefox\firefox.exe"));
+            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData"), @"Mozilla Firefox\firefox.exe"));
+
+            return [.. paths.Distinct()];
+
+            string? RetrievePathFromMozillaRegistry(bool isHklm)
+            {
+                const string rootKey = @"Software\Mozilla\Mozilla Firefox";
+
+                var currentVersionObj = isHklm
+                    ? _os.WindowsRegistryService.RetrieveLocalMachineValue(rootKey, "CurrentVersion")
+                    : _os.WindowsRegistryService.RetrieveCurrentUserValue(rootKey, "CurrentVersion");
+
+                if (currentVersionObj is null) return null;
+
+                string currentVersion = currentVersionObj.ToString()!;
+                string mainKeyPath = $@"{rootKey}\{currentVersion}\Main";
+
+                var pathToExeObj = isHklm
+                    ? _os.WindowsRegistryService.RetrieveLocalMachineValue(mainKeyPath, "PathToExe")
+                    : _os.WindowsRegistryService.RetrieveCurrentUserValue(mainKeyPath, "PathToExe");
+
+                return pathToExeObj?.ToString();
+            }
+        }
+    }
+
+    public override string ProcessName => "firefox";
     protected override string RegistryKeyVersion => @"Software\Mozilla\Mozilla Firefox";
 
-    // PRÜFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
-    public override bool IsExtensionInstalled(string? extensionId = null)
-    {
-        var paths = GetPaths();
-
-        // Wenn keine Extensions-Ordner gefunden wurden, abbrechen
-        if (paths.ExtensionsDirs == null || paths.ExtensionsDirs.Count == 0) return false;
-
-        var idToCheck = string.IsNullOrEmpty(extensionId)
-            ? EbesucherAddOnNameForFirefox.TrimStart('\\')
-            : extensionId;
-
-        // Wir prüfen jeden gefundenen Profil-Ordner
-        foreach (var extensionsDir in paths.ExtensionsDirs)
-        {
-            if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
-
-            // Fall 1: Die Extension ist eine .xpi Datei
-            var xpiPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
-            if (_os.WindowsFileSystemService.FileExists(xpiPath)) return true;
-
-            // Fall 2: Die Extension ist ein entpackter Ordner (Sideloading)
-            // Entferne .xpi Endung für den Ordnernamen-Check
-            var folderName = idToCheck.Replace(".xpi", "", StringComparison.OrdinalIgnoreCase);
-            var folderPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, folderName);
-            if (_os.WindowsFileSystemService.DirectoryExists(folderPath)) return true;
-        }
-
-        return false;
-    }
     // PFADE: Cache, Cookies & Extensions für ALLE Profile ermitteln
-    public override BrowserPaths GetPaths()
+    public override BrowserPaths ResolvePaths()
     {
-        var appData = _os.WindowsFileSystemService.GetEnvironmentPath("AppData"); // Roaming
-        var localAppData = _os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData"); // Local
+        var appData = _os.WindowsFileSystemService.ResolveEnvironmentPath("AppData"); // Roaming
+        var localAppData = _os.WindowsFileSystemService.ResolveEnvironmentPath("LocalAppData"); // Local
 
         var firefoxRoamingRoot = _os.WindowsFileSystemService.CombinePaths(appData, "Mozilla", "Firefox");
         var firefoxLocalRoot = _os.WindowsFileSystemService.CombinePaths(localAppData, "Mozilla", "Firefox");
@@ -64,7 +87,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
 
         // 1. profiles.ini einlesen und alle Profil-Ordner finden
         var profilesIniPath = _os.WindowsFileSystemService.CombinePaths(firefoxRoamingRoot, "profiles.ini");
-        var profileInfos = GetProfileFoldersFromIni(profilesIniPath);
+        var profileInfos = RetrieveProfileFoldersFromIni(profilesIniPath);
 
         // 2. Pfade für jedes gefundene Profil generieren
         foreach (var profile in profileInfos)
@@ -106,31 +129,38 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
         return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
     }
 
-
-    //Cookie source
-
-    //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\storage\default => Cookies
-    //"C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\cookies.sqlite"
-
-
-    //Internetcache source
-    //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\doomed
-    //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\entries
-    //C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\jumpListCache
-
-    //Current open tabs
-    //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\sessionstore-backups
-
-    //C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\datareporting
-    // HELPER: profiles.ini Parsen
-
-    private class ProfileInfo
+    // PRÜFUNG: Ist die Extension installiert? (Sucht in ALLEN Profilen)
+    public override bool IsExtensionInstalled(string? extensionId = null)
     {
-        public string Path { get; set; } = string.Empty;
-        public bool IsRelative { get; set; } = true;
+        var paths = ResolvePaths();
+
+        // Wenn keine Extensions-Ordner gefunden wurden, abbrechen
+        if (paths.ExtensionsDirs is null || paths.ExtensionsDirs.Count == 0) return false;
+
+        var idToCheck = string.IsNullOrEmpty(extensionId)
+            ? EbesucherAddOnNameForFirefox.TrimStart('\\')
+            : extensionId;
+
+        // Wir prüfen jeden gefundenen Profil-Ordner
+        foreach (var extensionsDir in paths.ExtensionsDirs)
+        {
+            if (!_os.WindowsFileSystemService.DirectoryExists(extensionsDir)) continue;
+
+            // Fall 1: Die Extension ist eine .xpi Datei
+            var xpiPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, idToCheck);
+            if (_os.WindowsFileSystemService.FileExists(xpiPath)) return true;
+
+            // Fall 2: Die Extension ist ein entpackter Ordner (Sideloading)
+            // Entferne .xpi Endung für den Ordnernamen-Check
+            var folderName = idToCheck.Replace(".xpi", "", StringComparison.OrdinalIgnoreCase);
+            var folderPath = _os.WindowsFileSystemService.CombinePaths(extensionsDir, folderName);
+            if (_os.WindowsFileSystemService.DirectoryExists(folderPath)) return true;
+        }
+
+        return false;
     }
 
-    private List<ProfileInfo> GetProfileFoldersFromIni(string iniPath)
+    private List<ProfileInfo> RetrieveProfileFoldersFromIni(string iniPath)
     {
         var profiles = new List<ProfileInfo>();
 
@@ -151,7 +181,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
                 if (line.Trim().StartsWith('[') && line.Trim().EndsWith(']'))
                 {
                     // Wenn wir vorher Daten gesammelt haben, speichern wir sie jetzt
-                    if (currentPath != null)
+                    if (currentPath is not null)
                     {
                         profiles.Add(new ProfileInfo
                         {
@@ -179,7 +209,7 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
             }
 
             // Den allerletzten Eintrag nicht vergessen (da keine neue Klammer [ mehr kommt)
-            if (currentPath != null)
+            if (currentPath is not null)
             {
                 profiles.Add(new ProfileInfo
                 {
@@ -195,55 +225,30 @@ public class FirefoxBrowser(IOperatingSystemFacade os, ILogger<FirefoxBrowser> l
 
         return profiles;
     }
-    // EXECUTABLE PATHS (Deine bestehende Logik)
-    protected override List<string> ExecutablePaths
+
+    private sealed class ProfileInfo
     {
-        get
-        {
-            var paths = new List<string>();
-
-            // 1. REGISTRY: Dynamic Lookup
-            string? GetPathFromMozillaRegistry(bool isHklm)
-            {
-                const string rootKey = @"Software\Mozilla\Mozilla Firefox";
-
-                var currentVersionObj = isHklm
-                    ? _os.WindowsRegistryService.GetLocalMachineValue(rootKey, "CurrentVersion")
-                    : _os.WindowsRegistryService.GetCurrentUserValue(rootKey, "CurrentVersion");
-
-                if (currentVersionObj == null) return null;
-
-                string currentVersion = currentVersionObj.ToString()!;
-                string mainKeyPath = $@"{rootKey}\{currentVersion}\Main";
-
-                var pathToExeObj = isHklm
-                    ? _os.WindowsRegistryService.GetLocalMachineValue(mainKeyPath, "PathToExe")
-                    : _os.WindowsRegistryService.GetCurrentUserValue(mainKeyPath, "PathToExe");
-
-                return pathToExeObj?.ToString();
-            }
-
-            var hkcuPath = GetPathFromMozillaRegistry(false);
-
-            if (!string.IsNullOrEmpty(hkcuPath)) {
-
-                paths.Add(hkcuPath);
-
-            }
-
-            var hklmPath = GetPathFromMozillaRegistry(true);
-
-            if (!string.IsNullOrEmpty(hklmPath))
-            {
-                 paths.Add(hklmPath);
-            }
-
-            // 2. STANDARDPFADE (Fallback)
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles"), @"Mozilla Firefox\firefox.exe"));
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("ProgramFiles(x86)"), @"Mozilla Firefox\firefox.exe"));
-            paths.Add(_os.WindowsFileSystemService.CombinePaths(_os.WindowsFileSystemService.GetEnvironmentPath("LocalAppData"), @"Mozilla Firefox\firefox.exe"));
-
-            return [.. paths.Distinct()];
-        }
+        public string Path { get; set; } = string.Empty;
+        public bool IsRelative { get; set; } = true;
     }
 }
+
+//Cookie source
+
+//C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\storage\default => Cookies
+//"C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\cookies.sqlite"
+
+
+//Internetcache source
+//C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\doomed
+//C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\cache2\entries
+//C:\Users\Workstation\AppData\Local\Mozilla\Firefox\Profiles\opng5oi1.default-release\jumpListCache
+
+//Current open tabs
+//C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\sessionstore-backups
+
+//C:\Users\Workstation\AppData\Roaming\Mozilla\Firefox\Profiles\opng5oi1.default-release\datareporting
+// HELPER: profiles.ini Parsen
+
+
+

@@ -9,5 +9,5 @@ public interface IComputerRestartDateService
     /// Computes the next restart instant from interval (days) and clock hour (0–23).
     /// </summary>
     /// <returns><see cref="DateTime.MinValue"/> when the schedule is disabled.</returns>
-    DateTime GetNextRestartDate(int intervalDays, int restartClockTime);
+    DateTime RetrieveNextRestartDate(int intervalDays, int restartClockTime);
 }

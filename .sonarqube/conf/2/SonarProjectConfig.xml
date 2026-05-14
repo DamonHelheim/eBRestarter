@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SonarProjectConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/analyzer/2021/1">
   <AnalysisConfigPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\SonarQubeAnalysisConfig.xml</AnalysisConfigPath>
-  <ProjectPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.XUnit.Test\eBRestarter.XUnit.Test.csproj</ProjectPath>
+  <ProjectPath>C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj</ProjectPath>
   <FilesToAnalyzePath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\conf\2\FilesToAnalyze.txt</FilesToAnalyzePath>
   <OutPath>C:\Users\Workstation\source\repos\eBRestarter\.sonarqube\out\2</OutPath>
-  <ProjectType>Test</ProjectType>
+  <ProjectType>Product</ProjectType>
   <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
 </SonarProjectConfig>

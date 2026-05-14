@@ -13,5 +13,5 @@ public interface IBrowserCleanupScheduleService
     /// <summary>
     /// Berechnet das nächste Löschdatum nach einem Durchlauf (fromDate + intervalDays).
     /// </summary>
-    DateTime GetNextCleanupDateAfterRun(DateTime fromDate, int intervalDays);
+    DateTime CalculateNextCleanupDateAfterRun(DateTime fromDate, int intervalDays);
 }

@@ -15,7 +15,7 @@ public class PrincipalContextCredentialValidationService(IActiveDirectoryService
     {
         try
         {
-            ContextType contextType = ContextType.Machine;
+            var contextType = ContextType.Machine;
 
             if (!string.Equals(domain, Environment.MachineName, StringComparison.OrdinalIgnoreCase))
             {

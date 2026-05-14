@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 
 namespace eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 
@@ -11,15 +11,15 @@ public interface IWindowsRegistryService
     /// <summary>
     /// Liest einen einzelnen Wert aus HKEY_CURRENT_USER.
     /// </summary>
-    object? GetCurrentUserValue(string subKey, string valueName);
+    object? RetrieveCurrentUserValue(string subKey, string valueName);
 
     /// <summary>
-    /// Liest alle Werte eines Schlüssels aus HKEY_CURRENT_USER.
+    /// Liest alle Werte eines Schl�ssels aus HKEY_CURRENT_USER.
     /// </summary>
-    Dictionary<string, object> GetCurrentUserValues(string subKey);
+    Dictionary<string, object> RetrieveCurrentUserValues(string subKey);
 
     /// <summary>
     /// Liest einen einzelnen Wert aus HKEY_LOCAL_MACHINE.
     /// </summary>
-    object? GetLocalMachineValue(string subKey, string valueName);
+    object? RetrieveLocalMachineValue(string subKey, string valueName);
 }

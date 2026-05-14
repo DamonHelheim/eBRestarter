@@ -6,13 +6,6 @@ public static class SystemPaths
     private const string ManufacturerName = "Skylar";
     private const string AppName = "eBRestarter";
 
-    // Gibt dynamisch den korrekten Pfad zu "AppData/Local" zurück (z.B. C:\Users\User\AppData\Local)
-    // Das ist viel sicherer als manuelles String-Basteln.
-    private static string LocalAppData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-
-    // Gibt dynamisch den User-Profil-Ordner zurück (z.B. C:\Users\User)
-    private static string UserProfile => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
     // Der Basis-Ordner deiner App: ...\AppData\Local\Skylar\eBRestarter\
     public static string ApplicationDataBasePath => Path.Combine(LocalAppData, ManufacturerName, AppName);
 
@@ -28,6 +21,15 @@ public static class SystemPaths
     public static string File_Path_Time_Stamp_Restart_Process => Path.Combine(ApplicationDataBasePath, "RestartDate.ini");
     public static string File_Path_API => Path.Combine(ApplicationDataBasePath, "EB_API_File.apiaf");
     public static string File_Path_Logging => Path.Combine(ApplicationDataBasePath, "log.txt");
+
+    // Gibt dynamisch den korrekten Pfad zu "AppData/Local" zurück (z.B. C:\Users\User\AppData\Local)
+    // Das ist viel sicherer als manuelles String-Basteln.
+    private static string LocalAppData => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+    // Gibt dynamisch den User-Profil-Ordner zurück (z.B. C:\Users\User)
+    private static string UserProfile => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+
 
     // Helper: Stellt sicher, dass der App-Ordner existiert (kann beim Start aufgerufen werden)
     public static void EnsureApplicationDirectoryExists()

@@ -12,6 +12,7 @@ public partial class ComputerRestartScheduler(
     TimeProvider timeProvider,
     ILogger<ComputerRestartScheduler> logger) : IComputerRestartScheduler, IDisposable
 {
+    private bool _disposed;
     // Abhängigkeiten (Dependency Inversion Principle)
     private readonly IEVisitorConfigService _configService = configService;
     private readonly IWindowsProcessControlService _processService = processService;
@@ -28,7 +29,7 @@ public partial class ComputerRestartScheduler(
 
     public void StartScheduler()
     {
-        if (_backgroundTask != null) return; // Läuft bereits
+        if (_backgroundTask is not null) return; // Läuft bereits
 
         _logger.LogInformation("Computer Restart Scheduler gestartet.");
 
@@ -43,14 +44,14 @@ public partial class ComputerRestartScheduler(
 
     public async Task StopSchedulerAsync()
     {
-        if (_cts != null)
+        if (_cts is not null)
         {
             await _cts.CancelAsync();
             _cts.Dispose();
             _cts = null;
         }
 
-        if (_backgroundTask != null)
+        if (_backgroundTask is not null)
         {
             try
             {
@@ -63,6 +64,31 @@ public partial class ComputerRestartScheduler(
         }
 
         _logger.LogInformation("Computer Restart Scheduler gestoppt.");
+    }
+
+    public void Dispose()
+    {
+        // Ruft die eigentliche Aufräum-Methode auf
+        Dispose(true);
+
+        // Sagt dem Garbage Collector, dass er den Finalizer nicht mehr aufrufen muss (SonarQube Fix!)
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        // Verhindert, dass doppelt abgebaut wird
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Verwaltete Ressourcen (Managed Objects) freigeben
+                _timer?.Dispose();
+                _cts?.Dispose();
+            }
+
+            _disposed = true;
+        }
     }
 
     private async Task LoopAsync(CancellationToken token)
@@ -91,7 +117,7 @@ public partial class ComputerRestartScheduler(
         var config = _configService.LoadConfig();
 
         // 2. Validierung: Ist ein Datum gesetzt?
-        if (config.Computer.NextRestartDate == null || config.Computer.ComputerRestartIntervalDays <= 0)
+        if (config.Computer.NextRestartDate is null || config.Computer.ComputerRestartIntervalDays <= 0)
         {
             return; // Feature nicht aktiv
         }
@@ -168,29 +194,4 @@ public partial class ComputerRestartScheduler(
         }
     }
 
-    private bool _disposed;
-    public void Dispose()
-    {
-        // Ruft die eigentliche Aufräum-Methode auf
-        Dispose(true);
-
-        // Sagt dem Garbage Collector, dass er den Finalizer nicht mehr aufrufen muss (SonarQube Fix!)
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        // Verhindert, dass doppelt abgebaut wird
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                // Verwaltete Ressourcen (Managed Objects) freigeben
-                _timer?.Dispose();
-                _cts?.Dispose();
-            }
-
-            _disposed = true;
-        }
-    }
 }

@@ -11,7 +11,8 @@ public class ToggleEdgeStartupBoostService(
     private readonly IWindowsStartupManagerService _startupService = startupService;
     private readonly IBrowserFactory _browserFactory = browserFactory;
 
-    public bool IsEnabled() => _startupService.IsEdgeStartupBoostEnabled();
+    public bool IsEnabled() =>
+        _startupService.IsEdgeStartupBoostEnabled();
 
     public bool IsEdgeInstalled()
     {

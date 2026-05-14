@@ -1,12 +1,12 @@
-ï»¿using eBRestarter.Core.Application.Models.Api;
+using eBRestarter.Core.Application.Models.Api;
 
 namespace eBRestarter.Core.Application.Interfaces.RestClient;
 
 public interface IRestClientService
 {
-    // Asynchron ist Standard fÃ¼r Web-Requests
+    // Asynchron ist Standard für Web-Requests
     Task<ApiResponse> ExecuteGetAsync(ApiRequest request);
 
-    // Synchron (falls zwingend nÃ¶tig, aber async preferred)
+    // Synchron (falls zwingend nötig, aber async preferred)
     ApiResponse ExecuteGet(ApiRequest request);
 }

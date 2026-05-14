@@ -1,3 +1,4 @@
+#pragma warning disable S3168
 using System.Diagnostics;
 
 namespace eBRestarter.Core.Application.Extensions;

@@ -14,11 +14,11 @@ public class GetSystemInformationService(
 
     public async Task<SystemInformationResponse> ExecuteAsync()
     {
-        var hardware = await _hardwareService.GetHardwareInfoAsync();
-        var edition = await _osEditionService.GetOsEditionAsync();
-        var osDisplayVersion = _systemInfoService.GetCurrentOsDisplayVersion();
-        var osBuildVersion = _systemInfoService.GetCurrentOsBuildVersion();
-        var browserName = _systemInfoService.GetCurrentStandardBrowserName();
+        var hardware = await _hardwareService.RetrieveHardwareInfoAsync();
+        var edition = await _osEditionService.RetrieveOsEditionAsync();
+        var osDisplayVersion = _systemInfoService.RetrieveCurrentOsDisplayVersion();
+        var osBuildVersion = _systemInfoService.RetrieveCurrentOsBuildVersion();
+        var browserName = _systemInfoService.RetrieveCurrentStandardBrowserName();
 
         return new SystemInformationResponse(
             ProcessorName: hardware.ProcessorName,

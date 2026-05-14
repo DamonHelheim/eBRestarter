@@ -46,8 +46,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             WeakReferenceMessenger.Default.Send(new ApiCredentialsRemovedMessage());
 
             await _dialogService.ShowMessageAsync(
-                _localizationService.GetString("Options_RemoveCreds_Title"),
-                _localizationService.GetString("Options_RemoveCreds_Message"),
+                _localizationService.RetrieveString("Options_RemoveCreds_Title"),
+                _localizationService.RetrieveString("Options_RemoveCreds_Message"),
                 DialogIcon.Success);
         }
 

@@ -17,17 +17,17 @@ public class HttpClientDownloadService : IBrowserDownloadService
 
     }
 
-    public async Task DownloadFileAsync(string url, string destinationPath, IProgress<DownloadProgressStatus> progress, CancellationToken cancellationToken)
+    public async Task DownloadFileAsync(string url, string destinationPath, IProgress<DownloadProgressStatus> progress, CancellationToken cancel)
     {
         // 1. Verbindung aufbauen (nur Header lesen)
-        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
         response.EnsureSuccessStatusCode();
 
         var totalBytes = response.Content.Headers.ContentLength ?? -1L;
         var canReportProgress = totalBytes != -1;
 
         // 2. Streams öffnen
-        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        await using var contentStream = await response.Content.ReadAsStreamAsync(cancel);
 
         // WICHTIG: FileOptions.Asynchronous für echtes Async I/O auf der Festplatte
         await using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
@@ -41,12 +41,12 @@ public class HttpClientDownloadService : IBrowserDownloadService
         long lastUpdateTicks = 0;
         long updateIntervalTicks = Stopwatch.Frequency / 10; // 1/10 Sekunde (=100ms)
 
-        while ((bytesRead = await contentStream.ReadAsync(buffer, cancellationToken)) > 0)
+        while ((bytesRead = await contentStream.ReadAsync(buffer, cancel)) > 0)
         {
-            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancel);
             totalRead += bytesRead;
 
-            if (canReportProgress && progress != null)
+            if (canReportProgress && progress is not null)
             {
                 // Update senden, wenn:
                 // A) Das Zeitintervall abgelaufen ist ODER

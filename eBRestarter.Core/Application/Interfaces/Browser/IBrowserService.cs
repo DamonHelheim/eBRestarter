@@ -1,9 +1,9 @@
-﻿using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Core.Application.Interfaces.Browser;
 
 public interface IBrowserService
 {
-    Task<IEnumerable<BrowserInfo>> GetInstalledBrowsersAsync();
-    // Eventuell Methoden für Installation, Download etc.
+    Task<IEnumerable<BrowserInfo>> FindInstalledBrowsersAsync();
+    // Eventuell Methoden f�r Installation, Download etc.
 }

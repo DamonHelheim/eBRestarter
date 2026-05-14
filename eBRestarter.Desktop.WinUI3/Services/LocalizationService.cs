@@ -28,7 +28,7 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
         _resourceMap = _resourceManager.MainResourceMap;
     }
 
-    public string GetString(string key)
+    public string RetrieveString(string key)
     {
         try
         {
@@ -43,8 +43,8 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
 
     public IEnumerable<LanguageOption> GetAvailableLanguages()
     {
-        string de = GetString("Lang_German");
-        string en = GetString("Lang_English");
+        string de = RetrieveString("Lang_German");
+        string en = RetrieveString("Lang_English");
         if (de.StartsWith('[')) de = "Deutsch";
         if (en.StartsWith('[')) en = "English";
         return [new(de, 0), new(en, 1)];
@@ -54,11 +54,11 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
     {
         return
         [
-            new(GetString("RestartOption_0"), 0),
-            new(GetString("RestartOption_1"), 1),
-            new(GetString("RestartOption_3"), 3),
-            new(GetString("RestartOption_7"), 7),
-            new(GetString("RestartOption_14"), 14)
+            new(RetrieveString("RestartOption_0"), 0),
+            new(RetrieveString("RestartOption_1"), 1),
+            new(RetrieveString("RestartOption_3"), 3),
+            new(RetrieveString("RestartOption_7"), 7),
+            new(RetrieveString("RestartOption_14"), 14)
         ];
     }
 
@@ -66,11 +66,11 @@ public class LocalizationService : ILocalizationService, IUIOptionsService
     {
         return
         [
-            new(GetString("BrowserCacheOption_0"), 0),
-            new(GetString("BrowserCacheOption_1"), 1),
-            new(GetString("BrowserCacheOption_3"), 3),
-            new(GetString("BrowserCacheOption_7"), 7),
-            new(GetString("BrowserCacheOption_14"), 14)
+            new(RetrieveString("BrowserCacheOption_0"), 0),
+            new(RetrieveString("BrowserCacheOption_1"), 1),
+            new(RetrieveString("BrowserCacheOption_3"), 3),
+            new(RetrieveString("BrowserCacheOption_7"), 7),
+            new(RetrieveString("BrowserCacheOption_14"), 14)
         ];
     }
 }

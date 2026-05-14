@@ -35,14 +35,14 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             public override string IconPath => "";
             public override string DownloadUrl => "";
             public override string ExtensionInstallUrl => "";
-            protected override string ProcessName => "testbrowser";
+            public override string ProcessName => "testbrowser";
             protected override string RegistryKeyVersion => @"Software\Test";
 
             // Wir gaukeln der Basisklasse vor, dass unser Test-Browser nur diesen einen Pfad hat.
             protected override List<string> ExecutablePaths => new() { @"C:\FakePath\browser.exe" };
 
             public override bool IsExtensionInstalled(string? extensionId = null) => false;
-            public override BrowserPaths GetPaths() => new(new List<string>(), new List<string>(), new List<string>());
+            public override BrowserPaths ResolvePaths() => new(new List<string>(), new List<string>(), new List<string>());
 
             // WICHTIG: CleanVersionString ist in der Basisklasse 'protected'.
             // Ein Unit-Test darf "von auÃŸen" nicht auf protected Methoden zugreifen.
@@ -183,3 +183,4 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
     }
 }
+

@@ -1,4 +1,4 @@
-ï»¿using eBRestarter.Infrastructure.Services.WindowsOS;
+using eBRestarter.Infrastructure.Services.WindowsOS;
 using Shouldly;
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// Testet den WindowsPathProvider.
     /// Da diese Klasse ein reiner Wrapper um System.Environment ist, testen wir hier,
     /// ob die Methoden intern auf die korrekten Windows-Umgebungsvariablen verweisen
-    /// und ob die zurÃ¼ckgegebenen Strings gÃ¼ltige, absolute Pfade sind.
+    /// und ob die zurückgegebenen Strings gültige, absolute Pfade sind.
     /// </summary>
     public class WindowsPathProviderTests
     {
@@ -23,11 +23,11 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 1. APPDATA / LOCALAPPDATA TESTS
 
         /// <summary>
-        /// Stellt sicher, dass GetAppDataDirectory den korrekten Pfad zum Roaming-AppData Ordner liefert.
+        /// Stellt sicher, dass RetrieveAppDataDirectory den korrekten Pfad zum Roaming-AppData Ordner liefert.
         ///
         /// WAS WIRD GETESTET?
         /// Wir rufen das echte System via Environment.GetFolderPath auf und vergleichen es mit der
-        /// Ausgabe unseres Wrappers. Zudem prÃ¼fen wir, ob es sich um einen validen absoluten Pfad handelt.
+        /// Ausgabe unseres Wrappers. Zudem prüfen wir, ob es sich um einen validen absoluten Pfad handelt.
         /// </summary>
         [Fact]
         public void GetAppDataDirectory_ShouldReturnCorrectRoamingAppDataPath()
@@ -36,7 +36,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             // ACT
-            string actualPath = _sut.GetAppDataDirectory();
+            string actualPath = _sut.RetrieveAppDataDirectory();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -45,7 +45,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Stellt sicher, dass GetLocalAppDataDirectory auf den lokalen AppData Ordner verweist.
+        /// Stellt sicher, dass RetrieveLocalAppDataDirectory auf den lokalen AppData Ordner verweist.
         /// </summary>
         [Fact]
         public void GetLocalAppDataDirectory_ShouldReturnCorrectLocalAppDataPath()
@@ -54,7 +54,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             // ACT
-            string actualPath = _sut.GetLocalAppDataDirectory();
+            string actualPath = _sut.RetrieveLocalAppDataDirectory();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -73,7 +73,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
             // ACT
-            string actualPath = _sut.GetUserProfileDirectory();
+            string actualPath = _sut.RetrieveUserProfileDirectory();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -83,7 +83,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 3. PROGRAM FILES TESTS
 
         /// <summary>
-        /// Stellt sicher, dass der Pfad fÃ¼r 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
+        /// Stellt sicher, dass der Pfad für 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
         /// </summary>
         [Fact]
         public void GetProgramFilesDirectory_ShouldReturnCorrectProgramFilesPath()
@@ -92,7 +92,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
             // ACT
-            string actualPath = _sut.GetProgramFilesDirectory();
+            string actualPath = _sut.RetrieveProgramFilesDirectory();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);
@@ -110,7 +110,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
             // ACT
-            string actualPath = _sut.GetProgramFilesX86Directory();
+            string actualPath = _sut.RetrieveProgramFilesX86Directory();
 
             // ASSERT
             actualPath.ShouldBe(expectedPath);

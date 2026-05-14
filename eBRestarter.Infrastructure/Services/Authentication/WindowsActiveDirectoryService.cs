@@ -1,11 +1,11 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.Authentication;
+using eBRestarter.Core.Application.Interfaces.Authentication;
 using System.DirectoryServices.AccountManagement;
 
 namespace eBRestarter.Infrastructure.Services.Authentication;
 
 /// <summary>
-/// Das ist der echte Wrapper fÃ¼r die Windows-API, den wir in den Unit-Tests durch Moq ersetzen.
-/// Er enthÃ¤lt keine eigene Logik, sondern reicht die Parameter nur an Windows durch.
+/// Das ist der echte Wrapper für die Windows-API, den wir in den Unit-Tests durch Moq ersetzen.
+/// Er enthält keine eigene Logik, sondern reicht die Parameter nur an Windows durch.
 /// </summary>
 public class WindowsActiveDirectoryService : IActiveDirectoryService
 {

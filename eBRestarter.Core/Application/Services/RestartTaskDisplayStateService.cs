@@ -18,22 +18,22 @@ public class RestartTaskDisplayStateService(
     private readonly TimeProvider _timeProvider = timeProvider;
 
     /// <inheritdoc />
-    public RestartTaskDisplayState GetInitialState(AppConfig config)
+    public RestartTaskDisplayState RetrieveInitialState(AppConfig config)
     {
-        if (config == null)
+        if (config is null)
         {
             return new RestartTaskDisplayState
             {
-                ChosenBrowser = _localizationService.GetString("Task_DefaultBrowser"),
+                ChosenBrowser = _localizationService.RetrieveString("Task_DefaultBrowser"),
                 PauseSeconds = 20,
                 RuntimeSeconds = 3600
             };
         }
 
         string username = config.Username ?? "-";
-        string chosenBrowser = config.Browser?.Selected ?? _localizationService.GetString("Task_DefaultBrowser");
+        string chosenBrowser = config.Browser?.Selected ?? _localizationService.RetrieveString("Task_DefaultBrowser");
 
-        int runtimeSeconds = config.Browser != null ? config.Browser.RuntimeHours * 3600 : 3600;
+        int runtimeSeconds = config.Browser is null ? 3600 : config.Browser.RuntimeHours * 3600;
         int pauseSeconds = config.Browser?.RuntimePauseSeconds ?? 20;
 
         bool checkBrowserAliveRoutine = config.Browser?.CheckBrowserAliveRoutine ?? false;
@@ -41,7 +41,7 @@ public class RestartTaskDisplayStateService(
         int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
         DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
 
-        bool deleteBrowserContentIsActive = _intervalValidator.IsValidIntervalDays(intervalDays);
+        var deleteBrowserContentIsActive = _intervalValidator.IsValidIntervalDays(intervalDays);
 
         string deleteIsActivatedMessage;
         string nextDeletionProcessMessage;
@@ -49,10 +49,10 @@ public class RestartTaskDisplayStateService(
 
         if (deleteBrowserContentIsActive)
         {
-            deleteIsActivatedMessage = _localizationService.GetString("Activate");
-            nextDeletionProcessMessage = _localizationService.GetString("NextDeletionProcess");
+            deleteIsActivatedMessage = _localizationService.RetrieveString("Activate");
+            nextDeletionProcessMessage = _localizationService.RetrieveString("NextDeletionProcess");
 
-            string formatPattern = _localizationService.GetString("Browser_NextDeleteDate_Format");
+            var formatPattern = _localizationService.RetrieveString("Browser_NextDeleteDate_Format");
 
             var today = _timeProvider.GetLocalNow().Date;
 
@@ -65,7 +65,7 @@ public class RestartTaskDisplayStateService(
         }
         else
         {
-            deleteIsActivatedMessage = _localizationService.GetString("Disabled");
+            deleteIsActivatedMessage = _localizationService.RetrieveString("Disabled");
             nextDeletionProcessMessage = string.Empty;
             nextDeletionProcessDateMessage = string.Empty;
         }

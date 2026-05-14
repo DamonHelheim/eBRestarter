@@ -3,7 +3,7 @@ namespace eBRestarter.Core.Application.Extensions;
 using System;
 using System.Globalization;
 
-public static class FormatExtensions
+public static class Int64Extensions
 {
     // ZB und YB entfernt, da ein Int64 (long) maximal ~9.2 EB fassen kann.
     // "bytes" zu "B" geändert für eine einheitliche Optik.

@@ -11,5 +11,5 @@ public interface IRestartCalculationService
     /// <param name="intervalDays">ComputerRestartIntervalDays (0 = deaktiviert)</param>
     /// <param name="restartClockTime">RestartClockTime (Stunde 0-23)</param>
     /// <returns>Nächstes Datum inkl. Uhrzeit, oder DateTime.MinValue wenn intervalDays &lt;= 0</returns>
-    DateTime GetNextRestartDate(int intervalDays, int restartClockTime);
+    DateTime RetrieveNextRestartDate(int intervalDays, int restartClockTime);
 }

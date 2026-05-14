@@ -36,7 +36,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
         public void IsNetworkAvailable_ShouldReturnResultFromProvider(bool isAvailable)
         {
             // ARRANGE
-            _mockProvider.Setup(p => p.GetIsNetworkAvailable()).Returns(isAvailable);
+            _mockProvider.Setup(p => p.CheckIsNetworkAvailable()).Returns(isAvailable);
 
             // ACT
             var result = _sut.IsNetworkAvailable();
@@ -69,7 +69,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
             var validEthMock = CreateNicMock("Valid Ethernet", OperationalStatus.Up, NetworkInterfaceType.Ethernet, sent: 500, received: 1000);
             var validWifiMock = CreateNicMock("Valid WiFi", OperationalStatus.Up, NetworkInterfaceType.Wireless80211, sent: 0, received: 50); // Nur Downloads
 
-            _mockProvider.Setup(p => p.GetAllNetworkInterfaces()).Returns(new[]
+            _mockProvider.Setup(p => p.RetrieveAllNetworkInterfaces()).Returns(new[]
             {
                 loopbackMock.Object,
                 downMock.Object,
@@ -79,9 +79,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
             });
 
             // ACT
-            // Da 'GetActiveInterfaces' ein IEnumerable mit 'yield return' nutzt,
+            // Da 'RetrieveActiveInterfaces' ein IEnumerable mit 'yield return' nutzt,
             // holen wir uns mit .ToList() die tatsächliche Auswertung.
-            var result = _sut.GetActiveInterfaces().ToList();
+            var result = _sut.RetrieveActiveInterfaces().ToList();
 
             // ASSERT
             // 1. Es dürfen exakt nur die 2 gültigen Karten übrig bleiben

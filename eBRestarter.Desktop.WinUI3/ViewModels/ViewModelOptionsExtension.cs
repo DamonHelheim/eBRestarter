@@ -4,6 +4,7 @@ using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Config;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Models.Config;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -88,7 +89,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string extensionPath = _browserExtensionDeploymentService.GetExtensionFolderPath();
+                string extensionPath = _browserExtensionDeploymentService.RetrieveExtensionFolderPath();
 
                 if (!Directory.Exists(extensionPath))
                 {
@@ -100,9 +101,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                string messageFormat = _localizationService.GetString("Options_ExtensionFolderOpenError_Message");
+                string messageFormat = _localizationService.RetrieveString("Options_ExtensionFolderOpenError_Message");
                 await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString("Options_ExtensionFolderOpenError_Title"),
+                    _localizationService.RetrieveString("Options_ExtensionFolderOpenError_Title"),
                     string.Format(messageFormat, ex.Message),
                     DialogIcon.Error);
             }
@@ -113,7 +114,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string extensionPath = _browserExtensionDeploymentService.GetExtensionFolderPath();
+                string extensionPath = _browserExtensionDeploymentService.RetrieveExtensionFolderPath();
                 string configPath = Path.Combine(extensionPath, ExtensionConfigFileName);
 
                 var extensionConfigDto = new ExtensionConfigDto
@@ -132,7 +133,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
                 await File.WriteAllTextAsync(configPath, jsonString);
 
-                ExtensionSaveStatus = _localizationService.GetString("Options_SavedSuccessfully") ?? string.Empty;
+                ExtensionSaveStatus = _localizationService.RetrieveString("Options_SavedSuccessfully") ?? string.Empty;
                 await Task.Delay(ExtensionSaveStatusDisplayDurationMilliseconds);
                 ExtensionSaveStatus = string.Empty;
             }
@@ -140,8 +141,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             {
                 Debug.WriteLine(ex);
                 await _dialogService.ShowMessageAsync(
-                    _localizationService.GetString(GeneralErrorKey),
-                    _localizationService.GetString("BrowserExtension_Config_Error_Message") + " " + ex.Message,
+                    _localizationService.RetrieveString(GeneralErrorKey),
+                    _localizationService.RetrieveString("BrowserExtension_Config_Error_Message") + " " + ex.Message,
                     DialogIcon.Error);
             }
         }
@@ -150,7 +151,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string configPath = Path.Combine(_browserExtensionDeploymentService.GetExtensionFolderPath(), ExtensionConfigFileName);
+                string configPath = Path.Combine(_browserExtensionDeploymentService.RetrieveExtensionFolderPath(), ExtensionConfigFileName);
 
                 if (File.Exists(configPath))
                 {
