@@ -1,4 +1,4 @@
-using eBRestarter.Infrastructure.Services.WindowsOS;
+ï»¿using eBRestarter.Infrastructure.Services.WindowsOS;
 using Microsoft.Win32;
 using Shouldly;
 using System;
@@ -9,31 +9,31 @@ using Xunit;
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsRegistryService.
-    /// Da diese Klasse tief in das System eingreift, arbeiten wir für Schreibtests
-    /// in einem sicheren, temporären Sandbox-Schlüssel unter HKEY_CURRENT_USER.
+    /// Testet den WindowsRegistryAdapter.
+    /// Da diese Klasse tief in das System eingreift, arbeiten wir fÃ¼r Schreibtests
+    /// in einem sicheren, temporÃ¤ren Sandbox-SchlÃ¼ssel unter HKEY_CURRENT_USER.
     /// </summary>
     public class WindowsRegistryServiceTests : IDisposable
     {
-        private readonly WindowsRegistryService _sut;
+        private readonly WindowsRegistryAdapter _sut;
         private readonly string _tempTestKey;
 
         public WindowsRegistryServiceTests()
         {
-            _sut = new WindowsRegistryService();
+            _sut = new WindowsRegistryAdapter();
 
-            // Wir generieren für jeden Testdurchlauf einen einzigartigen, temporären Registry-Key.
-            // Das verhindert, dass sich parallele Tests stören oder das Entwickler-System zugemüllt wird.
+            // Wir generieren fÃ¼r jeden Testdurchlauf einen einzigartigen, temporÃ¤ren Registry-Key.
+            // Das verhindert, dass sich parallele Tests stÃ¶ren oder das Entwickler-System zugemÃ¼llt wird.
             _tempTestKey = $@"Software\eBRestarter_TestSandbox_{Guid.NewGuid()}";
         }
-        // 1. CURRENT USER TESTS (HKCU) - Schreiben, Lesen, Löschen
+        // 1. CURRENT USER TESTS (HKCU) - Schreiben, Lesen, LÃ¶schen
 
         /// <summary>
         /// Stellt sicher, dass Werte korrekt in die CurrentUser-Registry geschrieben
-        /// und exakt so wieder ausgelesen werden können.
+        /// und exakt so wieder ausgelesen werden kÃ¶nnen.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir schreiben einen String in unsere Sandbox und lesen ihn über die Get-Methode wieder aus.
+        /// Wir schreiben einen String in unsere Sandbox und lesen ihn Ã¼ber die Get-Methode wieder aus.
         /// </summary>
         [Fact]
         public void SetAndGetCurrentUserValue_ShouldWriteAndReadCorrectly()
@@ -52,8 +52,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Wenn ein Wert gelöscht wird, darf er danach nicht mehr existieren. Die Methode
-        /// darf außerdem nicht abstürzen, wenn der Wert bereits fehlt (throwOnMissingValue: false).
+        /// Wenn ein Wert gelÃ¶scht wird, darf er danach nicht mehr existieren. Die Methode
+        /// darf auÃŸerdem nicht abstÃ¼rzen, wenn der Wert bereits fehlt (throwOnMissingValue: false).
         /// </summary>
         [Fact]
         public void DeleteCurrentUserValue_ShouldRemoveValue_WithoutCrashing()
@@ -74,8 +74,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Stellt sicher, dass das Auslesen eines gesamten Registry-Schlüssels
-        /// alle darin enthaltenen Werte als Dictionary zurückgibt.
+        /// Stellt sicher, dass das Auslesen eines gesamten Registry-SchlÃ¼ssels
+        /// alle darin enthaltenen Werte als Dictionary zurÃ¼ckgibt.
         /// </summary>
         [Fact]
         public void GetCurrentUserValues_ShouldReturnAllValuesAsDictionary()
@@ -97,8 +97,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Wenn ein Schlüssel nicht existiert, darf die App nicht abstürzen,
-        /// sondern muss ein leeres Dictionary zurückliefern.
+        /// Wenn ein SchlÃ¼ssel nicht existiert, darf die App nicht abstÃ¼rzen,
+        /// sondern muss ein leeres Dictionary zurÃ¼ckliefern.
         /// </summary>
         [Fact]
         public void GetCurrentUserValues_ShouldReturnEmptyDictionary_WhenKeyDoesNotExist()
@@ -113,8 +113,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 2. LOCAL MACHINE TESTS (HKLM)
 
         /// <summary>
-        /// Das Lesen aus HKLM benötigt keine Adminrechte und muss immer funktionieren.
-        /// Wir prüfen das, indem wir einen Schlüssel lesen, der in jedem Windows-System existiert.
+        /// Das Lesen aus HKLM benÃ¶tigt keine Adminrechte und muss immer funktionieren.
+        /// Wir prÃ¼fen das, indem wir einen SchlÃ¼ssel lesen, der in jedem Windows-System existiert.
         /// </summary>
         [Fact]
         public void GetLocalMachineValue_ShouldReadExistingWindowsKey()
@@ -133,9 +133,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Das Schreiben in HKLM benötigt zwingend Administrator-Rechte.
-        /// Der Test prüft, ob entweder der Wert erfolgreich geschrieben wird (wenn als Admin ausgeführt),
-        /// oder ob die korrekte Sicherheitsausnahme geworfen wird (wenn als normaler User ausgeführt).
+        /// Das Schreiben in HKLM benÃ¶tigt zwingend Administrator-Rechte.
+        /// Der Test prÃ¼ft, ob entweder der Wert erfolgreich geschrieben wird (wenn als Admin ausgefÃ¼hrt),
+        /// oder ob die korrekte Sicherheitsausnahme geworfen wird (wenn als normaler User ausgefÃ¼hrt).
         /// </summary>
         [Fact]
         public void SetLocalMachineValue_ShouldWriteIfAdmin_OrThrowSecurityException()
@@ -153,7 +153,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 result.ShouldNotBeNull();
                 result.ToString().ShouldBe("Success");
 
-                // Cleanup für HKLM (nur möglich, wenn wir Admin sind)
+                // Cleanup fÃ¼r HKLM (nur mÃ¶glich, wenn wir Admin sind)
                 Registry.LocalMachine.DeleteSubKeyTree(hklmTestKey, false);
             }
             catch (Exception ex)
@@ -161,28 +161,29 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 // ASSERT (Falls wir KEINE Admin-Rechte haben)
                 // Es muss entweder eine UnauthorizedAccessException oder SecurityException sein.
                 (ex is UnauthorizedAccessException || ex is SecurityException)
-                    .ShouldBeTrue("Erwartete fehlende Berechtigung, da der Test-Runner nicht als Administrator läuft.");
+                    .ShouldBeTrue("Erwartete fehlende Berechtigung, da der Test-Runner nicht als Administrator lÃ¤uft.");
             }
         }
-        // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
+        // CLEANUP (wird nach JEDEM Test automatisch ausgefÃ¼hrt)
         public void Dispose()
         {
-            // Wir löschen den kompletten Sandbox-Ordner aus der Registry des aktuellen Benutzers.
-            // So hinterlässt der Unit-Test absolut keine Spuren.
+            // Wir lÃ¶schen den kompletten Sandbox-Ordner aus der Registry des aktuellen Benutzers.
+            // So hinterlÃ¤sst der Unit-Test absolut keine Spuren.
             try
             {
                 using var baseKey = Registry.CurrentUser.OpenSubKey("Software", true);
                 if (baseKey != null)
                 {
-                    // Den speziellen Ordner für diesen Testlauf löschen (nur diesen einen!)
+                    // Den speziellen Ordner fÃ¼r diesen Testlauf lÃ¶schen (nur diesen einen!)
                     string keyToDelete = _tempTestKey.Replace(@"Software\", "");
                     baseKey.DeleteSubKeyTree(keyToDelete, false);
                 }
             }
             catch
             {
-                // Fehler beim Aufräumen ignorieren, um den Test-Erfolg nicht zu verfälschen
+                // Fehler beim AufrÃ¤umen ignorieren, um den Test-Erfolg nicht zu verfÃ¤lschen
             }
         }
     }
 }
+

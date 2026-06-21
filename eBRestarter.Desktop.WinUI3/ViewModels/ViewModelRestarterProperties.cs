@@ -104,7 +104,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
     /// </summary>
     public ViewModelRestarterProperties(
         IScheduleBrowserCleanupUseCase scheduleBrowserCleanupUseCase,
-        IOperatingSystemFacade operatingSystemFacade,
+        IOperatingSystemFacade OperatingSystemFacadeAdapter,
         IEVisitorConfigService eVisitorConfigService,
         ILocalizationService localizationService,
         IUIOptionsService uiOptionsService,
@@ -112,7 +112,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
         IBrowserService browserService)
     {
         ArgumentNullException.ThrowIfNull(scheduleBrowserCleanupUseCase);
-        ArgumentNullException.ThrowIfNull(operatingSystemFacade);
+        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
         ArgumentNullException.ThrowIfNull(eVisitorConfigService);
         ArgumentNullException.ThrowIfNull(localizationService);
         ArgumentNullException.ThrowIfNull(uiOptionsService);
@@ -123,7 +123,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
         _dialogService = dialogService;
         _eVisitorConfigService = eVisitorConfigService;
         _localizationService = localizationService;
-        _operatingSystemFacade = operatingSystemFacade;
+        _operatingSystemFacade = OperatingSystemFacadeAdapter;
         _scheduleBrowserCleanupUseCase = scheduleBrowserCleanupUseCase;
         _uiOptionsService = uiOptionsService;
 
@@ -327,14 +327,14 @@ public partial class ViewModelRestarterProperties : ObservableObject
             string formatPattern = _localizationService.RetrieveString("Browser_NextDeleteDate_Format");
             string formattedDateString = string.Format(formatPattern, scheduleUpdateResponse.NextDate.Value);
 
-            WeakReferenceMessenger.Default.Send(new NextDeletionProcess(_localizationService.RetrieveString("NextDeletionProcess")));
+            WeakReferenceMessenger.Default.Send(new NextDeletionProcessMessage(_localizationService.RetrieveString("NextDeletionProcess")));
             WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(formattedDateString));
             WeakReferenceMessenger.Default.Send(new DeleteBrowserContentActivateMessage(_localizationService.RetrieveString("Activate")));
             WeakReferenceMessenger.Default.Send(new DeleteBrowserContentIsActive(true));
         }
         else
         {
-            WeakReferenceMessenger.Default.Send(new NextDeletionProcess(string.Empty));
+            WeakReferenceMessenger.Default.Send(new NextDeletionProcessMessage(string.Empty));
             WeakReferenceMessenger.Default.Send(new NextDeletionProcessDate(string.Empty));
             WeakReferenceMessenger.Default.Send(new DeleteBrowserContentActivateMessage(_localizationService.RetrieveString("Disabled")));
             WeakReferenceMessenger.Default.Send(new DeleteBrowserContentIsActive(false));
@@ -353,3 +353,5 @@ public partial class ViewModelRestarterProperties : ObservableObject
     /// <summary>Username can be added only when the field is non-empty.</summary>
     private bool CanAddUsername() => !string.IsNullOrWhiteSpace(Username);
 }
+
+

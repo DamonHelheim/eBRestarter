@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Browsers;
 using Microsoft.Extensions.Logging;
@@ -9,25 +9,25 @@ using Xunit;
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
     /// <summary>
-    /// Testet die hartkodierten Eigenheiten der konkreten ChromeBrowser Klasse.
+    /// Testet die hartkodierten Eigenheiten der konkreten ChromeBrowserAdapter Klasse.
     /// </summary>
     public class ChromeBrowserTests
     {
         /// <summary>
         /// eBesucher muss ganz spezifische Ordner leeren (z. B. "Cache_Data", "IndexedDB").
-        /// Wir müssen sicherstellen, dass die ResolvePaths() Methode genau diese Ordner für
+        /// Wir mÃ¼ssen sicherstellen, dass die ResolvePaths() Methode genau diese Ordner fÃ¼r
         /// das Standard-Profil von Chrome generiert.
         ///
         /// WAS WIRD GETESTET?
         /// Wir mocken 'CombinePaths', damit es Pfade berechenbar zusammenklebt.
-        /// Dann prüfen wir, ob in der generierten Liste exakt die geforderten Ordner-Endungen stehen.
+        /// Dann prÃ¼fen wir, ob in der generierten Liste exakt die geforderten Ordner-Endungen stehen.
         /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectCacheAndCookieDirectories_ForDefaultProfile()
         {
             // ARRANGE
             var mockOs = new Mock<IOperatingSystemFacade>();
-            var mockLogger = new Mock<ILogger<ChromeBrowser>>();
+            var mockLogger = new Mock<ILogger<ChromeBrowserAdapter>>();
             var mockFileSystem = new Mock<IWindowsFileSystemService>();
 
             // 1. LocalAppData vorgeben
@@ -38,16 +38,16 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
                 .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
                 .Returns<string[]>(paths => string.Join(@"\", paths));
 
-            // 3. Wir täuschen vor, dass das "Default"-Profilverzeichnis existiert!
-            // Sonst bricht ChromeBrowser.cs in Zeile 42 ab.
+            // 3. Wir tÃ¤uschen vor, dass das "Default"-Profilverzeichnis existiert!
+            // Sonst bricht ChromeBrowserAdapter.cs in Zeile 42 ab.
             string expectedDefaultProfilePath = @"C:\Users\Test\AppData\Local\Google\Chrome\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 
-            mockOs.Setup(os => os.WindowsFileSystemService).Returns(mockFileSystem.Object);
-            var chromeBrowser = new ChromeBrowser(mockOs.Object, mockLogger.Object);
+            mockOs.Setup(os => os.WindowsFileSystemServiceAdapter).Returns(mockFileSystem.Object);
+            var ChromeBrowserAdapter = new ChromeBrowserAdapter(mockOs.Object, mockLogger.Object);
 
             // ACT
-            var paths = chromeBrowser.ResolvePaths();
+            var paths = ChromeBrowserAdapter.ResolvePaths();
 
             // ASSERT
             // Hat er den Cache-Ordner gefunden?
@@ -60,3 +60,5 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
     }
 }
+
+

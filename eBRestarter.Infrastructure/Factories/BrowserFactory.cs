@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Interfaces.Browser;
+﻿using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Browsers;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +13,14 @@ public class BrowserFactory(IServiceProvider serviceProvider) : IBrowserFactory
     {
         return type switch
         {
-            BrowserType.Chrome => _serviceProvider.GetRequiredService<ChromeBrowser>(),
-            BrowserType.Firefox => _serviceProvider.GetRequiredService<FirefoxBrowser>(),
-            BrowserType.Edge => _serviceProvider.GetRequiredService<EdgeBrowser>(),
-            BrowserType.Brave => _serviceProvider.GetRequiredService<BraveBrowser>(),
-            BrowserType.Vivaldi => _serviceProvider.GetRequiredService<VivaldiBrowser>(),
+            BrowserType.Chrome => _serviceProvider.GetRequiredService<ChromeBrowserAdapter>(),
+            BrowserType.Firefox => _serviceProvider.GetRequiredService<FirefoxBrowserAdapter>(),
+            BrowserType.Edge => _serviceProvider.GetRequiredService<EdgeBrowserAdapter>(),
+            BrowserType.Brave => _serviceProvider.GetRequiredService<BraveBrowserAdapter>(),
+            BrowserType.Vivaldi => _serviceProvider.GetRequiredService<VivaldiBrowserAdapter>(),
             _ => throw new NotSupportedException($"Browser {type} ist noch nicht implementiert.")
         };
     }
 }
+
+

@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
@@ -24,7 +24,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// <summary>
 /// View model for a single browser entry on the "Installed Browsers" page. Handles display of
 /// install state, version, download progress, and actions: choose as default or download/install
-/// via <see cref="IBrowserDownloadService"/>. Sends <see cref="BrowserChangedMessage"/> when chosen.
+/// via <see cref="IBrowserDownloadUseCase"/>. Sends <see cref="BrowserChangedMessage"/> when chosen.
 /// </summary>
 public partial class ViewModelBrowserItem : ObservableObject
 {
@@ -54,7 +54,7 @@ public partial class ViewModelBrowserItem : ObservableObject
 
     private CancellationTokenSource? _downloadCancellationTokenSource;
 
-    private readonly IBrowserDownloadService _downloadService;
+    private readonly IBrowserDownloadUseCase _downloadService;
 
     private readonly IEVisitorConfigService _eVisitorConfigService;
 
@@ -147,22 +147,22 @@ public partial class ViewModelBrowserItem : ObservableObject
     /// </summary>
     public ViewModelBrowserItem(
         BrowserInfo browserInfo,
-        IBrowserDownloadService downloadService,
-        IOperatingSystemFacade operatingSystemFacade,
+        IBrowserDownloadUseCase downloadService,
+        IOperatingSystemFacade OperatingSystemFacadeAdapter,
         IEVisitorConfigService eVisitorConfigService,
         IDialogService dialogService,
         ILocalizationService localizationService)
     {
         ArgumentNullException.ThrowIfNull(browserInfo);
         ArgumentNullException.ThrowIfNull(downloadService);
-        ArgumentNullException.ThrowIfNull(operatingSystemFacade);
+        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
         ArgumentNullException.ThrowIfNull(eVisitorConfigService);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
 
         _browserInfo = browserInfo;
         _downloadService = downloadService;
-        _operatingSystemFacade = operatingSystemFacade;
+        _operatingSystemFacade = OperatingSystemFacadeAdapter;
         _eVisitorConfigService = eVisitorConfigService;
         _dialogService = dialogService;
         _localizationService = localizationService;
@@ -246,8 +246,8 @@ public partial class ViewModelBrowserItem : ObservableObject
     {
         try
         {
-            if (_operatingSystemFacade.WindowsFileSystemService.FileExists(partialDownloadFilePath))
-                _operatingSystemFacade.WindowsFileSystemService.DeleteFile(partialDownloadFilePath);
+            if (_operatingSystemFacade.WindowsFileSystemServiceAdapter.FileExists(partialDownloadFilePath))
+                _operatingSystemFacade.WindowsFileSystemServiceAdapter.DeleteFile(partialDownloadFilePath);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ObjectDisposedException)
         {
@@ -319,8 +319,8 @@ public partial class ViewModelBrowserItem : ObservableObject
         RefreshBrowserVersionText();
 
         var fileName = $"{_browserInfo.Name}{BrowserInstallerFileNameSuffix}";
-        var userProfile = _operatingSystemFacade.WindowsFileSystemService.ResolveEnvironmentPath(UserProfileEnvironmentVariableName);
-        var downloadPath = _operatingSystemFacade.WindowsFileSystemService.CombinePaths(userProfile, UserDownloadsFolderName, fileName);
+        var userProfile = _operatingSystemFacade.WindowsFileSystemServiceAdapter.ResolveEnvironmentPath(UserProfileEnvironmentVariableName);
+        var downloadPath = _operatingSystemFacade.WindowsFileSystemServiceAdapter.CombinePaths(userProfile, UserDownloadsFolderName, fileName);
 
         var progressHandler = new Progress<DownloadProgressStatus>(downloadProgressStatus =>
         {
@@ -356,3 +356,5 @@ public partial class ViewModelBrowserItem : ObservableObject
         }
     }
 }
+
+

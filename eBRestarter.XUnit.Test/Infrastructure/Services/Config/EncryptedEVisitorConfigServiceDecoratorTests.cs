@@ -16,19 +16,19 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
     public class EncryptedEVisitorConfigServiceDecoratorTests
     {
         private readonly Mock<IEVisitorConfigService> _mockInnerService;
-        private readonly Mock<IEncryptionService> _mockEncryptionService;
+        private readonly Mock<IEncryptionUseCase> _mockEncryptionUseCase;
         private readonly Mock<ILogger<EncryptedEVisitorConfigServiceDecorator>> _mockLogger;
         private readonly EncryptedEVisitorConfigServiceDecorator _decorator;
 
         public EncryptedEVisitorConfigServiceDecoratorTests()
         {
             _mockInnerService = new Mock<IEVisitorConfigService>();
-            _mockEncryptionService = new Mock<IEncryptionService>();
+            _mockEncryptionUseCase = new Mock<IEncryptionUseCase>();
             _mockLogger = new Mock<ILogger<EncryptedEVisitorConfigServiceDecorator>>();
 
             _decorator = new EncryptedEVisitorConfigServiceDecorator(
                 _mockInnerService.Object,
-                _mockEncryptionService.Object,
+                _mockEncryptionUseCase.Object,
                 _mockLogger.Object
             );
         }
@@ -41,7 +41,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             rawConfig.Settings.ApiKey = "EncryptedApiKey";
 
             _mockInnerService.Setup(s => s.LoadConfig()).Returns(rawConfig);
-            _mockEncryptionService.Setup(e => e.Decrypt("EncryptedApiKey")).Returns("PlaintextApiKey");
+            _mockEncryptionUseCase.Setup(e => e.Decrypt("EncryptedApiKey")).Returns("PlaintextApiKey");
 
             // ACT
             var result = _decorator.LoadConfig();
@@ -58,7 +58,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             rawConfig.Settings.ApiKey = "CorruptApiKey";
 
             _mockInnerService.Setup(s => s.LoadConfig()).Returns(rawConfig);
-            _mockEncryptionService.Setup(e => e.Decrypt("CorruptApiKey")).Returns(string.Empty);
+            _mockEncryptionUseCase.Setup(e => e.Decrypt("CorruptApiKey")).Returns(string.Empty);
 
             // ACT
             var result = _decorator.LoadConfig();
@@ -74,7 +74,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
             var configToSave = new AppConfig();
             configToSave.Settings.ApiKey = "PlaintextApiKey";
 
-            _mockEncryptionService.Setup(e => e.Encrypt("PlaintextApiKey")).Returns("EncryptedApiKey");
+            _mockEncryptionUseCase.Setup(e => e.Encrypt("PlaintextApiKey")).Returns("EncryptedApiKey");
 
             string capturedKey = null!;
             _mockInnerService
@@ -102,3 +102,4 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Config
         }
     }
 }
+

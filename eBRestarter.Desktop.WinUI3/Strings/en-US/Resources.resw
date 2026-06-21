@@ -981,4 +981,7 @@ Do you want to restart now?</value>
   <data name="Chart_FakeDataMode" xml:space="preserve">
     <value> (Test Mode)</value>
   </data>
+  <data name="Cleanup_Running" xml:space="preserve">
+    <value>Cleanup running...</value>
+  </data>
 </root>

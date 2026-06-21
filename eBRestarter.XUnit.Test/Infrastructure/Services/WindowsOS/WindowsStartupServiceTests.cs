@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
 using eBRestarter.Infrastructure.Services.WindowsOS;
 using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
 using Microsoft.Extensions.Logging;
@@ -13,39 +13,39 @@ using Xunit;
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsStartupService.
-    /// Dank der sauberen Architektur (IWindowsRegistryService, IProcessInfoService)
-    /// können wir hier alle Registry-Zugriffe und Pfad-Ermittlungen vollständig mocken,
-    /// ohne das echte System des Entwicklers zu verändern.
+    /// Testet den WindowsStartupServiceAdapter.
+    /// Dank der sauberen Architektur (IWindowsRegistryService, IProcessInfoUseCase)
+    /// kï¿½nnen wir hier alle Registry-Zugriffe und Pfad-Ermittlungen vollstï¿½ndig mocken,
+    /// ohne das echte System des Entwicklers zu verï¿½ndern.
     /// </summary>
     public class WindowsStartupServiceTests
     {
-        private readonly Mock<ILogger<WindowsStartupService>> _mockLogger;
+        private readonly Mock<ILogger<WindowsStartupServiceAdapter>> _mockLogger;
         private readonly Mock<IWindowsRegistryService> _mockRegistry;
-        private readonly Mock<IProcessInfoService> _mockProcessInfo;
-        private readonly WindowsStartupService _sut;
+        private readonly Mock<IProcessInfoUseCase> _mockProcessInfo;
+        private readonly WindowsStartupServiceAdapter _sut;
 
-        // Konstanten, die in der Originalklasse verwendet werden (für präzise Verification)
+        // Konstanten, die in der Originalklasse verwendet werden (fï¿½r prï¿½zise Verification)
         private const string RegistryPathRun = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
         private const string RegistryPathEdgePolicies = @"SOFTWARE\Policies\Microsoft\Edge";
         private const string RegistryPathPasswordLess = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device";
 
         public WindowsStartupServiceTests()
         {
-            _mockLogger = new Mock<ILogger<WindowsStartupService>>();
+            _mockLogger = new Mock<ILogger<WindowsStartupServiceAdapter>>();
             _mockRegistry = new Mock<IWindowsRegistryService>();
-            _mockProcessInfo = new Mock<IProcessInfoService>();
+            _mockProcessInfo = new Mock<IProcessInfoUseCase>();
 
-            _sut = new WindowsStartupService(_mockLogger.Object, _mockRegistry.Object, _mockProcessInfo.Object);
+            _sut = new WindowsStartupServiceAdapter(_mockLogger.Object, _mockRegistry.Object, _mockProcessInfo.Object);
         }
         // 1. AUTOSTART TESTS (Sync & Async)
 
         /// <summary>
         /// Stellt sicher, dass beim Aktivieren des Autostarts der exakte Pfad der
-        /// laufenden .exe-Datei in den korrekten "Run"-Schlüssel geschrieben wird.
+        /// laufenden .exe-Datei in den korrekten "Run"-Schlï¿½ssel geschrieben wird.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir geben über den ProcessInfo-Mock einen Fake-Pfad zurück und prüfen,
+        /// Wir geben ï¿½ber den ProcessInfo-Mock einen Fake-Pfad zurï¿½ck und prï¿½fen,
         /// ob der Registry-Service exakt diesen Pfad speichert.
         /// </summary>
         [Fact]
@@ -67,7 +67,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Stellt sicher, dass der Autostart-Eintrag korrekt aus der Registry gelöscht wird.
+        /// Stellt sicher, dass der Autostart-Eintrag korrekt aus der Registry gelï¿½scht wird.
         /// </summary>
         [Fact]
         public void DisableAutoStart_ShouldDeleteRegistryKey()
@@ -97,7 +97,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Prüft, ob IsAutoStartEnabledAsync korrekt auswertet, ob unser App-Schlüssel
+        /// Prï¿½ft, ob IsAutoStartEnabledAsync korrekt auswertet, ob unser App-Schlï¿½ssel
         /// in den geladenen Registry-Werten existiert.
         /// </summary>
         [Theory]
@@ -112,7 +112,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             {
                 fakeRegistryEntries.Add("eBRestarter", @"C:\Path\eB.exe");
             }
-            // Wir fügen Rauschen hinzu, um sicherzustellen, dass er nach dem richtigen Key sucht
+            // Wir fï¿½gen Rauschen hinzu, um sicherzustellen, dass er nach dem richtigen Key sucht
             fakeRegistryEntries.Add("SomeOtherApp", @"C:\Other\app.exe");
 
             _mockRegistry.Setup(r => r.RetrieveCurrentUserValues(RegistryPathRun)).Returns(fakeRegistryEntries);
@@ -147,7 +147,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Prüft das Auslesen des Edge-Status. Standardverhalten laut deinem Code:
+        /// Prï¿½ft das Auslesen des Edge-Status. Standardverhalten laut deinem Code:
         /// 1 -> True, 0 -> False. Wenn nicht gesetzt (null) -> True.
         /// </summary>
         [Theory]
@@ -192,8 +192,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         /// <summary>
-        /// Wenn das Setzen des AutoLogon in HKLM ohne Adminrechte fehlschlägt,
-        /// darf der Prozess nicht abstürzen, sondern muss das sauber loggen.
+        /// Wenn das Setzen des AutoLogon in HKLM ohne Adminrechte fehlschlï¿½gt,
+        /// darf der Prozess nicht abstï¿½rzen, sondern muss das sauber loggen.
         /// </summary>
         [Fact]
         public void SetAutoLogon_ShouldCatchUnauthorizedAccessException_Gracefully()
@@ -203,8 +203,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                          .Throws(new UnauthorizedAccessException("Need Admin Rights"));
 
             // ACT & ASSERT
-            // Die Methode fängt die Exception spezifisch ab, crasht also nicht.
+            // Die Methode fï¿½ngt die Exception spezifisch ab, crasht also nicht.
             Should.NotThrow(() => _sut.SetAutoLogon(true));
         }
     }
 }
+

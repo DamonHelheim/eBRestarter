@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Interfaces.Browser;
+﻿using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Infrastructure.Services.WindowsOS;
@@ -13,7 +13,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
     /// Testet den WindowsBrowserService.
-    /// Hier wird hauptsächlich die Logik geprüft, wie die Factory aufgerufen wird,
+    /// Hier wird hauptsÃ¤chlich die Logik geprÃ¼ft, wie die Factory aufgerufen wird,
     /// wie die Mappings stattfinden und wie der Service mit Fehlern umgeht.
     /// </summary>
     public class WindowsBrowserServiceTests
@@ -27,11 +27,11 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 1. CONSTRUCTOR TESTS
 
         /// <summary>
-        /// Dependency Injection Regel: Ein Service darf nicht instanziiert werden können,
-        /// wenn seine zwingenden Abhängigkeiten (hier IBrowserFactory) null sind.
+        /// Dependency Injection Regel: Ein Service darf nicht instanziiert werden kÃ¶nnen,
+        /// wenn seine zwingenden AbhÃ¤ngigkeiten (hier IBrowserFactory) null sind.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir übergeben "null" an den Konstruktor und erwarten eine ArgumentNullException.
+        /// Wir Ã¼bergeben "null" an den Konstruktor und erwarten eine ArgumentNullException.
         /// </summary>
         [Fact]
         public void Constructor_ShouldThrowArgumentNullException_WhenFactoryIsNull()
@@ -45,13 +45,13 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 2. MAPPING TESTS (Happy Path)
 
         /// <summary>
-        /// Wenn ein Browser auf dem System installiert ist, müssen dessen korrekte Version
+        /// Wenn ein Browser auf dem System installiert ist, mÃ¼ssen dessen korrekte Version
         /// und Pfade in das finale BrowserInfo-Objekt gemappt werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir zwingen die Factory dazu, für JEDEN BrowserType im Enum einen simulierten,
-        /// "installierten" Browser zurückzugeben. Danach prüfen wir, ob die Properties
-        /// (IsInstalled, Version, etc.) korrekt in die Liste übernommen wurden.
+        /// Wir zwingen die Factory dazu, fÃ¼r JEDEN BrowserType im Enum einen simulierten,
+        /// "installierten" Browser zurÃ¼ckzugeben. Danach prÃ¼fen wir, ob die Properties
+        /// (IsInstalled, Version, etc.) korrekt in die Liste Ã¼bernommen wurden.
         /// </summary>
         [Fact]
         public async Task GetInstalledBrowsersAsync_ShouldMapInstalledBrowserCorrectly()
@@ -68,7 +68,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             mockInstalledBrowser.Setup(b => b.IconPath).Returns(@"C:\icon.exe");
             mockInstalledBrowser.Setup(b => b.DownloadUrl).Returns("https://download.com");
 
-            // Die Factory liefert für JEDEN abgerufenen Typen unseren Mock zurück
+            // Die Factory liefert fÃ¼r JEDEN abgerufenen Typen unseren Mock zurÃ¼ck
             _mockBrowserFactory
                 .Setup(f => f.Create(It.IsAny<BrowserType>()))
                 .Returns(mockInstalledBrowser.Object);
@@ -79,13 +79,13 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             // ASSERT
             var browserList = result.ToList();
 
-            // Es müssen genauso viele Ergebnisse zurückkommen, wie das Enum Einträge hat
+            // Es mÃ¼ssen genauso viele Ergebnisse zurÃ¼ckkommen, wie das Enum EintrÃ¤ge hat
             browserList.Count.ShouldBe(enumCount);
 
-            // Wir prüfen exemplarisch den ersten Eintrag in der Liste
+            // Wir prÃ¼fen exemplarisch den ersten Eintrag in der Liste
             var firstBrowser = browserList.First();
             firstBrowser.IsInstalled.ShouldBeTrue();
-            firstBrowser.Version.ShouldBe("120.0.6099.109"); // Originale Version wurde übernommen
+            firstBrowser.Version.ShouldBe("120.0.6099.109"); // Originale Version wurde Ã¼bernommen
             firstBrowser.Name.ShouldBe("Mocked Browser");
             firstBrowser.IconPath.ShouldBe(@"C:\icon.exe");
             firstBrowser.DownloadUrl.ShouldBe("https://download.com");
@@ -94,11 +94,11 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         /// <summary>
         /// Wenn ein Browser NICHT installiert ist, greift eine Fallback-Logik in deinem Service:
         /// Die Version wird hardcodiert auf "Nicht installiert" gesetzt, anstatt was auch immer
-        /// das IBrowser-Objekt liefern würde.
+        /// das IBrowser-Objekt liefern wÃ¼rde.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir simulieren un-installierte Browser. Wir prüfen explizit, ob die "Version" Property
-        /// im resultierenden BrowserInfo Objekt den Text "Nicht installiert" enthält.
+        /// Wir simulieren un-installierte Browser. Wir prÃ¼fen explizit, ob die "Version" Property
+        /// im resultierenden BrowserInfo Objekt den Text "Nicht installiert" enthÃ¤lt.
         /// </summary>
         [Fact]
         public async Task GetInstalledBrowsersAsync_ShouldMapUninstalledBrowserCorrectly()
@@ -128,13 +128,13 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 3. EXCEPTION HANDLING TESTS
 
         /// <summary>
-        /// Wenn du einen neuen Browser zum Enum hinzufügst, aber vergisst, ihn in der Factory
+        /// Wenn du einen neuen Browser zum Enum hinzufÃ¼gst, aber vergisst, ihn in der Factory
         /// zu registrieren, wirft die Factory (hoffentlich) eine NotSupportedException.
-        /// Der Service darf dadurch NICHT abstürzen, sondern muss diesen Browser überspringen.
+        /// Der Service darf dadurch NICHT abstÃ¼rzen, sondern muss diesen Browser Ã¼berspringen.
         ///
         /// WAS WIRD GETESTET?
         /// Wir zwingen die Factory dazu, prinzipiell immer eine NotSupportedException zu werfen.
-        /// Wir prüfen, ob die Methode sauber durchläuft und eine leere Liste zurückgibt.
+        /// Wir prÃ¼fen, ob die Methode sauber durchlÃ¤uft und eine leere Liste zurÃ¼ckgibt.
         /// </summary>
         [Fact]
         public async Task GetInstalledBrowsersAsync_ShouldSkipBrowser_WhenFactoryThrowsNotSupportedException()
@@ -151,14 +151,14 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
-            // Die Schleife fängt den Fehler auf ('continue'), daher kommt eine leere Liste zurück
+            // Die Schleife fÃ¤ngt den Fehler auf ('continue'), daher kommt eine leere Liste zurÃ¼ck
             result.ShouldBeEmpty();
         }
 
         /// <summary>
-        /// Ein Registry-Check in der jeweiligen Browser-Implementierung (z.B. ChromeBrowser)
-        /// könnte fehlschlagen und eine allgemeine Exception (z.B. SecurityException) werfen.
-        /// Auch dann darf der Rest des Programms nicht abstürzen, andere Browser sollen
+        /// Ein Registry-Check in der jeweiligen Browser-Implementierung (z.B. ChromeBrowserAdapter)
+        /// kÃ¶nnte fehlschlagen und eine allgemeine Exception (z.B. SecurityException) werfen.
+        /// Auch dann darf der Rest des Programms nicht abstÃ¼rzen, andere Browser sollen
         /// weiterhin geladen werden.
         ///
         /// WAS WIRD GETESTET?
@@ -184,8 +184,9 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             var result = await service.FindInstalledBrowsersAsync();
 
             // ASSERT
-            // Methode darf nicht abstürzen, fängt den Fehler ab und liefert eine leere Liste
+            // Methode darf nicht abstÃ¼rzen, fÃ¤ngt den Fehler ab und liefert eine leere Liste
             result.ShouldBeEmpty();
         }
     }
 }
+

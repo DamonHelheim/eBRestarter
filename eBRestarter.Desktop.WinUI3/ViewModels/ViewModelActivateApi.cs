@@ -13,12 +13,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Activate API" dialog. Lets the user enter or import eBesucher API
-/// credentials; validates them via <see cref="IApiAuthenticationService"/> and persists
+/// credentials; validates them via <see cref="IApiAuthenticationUseCase"/> and persists
 /// to config when valid.
 /// </summary>
 public partial class ViewModelActivateApi : ObservableObject
 {
-    private readonly IApiAuthenticationService _apiAuthenticationService;
+    private readonly IApiAuthenticationUseCase _apiAuthenticationService;
 
     private readonly IEVisitorConfigService _configService;
 
@@ -49,7 +49,7 @@ public partial class ViewModelActivateApi : ObservableObject
     /// <see cref="Username"/> and <see cref="ApiKey"/> from saved config if present.
     /// </summary>
     public ViewModelActivateApi(
-        IApiAuthenticationService apiAuthenticationService,
+        IApiAuthenticationUseCase apiAuthenticationService,
         IEVisitorConfigService configService,
         ILocalizationService localizationService)
     {

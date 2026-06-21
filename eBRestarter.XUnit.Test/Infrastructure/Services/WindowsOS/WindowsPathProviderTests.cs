@@ -1,4 +1,4 @@
-using eBRestarter.Infrastructure.Services.WindowsOS;
+ï»¿using eBRestarter.Infrastructure.Services.WindowsOS;
 using Shouldly;
 using System;
 using System.IO;
@@ -7,18 +7,18 @@ using Xunit;
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsPathProvider.
+    /// Testet den WindowsPathProviderAdapter.
     /// Da diese Klasse ein reiner Wrapper um System.Environment ist, testen wir hier,
     /// ob die Methoden intern auf die korrekten Windows-Umgebungsvariablen verweisen
-    /// und ob die zurückgegebenen Strings gültige, absolute Pfade sind.
+    /// und ob die zurÃ¼ckgegebenen Strings gÃ¼ltige, absolute Pfade sind.
     /// </summary>
     public class WindowsPathProviderTests
     {
-        private readonly WindowsPathProvider _sut;
+        private readonly WindowsPathProviderAdapter _sut;
 
         public WindowsPathProviderTests()
         {
-            _sut = new WindowsPathProvider();
+            _sut = new WindowsPathProviderAdapter();
         }
         // 1. APPDATA / LOCALAPPDATA TESTS
 
@@ -27,7 +27,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         ///
         /// WAS WIRD GETESTET?
         /// Wir rufen das echte System via Environment.GetFolderPath auf und vergleichen es mit der
-        /// Ausgabe unseres Wrappers. Zudem prüfen wir, ob es sich um einen validen absoluten Pfad handelt.
+        /// Ausgabe unseres Wrappers. Zudem prÃ¼fen wir, ob es sich um einen validen absoluten Pfad handelt.
         /// </summary>
         [Fact]
         public void GetAppDataDirectory_ShouldReturnCorrectRoamingAppDataPath()
@@ -83,7 +83,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 3. PROGRAM FILES TESTS
 
         /// <summary>
-        /// Stellt sicher, dass der Pfad für 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
+        /// Stellt sicher, dass der Pfad fÃ¼r 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
         /// </summary>
         [Fact]
         public void GetProgramFilesDirectory_ShouldReturnCorrectProgramFilesPath()
@@ -119,3 +119,4 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
     }
 }
+

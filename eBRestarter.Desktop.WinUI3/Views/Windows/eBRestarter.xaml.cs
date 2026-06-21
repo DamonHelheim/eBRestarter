@@ -27,7 +27,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private readonly INavigationService _navigationService;
 
-        private readonly IAppVersionInfoService? _iAppVersionInfoService;
+        private readonly IAppVersionInfoUseCase? _iAppVersionInfoService;
 
         /// <summary>
         /// Die Standard-Animation für Seitenübergünge (hier: "DrillIn" Effekt).
@@ -38,7 +38,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// Initialisiert eine neue Instanz des Hauptfensters.
         /// </summary>
         /// <param name="navigationService">Der injizierte Navigationsdienst (Dependency Injection).</param>
-        public EBRestarter(INavigationService navigationService, IAppVersionInfoService iAppVersionInfoService)
+        public EBRestarter(INavigationService navigationService, IAppVersionInfoUseCase iAppVersionInfoService)
         {
             InitializeComponent();
 

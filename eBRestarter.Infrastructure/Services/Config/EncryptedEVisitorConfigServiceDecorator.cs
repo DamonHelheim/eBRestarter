@@ -11,11 +11,11 @@ namespace eBRestarter.Infrastructure.Services.Config;
 /// </summary>
 public class EncryptedEVisitorConfigServiceDecorator(
     IEVisitorConfigService inner,
-    IEncryptionService encryptionService,
+    IEncryptionUseCase encryptionUseCase,
     ILogger<EncryptedEVisitorConfigServiceDecorator> logger) : IEVisitorConfigService
 {
     private readonly IEVisitorConfigService _inner = inner;
-    private readonly IEncryptionService _encryptionService = encryptionService;
+    private readonly IEncryptionUseCase _encryptionUseCase = encryptionUseCase;
     private readonly ILogger<EncryptedEVisitorConfigServiceDecorator> _logger = logger;
 
     /// <summary>
@@ -29,7 +29,7 @@ public class EncryptedEVisitorConfigServiceDecorator(
         {
             try
             {
-                var decryptedKey = _encryptionService.Decrypt(config.Settings.ApiKey);
+                var decryptedKey = _encryptionUseCase.Decrypt(config.Settings.ApiKey);
                 config.Settings.ApiKey = decryptedKey;
 
                 if (string.IsNullOrEmpty(decryptedKey))
@@ -58,7 +58,7 @@ public class EncryptedEVisitorConfigServiceDecorator(
         {
             if (!string.IsNullOrEmpty(originalKey))
             {
-                config.Settings.ApiKey = _encryptionService.Encrypt(originalKey);
+                config.Settings.ApiKey = _encryptionUseCase.Encrypt(originalKey);
             }
 
             _inner.SaveConfig(config);
@@ -78,3 +78,4 @@ public class EncryptedEVisitorConfigServiceDecorator(
         _inner.ResetConfig();
     }
 }
+

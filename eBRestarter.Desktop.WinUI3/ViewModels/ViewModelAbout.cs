@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -8,13 +8,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the About page. Displays the application version from
-/// <see cref="IAppInfoService"/> and a list of icon credits, both localized where applicable.
+/// <see cref="IAppInfoUseCase"/> and a list of icon credits, both localized where applicable.
 /// </summary>
 public partial class ViewModelAbout : ObservableObject
 {
-    private readonly IAppInfoService _appInfoService;
+    private readonly IAppInfoUseCase _appInfoUseCase;
 
-    private readonly IIconCreditService _iconCreditService;
+    private readonly IIconCreditHandler _iconCreditService;
 
     private readonly ILocalizationService _localizationService;
 
@@ -28,11 +28,11 @@ public partial class ViewModelAbout : ObservableObject
     /// for version, and loads version plus icon credits so the UI can bind immediately.
     /// </summary>
     public ViewModelAbout(
-        IAppInfoService appInfoService,
+        IAppInfoUseCase AppInfoAdapter,
         ILocalizationService localizationService,
-        IIconCreditService iconCreditService)
+        IIconCreditHandler iconCreditService)
     {
-        _appInfoService = appInfoService;
+        _appInfoUseCase = AppInfoAdapter;
         _localizationService = localizationService;
         _iconCreditService = iconCreditService;
         AppVersion = _localizationService.RetrieveString("About_Loading");
@@ -43,10 +43,11 @@ public partial class ViewModelAbout : ObservableObject
     private void LoadVersionAndIconCredits()
     {
         string prefix = _localizationService.RetrieveString("About_VersionPrefix");
-        AppVersion = $"{prefix} {_appInfoService.RetrieveAppVersion()}";
+        AppVersion = $"{prefix} {_appInfoUseCase.RetrieveAppVersion()}";
         var credits = _iconCreditService.GetIconCredits();
         IconCredits.Clear();
         foreach (var iconCredit in credits)
             IconCredits.Add(iconCredit);
     }
 }
+

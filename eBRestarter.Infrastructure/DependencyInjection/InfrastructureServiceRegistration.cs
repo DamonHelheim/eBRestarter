@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Interfaces;
+﻿using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Authentication;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
@@ -30,81 +30,92 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddLogging(builder => builder.AddDebug());
-        services.AddSingleton<IProcessWrapper, RealProcessWrapper>();
-        services.AddSingleton<IWindowsProcessControlService, WindowsProcessService>();
+        services.AddSingleton<IProcessWrapper, RealProcessWrapperAdapter>();
+        services.AddSingleton<IWindowsProcessControlService, WindowsProcessAdapter>();
         services.AddSingleton<IWindowsSystemInfoService, WindowsSystemInfoService>();
 
-        services.AddSingleton<IProcessInfoService, ProcessInfoService>();
-        services.AddSingleton<IWindowsRegistryService, WindowsRegistryService>();
-        services.AddSingleton<IWindowsFileSystemService, WindowsFileSystemService>();
-        services.AddSingleton<IWindowsStartupManagerService, WindowsStartupService>();
+        services.AddSingleton<IProcessInfoUseCase, ProcessInfoAdapter>();
+        services.AddSingleton<IWindowsRegistryService, WindowsRegistryAdapter>();
+        services.AddSingleton<IWindowsFileSystemService, WindowsFileSystemServiceAdapter>();
+        services.AddSingleton<IWindowsStartupManagerService, WindowsStartupServiceAdapter>();
 
-        services.AddSingleton<IWindowsAutoLogonService, WindowsAutoLogonService>();
-        services.AddSingleton<IEncryptionService, WindowsEncryptionService>();
-        services.AddSingleton<IPathProvider, WindowsPathProvider>();
-        services.AddSingleton<IApplicationLifetime, WindowsApplicationLifetime>();
+        services.AddSingleton<IWindowsAutoLogonService, WindowsAutoLogonAdapter>();
+        services.AddSingleton<IEncryptionUseCase, WindowsEncryptionHandler>();
+        services.AddSingleton<IPathProvider, WindowsPathProviderAdapter>();
+        services.AddSingleton<IApplicationLifetimeUseCase, WindowsApplicationLifetimeHandler>();
         services.AddSingleton(TimeProvider.System);
-        services.AddSingleton<WindowsWmiHardwareService>();
+        services.AddSingleton<WmiHardwareAdapter>();
 
-        services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+        services.AddSingleton<IHardwareInfoService>(provider => provider.GetRequiredService<WmiHardwareAdapter>());
 
-        services.AddSingleton<IOsEditionService>(provider => provider.GetRequiredService<WindowsWmiHardwareService>());
+        services.AddSingleton<IOsEditionService>(provider => provider.GetRequiredService<WmiHardwareAdapter>());
 
-        services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacade>();
+        services.AddSingleton<IOperatingSystemFacade, OperatingSystemFacadeAdapter>();
 
-        services.AddSingleton<INetworkProvider, NetworkProvider>();
+        services.AddSingleton<INetworkProvider, WindowsNetworkAdapter>();
 
-        services.AddSingleton<IWindowsNetworkInfoService, WindowsNetworkInfoService>();
+        services.AddSingleton<IWindowsNetworkInfoUseCase, WindowsNetworkInfoAdapter>();
 
-        services.AddTransient<ChromeBrowser>();
-        services.AddTransient<FirefoxBrowser>();
-        services.AddTransient<EdgeBrowser>();
-        services.AddTransient<BraveBrowser>();
-        services.AddTransient<VivaldiBrowser>();
+        services.AddTransient<ChromeBrowserAdapter>();
+        services.AddTransient<FirefoxBrowserAdapter>();
+        services.AddTransient<EdgeBrowserAdapter>();
+        services.AddTransient<BraveBrowserAdapter>();
+        services.AddTransient<VivaldiBrowserAdapter>();
 
         services.AddSingleton<IBrowserFactory, BrowserFactory>();
 
         services.AddSingleton<IBrowserService, WindowsBrowserService>();
 
-        services.AddSingleton<IBrowserDownloadService, HttpClientDownloadService>();
+        services.AddSingleton<IBrowserDownloadUseCase, HttpClientDownloadHandler>();
 
-        services.AddSingleton<IRestClientService, RestSharpClientService>();
+        services.AddSingleton<IRestClientUseCase, RestSharpClientHandler>();
 
-        services.AddSingleton<IPathService, WindowsPathService>();
+        services.AddSingleton<IPathUseCase, WindowsPathHandler>();
 
         services.AddSingleton<EVisitorConfigService>();
 
         services.AddSingleton<IEVisitorConfigService>(provider =>
             new EncryptedEVisitorConfigServiceDecorator(
                 provider.GetRequiredService<EVisitorConfigService>(),
-                provider.GetRequiredService<IEncryptionService>(),
+                provider.GetRequiredService<IEncryptionUseCase>(),
                 provider.GetRequiredService<ILogger<EncryptedEVisitorConfigServiceDecorator>>()
             ));
 
-        services.AddSingleton<IAppInfoService, AppInfoService>();
+        services.AddSingleton<IAppInfoUseCase, AppInfoAdapter>();
 
-        services.AddSingleton<IFileDeletionService, FileDeletionService>();
+        services.AddSingleton<IFileDeletionUseCase, FileDeletionHandler>();
 
-        services.AddSingleton<IApiAuthenticationService, EVisitorApiAuthenticationService>();
+        services.AddSingleton<IApiAuthenticationUseCase, EVisitorApiAuthenticationAdapter>();
 
-        services.AddSingleton<ICredentialStore, JsonCredentialStore>();
+        services.AddSingleton<ICredentialStore, JsonCredentialStoreRepository>();
 
         services.AddSingleton<IEVisitorApiService, EVisitorApiAdapter>();
 
-        services.AddSingleton<IBrowserDisplayNameResolver, BrowserDisplayNameResolverService>();
+        services.AddSingleton<IBrowserDisplayNameResolverUseCase, BrowserDisplayNameResolverHandler>();
 
-        services.AddSingleton<IBrowserExtensionDeploymentService, BrowserExtensionDeploymentService>();
+        services.AddSingleton<IBrowserExtensionDeploymentUseCase, BrowserExtensionDeploymentHandler>();
 
         services.AddSingleton<IUpdateService, GitHubUpdateAdapter>();
 
-        services.AddSingleton<IActiveDirectoryService, WindowsActiveDirectoryService>();
+        services.AddSingleton<IActiveDirectoryUseCase, WindowsActiveDirectoryAdapter>();
 
-        services.AddSingleton<ICredentialValidationService, PrincipalContextCredentialValidationService>();
+        services.AddSingleton<ICredentialValidationUseCase, CredentialValidationHandler>();
 
-        services.AddSingleton<IAppVersionInfoService, WindowsAppVersionInfoService>();
+        services.AddSingleton<IAppVersionInfoUseCase, WindowsAppVersionInfoHandler>();
 
         services.AddSingleton<IComputerRestartScheduler, ComputerRestartScheduler>();
 
         return services;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

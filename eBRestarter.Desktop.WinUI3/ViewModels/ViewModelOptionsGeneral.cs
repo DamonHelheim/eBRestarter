@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Extensions;
@@ -26,16 +26,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private const string GeneralErrorKey = "General_Error";
 
-        private readonly IComputerRestartDateService _computerRestartDateService;
+        private readonly IRetrieveNextRestartDateUseCase _retrieveNextRestartDateUseCase;
         private readonly IComputerRestartScheduler _computerRestartScheduler;
         private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly ILanguageService _languageService;
+        private readonly ILanguageHandler _languageService;
         private readonly ILocalizationService _localizationService;
         private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
         private readonly IOperatingSystemFacade _operatingSystemFacade;
-        private readonly IThemeService _themeService;
+        private readonly IThemeHandler _themeService;
         private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
         private readonly IUIOptionsService _uiOptionsService;
 
@@ -82,18 +82,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IConfigureAutoLogonUseCase configureAutoLogonUseCase,
             IToggleAppAutoStartUseCase toggleAppAutoStartUseCase,
             IManageApplicationUpdatesUseCase manageApplicationUpdatesUseCase,
-            IOperatingSystemFacade operatingSystemFacade,
-            IThemeService themeService,
+            IOperatingSystemFacade OperatingSystemFacadeAdapter,
+            IThemeHandler themeService,
             IEVisitorConfigService eVisitorConfigService,
-            ILanguageService languageService,
+            ILanguageHandler languageService,
             ILocalizationService localizationService,
             IUIOptionsService uiOptionsService,
-            IComputerRestartDateService computerRestartDateService,
+            IRetrieveNextRestartDateUseCase retrieveNextRestartDateUseCase,
             IComputerRestartScheduler computerRestartScheduler)
         {
             _isInitializing = true;
 
-            _computerRestartDateService = computerRestartDateService;
+            _retrieveNextRestartDateUseCase = retrieveNextRestartDateUseCase;
             _computerRestartScheduler = computerRestartScheduler;
             _configureAutoLogonUseCase = configureAutoLogonUseCase;
             _dialogService = dialogService;
@@ -101,7 +101,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _languageService = languageService;
             _localizationService = localizationService;
             _manageApplicationUpdatesUseCase = manageApplicationUpdatesUseCase;
-            _operatingSystemFacade = operatingSystemFacade;
+            _operatingSystemFacade = OperatingSystemFacadeAdapter;
             _themeService = themeService;
             _toggleAppAutoStartUseCase = toggleAppAutoStartUseCase;
             _uiOptionsService = uiOptionsService;
@@ -118,7 +118,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 var targetDateTime = _currentConfig.Computer.NextRestartDate.Value.Date.AddHours(_currentConfig.Computer.RestartClockTime);
                 if (DateTime.Now >= targetDateTime)
                 {
-                    _currentConfig.Computer.SetNextRestartDate(_computerRestartDateService.RetrieveNextRestartDate(
+                    _currentConfig.Computer.SetNextRestartDate(_retrieveNextRestartDateUseCase.RetrieveNextRestartDate(
                         _currentConfig.Computer.ComputerRestartIntervalDays,
                         _currentConfig.Computer.RestartClockTime));
                     SaveSettings();
@@ -212,7 +212,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string currentUser = Environment.UserName;
             string currentDomain = Environment.UserDomainName;
 
-            bool isPasswordlessEnabled = _operatingSystemFacade.WindowsAutoLogonService.IsWindowsHelloPasswordlessEnabled();
+            bool isPasswordlessEnabled = _operatingSystemFacade.WindowsAutoLogonAdapter.IsWindowsHelloPasswordlessEnabled();
             bool isAdmin = _operatingSystemFacade.WindowsSystemInfoService.IsUserAdministrator();
 
             var autoLogonDialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain, isPasswordlessEnabled, isAdmin);
@@ -488,3 +488,5 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+
+
