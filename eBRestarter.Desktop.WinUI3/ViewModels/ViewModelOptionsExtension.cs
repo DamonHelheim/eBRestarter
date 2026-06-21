@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Constants;
 using eBRestarter.Core.Application.Interfaces;
@@ -32,7 +32,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             TypeInfoResolver = ExtensionConfigJsonContext.Default
         };
 
-        private readonly IBrowserExtensionDeploymentService _browserExtensionDeploymentService;
+        private readonly IBrowserExtensionDeploymentUseCase _browserExtensionDeploymentService;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigService _eVisitorConfigService;
         private readonly ILocalizationService _localizationService;
@@ -55,18 +55,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
         public ViewModelOptionsExtension(
-            IBrowserExtensionDeploymentService browserExtensionDeploymentService,
+            IBrowserExtensionDeploymentUseCase browserExtensionDeploymentService,
             IDialogService dialogService,
             IEVisitorConfigService eVisitorConfigService,
             ILocalizationService localizationService,
-            IOperatingSystemFacade operatingSystemFacade,
+            IOperatingSystemFacade OperatingSystemFacadeAdapter,
             IUIOptionsService uiOptionsService)
         {
             _browserExtensionDeploymentService = browserExtensionDeploymentService;
             _dialogService = dialogService;
             _eVisitorConfigService = eVisitorConfigService;
             _localizationService = localizationService;
-            _operatingSystemFacade = operatingSystemFacade;
+            _operatingSystemFacade = OperatingSystemFacadeAdapter;
             _uiOptionsService = uiOptionsService;
 
             _currentConfig = _eVisitorConfigService.LoadConfig();
@@ -181,3 +181,4 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+

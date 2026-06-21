@@ -17,7 +17,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the network traffic / network cards page. Polls
-/// <see cref="IWindowsNetworkInfoService"/> on a timer for active interfaces and
+/// <see cref="IWindowsNetworkInfoUseCase"/> on a timer for active interfaces and
 /// bytes sent/received, then updates <see cref="NetworkCards"/> on the UI thread. Shows a
 /// single "not available" entry when the network is offline or an error occurs.
 /// </summary>
@@ -37,7 +37,7 @@ public partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
 
     private readonly ILocalizationService _localizationService;
 
-    private readonly IWindowsNetworkInfoService _networkService;
+    private readonly IWindowsNetworkInfoUseCase _networkService;
 
     private readonly DispatcherQueue _dispatcherQueue;
 
@@ -53,7 +53,7 @@ public partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
     /// and applies results on the UI thread. Runs the first update immediately on a background thread.
     /// </summary>
     public ViewModelNetworkTraffic(
-        IWindowsNetworkInfoService networkService,
+        IWindowsNetworkInfoUseCase networkService,
         ILocalizationService localizationService)
     {
         ArgumentNullException.ThrowIfNull(networkService);

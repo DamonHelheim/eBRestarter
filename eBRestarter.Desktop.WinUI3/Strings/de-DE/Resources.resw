@@ -981,4 +981,7 @@ Möchten Sie die Anwendung jetzt neu starten?</value>
   <data name="Chart_FakeDataMode" xml:space="preserve">
     <value> (Test-Modus)</value>
   </data>
+  <data name="Cleanup_Running" xml:space="preserve">
+    <value>Löschvorgang läuft...</value>
+  </data>
 </root>

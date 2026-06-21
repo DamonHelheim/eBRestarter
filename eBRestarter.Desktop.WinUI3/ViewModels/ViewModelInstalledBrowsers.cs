@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Interfaces;
 using eBRestarter.Core.Application.Interfaces.Browser;
 using eBRestarter.Core.Application.Interfaces.Config;
@@ -25,7 +25,7 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
 
     private readonly IBrowserService _browserService;
 
-    private readonly IBrowserDownloadService _downloadService;
+    private readonly IBrowserDownloadUseCase _downloadService;
 
     private readonly IDialogService _dialogService;
 
@@ -48,22 +48,22 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
     /// </summary>
     public ViewModelInstalledBrowsers(
         IBrowserService browserService,
-        IBrowserDownloadService downloadService,
-        IOperatingSystemFacade operatingSystemFacade,
+        IBrowserDownloadUseCase downloadService,
+        IOperatingSystemFacade OperatingSystemFacadeAdapter,
         IDialogService dialogService,
         ILocalizationService localizationService,
         IEVisitorConfigService eVisitorConfigService)
     {
         ArgumentNullException.ThrowIfNull(browserService);
         ArgumentNullException.ThrowIfNull(downloadService);
-        ArgumentNullException.ThrowIfNull(operatingSystemFacade);
+        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
         ArgumentNullException.ThrowIfNull(eVisitorConfigService);
 
         _browserService = browserService;
         _downloadService = downloadService;
-        _operatingSystemFacade = operatingSystemFacade;
+        _operatingSystemFacade = OperatingSystemFacadeAdapter;
         _dialogService = dialogService;
         _localizationService = localizationService;
         _eVisitorConfigService = eVisitorConfigService;
@@ -123,3 +123,4 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
         LoadBrowsersSmartAsync().Forget();
     }
 }
+

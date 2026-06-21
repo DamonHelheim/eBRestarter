@@ -21,14 +21,14 @@ namespace eBRestarter.Tests.Infrastructure.Services
     /// </summary>
     public class EVisitorApiAdapterTests
     {
-        private readonly Mock<IRestClientService> _mockRestClient;
+        private readonly Mock<IRestClientUseCase> _mockRestClient;
         private readonly Mock<IEVisitorConfigService> _mockConfigService;
         private readonly Mock<ILogger<EVisitorApiAdapter>> _mockLogger;
         private readonly EVisitorApiAdapter _sut;
 
         public EVisitorApiAdapterTests()
         {
-            _mockRestClient = new Mock<IRestClientService>();
+            _mockRestClient = new Mock<IRestClientUseCase>();
             _mockConfigService = new Mock<IEVisitorConfigService>();
             _mockLogger = new Mock<ILogger<EVisitorApiAdapter>>();
 
@@ -219,3 +219,4 @@ namespace eBRestarter.Tests.Infrastructure.Services
         }
     }
 }
+

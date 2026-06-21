@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
-    d:DataContext ="{d:DesignInstance Type=VM:ViewModelDeleteBrowserContent}"        
+    d:DataContext ="{d:DesignInstance Type=VM:ViewModelDeleteBrowserContent}"
     mc:Ignorable="d"
     x:Uid="DeleteDialog"
     DefaultButton="Close"
@@ -18,8 +18,8 @@
         <convertersNuget:BoolNegationConverter x:Key="BoolNegationConverter"/>
         <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
 
-        <convertersNuget:BoolToVisibilityConverter x:Key="InverseBoolToVisConverter" 
-                                                   TrueValue="Collapsed" 
+        <convertersNuget:BoolToVisibilityConverter x:Key="InverseBoolToVisConverter"
+                                                   TrueValue="Collapsed"
                                                    FalseValue="Visible"/>
 
         <Style TargetType="TextBlock" x:Key="HeaderTextStyle">
@@ -56,7 +56,7 @@
             <TextBlock x:Uid="DeleteDialog_HeaderOptions" 
                        Style="{StaticResource HeaderTextStyle}"/>
 
-            <CheckBox x:Uid="DeleteDialog_CheckCookies"               
+            <CheckBox x:Uid="DeleteDialog_CheckCookies"
                       IsChecked="{Binding IsDeleteCookiesChecked, Mode=TwoWay}"
                       IsEnabled="{Binding IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                       Margin="0,0,0,10"/>

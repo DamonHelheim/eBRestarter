@@ -20,23 +20,23 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddSingleton<IRestartCalculationService, RestartCalculationService>();
-        services.AddSingleton<IComputerRestartDateService, ComputerRestartDateService>();
-        services.AddSingleton<IApplicationLaunchConfigService, ApplicationLaunchConfigService>();
+        services.AddSingleton<IRestartCalculationHandler, RestartCalculationHandler>();
+        services.AddSingleton<IRetrieveNextRestartDateUseCase, RetrieveNextRestartDateUseCase>();
+        services.AddSingleton<IPrepareConfigForLaunchUseCase, PrepareConfigForLaunchUseCase>();
         services.AddSingleton<ICacheDeletionIntervalValidator, CacheDeletionIntervalValidator>();
-        services.AddSingleton<IBrowserCleanupScheduleService, BrowserCleanupScheduleService>();
-        services.AddSingleton<IRestartTaskDisplayStateService, RestartTaskDisplayStateService>();
+        services.AddSingleton<IBrowserCleanupScheduleHandler, BrowserCleanupScheduleHandler>();
+        services.AddSingleton<IRestartTaskDisplayStateUseCase, RestartTaskDisplayStateUseCase>();
 
         // Use Cases
-        services.AddTransient<IDeleteBrowserContentUseCase, DeleteBrowserContentService>();
-        services.AddTransient<IManageRestarterCycleUseCase, ManageRestarterCycleService>();
-        services.AddTransient<IConfigureAutoLogonUseCase, ConfigureAutoLogonService>();
-        services.AddTransient<IToggleAppAutoStartUseCase, ToggleAppAutoStartService>();
-        services.AddTransient<IToggleEdgeStartupBoostUseCase, ToggleEdgeStartupBoostService>();
-        services.AddTransient<IManageApplicationUpdatesUseCase, ManageApplicationUpdatesService>();
-        services.AddTransient<IScheduleBrowserCleanupUseCase, ScheduleBrowserCleanupService>();
-        services.AddTransient<IGetSystemInformationUseCase, GetSystemInformationService>();
-        services.AddTransient<IRemoveApiCredentialsUseCase, RemoveApiCredentialsService>();
+        services.AddTransient<IDeleteBrowserContentUseCase, DeleteBrowserContentUseCase>();
+        services.AddTransient<IManageRestarterCycleUseCase, ManageRestarterCycleUseCase>();
+        services.AddTransient<IConfigureAutoLogonUseCase, ConfigureAutoLogonUseCase>();
+        services.AddTransient<IToggleAppAutoStartUseCase, ToggleAppAutoStartUseCase>();
+        services.AddTransient<IToggleEdgeStartupBoostUseCase, ToggleEdgeStartupBoostUseCase>();
+        services.AddTransient<IManageApplicationUpdatesUseCase, ManageApplicationUpdatesUseCase>();
+        services.AddTransient<IScheduleBrowserCleanupUseCase, ScheduleBrowserCleanupUseCase>();
+        services.AddTransient<IGetSystemInformationUseCase, GetSystemInformationUseCase>();
+        services.AddTransient<IRemoveApiCredentialsUseCase, RemoveApiCredentialsUseCase>();
 
         services.AddValidatorsFromAssemblyContaining<ConfigureAutoLogonRequestValidator>();
 

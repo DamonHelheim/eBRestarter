@@ -11,11 +11,11 @@ using System.Text.Json;
 namespace eBRestarter.Infrastructure.Services;
 
 public class EVisitorApiAdapter(
-    IRestClientService restClient,
+    IRestClientUseCase restClientUseCase,
     IEVisitorConfigService configService,
     ILogger<EVisitorApiAdapter> logger) : IEVisitorApiService
 {
-    private readonly IRestClientService _restClient = restClient;
+    private readonly IRestClientUseCase _restClientUseCase = restClientUseCase;
     private readonly IEVisitorConfigService _configService = configService;
     private readonly ILogger<EVisitorApiAdapter> _logger = logger;
 
@@ -27,7 +27,7 @@ public class EVisitorApiAdapter(
             Method = Core.Application.Enums.HttpMethod.GET
         };
 
-        var response = await _restClient.ExecuteGetAsync(request);
+        var response = await _restClientUseCase.ExecuteGetAsync(request);
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
             return null;
@@ -110,7 +110,7 @@ public class EVisitorApiAdapter(
             Password = apiKey
         };
 
-        var response = await _restClient.ExecuteGetAsync(request);
+        var response = await _restClientUseCase.ExecuteGetAsync(request);
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
             return new double[24];
@@ -188,7 +188,7 @@ public class EVisitorApiAdapter(
         var daysInMonth = DateTime.DaysInMonth(start.Year, start.Month);
         var dailyEarnings = new double[daysInMonth];
 
-        var response = await _restClient.ExecuteGetAsync(request);
+        var response = await _restClientUseCase.ExecuteGetAsync(request);
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
             return dailyEarnings;
@@ -230,7 +230,7 @@ public class EVisitorApiAdapter(
 
         var monthlyEarnings = new double[12]; // Jan=0, Dez=11
 
-        var response = await _restClient.ExecuteGetAsync(request);
+        var response = await _restClientUseCase.ExecuteGetAsync(request);
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
             return monthlyEarnings;
@@ -331,3 +331,4 @@ public class EVisitorApiAdapter(
         return "-";
     }
 }
+

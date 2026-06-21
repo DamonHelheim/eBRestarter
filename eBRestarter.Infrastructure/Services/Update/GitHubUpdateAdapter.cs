@@ -10,7 +10,7 @@ using System.Text.Json;
 namespace eBRestarter.Infrastructure.Services.Update;
 
 public class GitHubUpdateAdapter(
-    IRestClientService restClient,
+    IRestClientUseCase restClientUseCase,
     ILogger<GitHubUpdateAdapter> logger) : IUpdateService
 {
     // Anpassen an dein Repository!
@@ -20,7 +20,7 @@ public class GitHubUpdateAdapter(
     // GitHub API URL für das allerneueste Release
     private const string GitHubApiUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
 
-    private readonly IRestClientService _restClient = restClient;
+    private readonly IRestClientUseCase _restClientUseCase = restClientUseCase;
     private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
 
     public async Task<UpdateInfo> CheckForUpdateAsync()
@@ -33,7 +33,7 @@ public class GitHubUpdateAdapter(
             Method = Core.Application.Enums.HttpMethod.GET
         };
 
-        var response = await _restClient.ExecuteGetAsync(request);
+        var response = await _restClientUseCase.ExecuteGetAsync(request);
 
         if (!response.IsSuccess || string.IsNullOrEmpty(response.Content))
         {
@@ -154,3 +154,4 @@ public class GitHubUpdateAdapter(
         }
     }
 }
+

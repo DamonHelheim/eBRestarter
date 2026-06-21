@@ -14,11 +14,11 @@ namespace eBRestarter.Infrastructure.Services.Config;
 /// Vollständig entkoppelt von System.IO über den IWindowsFileSystemService (Repository-Pattern).
 /// </summary>
 public class EVisitorConfigService(
-    IPathService pathService, 
+    IPathUseCase pathUseCase, 
     IWindowsFileSystemService fileSystem,
     ILogger<EVisitorConfigService> logger) : IEVisitorConfigService
 {
-    private readonly IPathService _pathService = pathService;
+    private readonly IPathUseCase _pathUseCase = pathUseCase;
     private readonly IWindowsFileSystemService _fileSystem = fileSystem;
     private readonly ILogger<EVisitorConfigService> _logger = logger;
 
@@ -34,7 +34,7 @@ public class EVisitorConfigService(
     /// </summary>
     public AppConfig LoadConfig()
     {
-        var filePath = _pathService.RetrieveConfigFilePath();
+        var filePath = _pathUseCase.RetrieveConfigFilePath();
 
         if (!_fileSystem.FileExists(filePath))
         {
@@ -67,7 +67,7 @@ public class EVisitorConfigService(
     {
         try
         {
-            var filePath = _pathService.RetrieveConfigFilePath();
+            var filePath = _pathUseCase.RetrieveConfigFilePath();
             var directory = _fileSystem.GetDirectoryName(filePath);
 
             if (!string.IsNullOrEmpty(directory) && !_fileSystem.DirectoryExists(directory))
@@ -100,3 +100,4 @@ public class EVisitorConfigService(
 // SOURCE GENERATOR KONTEXT (Für Release/Trim-Kompatibilität)
 [JsonSerializable(typeof(AppConfig))]
 internal partial class AppConfigJsonContext : JsonSerializerContext;
+
