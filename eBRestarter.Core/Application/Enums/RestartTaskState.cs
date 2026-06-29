@@ -2,8 +2,8 @@ namespace eBRestarter.Core.Application.Enums;
 
 public enum RestartTaskState
 {
-    Idle,           // Nichts läuft
-    InitialDelay,   // "StartRestartTimer" (Die ersten 5 Sekunden)
-    Running,        // "mainTimer" (Browser ist offen)
-    Cooldown        // "BrowserStartsInTimer" (Pause / Neustart in...)
+    Idle,           // Nothing is running
+    InitialDelay,   // "StartRestartTimer" (The first 5 seconds)
+    Running,        // "mainTimer" (Browser is open)
+    Cooldown        // "BrowserStartsInTimer" (Pause / Restart in...)
 }

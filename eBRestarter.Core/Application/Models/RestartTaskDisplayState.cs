@@ -1,8 +1,5 @@
 namespace eBRestarter.Core.Application.Models;
 
-/// <summary>
-/// DTO für den initialen Anzeige-Zustand der Restart-Task-UI (aus Config + Lokalisierung).
-/// </summary>
 public sealed class RestartTaskDisplayState
 {
     public string Username { get; init; } = "-";

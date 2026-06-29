@@ -9,24 +9,24 @@ namespace eBRestarter.Desktop.WinUI3.Views.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
-    /// WinUI Frame ruft immer new Page() auf.
-    /// Deshalb dürfen Pages keine Parameter im Konstruktor haben.
-    /// Die Lösung ist, den DI-Container (AppHost) statisch verfügbar zu machen und in der Page GetRequiredService<T>() aufzurufen.
+    /// The WinUI Frame always invokes "new Page()".
+    /// Therefore, pages must not accept parameters in their constructor.
+    /// The solution is to expose the DI container (AppHost) statically and call GetRequiredService<T>() inside the page.
     /// </summary>
     public sealed partial class P_RestarterProperties : Page
     {
-        // Kein "new()", da wir es aus dem DI Container wollen!
+        // No "new()" here, because we want to retrieve it from the DI container!
         public ViewModelRestarterProperties ViewModelRestarterProperties { get; }
 
-        // WICHTIG: Der Konstruktor muss LEER sein (Parameterlos)
+        // IMPORTANT: The constructor must be EMPTY (parameterless)
         public P_RestarterProperties()
         {
             this.InitializeComponent();
 
-            // Hier holen wir uns das ViewModel manuell aus dem Container
+            // Manually resolve the ViewModel from the container here
             ViewModelRestarterProperties = App.AppHost!.Services.GetRequiredService<ViewModelRestarterProperties>();
 
-            // DataContext setzen
+            // Set the DataContext
             this.DataContext = ViewModelRestarterProperties;
         }
     }

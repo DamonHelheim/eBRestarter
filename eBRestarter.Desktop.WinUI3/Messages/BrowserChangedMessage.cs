@@ -1,3 +1,3 @@
 namespace eBRestarter.Desktop.WinUI3.Messages;
 
-public record BrowserChangedMessage(string BrowserName);
+public sealed record BrowserChangedMessage(string BrowserName);

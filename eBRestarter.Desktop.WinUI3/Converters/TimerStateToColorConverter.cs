@@ -8,7 +8,7 @@ namespace eBRestarter.Desktop.WinUI3.Converters
     /// <summary>
     /// Converts a timer running state (bool) to a brush color (e.g. red when running, green when stopped).
     /// </summary>
-    public partial class TimerStateToColorConverter : IValueConverter
+    public sealed partial class TimerStateToColorConverter : IValueConverter
     {
 
         public object Convert(object value, Type targetType, object parameter, string language)

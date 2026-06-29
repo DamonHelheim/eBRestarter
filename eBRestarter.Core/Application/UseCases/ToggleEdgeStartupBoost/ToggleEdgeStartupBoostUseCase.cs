@@ -1,18 +1,24 @@
-﻿using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 
-public class ToggleEdgeStartupBoostUseCase(
-    IWindowsStartupManagerService startupService,
-    IBrowserFactory browserFactory) : IToggleEdgeStartupBoostUseCase
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class ToggleEdgeStartupBoostUseCase(
+    IBrowserConfigPort startupService,
+    IBrowserFactoryPort BrowserFactory) : IToggleEdgeStartupBoostUseCase
 {
-    private readonly IWindowsStartupManagerService _startupService = startupService;
-    private readonly IBrowserFactory _browserFactory = browserFactory;
+    private readonly IBrowserConfigPort _startupService = startupService;
+    private readonly IBrowserFactoryPort _browserFactory = BrowserFactory;
 
     public bool IsEnabled() =>
-        _startupService.IsEdgeStartupBoostEnabled();
+        _startupService.IsBrowserStartupBoostEnabled();
 
     public bool IsEdgeInstalled()
     {
@@ -25,7 +31,7 @@ public class ToggleEdgeStartupBoostUseCase(
     {
         try
         {
-            _startupService.SetEdgeStartupBoost(enable);
+            _startupService.SetBrowserStartupBoost(enable);
 
             return new ToggleEdgeStartupBoostResponse(true, enable);
 
@@ -36,3 +42,7 @@ public class ToggleEdgeStartupBoostUseCase(
         }
     }
 }
+
+
+
+

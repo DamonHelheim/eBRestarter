@@ -1,6 +1,5 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
-// Record für IP Infos
 public sealed record IpInfoData(
     string IpAddress,
     string Hostname,

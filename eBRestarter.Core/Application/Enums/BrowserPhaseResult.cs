@@ -2,7 +2,7 @@ namespace eBRestarter.Core.Application.Enums;
 
 public enum BrowserPhaseResult
 {
-    Completed,     // Die Laufzeit ist ganz normal abgelaufen
-    BrowserClosed, // Der CheckBrowserAliveRoutine hat gegriffen (Browser tot)
-    CleanupDue     // 0:00 Uhr wurde erreicht, sofort aufräumen!
+    Completed,     // The runtime has completed normally
+    BrowserClosed, // The CheckBrowserAliveRoutine triggered (browser is dead)
+    CleanupDue     // 12:00 AM (midnight) was reached, clean up immediately!
 }

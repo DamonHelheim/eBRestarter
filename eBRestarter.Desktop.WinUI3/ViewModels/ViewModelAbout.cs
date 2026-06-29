@@ -1,22 +1,25 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Core.Application.Interfaces;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the About page. Displays the application version from
-/// <see cref="IAppInfoUseCase"/> and a list of icon credits, both localized where applicable.
+/// <see cref="IAppInfoPort"/> and a list of icon credits, both localized where applicable.
 /// </summary>
-public partial class ViewModelAbout : ObservableObject
+public sealed partial class ViewModelAbout : ObservableObject
 {
-    private readonly IAppInfoUseCase _appInfoUseCase;
+    private readonly IAppInfoPort _appInfoUseCase;
 
-    private readonly IIconCreditHandler _iconCreditService;
+    private readonly IIconCreditProvider _iconCreditService;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
     [ObservableProperty] public partial string AppVersion { get; set; }
 
@@ -28,12 +31,12 @@ public partial class ViewModelAbout : ObservableObject
     /// for version, and loads version plus icon credits so the UI can bind immediately.
     /// </summary>
     public ViewModelAbout(
-        IAppInfoUseCase AppInfoAdapter,
-        ILocalizationService localizationService,
-        IIconCreditHandler iconCreditService)
+        IAppInfoPort AppInfoProviderAdapter,
+        ILocalizationProvider LocalizationProvider,
+        IIconCreditProvider iconCreditService)
     {
-        _appInfoUseCase = AppInfoAdapter;
-        _localizationService = localizationService;
+        _appInfoUseCase = AppInfoProviderAdapter;
+        _localizationService = LocalizationProvider;
         _iconCreditService = iconCreditService;
         AppVersion = _localizationService.RetrieveString("About_Loading");
         LoadVersionAndIconCredits();
@@ -50,4 +53,9 @@ public partial class ViewModelAbout : ObservableObject
             IconCredits.Add(iconCredit);
     }
 }
+
+
+
+
+
 

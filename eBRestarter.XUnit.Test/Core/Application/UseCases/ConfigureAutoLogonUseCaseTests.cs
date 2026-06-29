@@ -1,6 +1,15 @@
-//using eBRestarter.Core.Application.Interfaces.Authentication;
-//using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+//using eBRestarter.Core.Application.Validators;
+using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+//using eBRestarter.Core.Application.Providers.OperatingSystem.WindowsOS;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
 //using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 //using Moq;
 //using Shouldly;
 //using System;
@@ -10,20 +19,20 @@
 //{
 //    public class ConfigureAutoLogonUseCaseTests
 //    {
-//        private readonly Mock<IWindowsAutoLogonService> _mockAutoLogonService;
-//        private readonly Mock<ICredentialValidationUseCase> _mockCredentialUseCase;
+//        private readonly Mock<IWindowsAutoLogonRepository> _mockAutoLogonService;
+//        private readonly Mock<ICredentialValidationPort> _mockCredentialUseCase;
 //        private readonly ConfigureAutoLogonUseCase _sut;
 //
 //        public ConfigureAutoLogonUseCaseTests()
 //        {
-//            _mockAutoLogonService = new Mock<IWindowsAutoLogonService>();
-//            _mockCredentialUseCase = new Mock<ICredentialValidationUseCase>();
+//            _mockAutoLogonService = new Mock<IWindowsAutoLogonRepository>();
+//            _mockCredentialUseCase = new Mock<ICredentialValidationPort>();
 //            
 //            _sut = new ConfigureAutoLogonUseCase(
 //                _mockAutoLogonService.Object,
-//                null, // mock windowsSystemInfoService
+//                null, // mock WindowsSystemInfoAdapter
 //                _mockCredentialUseCase.Object,
-//                new ConfigureAutoLogonRequestValidator());
+//                new ConfigureAutoLogonValidator());
 //        }
 //
 //        [Fact]
@@ -42,7 +51,7 @@
 //        public void Execute_ShouldReturnHelloBlock_WhenWindowsHelloIsActive()
 //        {
 //            var request = new ConfigureAutoLogonRequest(IsDeactivateAction: false, false, false, "user", "dom", "pass");
-//            _mockAutoLogonService.Setup(s => s.IsWindowsHelloPasswordlessEnabled()).Returns(true);
+//            _mockAutoLogonService.Setup(s => s.IsPasswordlessAuthEnabled()).Returns(true);
 //
 //            var result = _sut.Execute(request);
 //
@@ -58,7 +67,7 @@
 //        {
 //            var request = new ConfigureAutoLogonRequest(false, false, false, "Admin", "Workgroup", "TopSecret");
 //
-//            _mockAutoLogonService.Setup(s => s.IsWindowsHelloPasswordlessEnabled()).Returns(false);
+//            _mockAutoLogonService.Setup(s => s.IsPasswordlessAuthEnabled()).Returns(false);
 //            _mockCredentialUseCase
 //                .Setup(s => s.ValidateCredentials("Admin", "Workgroup", "TopSecret"))
 //                .Returns(true);
@@ -124,3 +133,11 @@
 //        }
 //    }
 //}
+
+
+
+
+
+
+
+

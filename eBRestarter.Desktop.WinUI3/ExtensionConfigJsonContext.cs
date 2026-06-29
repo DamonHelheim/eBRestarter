@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
-using eBRestarter.Core.Application.Models.Config;
+﻿using System.Text.Json.Serialization;
+using eBRestarter.Infrastructure.Config;
 
 namespace eBRestarter.Desktop.WinUI3;
 
@@ -7,3 +7,4 @@ namespace eBRestarter.Desktop.WinUI3;
 internal partial class ExtensionConfigJsonContext : JsonSerializerContext
 {
 }
+

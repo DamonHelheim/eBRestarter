@@ -1,13 +1,23 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Constants;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Application.Models.Config;
+using eBRestarter.Infrastructure.Api;
+using eBRestarter.Infrastructure.Browser;
+using eBRestarter.Infrastructure.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Infrastructure.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Collections.ObjectModel;
@@ -19,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ViewModelOptionsExtension : ObservableObject
+    public sealed partial class ViewModelOptionsExtension : ObservableObject
     {
         private const string ExtensionConfigFileName = "tab_restarter_config.json";
         private const string GeneralErrorKey = "General_Error";
@@ -32,12 +42,18 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             TypeInfoResolver = ExtensionConfigJsonContext.Default
         };
 
-        private readonly IBrowserExtensionDeploymentUseCase _browserExtensionDeploymentService;
+        private readonly IBrowserExtensionDeploymentPort _browserExtensionDeploymentService;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly ILocalizationService _localizationService;
-        private readonly IOperatingSystemFacade _operatingSystemFacade;
-        private readonly IUIOptionsService _uiOptionsService;
+        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly ILocalizationProvider _localizationService;
+        private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
+        private readonly IUIOptionsProvider _uiOptionsService;
         private readonly AppConfig _currentConfig;
 
         [ObservableProperty]
@@ -55,21 +71,27 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
         public ViewModelOptionsExtension(
-            IBrowserExtensionDeploymentUseCase browserExtensionDeploymentService,
+            IBrowserExtensionDeploymentPort browserExtensionDeploymentService,
             IDialogService dialogService,
-            IEVisitorConfigService eVisitorConfigService,
-            ILocalizationService localizationService,
-            IOperatingSystemFacade OperatingSystemFacadeAdapter,
-            IUIOptionsService uiOptionsService)
+            IEVisitorConfigPort EVRestarterConfigRepository,
+            ILocalizationProvider LocalizationProvider,
+            IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+            IUIOptionsProvider uiOptionsService)
         {
             _browserExtensionDeploymentService = browserExtensionDeploymentService;
             _dialogService = dialogService;
-            _eVisitorConfigService = eVisitorConfigService;
-            _localizationService = localizationService;
-            _operatingSystemFacade = OperatingSystemFacadeAdapter;
+            _EVRestarterConfigRepository = EVRestarterConfigRepository;
+            _localizationService = LocalizationProvider;
+            _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
             _uiOptionsService = uiOptionsService;
 
-            _currentConfig = _eVisitorConfigService.LoadConfig();
+            _currentConfig = _EVRestarterConfigRepository.LoadConfig();
 
             _browserExtensionDeploymentService.EnsureExtensionIsDeployed();
 
@@ -96,7 +118,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                     Directory.CreateDirectory(extensionPath);
                 }
 
-                _operatingSystemFacade.WindowsProcessControlService.OpenExplorer(extensionPath);
+                _osProcessControlPort.OpenDirectoryInFileBrowser(extensionPath);
             }
             catch (Exception ex)
             {
@@ -181,4 +203,16 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

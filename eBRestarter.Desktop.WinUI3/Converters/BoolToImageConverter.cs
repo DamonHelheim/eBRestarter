@@ -7,7 +7,7 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// <summary>
 /// Converts a boolean to an image source; paths are configurable via XAML properties.
 /// </summary>
-public partial class BoolToImageConverter : IValueConverter
+public sealed partial class BoolToImageConverter : IValueConverter
 {
     public string? ImagePathWhenFalse { get; set; }
     public string? ImagePathWhenTrue { get; set; }

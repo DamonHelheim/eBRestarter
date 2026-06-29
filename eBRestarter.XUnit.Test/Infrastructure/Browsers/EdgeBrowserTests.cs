@@ -1,6 +1,8 @@
-ï»¿using eBRestarter.Core.Application.Interfaces.OperatingSystem;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
-using eBRestarter.Infrastructure.Browsers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.WindowsOS;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Infrastructure.Adapters.Browsers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
@@ -13,18 +15,20 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     {
         /// <summary>
         /// Bei Edge passiert oft der Fehler, dass man "Microsoft Edge" oder nur "Edge" als
-        /// Verzeichnisnamen wÃ¤hlt. Der echte Ordnerbaum ist aber "Microsoft\Edge\User Data".
+        /// Verzeichnisnamen wählt. Der echte Ordnerbaum ist aber "Microsoft\Edge\User Data".
         ///
         /// WAS WIRD GETESTET?
-        /// Identisch zu den anderen: Wir prÃ¼fen das korrekte String-Mapping des Edge-Root-Ordners.
+        /// Identisch zu den anderen: Wir prüfen das korrekte String-Mapping des Edge-Root-Ordners.
         /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectDirectories_ForEdge()
         {
             // ARRANGE
-            var mockOs = new Mock<IOperatingSystemFacade>();
-            var mockLogger = new Mock<ILogger<EdgeBrowserAdapter>>();
-            var mockFileSystem = new Mock<IWindowsFileSystemService>();
+            var mockProcess = new Mock<IOsProcessControlPort>();
+            var mockSettings = new Mock<ISettingsPort>();
+            var mockFileSystem = new Mock<IFileSystemPort>();
+            var mockLogger = new Mock<ILogger<EdgeBrowser>>();
+            
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
             mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));
@@ -32,11 +36,10 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             string expectedDefaultProfilePath = @"C:\Local\Microsoft\Edge\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 
-            mockOs.Setup(os => os.WindowsFileSystemServiceAdapter).Returns(mockFileSystem.Object);
-            var EdgeBrowserAdapter = new EdgeBrowserAdapter(mockOs.Object, mockLogger.Object);
+            var EdgeBrowser = new EdgeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
-            var paths = EdgeBrowserAdapter.ResolvePaths();
+            var paths = EdgeBrowser.ResolvePaths();
 
             // ASSERT
             paths.CacheDirs.ShouldContain($@"{expectedDefaultProfilePath}\GPUCache");
@@ -44,5 +47,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
     }
 }
+
+
+
 
 

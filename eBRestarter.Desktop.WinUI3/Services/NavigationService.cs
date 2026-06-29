@@ -1,3 +1,4 @@
+using eBRestarter.Desktop.WinUI3.Adapters;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -13,6 +14,7 @@ public sealed class NavigationService : INavigationService
 {
 
     private readonly Dictionary<string, Type> _pages = [];
+
     private INavigationFrame? _frameAdapter;
 
     public void AttachFrame(Frame frame)
@@ -27,11 +29,11 @@ public sealed class NavigationService : INavigationService
 
     public bool NavigateTo(string key, object parameter = null!, NavigationTransitionInfo transitionInfo = null!)
     {
-        if (_frameAdapter == null) return false;
+        if (_frameAdapter == null) { return false; }
 
         if (_pages.TryGetValue(key, out var pageType))
         {
-            if (_frameAdapter.Content?.GetType() == pageType) return false;
+            if (_frameAdapter.Content?.GetType() == pageType) { return false; }
 
             return _frameAdapter.Navigate(pageType, parameter, transitionInfo);
         }

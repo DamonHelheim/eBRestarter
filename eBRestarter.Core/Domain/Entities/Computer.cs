@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Domain.Entities;
 
-public class Computer
+public sealed class Computer
 {
     public DateTime? NextRestartDate { get; set; }
     public int ComputerRestartIntervalDays { get; set; }

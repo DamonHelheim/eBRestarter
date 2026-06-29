@@ -1,9 +1,15 @@
+﻿using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using LiveChartsCore;
@@ -24,11 +30,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the general overview / dashboard page. Loads earnings and IP info from
-/// <see cref="IEVisitorApiService"/>, displays BTP sums for day/month/year and a chart that
+/// <see cref="IEVisitorApiProviderPort"/>, displays BTP sums for day/month/year and a chart that
 /// can pivot by hour, day, or month. Refreshes data on a timer (e.g. at minute 5) and keeps
 /// chart and labels in sync on the UI thread via <see cref="DispatcherQueue"/>.
 /// </summary>
-public partial class ViewModelGeneralOverview : ObservableObject
+public sealed partial class ViewModelGeneralOverview : ObservableObject
 {
     private const double ChartValueChangeEpsilon = 0.0001;
 
@@ -46,9 +52,9 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
     private const int YAxisMinStep = 100;
 
-    private readonly IEVisitorApiService _eVisitorApiService;
+    private readonly IEVisitorApiProviderPort _eVisitorApiService;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
     private readonly INavigationService _navigationService;
 
@@ -62,13 +68,13 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
     private readonly DispatcherTimer _timer;
 
-    private readonly IEVisitorConfigService _configService;
+    private readonly IEVisitorConfigPort _configService;
 
     private bool _isApiConfigured;
 
     /// <summary>
-    /// Setze dies auf true, um für Screenshots automatisch Fake-Werte (Chart und BTP-Summen) zu generieren.
-    /// Nach dem Erstellen der Screenshots einfach wieder auf false setzen.
+    /// Set this to true to automatically generate fake values (chart and BTP totals) for screenshots.
+    /// Simply set it back to false after taking the screenshots.
     /// </summary>
     public bool UseScreenshotFakeData { get; set; } = false;
 
@@ -152,18 +158,18 @@ public partial class ViewModelGeneralOverview : ObservableObject
     /// </summary>
     public ViewModelGeneralOverview(
         INavigationService navigationService,
-        IEVisitorApiService eVisitorApiService,
-        ILocalizationService localizationService,
-        IEVisitorConfigService configService)
+        IEVisitorApiProviderPort eVisitorApiService,
+        ILocalizationProvider LocalizationProvider,
+        IEVisitorConfigPort configService)
     {
         ArgumentNullException.ThrowIfNull(navigationService);
         ArgumentNullException.ThrowIfNull(eVisitorApiService);
-        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
         ArgumentNullException.ThrowIfNull(configService);
 
         _navigationService = navigationService;
         _eVisitorApiService = eVisitorApiService;
-        _localizationService = localizationService;
+        _localizationService = LocalizationProvider;
         _configService = configService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
@@ -253,7 +259,7 @@ public partial class ViewModelGeneralOverview : ObservableObject
                 string monthsString = _localizationService.RetrieveString("Chart_MonthsShort");
                 xAxis.Labels = !string.IsNullOrEmpty(monthsString)
                     ? monthsString.Split(',')
-                    : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+                    : ["Jan", "Feb", "M�r", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
                 break;
         }
 
@@ -368,12 +374,12 @@ public partial class ViewModelGeneralOverview : ObservableObject
 
     private double[] GenerateFakeEarningsData()
     {
-        var rnd = new Random(SelectedPivotIndex); // Fester Seed, damit sich die Werte beim Hin- und Herschalten nicht ändern
+        var rnd = new Random(SelectedPivotIndex); // Fixed seed so values don't change when toggling back and forth
         int count = SelectedPivotIndex switch
         {
-            0 => 24, // 24 Stunden
-            1 => DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month), // Tage im aktuellen Monat
-            2 => 12, // 12 Monate
+            0 => 24, // 24 hours
+            1 => DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month), // Days in the current month
+            2 => 12, // 12 months
             _ => 0
         };
 
@@ -382,9 +388,9 @@ public partial class ViewModelGeneralOverview : ObservableObject
         {
             earningsValuesForPivot[i] = SelectedPivotIndex switch
             {
-                0 => rnd.Next(500, 801), // Stundenwerte
-                1 => rnd.Next(12000, 17001), // Tageswerte im Monat
-                2 => rnd.Next(500000, 650001), // Monatswerte im Jahr
+                0 => rnd.Next(500, 801), // Hourly values
+                1 => rnd.Next(12000, 17001), // Daily values in the month
+                2 => rnd.Next(500000, 650001), // Monthly values in the year
                 _ => 0
             };
         }
@@ -424,5 +430,9 @@ public partial class ViewModelGeneralOverview : ObservableObject
     }
 
     [RelayCommand] private void GoToAPILogin() => _navigationService.NavigateTo("Options", parameter: 1);
-
 }
+
+
+
+
+

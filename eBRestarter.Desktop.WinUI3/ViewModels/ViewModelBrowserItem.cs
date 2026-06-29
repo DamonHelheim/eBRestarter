@@ -1,14 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Media;
@@ -24,9 +28,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// <summary>
 /// View model for a single browser entry on the "Installed Browsers" page. Handles display of
 /// install state, version, download progress, and actions: choose as default or download/install
-/// via <see cref="IBrowserDownloadUseCase"/>. Sends <see cref="BrowserChangedMessage"/> when chosen.
+/// via <see cref="IBrowserDownloadPort"/>. Sends <see cref="BrowserChangedMessage"/> when chosen.
 /// </summary>
-public partial class ViewModelBrowserItem : ObservableObject
+public sealed partial class ViewModelBrowserItem : ObservableObject
 {
     private const string BrowserInstallerFileNameSuffix = "_Installer.exe";
 
@@ -54,13 +58,19 @@ public partial class ViewModelBrowserItem : ObservableObject
 
     private CancellationTokenSource? _downloadCancellationTokenSource;
 
-    private readonly IBrowserDownloadUseCase _downloadService;
+    private readonly IBrowserDownloadPort _downloadService;
 
-    private readonly IEVisitorConfigService _eVisitorConfigService;
+    private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
-    private readonly IOperatingSystemFacade _operatingSystemFacade;
+    private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
 
     [ObservableProperty]
     public partial double DownloadProgressValue { get; set; }
@@ -147,25 +157,37 @@ public partial class ViewModelBrowserItem : ObservableObject
     /// </summary>
     public ViewModelBrowserItem(
         BrowserInfo browserInfo,
-        IBrowserDownloadUseCase downloadService,
-        IOperatingSystemFacade OperatingSystemFacadeAdapter,
-        IEVisitorConfigService eVisitorConfigService,
+        IBrowserDownloadPort downloadService,
+        IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+        IEVisitorConfigPort EVRestarterConfigRepository,
         IDialogService dialogService,
-        ILocalizationService localizationService)
+        ILocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(browserInfo);
         ArgumentNullException.ThrowIfNull(downloadService);
-        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
-        ArgumentNullException.ThrowIfNull(eVisitorConfigService);
+        ArgumentNullException.ThrowIfNull(osProcessControlPort);
+        ArgumentNullException.ThrowIfNull(osAutoLogonPort);
+        ArgumentNullException.ThrowIfNull(windowsSystemInfo);
+        ArgumentNullException.ThrowIfNull(settingsPort);
+        ArgumentNullException.ThrowIfNull(autoStartPort);
+        ArgumentNullException.ThrowIfNull(fileSystemPort);
+        ArgumentNullException.ThrowIfNull(browserConfigPort);
+        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
         ArgumentNullException.ThrowIfNull(dialogService);
-        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
 
         _browserInfo = browserInfo;
         _downloadService = downloadService;
-        _operatingSystemFacade = OperatingSystemFacadeAdapter;
-        _eVisitorConfigService = eVisitorConfigService;
+        _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
+        _EVRestarterConfigRepository = EVRestarterConfigRepository;
         _dialogService = dialogService;
-        _localizationService = localizationService;
+        _localizationService = LocalizationProvider;
 
         BrowserVersionText = string.Empty;
         DownloadSizeText = string.Empty;
@@ -180,9 +202,9 @@ public partial class ViewModelBrowserItem : ObservableObject
     private void ChooseBrowser()
     {
         var selectedBrowserName = HeaderTitleBrowser ?? string.Empty;
-        var config = _eVisitorConfigService.LoadConfig();
+        var config = _EVRestarterConfigRepository.LoadConfig();
         config.Browser.Selected = selectedBrowserName;
-        _eVisitorConfigService.SaveConfig(config);
+        _EVRestarterConfigRepository.SaveConfig(config);
 
         WeakReferenceMessenger.Default.Send(new BrowserChangedMessage(selectedBrowserName));
     }
@@ -205,7 +227,7 @@ public partial class ViewModelBrowserItem : ObservableObject
     /// or version check). Only applies when install state or version actually changed; then
     /// refreshes version text and notifies dependent properties so the UI updates.
     /// </summary>
-    /// <param name="updatedBrowserInfo">New snapshot from <see cref="IBrowserService"/>.</param>
+    /// <param name="updatedBrowserInfo">New snapshot from <see cref="IBrowserDiscoveryPort"/>.</param>
     public void Update(BrowserInfo updatedBrowserInfo)
     {
         ArgumentNullException.ThrowIfNull(updatedBrowserInfo);
@@ -228,7 +250,7 @@ public partial class ViewModelBrowserItem : ObservableObject
 
         if (installNow)
         {
-            await _operatingSystemFacade.WindowsProcessControlService.StartExecutableAsync(installerFilePath);
+            await _osProcessControlPort.StartExecutableAsync(installerFilePath);
             await _dialogService.ShowMessageAsync(
                 _localizationService.RetrieveString("Install_FinishedTitle"),
                 _localizationService.RetrieveString("Install_FinishedMessage"));
@@ -246,8 +268,8 @@ public partial class ViewModelBrowserItem : ObservableObject
     {
         try
         {
-            if (_operatingSystemFacade.WindowsFileSystemServiceAdapter.FileExists(partialDownloadFilePath))
-                _operatingSystemFacade.WindowsFileSystemServiceAdapter.DeleteFile(partialDownloadFilePath);
+            if (_fileSystemPort.FileExists(partialDownloadFilePath))
+                _fileSystemPort.DeleteFile(partialDownloadFilePath);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ObjectDisposedException)
         {
@@ -297,8 +319,6 @@ public partial class ViewModelBrowserItem : ObservableObject
         _downloadCancellationTokenSource = null;
     }
 
-
-
     /// <summary>Downloads the browser installer to the user's Downloads folder, reports progress, then prompts for install. On cancel or error, cleans up and resets state.</summary>
     private async Task StartDownloadAsync()
     {
@@ -319,8 +339,8 @@ public partial class ViewModelBrowserItem : ObservableObject
         RefreshBrowserVersionText();
 
         var fileName = $"{_browserInfo.Name}{BrowserInstallerFileNameSuffix}";
-        var userProfile = _operatingSystemFacade.WindowsFileSystemServiceAdapter.ResolveEnvironmentPath(UserProfileEnvironmentVariableName);
-        var downloadPath = _operatingSystemFacade.WindowsFileSystemServiceAdapter.CombinePaths(userProfile, UserDownloadsFolderName, fileName);
+        var userProfile = _fileSystemPort.ResolveEnvironmentPath(UserProfileEnvironmentVariableName);
+        var downloadPath = _fileSystemPort.CombinePaths(userProfile, UserDownloadsFolderName, fileName);
 
         var progressHandler = new Progress<DownloadProgressStatus>(downloadProgressStatus =>
         {
@@ -356,5 +376,19 @@ public partial class ViewModelBrowserItem : ObservableObject
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

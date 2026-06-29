@@ -1,16 +1,16 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
 /// <summary>
-/// Repräsentiert die abgerufenen Verdienstdaten der API.
+/// Represents the retrieved earnings data from the API.
 /// </summary>
-/// <param name="HourlyEarnings">Array mit 24 Werten für die Stunden des aktuellen Tages.</param>
-/// <param name="DailyEarnings">Array mit den Werten für jeden Tag des aktuellen Monats.</param>
-/// <param name="MonthlyEarnings">Array mit 12 Werten für die Monate des aktuellen Jahres.</param>
-/// <param name="YearlySum">Die Gesamtsumme des aktuellen Jahres.</param>
-/// <param name="MonthlySum">Die Gesamtsumme des aktuellen Monats.</param>
-/// <param name="TodaySum">Die Gesamtsumme des heutigen Tages.</param>
+/// <param name="HourlyEarnings">Array with 24 values for the hours of the current day.</param>
+/// <param name="DailyEarnings">Array with values for each day of the current month.</param>
+/// <param name="MonthlyEarnings">Array with 12 values for the months of the current year.</param>
+/// <param name="YearlySum">The total sum for the current year.</param>
+/// <param name="MonthlySum">The total sum for the current month.</param>
+/// <param name="TodaySum">The total sum for today.</param>
 public sealed record EarningsData(
-    double[] HourlyEarnings, // Die 24 Balken
+    double[] HourlyEarnings, // The 24 bars
     double[] DailyEarnings,
     double[] MonthlyEarnings,
     double YearlySum,

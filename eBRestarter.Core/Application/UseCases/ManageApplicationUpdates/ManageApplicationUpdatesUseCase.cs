@@ -1,10 +1,16 @@
-﻿using eBRestarter.Core.Application.Interfaces.Update;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
+using eBRestarter.Core.Application.Ports.Outbound.Update;
 
 namespace eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 
-public class ManageApplicationUpdatesUseCase(IUpdateService updateService) : IManageApplicationUpdatesUseCase
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class ManageApplicationUpdatesUseCase(IUpdatePort updateService) : IManageApplicationUpdatesUseCase
 {
-    private readonly IUpdateService _updateService = updateService;
+    private readonly IUpdatePort _updateService = updateService;
 
     public async Task<CheckUpdateResponse> CheckForUpdatesAsync()
     {
@@ -23,3 +29,4 @@ public class ManageApplicationUpdatesUseCase(IUpdateService updateService) : IMa
         }
     }
 }
+

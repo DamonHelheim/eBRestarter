@@ -1,16 +1,39 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using eBRestarter.Core.Application.Handlers;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Constants;
+using eBRestarter.Infrastructure.Api;
+using eBRestarter.Infrastructure.Browser;
+using eBRestarter.Infrastructure.OperatingSystem;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Scheduling;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
@@ -22,22 +45,28 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ViewModelOptionsGeneral : ObservableObject
+    public sealed partial class ViewModelOptionsGeneral : ObservableObject
     {
         private const string GeneralErrorKey = "General_Error";
 
-        private readonly IRetrieveNextRestartDateUseCase _retrieveNextRestartDateUseCase;
-        private readonly IComputerRestartScheduler _computerRestartScheduler;
+        private readonly INextRestartDateProvider _retrieveNextRestartDateUseCase;
+        private readonly IComputerRestartSchedulerPort _computerRestartScheduler;
         private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly ILanguageHandler _languageService;
-        private readonly ILocalizationService _localizationService;
+        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly ILanguageService _languageService;
+        private readonly ILocalizationProvider _localizationService;
         private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
-        private readonly IOperatingSystemFacade _operatingSystemFacade;
-        private readonly IThemeHandler _themeService;
+        private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
+        private readonly IThemeService _themeService;
         private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
-        private readonly IUIOptionsService _uiOptionsService;
+        private readonly IUIOptionsProvider _uiOptionsService;
 
         private bool _isInitializing;
         private readonly AppConfig _currentConfig;
@@ -82,26 +111,32 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IConfigureAutoLogonUseCase configureAutoLogonUseCase,
             IToggleAppAutoStartUseCase toggleAppAutoStartUseCase,
             IManageApplicationUpdatesUseCase manageApplicationUpdatesUseCase,
-            IOperatingSystemFacade OperatingSystemFacadeAdapter,
-            IThemeHandler themeService,
-            IEVisitorConfigService eVisitorConfigService,
-            ILanguageHandler languageService,
-            ILocalizationService localizationService,
-            IUIOptionsService uiOptionsService,
-            IRetrieveNextRestartDateUseCase retrieveNextRestartDateUseCase,
-            IComputerRestartScheduler computerRestartScheduler)
+            IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+            IThemeService themeService,
+            IEVisitorConfigPort EVRestarterConfigRepository,
+            ILanguageService languageService,
+            ILocalizationProvider LocalizationProvider,
+            IUIOptionsProvider uiOptionsService,
+            INextRestartDateProvider NextRestartDateProvider,
+            IComputerRestartSchedulerPort ComputerRestartHandler)
         {
             _isInitializing = true;
 
-            _retrieveNextRestartDateUseCase = retrieveNextRestartDateUseCase;
-            _computerRestartScheduler = computerRestartScheduler;
+            _retrieveNextRestartDateUseCase = NextRestartDateProvider;
+            _computerRestartScheduler = ComputerRestartHandler;
             _configureAutoLogonUseCase = configureAutoLogonUseCase;
             _dialogService = dialogService;
-            _eVisitorConfigService = eVisitorConfigService;
+            _EVRestarterConfigRepository = EVRestarterConfigRepository;
             _languageService = languageService;
-            _localizationService = localizationService;
+            _localizationService = LocalizationProvider;
             _manageApplicationUpdatesUseCase = manageApplicationUpdatesUseCase;
-            _operatingSystemFacade = OperatingSystemFacadeAdapter;
+            _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
             _themeService = themeService;
             _toggleAppAutoStartUseCase = toggleAppAutoStartUseCase;
             _uiOptionsService = uiOptionsService;
@@ -111,7 +146,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             ComputerRestartList = new ReadOnlyCollection<ComputerRestartOption>([.. _uiOptionsService.GetComputerRestartOptions()]);
             LanguageList = new ReadOnlyCollection<LanguageOption>([.. _uiOptionsService.GetAvailableLanguages()]);
 
-            _currentConfig = _eVisitorConfigService.LoadConfig();
+            _currentConfig = _EVRestarterConfigRepository.LoadConfig();
 
             if (_currentConfig.Computer.NextRestartDate.HasValue && _currentConfig.Computer.ComputerRestartIntervalDays > 0)
             {
@@ -212,8 +247,8 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             string currentUser = Environment.UserName;
             string currentDomain = Environment.UserDomainName;
 
-            bool isPasswordlessEnabled = _operatingSystemFacade.WindowsAutoLogonAdapter.IsWindowsHelloPasswordlessEnabled();
-            bool isAdmin = _operatingSystemFacade.WindowsSystemInfoService.IsUserAdministrator();
+            bool isPasswordlessEnabled = _osAutoLogonPort.IsPasswordlessAuthEnabled();
+            bool isAdmin = _windowsSystemInfo.IsUserAdministrator();
 
             var autoLogonDialogResult = await _dialogService.ShowAutoLogonDialogAsync(currentUser, currentDomain, isPasswordlessEnabled, isAdmin);
 
@@ -261,7 +296,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     await _dialogService.ShowMessageAsync(
                         _localizationService.RetrieveString("General_Error"),
-                        "Es sind Administratorrechte erforderlich, um diese Aktion auszuführen. Bitte starten Sie die Anwendung als Administrator.",
+                        "Es sind Administratorrechte erforderlich, um diese Aktion auszuf�hren. Bitte starten Sie die Anwendung als Administrator.",
                         DialogIcon.Error);
                 }
                 else if (status == AutoLogonResultStatus.ValidationError)
@@ -289,7 +324,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private void OpenSettingsDataFolder()
         {
-            _operatingSystemFacade.WindowsProcessControlService.OpenExplorer(SystemPaths.ApplicationDataBasePath);
+            _osProcessControlPort.OpenDirectoryInFileBrowser(SystemPaths.ApplicationDataBasePath);
         }
 
         [RelayCommand]
@@ -356,6 +391,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 value.Days,
                 validClockTime,
                 TimeProvider.System); // Or inject TimeProvider
+
             UpdateRestartUiState();
             SaveSettings();
         }
@@ -375,7 +411,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
             if (_languageService.CurrentLanguageCode != newLanguageCode)
             {
-                _languageService.SetLanguage(newLanguageCode);
+                _languageService.SetLanguageOption(newLanguageCode);
 
                 bool restartNow = await _dialogService.ShowConfirmationAsync(
                     _localizationService.RetrieveString("Options_LanguageChanged_Restart_Title"),
@@ -393,7 +429,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         partial void OnStartWithWindowsChanged(bool value)
         {
             if (_isInitializing)
+            {
+
                 return;
+
+            }
 
             ToggleAutoStartAsync(value).Forget();
         }
@@ -403,6 +443,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task InitializeAsync()
         {
             _isInitializing = true;
+
             try
             {
                 StartWithWindows = await _toggleAppAutoStartUseCase.InitializeAndGetStateAsync();
@@ -416,6 +457,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private async Task PerformUpdateCoreAsync()
         {
             IsCheckingForUpdates = true;
+
             try
             {
                 await _manageApplicationUpdatesUseCase.PerformUpdateAsync();
@@ -423,11 +465,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+
                 string errorFormat = _localizationService.RetrieveString("Options_UpdateFailed_Message");
+
                 await _dialogService.ShowMessageAsync(
                     _localizationService.RetrieveString("Options_UpdateFailed_Title"),
                     string.Format(errorFormat, ex.Message),
                     DialogIcon.Error);
+
             }
             finally
             {
@@ -435,28 +480,23 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             }
         }
 
-        private void RecalculateNextRestartDate()
-        {
-            _currentConfig.Computer.CalculateNextRestartDate(TimeProvider.System);
-        }
-
         private void SaveSettings()
         {
-            var freshConfig = _eVisitorConfigService.LoadConfig();
+            var freshConfig = _EVRestarterConfigRepository.LoadConfig();
 
             freshConfig.Computer.UpdateRestartSettings(_currentConfig.Computer.ComputerRestartIntervalDays, _currentConfig.Computer.RestartClockTime, TimeProvider.System);
             freshConfig.Computer.SetNextRestartDate(_currentConfig.Computer.NextRestartDate);
             freshConfig.Settings.Language = _currentConfig.Settings.Language;
             freshConfig.Settings.StartWithWindows = _currentConfig.Settings.StartWithWindows;
 
-            _eVisitorConfigService.SaveConfig(freshConfig);
+            _EVRestarterConfigRepository.SaveConfig(freshConfig);
         }
 
         private void SaveThemeConfig(string theme)
         {
-            var config = _eVisitorConfigService.LoadConfig();
+            var config = _EVRestarterConfigRepository.LoadConfig();
             config.Settings.Theme = theme;
-            _eVisitorConfigService.SaveConfig(config);
+            _EVRestarterConfigRepository.SaveConfig(config);
         }
 
         private async Task ToggleAutoStartAsync(bool enable)
@@ -488,5 +528,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,5 +1,6 @@
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Views.Dialogs;
 using Microsoft.UI;
@@ -11,15 +12,21 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.Services;
 
-public class DialogService : IDialogService
+public sealed class DialogService : IDialogService
 {
+    private readonly IMainWindowProvider _mainWindowProvider;
 
-    private static XamlRoot XamlRoot => App.MainWindoweBRestarter!.Content.XamlRoot;
-    private static ElementTheme CurrentTheme => (App.MainWindoweBRestarter?.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default;
+    public DialogService(IMainWindowProvider mainWindowProvider)
+    {
+        _mainWindowProvider = mainWindowProvider;
+    }
+
+    private XamlRoot XamlRoot => _mainWindowProvider.MainWindow.Content.XamlRoot;
+    private ElementTheme CurrentTheme => (_mainWindowProvider.MainWindow.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default;
 
     public async Task<bool> ShowConfirmationAsync(string title, string message, string yesButtonText = "Ja", string noButtonText = "Nein")
     {
-        if (App.MainWindoweBRestarter?.Content is FrameworkElement element)
+        if (_mainWindowProvider.MainWindow.Content is FrameworkElement element)
         {
             var dialog = new ContentDialog
             {
@@ -125,7 +132,7 @@ public class DialogService : IDialogService
     }
 
 
-    private static async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
+    private async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
     {
         var dialog = new T
         {
@@ -138,7 +145,7 @@ public class DialogService : IDialogService
         return await dialog.ShowAsync();
     }
 
-    private static object CreateTitleContent(string title, DialogIcon icon)
+    private object CreateTitleContent(string title, DialogIcon icon)
     {
         if (icon == DialogIcon.None) return title;
 

@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Domain.Entities;
 
-public class BrowserConfig
+public sealed class BrowserConfig
 {
     public bool StartBrowserWithProgrammStart { get; set; }
     public bool CheckBrowserAliveRoutine { get; set; }
