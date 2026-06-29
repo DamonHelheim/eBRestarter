@@ -1,8 +1,5 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
 using System.Runtime.Versioning;
 
 namespace eBRestarter.Core.Application.Providers;

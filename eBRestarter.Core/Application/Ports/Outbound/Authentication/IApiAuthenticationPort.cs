@@ -1,6 +1,6 @@
-namespace eBRestarter.Core.Application.Ports.Outbound.Authentication;
-
 using eBRestarter.Core.Application.Models.Records;
+
+namespace eBRestarter.Core.Application.Ports.Outbound.Authentication;
 
 public interface IApiAuthenticationPort
 {

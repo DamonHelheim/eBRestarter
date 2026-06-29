@@ -1,33 +1,32 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Authentication;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+﻿using eBRestarter.Core.Application.Handlers;
+using eBRestarter.Core.Application.Parsers;
 using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Scheduling;
 using eBRestarter.Core.Application.Ports.Outbound.Security;
 using eBRestarter.Core.Application.Ports.Outbound.Update;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Providers;
 using eBRestarter.Infrastructure.Adapters;
 using eBRestarter.Infrastructure.Adapters.Authentication;
 using eBRestarter.Infrastructure.Adapters.Browsers;
-using eBRestarter.Infrastructure.Factories;
 using eBRestarter.Infrastructure.Adapters.Http;
-using eBRestarter.Core.Application.Parsers;
 using eBRestarter.Infrastructure.Adapters.Providers.WindowsOS;
 using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Infrastructure.Network;
-using eBRestarter.Core.Application.Handlers;
 using eBRestarter.Infrastructure.Adapters.Update;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Infrastructure.Adapters.WindowsOS.Security;
 using eBRestarter.Infrastructure.Adapters.Wrapper;
+using eBRestarter.Infrastructure.Factories;
+using eBRestarter.Infrastructure.Network;
 using eBRestarter.Infrastructure.Repositories.Authentication;
 using eBRestarter.Infrastructure.Repositories.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
 
 namespace eBRestarter.Infrastructure.Extensions.DependencyInjection;
 
@@ -97,7 +96,7 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<ICredentialStorePort, JsonCredentialStoreRepository>();
 
 
-        
+
         return services;
     }
 }

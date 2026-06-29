@@ -1,5 +1,4 @@
-﻿using eBRestarter.Infrastructure.Adapters.Wrapper;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace eBRestarter.Infrastructure.Adapters.Wrapper;
 

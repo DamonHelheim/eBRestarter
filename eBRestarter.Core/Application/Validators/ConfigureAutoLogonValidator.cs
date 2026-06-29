@@ -1,8 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
-using eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
-using eBRestarter.Core.Application.Models.Errors;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
+﻿using eBRestarter.Core.Application.Models.Records;
 using FluentValidation;
 
 namespace eBRestarter.Core.Application.Validators;

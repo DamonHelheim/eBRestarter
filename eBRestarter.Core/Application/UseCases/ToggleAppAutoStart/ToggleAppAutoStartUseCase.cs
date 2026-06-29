@@ -1,13 +1,8 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
+﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
-
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class ToggleAppAutoStartUseCase(
     IAutoStartPort startupManagerService,

@@ -1,10 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models.UI;
 using Microsoft.UI.Dispatching;
 using System;

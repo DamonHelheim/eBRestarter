@@ -1,7 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using Microsoft.Windows.ApplicationModel.Resources;

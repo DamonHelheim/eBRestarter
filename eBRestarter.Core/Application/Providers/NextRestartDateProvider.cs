@@ -1,5 +1,4 @@
 ﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
 using eBRestarter.Core.Domain.Handlers;
 
 namespace eBRestarter.Core.Application.Providers;

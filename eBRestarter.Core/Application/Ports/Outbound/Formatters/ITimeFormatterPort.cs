@@ -4,7 +4,7 @@
 /// Responsibility: Contract defining how time is formatted into text.
 /// Layer: Core (Port - Driving Interface)
 /// </summary>
-public interface ITimeFormatter
+public interface ITimeFormatterPort
 {
     string Format(int seconds);
 }

@@ -1,6 +1,4 @@
-﻿using eBRestarter.Infrastructure.Network;
-using eBRestarter.Infrastructure.Api;
-using eBRestarter.Core.Application.Enums;
+﻿using eBRestarter.Infrastructure.Api;
 
 namespace eBRestarter.Infrastructure.Network;
 

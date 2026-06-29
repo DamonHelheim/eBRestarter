@@ -1,9 +1,5 @@
 ﻿using eBRestarter.Infrastructure.Api;
-using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Network;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Infrastructure.Network;
-using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using RestSharp.Authenticators;

@@ -1,13 +1,10 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+﻿using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Infrastructure.Network;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem; using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
 using eBRestarter.Core.Application.Ports.Outbound.Update;
 using eBRestarter.Infrastructure.Network;
-using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Text.Json;
@@ -17,7 +14,13 @@ namespace eBRestarter.Infrastructure.Adapters.Update;
 public sealed class GitHubUpdateAdapter(
     IRestClientPort restClientUseCase,
     IBrowserDownloadPort browserDownloadUseCase,
-    IOsProcessControlPort processControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInformationPort systemInfoPort, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+    IOsProcessControlPort processControlPort,
+    IOsAutoLogonPort osAutoLogonPort,
+    ISystemInformationPort systemInfoPort,
+    ISettingsPort settingsPort,
+    IAutoStartPort autoStartPort,
+    IFileSystemPort fileSystemPort,
+    IBrowserConfigPort browserConfigPort,
     IApplicationLifetimePort applicationLifetimeUseCase,
     ILogger<GitHubUpdateAdapter> logger) : IUpdatePort
 {

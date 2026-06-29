@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 
 namespace eBRestarter.Infrastructure.Adapters.Providers.WindowsOS;

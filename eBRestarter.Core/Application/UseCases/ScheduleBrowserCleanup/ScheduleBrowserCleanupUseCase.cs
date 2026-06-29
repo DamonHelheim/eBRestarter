@@ -1,12 +1,9 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
+﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class ScheduleBrowserCleanupUseCase(
     IEVisitorConfigPort configService,

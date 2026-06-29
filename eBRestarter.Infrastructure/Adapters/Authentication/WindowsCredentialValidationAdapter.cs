@@ -1,6 +1,5 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
 using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using System.DirectoryServices.AccountManagement;
 
 namespace eBRestarter.Infrastructure.Adapters.Authentication;

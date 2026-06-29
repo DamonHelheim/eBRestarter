@@ -1,12 +1,8 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
+﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.Ports.Outbound.Update;
+using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
-
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class ManageApplicationUpdatesUseCase(IUpdatePort updateService) : IManageApplicationUpdatesUseCase
 {

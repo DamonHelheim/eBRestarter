@@ -1,14 +1,10 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
-
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class ToggleEdgeStartupBoostUseCase(
     IBrowserConfigPort startupService,

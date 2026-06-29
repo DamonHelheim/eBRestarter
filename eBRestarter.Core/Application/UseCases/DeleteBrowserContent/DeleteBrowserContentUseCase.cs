@@ -1,20 +1,14 @@
 ﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
 using eBRestarter.Core.Application.Ports.Outbound;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Models.Records;
 using FluentResults;
 using FluentValidation;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
-
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class DeleteBrowserContentUseCase(
     IBrowserFactoryPort BrowserFactory,

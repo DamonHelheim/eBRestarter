@@ -1,7 +1,6 @@
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
 using Microsoft.Extensions.Logging;
 using System.Management;
 

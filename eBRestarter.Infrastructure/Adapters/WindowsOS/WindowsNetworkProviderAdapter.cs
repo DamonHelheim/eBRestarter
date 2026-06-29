@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using System.Net.NetworkInformation;
 

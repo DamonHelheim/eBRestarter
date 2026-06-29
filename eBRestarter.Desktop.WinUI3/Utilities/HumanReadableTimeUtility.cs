@@ -7,7 +7,7 @@ namespace eBRestarter.Desktop.WinUI3.Utilities;
 /// <summary>
 /// Formats time spans in a human-readable way (adapter for UI/Infrastructure).
 /// </summary>
-public sealed class HumanReadableTimeUtility : ITimeFormatter
+public sealed class HumanReadableTimeUtility : ITimeFormatterPort
 {
     public string Format(int seconds)
     {

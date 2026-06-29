@@ -1,6 +1,4 @@
-﻿using eBRestarter.Infrastructure.Api;
-using eBRestarter.Infrastructure.Browser;
-using eBRestarter.Infrastructure.OperatingSystem;
+﻿using eBRestarter.Infrastructure.Browser;
 
 namespace eBRestarter.Infrastructure.Config;
 
