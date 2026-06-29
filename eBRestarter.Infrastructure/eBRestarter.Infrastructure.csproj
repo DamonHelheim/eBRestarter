@@ -12,6 +12,15 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="DTOs\**" />
+	  <Content Remove="DTOs\**" />
+	  <EmbeddedResource Remove="DTOs\**" />
+	  <None Remove="DTOs\**" />
+	  <Page Remove="DTOs\**" />
+	  <PRIResource Remove="DTOs\**" />
+	</ItemGroup>
 	<!--
 
 	 <PropertyGroup>
@@ -42,10 +51,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eBRestarter.Core\eBRestarter.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTOs\" />
   </ItemGroup>
 
 </Project>
