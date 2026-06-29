@@ -1,7 +1,8 @@
 namespace eBRestarter.Core.Application.Models.Records;
 
 /// <summary>
-/// Represents the retrieved earnings data from the API.
+/// Represents the aggregated earnings data for the application layer.
+/// This is not a 1:1 mapping of an external API, but rather an internal DTO that bundles parsed and calculated metrics (e.g. sums) for UI display.
 /// </summary>
 /// <param name="HourlyEarnings">Array with 24 values for the hours of the current day.</param>
 /// <param name="DailyEarnings">Array with values for each day of the current month.</param>
