@@ -1,14 +1,21 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.Config;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageRestarterCycle;
 using eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
+using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -28,7 +35,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// messages (username, browser, delete-content state) and optionally triggers browser cache cleanup
 /// when the schedule demands it.
 /// </summary>
-public partial class ViewModelRestartTask : ObservableObject,
+public sealed partial class ViewModelRestartTask : ObservableObject,
                                             IRecipient<UsernameChangedMessage>,
                                             IRecipient<BrowserChangedMessage>,
                                             IRecipient<DeleteBrowserContentActivateMessage>,
@@ -36,17 +43,18 @@ public partial class ViewModelRestartTask : ObservableObject,
                                             IRecipient<NextDeletionProcessMessage>,
                                             IRecipient<NextDeletionProcessDate>
 {
-    private readonly IEVisitorConfigService _configService;
+    private readonly IEVisitorConfigPort _configService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IBrowserService _browserService;
+    private readonly IBrowserDiscoveryPort _browserService;
+    private readonly eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
     private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
 
-    private readonly IRestartTaskDisplayStateUseCase _restartTaskDisplayStateUseCase;
+    private readonly IRestartTaskDisplayStateProvider _restartTaskDisplayStateUseCase;
 
     private bool _checkBrowserAliveRoutine;
 
@@ -90,30 +98,31 @@ public partial class ViewModelRestartTask : ObservableObject,
 
     /// <summary>
     /// Initializes the restart task view model with config and services, loads initial display state
-    /// from <see cref="IRestartTaskDisplayStateUseCase"/>, and registers as recipient for app-wide
+    /// from <see cref="IRestartTaskDisplayStateProvider"/>, and registers as recipient for app-wide
     /// messages so the UI stays in sync when username, browser, or delete-content settings change.
     /// </summary>
     public ViewModelRestartTask(
         IManageRestarterCycleUseCase manageRestarterCycleUseCase,
-        IEVisitorConfigService configService,
+        IEVisitorConfigPort configService,
         IDialogService dialogService,
-        ILocalizationService localizationService,
-        IRestartTaskDisplayStateUseCase restartTaskDisplayStateUseCase,
-        IBrowserService browserService)
+        ILocalizationProvider LocalizationProvider,
+        IRestartTaskDisplayStateProvider RestartTaskDisplayStateProvider,
+        IBrowserDiscoveryPort browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
     {
         ArgumentNullException.ThrowIfNull(manageRestarterCycleUseCase);
         ArgumentNullException.ThrowIfNull(configService);
         ArgumentNullException.ThrowIfNull(dialogService);
-        ArgumentNullException.ThrowIfNull(localizationService);
-        ArgumentNullException.ThrowIfNull(restartTaskDisplayStateUseCase);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
+        ArgumentNullException.ThrowIfNull(RestartTaskDisplayStateProvider);
         ArgumentNullException.ThrowIfNull(browserService);
 
         _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
         _configService = configService;
         _dialogService = dialogService;
-        _localizationService = localizationService;
-        _restartTaskDisplayStateUseCase = restartTaskDisplayStateUseCase;
+        _localizationService = LocalizationProvider;
+        _restartTaskDisplayStateUseCase = RestartTaskDisplayStateProvider;
         _browserService = browserService;
+        _browserDisplayNameResolver = browserDisplayNameResolver;
 
         _dispatcherQueue =
             DispatcherQueue.GetForCurrentThread()
@@ -242,7 +251,7 @@ public partial class ViewModelRestartTask : ObservableObject,
     private void StartLoop()
     {
         var manageRestarterCycleRequest = new ManageRestarterCycleRequest(
-            BrowserDisplayName: ChosenBrowser,
+            BrowserType: _browserDisplayNameResolver.ResolveBrowserTypeFromDisplayName(ChosenBrowser ?? string.Empty, "Edge"),
             Username: Username,
             RuntimeSeconds: _runtimeSeconds,
             PauseSeconds: _pauseSeconds,
@@ -303,4 +312,18 @@ public partial class ViewModelRestartTask : ObservableObject,
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

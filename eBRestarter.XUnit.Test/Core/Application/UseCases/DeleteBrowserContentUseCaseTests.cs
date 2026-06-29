@@ -1,7 +1,18 @@
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Validators;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
+using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
 using Moq;
@@ -16,18 +27,18 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 {
     public class DeleteBrowserContentUseCaseTests
     {
-        private readonly Mock<IBrowserFactory> _mockBrowserFactory;
-        private readonly Mock<IFileDeletionUseCase> _mockFileDeletionService;
-        private readonly Mock<IWindowsProcessControlService> _mockProcessService;
-        private readonly Mock<ILocalizationService> _mockLocalizationService;
+        private readonly Mock<IBrowserFactoryPort> _mockBrowserFactory;
+        private readonly Mock<IFileDeletionPort> _mockFileDeletionService;
+        private readonly Mock<IOsProcessControlPort> _mockProcessService;
+        private readonly Mock<ILocalizationProvider> _mockLocalizationService;
         private readonly DeleteBrowserContentUseCase _sut;
 
         public DeleteBrowserContentUseCaseTests()
         {
-            _mockBrowserFactory = new Mock<IBrowserFactory>();
-            _mockFileDeletionService = new Mock<IFileDeletionUseCase>();
-            _mockProcessService = new Mock<IWindowsProcessControlService>();
-            _mockLocalizationService = new Mock<ILocalizationService>();
+            _mockBrowserFactory = new Mock<IBrowserFactoryPort>();
+            _mockFileDeletionService = new Mock<IFileDeletionPort>();
+            _mockProcessService = new Mock<IOsProcessControlPort>();
+            _mockLocalizationService = new Mock<ILocalizationProvider>();
 
             _mockLocalizationService
                 .Setup(l => l.RetrieveString(It.IsAny<string>()))
@@ -38,7 +49,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
                 _mockFileDeletionService.Object,
                 _mockProcessService.Object,
                 _mockLocalizationService.Object,
-                new DeleteBrowserContentRequestValidator());
+                new DeleteBrowserContentValidator());
         }
 
         [Fact]
@@ -47,7 +58,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var request = new DeleteBrowserContentRequest(BrowserType.Chrome, true, true, ForceCloseProcess: false);
             var progress = new Progress<DeleteBrowserContentProgress>();
 
-            var mockBrowser = new Mock<IBrowser>();
+            var mockBrowser = new Mock<IBrowserPort>();
             mockBrowser.Setup(b => b.ProcessName).Returns("chrome");
             _mockBrowserFactory.Setup(f => f.Create(BrowserType.Chrome)).Returns(mockBrowser.Object);
 
@@ -68,7 +79,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progressUpdates = new List<DeleteBrowserContentProgress>();
             var progress = new Progress<DeleteBrowserContentProgress>(p => progressUpdates.Add(p));
 
-            var mockBrowser = new Mock<IBrowser>();
+            var mockBrowser = new Mock<IBrowserPort>();
             mockBrowser.Setup(b => b.ProcessName).Returns("msedge");
 
             mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
@@ -93,7 +104,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var request = new DeleteBrowserContentRequest(BrowserType.Firefox, DeleteCookies: false, DeleteCache: false, ForceCloseProcess: false);
             var progress = new Progress<DeleteBrowserContentProgress>();
 
-            var mockBrowser = new Mock<IBrowser>();
+            var mockBrowser = new Mock<IBrowserPort>();
             mockBrowser.Setup(b => b.ProcessName).Returns("firefox");
 
             mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
@@ -118,7 +129,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             var progressUpdates = new List<DeleteBrowserContentProgress>();
             var progress = new Progress<DeleteBrowserContentProgress>(p => progressUpdates.Add(p));
 
-            var mockBrowser = new Mock<IBrowser>();
+            var mockBrowser = new Mock<IBrowserPort>();
             mockBrowser.Setup(b => b.ProcessName).Returns("brave");
 
             mockBrowser.Setup(b => b.ResolvePaths()).Returns(new BrowserPaths(
@@ -161,3 +172,17 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

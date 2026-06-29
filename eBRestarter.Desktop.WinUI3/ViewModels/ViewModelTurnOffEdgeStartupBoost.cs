@@ -1,8 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
@@ -17,14 +25,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// Startup Boost setting via <see cref="IToggleEdgeStartupBoostUseCase"/> and shows success/error
 /// in an InfoBar. Provides a command to copy the settings URL for users who prefer to change it manually in Edge.
 /// </summary>
-public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
+public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
 {
     private const string EdgeStartupBoostSettingsClipboardText = "edge://settings/?search=Startup-Boost";
 
     private readonly IDialogService _dialogService;
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
     private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
-    private readonly IOperatingSystemFacade _operatingSystemFacade;
+    private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
 
     private bool _isRevertingState;
 
@@ -57,20 +71,32 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     public ViewModelTurnOffEdgeStartupBoost(
         IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
         IDialogService dialogService,
-        ILocalizationService localizationService,
-        IOperatingSystemFacade OperatingSystemFacadeAdapter)
+        ILocalizationProvider LocalizationProvider,
+        IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort)
     {
         ArgumentNullException.ThrowIfNull(toggleEdgeStartupBoostUseCase);
         ArgumentNullException.ThrowIfNull(dialogService);
-        ArgumentNullException.ThrowIfNull(localizationService);
-        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
+        ArgumentNullException.ThrowIfNull(osProcessControlPort);
+        ArgumentNullException.ThrowIfNull(osAutoLogonPort);
+        ArgumentNullException.ThrowIfNull(windowsSystemInfo);
+        ArgumentNullException.ThrowIfNull(settingsPort);
+        ArgumentNullException.ThrowIfNull(autoStartPort);
+        ArgumentNullException.ThrowIfNull(fileSystemPort);
+        ArgumentNullException.ThrowIfNull(browserConfigPort);
 
         _toggleEdgeStartupBoostUseCase = toggleEdgeStartupBoostUseCase;
         _dialogService = dialogService;
-        _localizationService = localizationService;
-        _operatingSystemFacade = OperatingSystemFacadeAdapter;
+        _localizationService = LocalizationProvider;
+        _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
 
-        IsAdministrator = _operatingSystemFacade.WindowsSystemInfoService.IsUserAdministrator();
+        IsAdministrator = _windowsSystemInfo.IsUserAdministrator();
         IsStartupBoostEnabled = _toggleEdgeStartupBoostUseCase.IsEnabled();
     }
 
@@ -139,4 +165,15 @@ public partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
         IsInfoBarOpen = true;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 

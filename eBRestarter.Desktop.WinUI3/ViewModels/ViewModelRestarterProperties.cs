@@ -1,18 +1,28 @@
+﻿using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Constants;
+using eBRestarter.Infrastructure.Api;
+using eBRestarter.Infrastructure.Browser;
+using eBRestarter.Infrastructure.OperatingSystem;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -28,26 +38,32 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// <summary>
 /// View model for the "Restarter properties" / task configuration page. Manages runtime hours,
 /// pause seconds, browser-alive check, start-with-program, cache-delete interval, and username.
-/// Persists via <see cref="IEVisitorConfigService"/> and broadcasts changes with
+/// Persists via <see cref="IEVisitorConfigPort"/> and broadcasts changes with
 /// <see cref="WeakReferenceMessenger"/> so the restart task and other pages stay in sync.
 /// </summary>
-public partial class ViewModelRestarterProperties : ObservableObject
+public sealed partial class ViewModelRestarterProperties : ObservableObject
 {
     private const int BrowserInstallCheckIntervalSeconds = 5;
 
-    private readonly IBrowserService _browserService;
+    private readonly IBrowserDiscoveryPort _browserService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IEVisitorConfigService _eVisitorConfigService;
+    private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
-    private readonly IOperatingSystemFacade _operatingSystemFacade;
+    private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
 
     private readonly IScheduleBrowserCleanupUseCase _scheduleBrowserCleanupUseCase;
 
-    private readonly IUIOptionsService _uiOptionsService;
+    private readonly IUIOptionsProvider _uiOptionsService;
 
     private readonly DispatcherTimer _browserCheckTimer;
 
@@ -104,26 +120,38 @@ public partial class ViewModelRestarterProperties : ObservableObject
     /// </summary>
     public ViewModelRestarterProperties(
         IScheduleBrowserCleanupUseCase scheduleBrowserCleanupUseCase,
-        IOperatingSystemFacade OperatingSystemFacadeAdapter,
-        IEVisitorConfigService eVisitorConfigService,
-        ILocalizationService localizationService,
-        IUIOptionsService uiOptionsService,
+        IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+        IEVisitorConfigPort EVRestarterConfigRepository,
+        ILocalizationProvider LocalizationProvider,
+        IUIOptionsProvider uiOptionsService,
         IDialogService dialogService,
-        IBrowserService browserService)
+        IBrowserDiscoveryPort browserService)
     {
         ArgumentNullException.ThrowIfNull(scheduleBrowserCleanupUseCase);
-        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
-        ArgumentNullException.ThrowIfNull(eVisitorConfigService);
-        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(osProcessControlPort);
+        ArgumentNullException.ThrowIfNull(osAutoLogonPort);
+        ArgumentNullException.ThrowIfNull(windowsSystemInfo);
+        ArgumentNullException.ThrowIfNull(settingsPort);
+        ArgumentNullException.ThrowIfNull(autoStartPort);
+        ArgumentNullException.ThrowIfNull(fileSystemPort);
+        ArgumentNullException.ThrowIfNull(browserConfigPort);
+        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
         ArgumentNullException.ThrowIfNull(uiOptionsService);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(browserService);
 
         _browserService = browserService;
         _dialogService = dialogService;
-        _eVisitorConfigService = eVisitorConfigService;
-        _localizationService = localizationService;
-        _operatingSystemFacade = OperatingSystemFacadeAdapter;
+        _EVRestarterConfigRepository = EVRestarterConfigRepository;
+        _localizationService = LocalizationProvider;
+        _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
         _scheduleBrowserCleanupUseCase = scheduleBrowserCleanupUseCase;
         _uiOptionsService = uiOptionsService;
 
@@ -132,7 +160,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
             ?? throw new InvalidOperationException(
                 $"{nameof(ViewModelRestarterProperties)} must be constructed on a thread with a WinUI DispatcherQueue (UI thread).");
 
-        _currentConfig = _eVisitorConfigService.LoadConfig();
+        _currentConfig = _EVRestarterConfigRepository.LoadConfig();
 
         RuntimePauseSecondsMin = 20;
         RuntimePauseSecondsMax = 60;
@@ -149,7 +177,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
         if (BrowserDeleteCacheOptionList.Count == 0)
         {
             throw new InvalidOperationException(
-                $"{nameof(ViewModelRestarterProperties)} requires at least one entry from {nameof(IUIOptionsService.GetBrowserCacheOptions)}.");
+                $"{nameof(ViewModelRestarterProperties)} requires at least one entry from {nameof(IUIOptionsProvider.GetBrowserCacheOptions)}.");
         }
 
         int configDays = _currentConfig.Browser.DeleteBrowserCacheIntervalDays;
@@ -187,9 +215,9 @@ public partial class ViewModelRestarterProperties : ObservableObject
     [RelayCommand(CanExecute = nameof(CanAddUsername))]
     private void AddEVisitorUsername()
     {
-        var freshConfig = _eVisitorConfigService.LoadConfig();
+        var freshConfig = _EVRestarterConfigRepository.LoadConfig();
         freshConfig.Username = Username;
-        _eVisitorConfigService.SaveConfig(freshConfig);
+        _EVRestarterConfigRepository.SaveConfig(freshConfig);
 
         _currentConfig.Username = Username;
 
@@ -209,7 +237,7 @@ public partial class ViewModelRestarterProperties : ObservableObject
     [RelayCommand]
     public void RegisterToEVisitor()
     {
-        _operatingSystemFacade.WindowsProcessControlService.OpenUrlInBrowser(WebLinks.RegistrationLink, string.Empty);
+        _osProcessControlPort.OpenUrlInBrowser(WebLinks.RegistrationLink, string.Empty);
     }
 
     /// <summary>Opens the delete-browser-content dialog in manual mode (no auto-start after completion).</summary>
@@ -258,14 +286,14 @@ public partial class ViewModelRestarterProperties : ObservableObject
         });
     }
 
-    // ObservableProperty partials: parameter name 'value' follows CommunityToolkit source generator convention.
+
     partial void OnCheckBrowserIsAliveIsOnChanged(bool value)
     {
         _currentConfig.Browser.CheckBrowserAliveRoutine = value;
 
-        var freshConfig = _eVisitorConfigService.LoadConfig();
+        var freshConfig = _EVRestarterConfigRepository.LoadConfig();
         freshConfig.Browser.CheckBrowserAliveRoutine = value;
-        _eVisitorConfigService.SaveConfig(freshConfig);
+        _EVRestarterConfigRepository.SaveConfig(freshConfig);
     }
 
     partial void OnRuntimeHoursChanged(int value)
@@ -281,9 +309,9 @@ public partial class ViewModelRestarterProperties : ObservableObject
         if (_currentConfig.Browser.RuntimeHours != value)
         {
             _currentConfig.Browser.RuntimeHours = value;
-            var freshConfig = _eVisitorConfigService.LoadConfig();
+            var freshConfig = _EVRestarterConfigRepository.LoadConfig();
             freshConfig.Browser.RuntimeHours = value;
-            _eVisitorConfigService.SaveConfig(freshConfig);
+            _EVRestarterConfigRepository.SaveConfig(freshConfig);
         }
     }
 
@@ -300,9 +328,9 @@ public partial class ViewModelRestarterProperties : ObservableObject
         if (_currentConfig.Browser.RuntimePauseSeconds != value)
         {
             _currentConfig.Browser.RuntimePauseSeconds = value;
-            var freshConfig = _eVisitorConfigService.LoadConfig();
+            var freshConfig = _EVRestarterConfigRepository.LoadConfig();
             freshConfig.Browser.RuntimePauseSeconds = value;
-            _eVisitorConfigService.SaveConfig(freshConfig);
+            _EVRestarterConfigRepository.SaveConfig(freshConfig);
         }
     }
 
@@ -317,10 +345,10 @@ public partial class ViewModelRestarterProperties : ObservableObject
         _currentConfig.Browser.UpdateCleanupSettings(value.Days, TimeProvider.System);
         _currentConfig.Browser.SetNextCleanupDate(scheduleUpdateResponse.NextDate ?? DateTime.MinValue);
 
-        var freshConfig = _eVisitorConfigService.LoadConfig();
+        var freshConfig = _EVRestarterConfigRepository.LoadConfig();
         freshConfig.Browser.UpdateCleanupSettings(value.Days, TimeProvider.System);
         freshConfig.Browser.SetNextCleanupDate(scheduleUpdateResponse.NextDate ?? DateTime.MinValue);
-        _eVisitorConfigService.SaveConfig(freshConfig);
+        _EVRestarterConfigRepository.SaveConfig(freshConfig);
 
         if (scheduleUpdateResponse.IsActive && scheduleUpdateResponse.NextDate.HasValue)
         {
@@ -344,14 +372,28 @@ public partial class ViewModelRestarterProperties : ObservableObject
     partial void OnStartBrowserWithProgramStartChanged(bool value)
     {
         _currentConfig.Browser.StartBrowserWithProgrammStart = value;
-        var freshConfig = _eVisitorConfigService.LoadConfig();
+        var freshConfig = _EVRestarterConfigRepository.LoadConfig();
         freshConfig.Browser.StartBrowserWithProgrammStart = value;
-        _eVisitorConfigService.SaveConfig(freshConfig);
+        _EVRestarterConfigRepository.SaveConfig(freshConfig);
     }
 
-    // Private helpers (alphabetically after ObservableProperty partials).
     /// <summary>Username can be added only when the field is non-empty.</summary>
     private bool CanAddUsername() => !string.IsNullOrWhiteSpace(Username);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,9 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Extensions;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml;
 using System;
@@ -15,25 +19,31 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Installed Browsers" page. Keeps a list of <see cref="ViewModelBrowserItem"/>
-/// in sync with <see cref="IBrowserService.FindInstalledBrowsersAsync"/>: updates existing items
+/// in sync with <see cref="IBrowserDiscoveryPort.FindInstalledBrowsersAsync"/>: updates existing items
 /// when install state or version changes and adds new items when a new browser type appears.
 /// Refreshes on a timer so the list stays current (e.g. after download/install).
 /// </summary>
-public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
+public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
 {
     private const int BrowserListRefreshIntervalSeconds = 2;
 
-    private readonly IBrowserService _browserService;
+    private readonly IBrowserDiscoveryPort _browserService;
 
-    private readonly IBrowserDownloadUseCase _downloadService;
+    private readonly IBrowserDownloadPort _downloadService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IEVisitorConfigService _eVisitorConfigService;
+    private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
-    private readonly IOperatingSystemFacade _operatingSystemFacade;
+    private readonly IOsProcessControlPort _osProcessControlPort;
+    private readonly IOsAutoLogonPort _osAutoLogonPort;
+    private readonly ISystemInfoPort _windowsSystemInfo;
+    private readonly ISettingsPort _settingsPort;
+    private readonly IAutoStartPort _autoStartPort;
+    private readonly IFileSystemPort _fileSystemPort;
+    private readonly IBrowserConfigPort _browserConfigPort;
 
     private readonly DispatcherTimer _refreshTimer;
 
@@ -47,26 +57,38 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
     /// installed browsers and versions. Kicks off the first load immediately.
     /// </summary>
     public ViewModelInstalledBrowsers(
-        IBrowserService browserService,
-        IBrowserDownloadUseCase downloadService,
-        IOperatingSystemFacade OperatingSystemFacadeAdapter,
+        IBrowserDiscoveryPort browserService,
+        IBrowserDownloadPort downloadService,
+        IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
         IDialogService dialogService,
-        ILocalizationService localizationService,
-        IEVisitorConfigService eVisitorConfigService)
+        ILocalizationProvider LocalizationProvider,
+        IEVisitorConfigPort EVRestarterConfigRepository)
     {
         ArgumentNullException.ThrowIfNull(browserService);
         ArgumentNullException.ThrowIfNull(downloadService);
-        ArgumentNullException.ThrowIfNull(OperatingSystemFacadeAdapter);
+        ArgumentNullException.ThrowIfNull(osProcessControlPort);
+        ArgumentNullException.ThrowIfNull(osAutoLogonPort);
+        ArgumentNullException.ThrowIfNull(windowsSystemInfo);
+        ArgumentNullException.ThrowIfNull(settingsPort);
+        ArgumentNullException.ThrowIfNull(autoStartPort);
+        ArgumentNullException.ThrowIfNull(fileSystemPort);
+        ArgumentNullException.ThrowIfNull(browserConfigPort);
         ArgumentNullException.ThrowIfNull(dialogService);
-        ArgumentNullException.ThrowIfNull(localizationService);
-        ArgumentNullException.ThrowIfNull(eVisitorConfigService);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
+        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
 
         _browserService = browserService;
         _downloadService = downloadService;
-        _operatingSystemFacade = OperatingSystemFacadeAdapter;
+        _osProcessControlPort = osProcessControlPort;
+        _osAutoLogonPort = osAutoLogonPort;
+        _windowsSystemInfo = windowsSystemInfo;
+        _settingsPort = settingsPort;
+        _autoStartPort = autoStartPort;
+        _fileSystemPort = fileSystemPort;
+        _browserConfigPort = browserConfigPort;
         _dialogService = dialogService;
-        _localizationService = localizationService;
-        _eVisitorConfigService = eVisitorConfigService;
+        _localizationService = LocalizationProvider;
+        _EVRestarterConfigRepository = EVRestarterConfigRepository;
 
         _refreshTimer = new DispatcherTimer
         {
@@ -109,8 +131,8 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
                 var newBrowserItem = new ViewModelBrowserItem(
                     installedBrowserInfo,
                     _downloadService,
-                    _operatingSystemFacade,
-                    _eVisitorConfigService,
+                    _osProcessControlPort, _osAutoLogonPort, _windowsSystemInfo, _settingsPort, _autoStartPort, _fileSystemPort, _browserConfigPort,
+                    _EVRestarterConfigRepository,
                     _dialogService,
                     _localizationService);
                 Browsers.Add(newBrowserItem);
@@ -123,4 +145,18 @@ public partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
         LoadBrowsersSmartAsync().Forget();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

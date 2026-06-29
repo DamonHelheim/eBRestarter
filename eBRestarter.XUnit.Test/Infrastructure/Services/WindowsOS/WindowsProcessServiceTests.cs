@@ -1,5 +1,6 @@
-﻿using eBRestarter.Infrastructure.Services.WindowsOS;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS.Process;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.Wrapper;
+using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
@@ -13,22 +14,22 @@ using Xunit;
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsProcessAdapter.
-    /// Dank des IProcessWrappers kÃ¶nnen wir alle Prozess-Starts, Kills und Checks simulieren,
+    /// Testet den WindowsProcessControlAdapter.
+    /// Dank des IProcessWrappers können wir alle Prozess-Starts, Kills und Checks simulieren,
     /// ohne das eigentliche Betriebssystem zu beeinflussen.
     /// </summary>
     public class WindowsProcessServiceTests
     {
-        private readonly Mock<ILogger<WindowsProcessAdapter>> _mockLogger;
+        private readonly Mock<ILogger<WindowsProcessControlAdapter>> _mockLogger;
         private readonly Mock<IProcessWrapper> _mockProcessWrapper;
-        private readonly WindowsProcessAdapter _sut;
+        private readonly WindowsProcessControlAdapter _sut;
 
         public WindowsProcessServiceTests()
         {
-            _mockLogger = new Mock<ILogger<WindowsProcessAdapter>>();
+            _mockLogger = new Mock<ILogger<WindowsProcessControlAdapter>>();
             _mockProcessWrapper = new Mock<IProcessWrapper>();
 
-            _sut = new WindowsProcessAdapter(_mockLogger.Object, _mockProcessWrapper.Object);
+            _sut = new WindowsProcessControlAdapter(_mockLogger.Object, _mockProcessWrapper.Object);
         }
         // 1. START EXECUTABLE TESTS
 
@@ -58,11 +59,11 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         /// Argumente setzen, Output umleiten und auf das Ende warten.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir simulieren einen startenden Prozess mit gefÃ¤lschten Konsolen-Outputs (Streams)
-        /// und prÃ¼fen, ob alle Eigenschaften korrekt gesetzt wurden und WaitForExit aufgerufen wird.
+        /// Wir simulieren einen startenden Prozess mit gefälschten Konsolen-Outputs (Streams)
+        /// und prüfen, ob alle Eigenschaften korrekt gesetzt wurden und WaitForExit aufgerufen wird.
         /// </summary>
         [Fact]
-        public void StartMsiFile_ShouldConfigureMsiExec_AndReadStreams()
+        public void RunInstaller_ShouldConfigureMsiExec_AndReadStreams()
         {
             // ARRANGE
             string msiPath = @"C:\Install\setup.msi";
@@ -70,7 +71,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedMsiExecPath = Path.Combine(expectedSystemFolder, "msiexec.exe");
             var mockProcess = new Mock<IProcess>();
 
-            // Dummy-Streams fÃ¼r Output und Error
+            // Dummy-Streams für Output und Error
             var outStream = new MemoryStream(Encoding.UTF8.GetBytes("Installation OK"));
             var errStream = new MemoryStream(Encoding.UTF8.GetBytes(""));
             mockProcess.Setup(p => p.StandardOutput).Returns(new StreamReader(outStream));
@@ -79,10 +80,10 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             _mockProcessWrapper.Setup(w => w.Start(It.IsAny<ProcessStartInfo>())).Returns(mockProcess.Object);
 
             // ACT
-            _sut.StartMsiFile(msiPath);
+            _sut.RunInstaller(msiPath);
 
             // ASSERT
-            // 1. PrÃ¼fen, ob der Wrapper mit den korrekten Parametern aufgerufen wurde
+            // 1. Prüfen, ob der Wrapper mit den korrekten Parametern aufgerufen wurde
             _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
                 info.FileName == expectedMsiExecPath &&
                 info.Arguments == $"/i \"{msiPath}\"" &&
@@ -91,7 +92,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
                 info.CreateNoWindow == true
             )), Times.Once);
 
-            // 2. PrÃ¼fen, ob auf das Beenden gewartet wurde
+            // 2. Prüfen, ob auf das Beenden gewartet wurde
             mockProcess.Verify(p => p.WaitForExit(), Times.Once);
         }
         // 3. EXPLORER / BROWSER / SHUTDOWN TESTS
@@ -132,7 +133,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
 
         [Fact]
-        public void OpenExplorer_ShouldCallExplorerExe_WithQuotedPath()
+        public void OpenDirectoryInFileBrowser_ShouldCallExplorerExe_WithQuotedPath()
         {
             // ARRANGE
             string targetFolder = @"C:\My Folder With Spaces";
@@ -140,7 +141,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
             string expectedExplorerPath = Path.Combine(expectedWindowsFolder, "explorer.exe");
 
             // ACT
-            _sut.OpenExplorer(targetFolder);
+            _sut.OpenDirectoryInFileBrowser(targetFolder);
 
             // ASSERT
             _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
@@ -180,7 +181,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
         /// <summary>
         /// Die "CloseAllOpenPrograms" Methode darf kritische Prozesse wie "System" oder "Idle"
-        /// nicht anrÃ¼hren und soll Prozesse ohne GUI (MainWindowHandle == 0) ignorieren.
+        /// nicht anrühren und soll Prozesse ohne GUI (MainWindowHandle == 0) ignorieren.
         /// </summary>
         [Fact]
         public async Task CloseAllOpenProgramsAsync_ShouldIgnoreSystemAndHeadlessProcesses()
@@ -223,7 +224,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         // 5. ASYNC PROCESS TESTS
 
         /// <summary>
-        /// PrÃ¼ft, ob der Task korrekt gewartet (await) wird.
+        /// Prüft, ob der Task korrekt gewartet (await) wird.
         /// </summary>
         [Fact]
         public async Task StartExecutableAsync_ShouldAwaitProcessExit()
@@ -243,7 +244,7 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 
         /// <summary>
         /// Laut deinem Code wird die Exception in der Async-Methode geloggt UND per 'throw' weitergeworfen.
-        /// Wir prÃ¼fen, ob diese Exception tatsÃ¤chlich oben ankommt.
+        /// Wir prüfen, ob diese Exception tatsächlich oben ankommt.
         /// </summary>
         [Fact]
         public async Task StartExecutableAsync_ShouldRethrowException()
@@ -261,4 +262,6 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         }
     }
 }
+
+
 

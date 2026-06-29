@@ -1,23 +1,32 @@
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using FluentResults;
 using FluentValidation;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
-public class DeleteBrowserContentUseCase(
-    IBrowserFactory browserFactory,
-    IFileDeletionUseCase fileDeletionService,
-    IWindowsProcessControlService processService,
-    ILocalizationService localizationService,
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class DeleteBrowserContentUseCase(
+    IBrowserFactoryPort BrowserFactory,
+    IFileDeletionPort fileDeletionService,
+    IOsProcessControlPort processService,
+    ILocalizationProvider LocalizationService,
     IValidator<DeleteBrowserContentRequest> validator) : IDeleteBrowserContentUseCase
 {
-    private readonly IBrowserFactory _browserFactory = browserFactory;
-    private readonly IFileDeletionUseCase _fileDeletionService = fileDeletionService;
-    private readonly IWindowsProcessControlService _processService = processService;
-    private readonly ILocalizationService _localizationService = localizationService;
+    private readonly IBrowserFactoryPort _browserFactory = BrowserFactory;
+    private readonly IFileDeletionPort _fileDeletionService = fileDeletionService;
+    private readonly IOsProcessControlPort _processService = processService;
+    private readonly ILocalizationProvider _localizationService = LocalizationService;
     private readonly IValidator<DeleteBrowserContentRequest> _validator = validator;
 
     public async Task<Result> ExecuteAsync(
@@ -88,3 +97,11 @@ public class DeleteBrowserContentUseCase(
         }
     }
 }
+
+
+
+
+
+
+
+

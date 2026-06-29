@@ -1,12 +1,18 @@
-﻿using eBRestarter.Core.Application.Interfaces.Config;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 
-public class ScheduleBrowserCleanupUseCase(
-    IEVisitorConfigService configService,
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class ScheduleBrowserCleanupUseCase(
+    IEVisitorConfigPort configService,
     TimeProvider timeProvider) : IScheduleBrowserCleanupUseCase
 {
-    private readonly IEVisitorConfigService _configService = configService;
+    private readonly IEVisitorConfigPort _configService = configService;
     private readonly TimeProvider _timeProvider = timeProvider;
 
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)
@@ -39,3 +45,5 @@ public class ScheduleBrowserCleanupUseCase(
         };
     }
 }
+
+

@@ -4,12 +4,12 @@ namespace eBRestarter.Desktop.WinUI3.Models;
 
 public sealed class AutoLogonDialogResult
 {
-    public bool IsDeactivateAction { get; set; } // Wurde "Deaktivieren" geklickt?
-    public bool DisablePasswordlessMode { get; set; } // Soll Passwordless deaktiviert werden?
-    public bool RestorePasswordlessMode { get; set; } // Soll Passwordless reaktiviert werden?
-    public AutoLogonCredentials? Credentials { get; set; } // Daten (nur bei Speichern)
+    public bool IsDeactivateAction { get; set; } // Was "Deactivate" clicked?
+    public bool DisablePasswordlessMode { get; set; } // Should Passwordless mode be disabled?
+    public bool RestorePasswordlessMode { get; set; } // Should Passwordless mode be reactivated?
+    public AutoLogonCredentials? Credentials { get; set; } // Data (only populated on save)
 
-    // Statische Helper für sauberen Code
+    // Static helpers for clean code
     public static AutoLogonDialogResult Deactivate(bool restorePasswordlessMode = false) => new()
     {
         IsDeactivateAction = true,
@@ -23,5 +23,5 @@ public sealed class AutoLogonDialogResult
         DisablePasswordlessMode = disablePasswordlessMode
     };
 
-    public static AutoLogonDialogResult? Cancel() => null; // Einfach null zurückgeben bei Abbruch
+    public static AutoLogonDialogResult? Cancel() => null; // Simply return null on cancellation
 }

@@ -1,5 +1,9 @@
-using eBRestarter.Core.Application.Interfaces.Config;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
@@ -16,13 +20,13 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
     /// </summary>
     public class ScheduleBrowserCleanupUseCaseTests
     {
-        private readonly Mock<IEVisitorConfigService> _mockConfigService;
+        private readonly Mock<IEVisitorConfigPort> _mockConfigService;
         private readonly FakeTimeProvider _fakeTimeProvider;
         private readonly ScheduleBrowserCleanupUseCase _sut;
 
         public ScheduleBrowserCleanupUseCaseTests()
         {
-            _mockConfigService = new Mock<IEVisitorConfigService>();
+            _mockConfigService = new Mock<IEVisitorConfigPort>();
             _fakeTimeProvider = new FakeTimeProvider();
 
             _sut = new ScheduleBrowserCleanupUseCase(
@@ -112,7 +116,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
             // ASSERT - Gespeicherte Config
             savedConfig.ShouldNotBeNull();
             // Der User-Input (z.B. 0) wird trotzdem als Setting gespeichert
-            savedConfig.Browser.DeleteBrowserCacheIntervalDays.ShouldBe(invalidIntervalDays);
+            savedConfig.Browser.DeleteBrowserCacheIntervalDays.ShouldBe(0);
             // Aber das Datum muss sicher auf MinValue gesetzt werden
             savedConfig.Browser.NextBrowserDeleteCacheDate.ShouldBe(DateTime.MinValue);
 
@@ -143,3 +147,4 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
         }
     }
 }
+

@@ -1,10 +1,16 @@
-﻿using eBRestarter.Core.Application.Interfaces.Config;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 
-public class RemoveApiCredentialsUseCase(IEVisitorConfigService configService) : IRemoveApiCredentialsUseCase
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class RemoveApiCredentialsUseCase(IEVisitorConfigPort configService) : IRemoveApiCredentialsUseCase
 {
-    private readonly IEVisitorConfigService _configService = configService;
+    private readonly IEVisitorConfigPort _configService = configService;
 
     public void Execute()
     {
@@ -16,3 +22,5 @@ public class RemoveApiCredentialsUseCase(IEVisitorConfigService configService) :
         _configService.SaveConfig(currentConfig);
     }
 }
+
+

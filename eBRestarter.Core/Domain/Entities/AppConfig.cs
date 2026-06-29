@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Domain.Entities;
 
-public class AppConfig
+public sealed class AppConfig
 {
     public string Username { get; set; } = string.Empty;
     public BrowserConfig Browser { get; set; } = new();

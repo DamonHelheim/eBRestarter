@@ -1,21 +1,27 @@
-using eBRestarter.Core.Application.Interfaces.Authentication;
-using eBRestarter.Core.Application.Interfaces.OperatingSystem.WindowsOS;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Network;
 using FluentResults;
 using FluentValidation;
 
 namespace eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 
-public class ConfigureAutoLogonUseCase(
-    IWindowsAutoLogonService autoLogonService,
-    IWindowsSystemInfoService windowsSystemInfoService,
-    ICredentialValidationUseCase credentialValidationUseCase,
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Errors;
+
+public sealed class ConfigureAutoLogonUseCase(
+    IOsAutoLogonPort autoLogonService,
+    ISystemInfoPort WindowsSystemInfoAdapter,
+    ICredentialValidationPort credentialValidationUseCase,
     IValidator<ConfigureAutoLogonRequest> validator) : IConfigureAutoLogonUseCase
 {
     private const string StatusKey = "Status";
 
-    private readonly IWindowsAutoLogonService _autoLogonService = autoLogonService;
-    private readonly IWindowsSystemInfoService _windowsSystemInfoService = windowsSystemInfoService;
-    private readonly ICredentialValidationUseCase _credentialValidationUseCase = credentialValidationUseCase;
+    private readonly IOsAutoLogonPort _autoLogonService = autoLogonService;
+    private readonly ISystemInfoPort _windowsSystemInfoService = WindowsSystemInfoAdapter;
+    private readonly ICredentialValidationPort _credentialValidationUseCase = credentialValidationUseCase;
     private readonly IValidator<ConfigureAutoLogonRequest> _validator = validator;
 
 
@@ -58,7 +64,7 @@ public class ConfigureAutoLogonUseCase(
                 return Result.Fail(new Error("Administrator rights required to restore passwordless mode.")
                     .WithMetadata(StatusKey, AutoLogonResultStatus.AdminRequired));
             }
-            _autoLogonService.SetWindowsHelloPasswordlessState(true);
+            _autoLogonService.SetPasswordlessAuth(true);
         }
 
         _autoLogonService.DisableAutoLogon();
@@ -74,12 +80,12 @@ public class ConfigureAutoLogonUseCase(
                 return Result.Fail(new Error("Administrator rights required to disable passwordless mode.")
                     .WithMetadata(StatusKey, AutoLogonResultStatus.AdminRequired));
             }
-            _autoLogonService.SetWindowsHelloPasswordlessState(false);
+            _autoLogonService.SetPasswordlessAuth(false);
         }
 
-        if (_autoLogonService.IsWindowsHelloPasswordlessEnabled())
+        if (_autoLogonService.IsPasswordlessAuthEnabled())
         {
-            return Result.Fail(new Error("Windows Hello Passwordless Mode ist aktiv. AutoLogon nicht möglich.")
+            return Result.Fail(new Error("Windows Hello Passwordless Mode ist aktiv. AutoLogon nicht mÃ¶glich.")
                 .WithMetadata(StatusKey, AutoLogonResultStatus.WindowsHelloBlockActive));
         }
 
@@ -104,3 +110,11 @@ public class ConfigureAutoLogonUseCase(
             .WithMetadata(StatusKey, AutoLogonResultStatus.ValidationError));
     }
 }
+
+
+
+
+
+
+
+

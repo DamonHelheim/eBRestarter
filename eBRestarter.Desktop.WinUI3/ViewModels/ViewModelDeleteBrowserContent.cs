@@ -1,10 +1,16 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
+using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
 using System;
 using System.Diagnostics;
@@ -16,11 +22,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Delete browser content" (cache/cookies cleanup) dialog. Resolves the
-/// selected browser via <see cref="IBrowserFactory"/>, collects paths from the browser implementation,
+/// selected browser via <see cref="IBrowserFactoryPort"/>, collects paths from the browser implementation,
 /// and runs cleanup through <see cref="IDeleteBrowserContentUseCase"/> with progress reporting.
 /// Can be run manually or as an auto-step from the restart task when cleanup is due.
 /// </summary>
-public partial class ViewModelDeleteBrowserContent : ObservableObject
+public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
 {
     private const int AutoCloseAfterSuccessDelayMilliseconds = 1000;
 
@@ -30,13 +36,13 @@ public partial class ViewModelDeleteBrowserContent : ObservableObject
 
     private bool _isAutoMode;
 
-    private readonly IBrowserFactory _browserFactory;
+    private readonly IBrowserFactoryPort _browserFactory;
 
     private readonly IDeleteBrowserContentUseCase _deleteBrowserContentUseCase;
 
-    private readonly IEVisitorConfigService _eVisitorConfigService;
+    private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationService _localizationService;
+    private readonly ILocalizationProvider _localizationService;
 
     private BrowserType _selectedBrowserType;
 
@@ -89,19 +95,19 @@ public partial class ViewModelDeleteBrowserContent : ObservableObject
     /// </summary>
     public ViewModelDeleteBrowserContent(
         IDeleteBrowserContentUseCase deleteBrowserContentUseCase,
-        IBrowserFactory browserFactory,
-        IEVisitorConfigService eVisitorConfigService,
-        ILocalizationService localizationService)
+        IBrowserFactoryPort BrowserFactory,
+        IEVisitorConfigPort EVRestarterConfigRepository,
+        ILocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);
-        ArgumentNullException.ThrowIfNull(browserFactory);
-        ArgumentNullException.ThrowIfNull(eVisitorConfigService);
-        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(BrowserFactory);
+        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
 
         _deleteBrowserContentUseCase = deleteBrowserContentUseCase;
-        _browserFactory = browserFactory;
-        _eVisitorConfigService = eVisitorConfigService;
-        _localizationService = localizationService;
+        _browserFactory = BrowserFactory;
+        _EVRestarterConfigRepository = EVRestarterConfigRepository;
+        _localizationService = LocalizationProvider;
 
         BrowserIconPath = string.Empty;
         BrowserName = _localizationService.RetrieveString("Cleanup_Loading");
@@ -112,7 +118,7 @@ public partial class ViewModelDeleteBrowserContent : ObservableObject
         IsDeleteCookiesChecked = true;
         IsDeleteInternetCacheChecked = true;
 
-        AppConfig appConfig = _eVisitorConfigService.LoadConfig();
+        AppConfig appConfig = _EVRestarterConfigRepository.LoadConfig();
         string selectedBrowserString = appConfig.Browser.Selected;
 
         if (Enum.TryParse<BrowserType>(selectedBrowserString, ignoreCase: true, out BrowserType parsedBrowserType))
@@ -279,3 +285,13 @@ public partial class ViewModelDeleteBrowserContent : ObservableObject
         }
     }
 }
+
+
+
+
+
+
+
+
+
+

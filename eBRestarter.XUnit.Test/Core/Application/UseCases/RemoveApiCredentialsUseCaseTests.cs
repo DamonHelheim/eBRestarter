@@ -1,5 +1,9 @@
-﻿using eBRestarter.Core.Application.Interfaces.Config;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
 using Moq;
 using Shouldly;
@@ -10,24 +14,24 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
 {
     /// <summary>
     /// Testet den RemoveApiCredentialsUseCase.
-    /// Der Fokus liegt hier auf dem korrekten Überschreiben der API-Felder (via "with" expression),
-    /// ohne dass andere Konfigurationswerte versehentlich gelöscht oder verändert werden.
+    /// Der Fokus liegt hier auf dem korrekten �berschreiben der API-Felder (via "with" expression),
+    /// ohne dass andere Konfigurationswerte versehentlich gel�scht oder ver�ndert werden.
     /// </summary>
     public class RemoveApiCredentialsUseCaseTests
     {
-        private readonly Mock<IEVisitorConfigService> _mockConfigService;
+        private readonly Mock<IEVisitorConfigPort> _mockConfigService;
         private readonly RemoveApiCredentialsUseCase _sut;
 
         public RemoveApiCredentialsUseCaseTests()
         {
-            _mockConfigService = new Mock<IEVisitorConfigService>();
+            _mockConfigService = new Mock<IEVisitorConfigPort>();
             _sut = new RemoveApiCredentialsUseCase(_mockConfigService.Object);
         }
-        // 1. HAPPY PATH (KORREKTES LÖSCHEN DER CREDENTIALS)
+        // 1. HAPPY PATH (KORREKTES L�SCHEN DER CREDENTIALS)
 
         /// <summary>
         /// Stellt sicher, dass die Methode ApiUsername und ApiKey auf string.Empty setzt,
-        /// aber alle anderen Werte in der Config exakt beibehält.
+        /// aber alle anderen Werte in der Config exakt beibeh�lt.
         /// </summary>
         [Fact]
         public void Execute_ShouldClearCredentials_AndKeepOtherSettingsIntact()
@@ -40,15 +44,15 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
                 {
                     ApiUsername = "MeinApiUser123",
                     ApiKey = "GeheimerSchluessel",
-                    Theme = "Dark", // Darf nicht verändert werden!
-                    Language = 1    // Darf nicht verändert werden!
+                    Theme = "Dark", // Darf nicht ver�ndert werden!
+Language = 1    // Darf nicht ver�ndert werden!
                 }
             };
 
             _mockConfigService.Setup(c => c.LoadConfig()).Returns(existingConfig);
 
-            // Callback-Trick: Wir fangen das Objekt ab, das an SaveConfig übergeben wird,
-            // um es danach genau analysieren zu können.
+            // Callback-Trick: Wir fangen das Objekt ab, das an SaveConfig �bergeben wird,
+            // um es danach genau analysieren zu k�nnen.
             AppConfig? savedConfig = null;
             _mockConfigService
                 .Setup(c => c.SaveConfig(It.IsAny<AppConfig>()))
@@ -75,8 +79,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
         // 2. EXCEPTION BUBBLING (FEHLER WEITERREICHEN)
 
         /// <summary>
-        /// Da der Service keinen eigenen try-catch-Block hat, müssen Fehler vom
-        /// ConfigService (z.B. wenn die config.json gelöscht oder blockiert wurde)
+        /// Da der Service keinen eigenen try-catch-Block hat, m�ssen Fehler vom
+        /// ConfigService (z.B. wenn die config.json gel�scht oder blockiert wurde)
         /// sauber nach oben an den Aufrufer (z.B. das ViewModel) durchgereicht werden.
         /// </summary>
         [Fact]
@@ -110,3 +114,4 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
         }
     }
 }
+

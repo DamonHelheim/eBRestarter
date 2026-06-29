@@ -1,7 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
 using Microsoft.UI.Dispatching;
 using System;
 
@@ -12,7 +15,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     /// browser is installed and whether the eBesucher extension is present; exposes a command to
     /// open the store/extension page. Status is updated by the parent via <see cref="RefreshStatus"/>.
     /// </summary>
-    public partial class ViewModelBrowserAddonStatus : ObservableObject
+    public sealed partial class ViewModelBrowserAddonStatus : ObservableObject
     {
         private const string AddonPlaceholderDash = "-";
 
@@ -34,11 +37,11 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private const string NeutralForegroundHex = "#000000";
 
-        private readonly IBrowser _browser;
+        private readonly IBrowserPort _browser;
 
         private readonly DispatcherQueue _dispatcherQueue;
 
-        private readonly ILocalizationService _localizationService;
+        private readonly ILocalizationProvider _localizationService;
 
         [ObservableProperty]
         public partial string AddonStatusColor { get; set; }
@@ -74,14 +77,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// paint shows install/extension state.
         /// </summary>
         public ViewModelBrowserAddonStatus(
-            IBrowser browser,
-            ILocalizationService localizationService)
+            IBrowserPort browser,
+            ILocalizationProvider LocalizationProvider)
         {
             ArgumentNullException.ThrowIfNull(browser);
-            ArgumentNullException.ThrowIfNull(localizationService);
+            ArgumentNullException.ThrowIfNull(LocalizationProvider);
 
             _browser = browser;
-            _localizationService = localizationService;
+            _localizationService = LocalizationProvider;
 
             _dispatcherQueue =
                 DispatcherQueue.GetForCurrentThread()
@@ -155,3 +158,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+
+
+
+
+
+

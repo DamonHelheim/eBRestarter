@@ -8,10 +8,9 @@ namespace eBRestarter.Desktop.WinUI3.Behaviors;
 /// <summary>
 /// Attached behavior that restricts a <see cref="TextBox"/> to numeric input only.
 /// </summary>
-public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
+public sealed class TextBoxNumericOnlyBehavior : Behavior<TextBox>
 {
-
-    // SonarQube Fix: Timeout (100ms) und NonBacktracking hinzugefügt, um UI-Freezes durch ReDoS zu verhindern.
+    // SonarQube Fix: Added a timeout (100ms) and NonBacktracking to prevent UI freezes caused by ReDoS.
     private static readonly Regex _regex = new("[^0-9]+", RegexOptions.NonBacktracking, TimeSpan.FromMilliseconds(100));
 
     protected override void OnAttached()
@@ -39,8 +38,8 @@ public class TextBoxNumericOnlyBehavior : Behavior<TextBox>
         }
         catch (RegexMatchTimeoutException)
         {
-            // Fallback: Falls der Text wirklich zu extrem ist und das Regex abbricht,
-            // fangen wir den Fehler ab, damit die App nicht abstürzt.
+            // Fallback: If the text is extremely malformed and the regex times out,
+            // we catch the exception to prevent the application from crashing.
             sender.Text = string.Empty;
         }
     }

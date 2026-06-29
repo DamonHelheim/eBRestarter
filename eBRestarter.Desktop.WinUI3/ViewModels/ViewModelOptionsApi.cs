@@ -1,10 +1,17 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Providers;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Core.Application.Interfaces.Config;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
+using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -13,26 +20,26 @@ using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
-    public partial class ViewModelOptionsApi : ObservableObject
+    public sealed partial class ViewModelOptionsApi : ObservableObject
     {
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigService _eVisitorConfigService;
-        private readonly ILocalizationService _localizationService;
+        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly ILocalizationProvider _localizationService;
         private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
         private readonly AppConfig _currentConfig;
 
         public ViewModelOptionsApi(
             IDialogService dialogService,
-            IEVisitorConfigService eVisitorConfigService,
-            ILocalizationService localizationService,
+            IEVisitorConfigPort EVRestarterConfigRepository,
+            ILocalizationProvider LocalizationProvider,
             IRemoveApiCredentialsUseCase removeApiCredentialsUseCase)
         {
             _dialogService = dialogService;
-            _eVisitorConfigService = eVisitorConfigService;
-            _localizationService = localizationService;
+            _EVRestarterConfigRepository = EVRestarterConfigRepository;
+            _localizationService = LocalizationProvider;
             _removeApiCredentialsUseCase = removeApiCredentialsUseCase;
 
-            _currentConfig = _eVisitorConfigService.LoadConfig();
+            _currentConfig = _EVRestarterConfigRepository.LoadConfig();
         }
 
         [RelayCommand]
@@ -58,3 +65,10 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         }
     }
 }
+
+
+
+
+
+
+

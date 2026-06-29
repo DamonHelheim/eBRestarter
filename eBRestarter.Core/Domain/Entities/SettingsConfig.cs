@@ -1,6 +1,6 @@
 namespace eBRestarter.Core.Domain.Entities;
 
-public class SettingsConfig
+public sealed class SettingsConfig
 {
     public string Theme { get; set; } = "Light";
     public int Language { get; set; }

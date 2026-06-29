@@ -15,10 +15,10 @@ namespace eBRestarter.Desktop.WinUI3.Views.UserControls
         {
             InitializeComponent();
 
-            // Hier holen wir uns das ViewModel manuell aus dem Container
+            // Manually resolve the ViewModel from the container here
             ViewModelInstalledBrowsers = App.AppHost!.Services.GetRequiredService<ViewModelInstalledBrowsers>();
 
-            // DataContext setzen
+            // Set the DataContext
             this.DataContext = ViewModelInstalledBrowsers;
         }
     }

@@ -1,5 +1,7 @@
-using eBRestarter.Core.Application.Interfaces;
-using eBRestarter.Desktop.WinUI3.Helpers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
+using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -15,59 +17,70 @@ using System.IO;
 namespace eBRestarter.Desktop.WinUI3
 {
     /// <summary>
-    /// Das Hauptfenster der Anwendung.
+    /// The main window of the application.
     /// <br/>
-    /// <b>Verantwortlichkeit:</b> Dient als "Shell" (Hülle), die das grundlegende Layout (NavigationView, TitleBar) bereitstellt
-    /// und den <see cref="Frame"/> für den Navigationsdienst hostet.
+    /// <b>Responsibility:</b> Serves as the "Shell" wrapper providing the basic layout (NavigationView, TitleBar)
+    /// and hosting the <see cref="Frame"/> utilized by the navigation service.
     /// </summary>
     public sealed partial class EBRestarter : Window
     {
         /// <summary>
-        /// Der Navigationsdienst, der die Logik für Seitenwechsel kapselt.
+        /// The navigation service encapsulating the page transition logic.
         /// </summary>
         private readonly INavigationService _navigationService;
 
-        private readonly IAppVersionInfoUseCase? _iAppVersionInfoService;
+        private readonly IAppVersionInfoPort? _iAppVersionInfoService;
+        private readonly IMainWindowProvider _mainWindowProvider;
+        private readonly IAppWindowHelper _appWindowHelper;
 
         /// <summary>
-        /// Die Standard-Animation für Seitenübergünge (hier: "DrillIn" Effekt).
+        /// The default animation for page transitions (here: "DrillIn" effect).
         /// </summary>
         private readonly NavigationTransitionInfo _defaultTransition = new DrillInNavigationTransitionInfo();
 
         /// <summary>
-        /// Initialisiert eine neue Instanz des Hauptfensters.
+        /// Initializes a new instance of the main window.
         /// </summary>
-        /// <param name="navigationService">Der injizierte Navigationsdienst (Dependency Injection).</param>
-        public EBRestarter(INavigationService navigationService, IAppVersionInfoUseCase iAppVersionInfoService)
+        /// <param name="navigationService">The injected navigation service (Dependency Injection).</param>
+        public EBRestarter(
+            INavigationService navigationService,
+            IAppVersionInfoPort iAppVersionInfoService,
+            IMainWindowProvider mainWindowProvider,
+            IAppWindowHelper appWindowHelper)
         {
             InitializeComponent();
 
-            // 1. SRP (Single Responsibility Principle):
-            // Die Konfiguration der Titelleiste (Farben, Verhalten) wurde in eine Extension Method ausgelagert,
-            // um den Code-Behind dieser Klasse sauber zu halten.
-            this.ConfigureTitleBarColors();
+            _mainWindowProvider = mainWindowProvider;
+            _appWindowHelper = appWindowHelper;
 
-            // Performance-Optimierung: Hült die letzten 10 Seiten im Speicher, um schnelles "Zurück" zu ermüglichen.
+            _mainWindowProvider.SetMainWindow(this);
+
+            // 1. SRP (Single Responsibility Principle):
+            // The configuration of the title bar (colors, behavior) has been moved to a separate service
+            // to keep this class's code-behind clean.
+            _appWindowHelper.ConfigureTitleBarColors(this);
+
+            // Performance optimization: Caches the last 10 pages in memory to enable fast back-navigation.
             NavigationFrame.CacheSize = 10;
 
             _navigationService = navigationService;
 
             _iAppVersionInfoService = iAppVersionInfoService;
 
-            // WICHTIG: Verbindung von UI (View) und Logik (Service).
-            // Wir übergeben den XAML-Frame an den Service, damit dieser navigieren kann.
+            // IMPORTANT: Connecting UI (View) and logic (Service).
+            // We pass the XAML frame to the service so it can handle navigation.
             _navigationService.AttachFrame(NavigationFrame);
 
-            // Initiale Navigation beim Start der App.
-            // Wir nutzen den String-Key "CommonOverview", damit das Fenster den konkreten Typ der Page nicht kennen muss.
+            // Initial navigation on application startup.
+            // We use the string key "CommonOverview" so the window doesn't need to know the concrete type of the Page.
             _navigationService.NavigateTo("CommonOverview", transitionInfo: new DrillInNavigationTransitionInfo());
 
-            // 1. AppWindow holen (Standard-Prozedur in WinUI 3)
+            // 1. Retrieve AppWindow (Standard procedure in WinUI 3)
             IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-            // Fenster- und Taskleisten-Icon setzen (in WinUI 3 zur Laufzeit erforderlich)
+            // Set window and taskbar icon (required at runtime in WinUI 3)
             string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "eB Restarter.ico");
 
             if (File.Exists(iconPath))
@@ -75,8 +88,8 @@ namespace eBRestarter.Desktop.WinUI3
                 appWindow.SetIcon(iconPath);
             }
 
-            // 2. Den "Presenter" abrufen und maximieren
-            // Der OverlappedPresenter ist der Standard für Desktop-Apps
+            // 2. Retrieve the "Presenter" and maximize
+            // OverlappedPresenter is the default for desktop applications
             if (appWindow.Presenter is OverlappedPresenter presenter)
             {
                 presenter.Maximize();
@@ -84,25 +97,25 @@ namespace eBRestarter.Desktop.WinUI3
 
             TxbVersion.Text = "v" + _iAppVersionInfoService?.RetrieveAppVersion();
 
-            //// 1. Fenster-Handle holen
+            //// 1. Get window handle
             //IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
-            //// 2. WindowId daraus erstellen
+            //// 2. Create WindowId from it
             //Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
 
-            //// 3. Das AppWindow holen
+            //// 3. Get the AppWindow
             //AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-            //// 4. Größe ändern (Breite, Hühe) in Pixeln
+            //// 4. Resize (Width, Height) in pixels
             //appWindow.Resize(new SizeInt32(2300, 2080));
         }
 
         /// <summary>
-        /// Event-Handler für den "Zurück"-Button in der benutzerdefinierten Titelleiste.
+        /// Event handler for the "Back" button in the custom title bar.
         /// </summary>
         private void AppTitleBar_BackRequested(TitleBar sender, object args)
         {
-            // Prüft direkt am Frame, ob eine Rückwürtsnavigation müglich ist.
+            // Checks directly against the frame if backward navigation is possible.
             if (NavigationFrame.CanGoBack)
             {
                 NavigationFrame.GoBack();
@@ -110,18 +123,18 @@ namespace eBRestarter.Desktop.WinUI3
         }
 
         /// <summary>
-        /// Event-Handler für den "Hamburger"-Button (Menü umschalten) in der Titelleiste.
+        /// Event handler for the "Hamburger" button (menu toggle) in the title bar.
         /// </summary>
         private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
         {
-            // Klappt das Navigationsmenü auf oder zu.
+            // Opens or closes the navigation menu pane.
             NavView.IsPaneOpen = !NavView.IsPaneOpen;
         }
 
         /// <summary>
-        /// Zentraler Handler für Klicks auf Menü-Eintrüge im NavigationView.
+        /// Central handler for clicks on menu items within the NavigationView.
         /// <br/>
-        /// Vereint die Logik von SelectionChanged und ItemInvoked.
+        /// Unifies the logic for SelectionChanged and ItemInvoked.
         /// </summary>
         private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
@@ -140,4 +153,7 @@ namespace eBRestarter.Desktop.WinUI3
         }
     }
 }
+
+
+
 
