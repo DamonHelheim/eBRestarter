@@ -1,6 +1,4 @@
-﻿using eBRestarter.Infrastructure.Network;
-using eBRestarter.Infrastructure.Api;
-namespace eBRestarter.Infrastructure.Api;
+﻿namespace eBRestarter.Infrastructure.Api;
 
 public enum ResponseCode
 {

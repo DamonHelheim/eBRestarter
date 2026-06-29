@@ -1,12 +1,8 @@
-using eBRestarter.Infrastructure.Api;
-using eBRestarter.Infrastructure.Browser;
-using eBRestarter.Infrastructure.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Parsers;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
+using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Network;
 using Microsoft.Extensions.Logging;
 

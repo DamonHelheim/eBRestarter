@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
 namespace eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+
 public interface IOsProcessControlPort
 {
     void RunInstaller(string installerPath);

@@ -1,6 +1,5 @@
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 

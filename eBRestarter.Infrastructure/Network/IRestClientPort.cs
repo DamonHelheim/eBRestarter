@@ -1,6 +1,4 @@
-﻿using eBRestarter.Infrastructure.Network;
-
-namespace eBRestarter.Infrastructure.Network;
+﻿namespace eBRestarter.Infrastructure.Network;
 
 public interface IRestClientPort
 {

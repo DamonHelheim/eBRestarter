@@ -1,8 +1,6 @@
-﻿namespace eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
+﻿using eBRestarter.Core.Application.Models.Records;
 
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
+namespace eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 
 public interface IToggleEdgeStartupBoostUseCase
 {

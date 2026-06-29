@@ -1,6 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
-using eBRestarter.Core.Application.Ports.Outbound;
+﻿using eBRestarter.Core.Application.Ports.Outbound;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;

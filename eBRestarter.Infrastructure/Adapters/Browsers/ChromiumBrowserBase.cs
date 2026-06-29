@@ -1,5 +1,5 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem; using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.Browsers;

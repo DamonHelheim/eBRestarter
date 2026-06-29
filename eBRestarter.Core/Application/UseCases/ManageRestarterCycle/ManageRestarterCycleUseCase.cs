@@ -1,26 +1,19 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageRestarterCycle;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Handlers.ManageRestarterCycle.Strategies;
+﻿using eBRestarter.Core.Application.Handlers.ManageRestarterCycle.Strategies;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageRestarterCycle;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Domain.Handlers;
-using FluentResults;
-using FluentValidation;
 using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Domain.Handlers;
+using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Models.Records;
+using FluentValidation;
 
 namespace eBRestarter.Core.Application.UseCases.ManageRestarterCycle;
-
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 
 public sealed class ManageRestarterCycleUseCase(
     IBrowserFactoryPort BrowserFactory,
     ILocalizationProvider LocalizationService,
-    
+
     IEVisitorConfigPort configService,
     IBrowserCleanupScheduleHandler browserCleanupScheduleHandler,
     TimeProvider timeProvider,
@@ -33,7 +26,7 @@ public sealed class ManageRestarterCycleUseCase(
 
     private readonly IBrowserFactoryPort _browserFactory = BrowserFactory;
     private readonly ILocalizationProvider _localizationService = LocalizationService;
-    
+
     private readonly IEVisitorConfigPort _configService = configService;
     private readonly IBrowserCleanupScheduleHandler _browserCleanupScheduleHandler = browserCleanupScheduleHandler;
     private readonly TimeProvider _timeProvider = timeProvider;
@@ -99,7 +92,9 @@ public sealed class ManageRestarterCycleUseCase(
         {
             var appConfig = _configService.LoadConfig();
 
-            request = request with { BrowserType = appConfig.Browser != null ? System.Enum.Parse<BrowserType>(appConfig.Browser.Selected ?? "Edge") : request.BrowserType,
+            request = request with
+            {
+                BrowserType = appConfig.Browser != null ? System.Enum.Parse<BrowserType>(appConfig.Browser.Selected ?? "Edge") : request.BrowserType,
 
                 Username = string.IsNullOrWhiteSpace(appConfig.Username) ? request.Username : appConfig.Username,
 

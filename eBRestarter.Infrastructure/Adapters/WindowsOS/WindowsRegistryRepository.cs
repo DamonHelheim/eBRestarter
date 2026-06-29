@@ -1,7 +1,6 @@
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Win32;
 using System.Runtime.Versioning;
-using System.Collections.Generic;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 

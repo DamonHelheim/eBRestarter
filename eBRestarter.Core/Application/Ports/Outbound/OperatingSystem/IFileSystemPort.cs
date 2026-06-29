@@ -1,5 +1,5 @@
-using System.IO;
 namespace eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+
 public interface IFileSystemPort
 {
     bool FileExists(string path);

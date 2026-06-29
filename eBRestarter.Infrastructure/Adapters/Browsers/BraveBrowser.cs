@@ -1,8 +1,6 @@
-using eBRestarter.Infrastructure.Api;
-using eBRestarter.Infrastructure.Browser;
-using eBRestarter.Infrastructure.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Infrastructure.Browser;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.Browsers;

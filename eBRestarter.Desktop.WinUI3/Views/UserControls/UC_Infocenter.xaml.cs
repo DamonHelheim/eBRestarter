@@ -15,10 +15,8 @@ public sealed partial class UC_Infocenter : UserControl
     {
         InitializeComponent();
 
-        // Hier holen wir uns das ViewModel manuell aus dem Container
         ViewModelInfocenter = App.AppHost!.Services.GetRequiredService<ViewModelInfocenter>();
 
-        // DataContext setzen
         this.DataContext = ViewModelInfocenter;
     }
 }

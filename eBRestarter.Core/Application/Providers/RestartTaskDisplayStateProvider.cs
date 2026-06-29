@@ -1,9 +1,7 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
-using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Domain.Entities;
+﻿using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Domain.Validators;
 
 namespace eBRestarter.Core.Application.Providers;

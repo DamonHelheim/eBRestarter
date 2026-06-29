@@ -1,7 +1,6 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+﻿using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Core.Application.Providers;
 

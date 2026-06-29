@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
 using Microsoft.Extensions.Logging;
 using System.Runtime.Versioning;
 
