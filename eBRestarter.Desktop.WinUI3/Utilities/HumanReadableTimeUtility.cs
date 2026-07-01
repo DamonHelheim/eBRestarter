@@ -1,15 +1,13 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
 using System;
 
 namespace eBRestarter.Desktop.WinUI3.Utilities;
 
 /// <summary>
-/// Formats time spans in a human-readable way (adapter for UI/Infrastructure).
+/// Formats time spans in a human-readable way for the Presentation Layer.
 /// </summary>
-public sealed class HumanReadableTimeUtility : ITimeFormatterPort
+public static class HumanReadableTimeUtility
 {
-    public string Format(int seconds)
+    public static string Format(int seconds)
     {
         if (seconds < 0) return "0s";
 

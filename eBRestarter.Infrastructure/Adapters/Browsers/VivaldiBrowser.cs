@@ -1,11 +1,11 @@
-using eBRestarter.Core.Application.Enums;
+﻿using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Browser;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.Browsers;
 
-public sealed class VivaldiBrowser(IOsProcessControlPort processControlPort, ISettingsPort settingsPort, IFileSystemPort fileSystemPort, ILogger<VivaldiBrowser> logger) : ChromiumBrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
+public sealed class VivaldiBrowser(IOsProcessControlOutboundPort processControlPort, ISettingsRepositoryOutboundPort settingsPort, IFileSystemOutboundPort fileSystemPort, ILogger<VivaldiBrowser> logger) : ChromiumBrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
 {
     public override BrowserType Type => BrowserType.Vivaldi;
     public override string DisplayName => "Vivaldi";

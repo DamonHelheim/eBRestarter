@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Diagnostics;
@@ -11,7 +10,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the Infocenter / system info page. Loads hardware and OS information via
-/// <see cref="ISystemInformationPort"/> and exposes localized text for display.
+/// <see cref="ISystemInformationProvider"/> and exposes localized text for display.
 /// Also provides commands to open the support website and the About dialog.
 /// </summary>
 public sealed partial class ViewModelInfocenter : ObservableObject
@@ -22,7 +21,7 @@ public sealed partial class ViewModelInfocenter : ObservableObject
 
     private readonly IDialogService _dialogService;
 
-    private readonly ISystemInformationPort _getSystemInformationUseCase;
+    private readonly ISystemInformationProvider _systemInformationProvider;
 
     private readonly ILocalizationProvider _localizationService;
 
@@ -52,15 +51,15 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     /// fields to a loading placeholder and starts async load so the page shows data as it becomes available.
     /// </summary>
     public ViewModelInfocenter(
-        ISystemInformationPort SystemInformationProvider,
+        ISystemInformationProvider systemInformationProvider,
         IDialogService dialogService,
         ILocalizationProvider LocalizationProvider)
     {
-        ArgumentNullException.ThrowIfNull(SystemInformationProvider);
+        ArgumentNullException.ThrowIfNull(systemInformationProvider);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(LocalizationProvider);
 
-        _getSystemInformationUseCase = SystemInformationProvider;
+        _systemInformationProvider = systemInformationProvider;
         _dialogService = dialogService;
         _localizationService = LocalizationProvider;
 
@@ -107,7 +106,7 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     {
         try
         {
-            var systemInformation = await _getSystemInformationUseCase.ExecuteAsync();
+            var systemInformation = await _systemInformationProvider.RetrieveAsync();
 
             ProcessorText = $"{_localizationService.RetrieveString("Infocenter_ProcessorPrefix")} {systemInformation.ProcessorName}";
             GraphicsText = $"{_localizationService.RetrieveString("Infocenter_GraphicsPrefix")} {systemInformation.GraphicsCardName}";

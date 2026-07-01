@@ -22,7 +22,7 @@ namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 /// <param name="logger">The logger for error and informational messages.</param>
 /// <param name="processWrapper">The wrapper for system process calls (Injected).</param>
 [SupportedOSPlatform("windows")]
-public sealed partial class WindowsProcessControlAdapter(ILogger<WindowsProcessControlAdapter> logger, IProcessWrapper processWrapper) : IOsProcessControlPort
+public sealed partial class WindowsProcessControlAdapter(ILogger<WindowsProcessControlAdapter> logger, IProcessWrapper processWrapper) : IOsProcessControlOutboundPort
 {
     private readonly ILogger<WindowsProcessControlAdapter> _logger = logger;
 

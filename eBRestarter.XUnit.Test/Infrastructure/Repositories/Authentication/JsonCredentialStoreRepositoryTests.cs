@@ -1,5 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
@@ -26,8 +25,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void SaveCredentials_ShouldSerializeToJson_AndWriteToFile()
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
 
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem
@@ -50,8 +49,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void LoadCredentials_ShouldReturnCredentials_WhenFileExistsAndIsValidJson()
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
 
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem
@@ -80,8 +79,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void LoadCredentials_ShouldReturnNull_WhenFileIsMissingOrBroken(bool fileExists, string? fileContent)
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
 
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem
@@ -108,8 +107,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void ClearCredentials_ShouldDeleteFile_WhenFileExists()
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
 
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem
@@ -131,8 +130,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void ImportFromLegacyFile_ShouldReadBinaryFileCorrectly()
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
             
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem
@@ -165,8 +164,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         public void ImportFromLegacyFile_ShouldReturnNull_WhenFileDoesNotExist()
         {
             // ARRANGE
-            var mockFileSystem = new Mock<IFileSystemPort>();
-            var mockPathProvider = new Mock<IAppPathPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
 
             mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
             mockFileSystem

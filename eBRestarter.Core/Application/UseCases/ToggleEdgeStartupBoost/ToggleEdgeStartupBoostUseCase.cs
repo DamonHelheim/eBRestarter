@@ -7,11 +7,11 @@ using eBRestarter.Core.Application.Models.Records;
 namespace eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
 
 public sealed class ToggleEdgeStartupBoostUseCase(
-    IBrowserConfigPort startupService,
-    IBrowserFactoryPort BrowserFactory) : IToggleEdgeStartupBoostUseCase
+    IBrowserConfigRepositoryOutboundPort startupService,
+    IBrowserFactoryOutboundPort BrowserFactory) : IToggleEdgeStartupBoostUseCase
 {
-    private readonly IBrowserConfigPort _startupService = startupService;
-    private readonly IBrowserFactoryPort _browserFactory = BrowserFactory;
+    private readonly IBrowserConfigRepositoryOutboundPort _startupService = startupService;
+    private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
 
     public bool IsEnabled() =>
         _startupService.IsBrowserStartupBoostEnabled();

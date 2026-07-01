@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using System;
 using System.Collections.ObjectModel;
 using System.Timers;
@@ -17,7 +17,7 @@ public sealed partial class ViewModelInstallAddOn : ObservableObject, IDisposabl
 {
     private const double BrowserAddonRefreshIntervalMilliseconds = 2000;
 
-    private readonly IBrowserFactoryPort _browserFactory;
+    private readonly IBrowserFactoryOutboundPort _browserFactory;
 
     private readonly Timer _timer;
 
@@ -32,7 +32,7 @@ public sealed partial class ViewModelInstallAddOn : ObservableObject, IDisposabl
     /// </summary>
     /// <param name="BrowserFactory">Used to create browser instances for status checks. Must not be null.</param>
     /// <param name="LocalizationProvider">Passed to each ViewModelBrowserAddonStatus for localized strings. Must not be null.</param>
-    public ViewModelInstallAddOn(IBrowserFactoryPort BrowserFactory, ILocalizationProvider LocalizationProvider)
+    public ViewModelInstallAddOn(IBrowserFactoryOutboundPort BrowserFactory, ILocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(BrowserFactory);
         ArgumentNullException.ThrowIfNull(LocalizationProvider);

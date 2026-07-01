@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+ï»¿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
@@ -16,26 +16,26 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         /// <summary>
         /// Auch wenn Brave fast identisch zu Chrome ist, hat es einen etwas exotischeren
         /// Root-Pfad: AppData\Local\BraveSoftware\Brave-Browser\User Data.
-        /// Ein simpler Vertipper im Code würde dazu führen, dass der Cache nie gelöscht wird.
+        /// Ein simpler Vertipper im Code wï¿½rde dazu fï¿½hren, dass der Cache nie gelï¿½scht wird.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir prüfen, ob die Wurzel für die Cache- und Cookie-Verzeichnisse exakt den
+        /// Wir prï¿½fen, ob die Wurzel fï¿½r die Cache- und Cookie-Verzeichnisse exakt den
         /// speziellen Brave-Ordnerbaum nutzt.
         /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectDirectories_ForBrave()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlPort>();
-            var mockSettings = new Mock<ISettingsPort>();
-            var mockFileSystem = new Mock<IFileSystemPort>();
+            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
+            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
             var mockLogger = new Mock<ILogger<BraveBrowser>>();
             
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
             mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));
 
-            // Dies ist der entscheidende Pfad für Brave!
+            // Dies ist der entscheidende Pfad fï¿½r Brave!
             string expectedDefaultProfilePath = @"C:\Local\BraveSoftware\Brave-Browser\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 

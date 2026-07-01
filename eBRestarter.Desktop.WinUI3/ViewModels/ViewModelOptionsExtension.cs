@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -34,17 +34,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             TypeInfoResolver = ExtensionConfigJsonContext.Default
         };
 
-        private readonly IBrowserExtensionDeploymentPort _browserExtensionDeploymentService;
+        private readonly IBrowserExtensionDeploymentOutboundPort _browserExtensionDeploymentService;
+        private readonly IBrowserExtensionPathProviderOutboundPort _browserExtensionPathProvider;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
         private readonly ILocalizationProvider _localizationService;
-        private readonly IOsProcessControlPort _osProcessControlPort;
-        private readonly IOsAutoLogonPort _osAutoLogonPort;
-        private readonly ISystemInfoPort _windowsSystemInfo;
-        private readonly ISettingsPort _settingsPort;
-        private readonly IAutoStartPort _autoStartPort;
-        private readonly IFileSystemPort _fileSystemPort;
-        private readonly IBrowserConfigPort _browserConfigPort;
+        private readonly IOsProcessControlOutboundPort _osProcessControlPort;
         private readonly IUIOptionsProvider _uiOptionsService;
         private readonly AppConfig _currentConfig;
 
@@ -63,24 +58,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
         public ViewModelOptionsExtension(
-            IBrowserExtensionDeploymentPort browserExtensionDeploymentService,
+            IBrowserExtensionDeploymentOutboundPort browserExtensionDeploymentService,
+            IBrowserExtensionPathProviderOutboundPort browserExtensionPathProvider,
             IDialogService dialogService,
-            IEVisitorConfigPort EVRestarterConfigRepository,
+            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
             ILocalizationProvider LocalizationProvider,
-            IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+            IOsProcessControlOutboundPort osProcessControlPort,
             IUIOptionsProvider uiOptionsService)
         {
             _browserExtensionDeploymentService = browserExtensionDeploymentService;
+            _browserExtensionPathProvider = browserExtensionPathProvider;
             _dialogService = dialogService;
             _EVRestarterConfigRepository = EVRestarterConfigRepository;
             _localizationService = LocalizationProvider;
             _osProcessControlPort = osProcessControlPort;
-            _osAutoLogonPort = osAutoLogonPort;
-            _windowsSystemInfo = windowsSystemInfo;
-            _settingsPort = settingsPort;
-            _autoStartPort = autoStartPort;
-            _fileSystemPort = fileSystemPort;
-            _browserConfigPort = browserConfigPort;
             _uiOptionsService = uiOptionsService;
 
             _currentConfig = _EVRestarterConfigRepository.LoadConfig();
@@ -103,7 +94,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string extensionPath = _browserExtensionDeploymentService.RetrieveExtensionFolderPath();
+                string extensionPath = _browserExtensionPathProvider.RetrieveExtensionFolderPath();
 
                 if (!Directory.Exists(extensionPath))
                 {
@@ -128,7 +119,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string extensionPath = _browserExtensionDeploymentService.RetrieveExtensionFolderPath();
+                string extensionPath = _browserExtensionPathProvider.RetrieveExtensionFolderPath();
                 string configPath = Path.Combine(extensionPath, ExtensionConfigFileName);
 
                 var extensionConfigDto = new ExtensionConfigDto
@@ -165,7 +156,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         {
             try
             {
-                string configPath = Path.Combine(_browserExtensionDeploymentService.RetrieveExtensionFolderPath(), ExtensionConfigFileName);
+                string configPath = Path.Combine(_browserExtensionPathProvider.RetrieveExtensionFolderPath(), ExtensionConfigFileName);
 
                 if (File.Exists(configPath))
                 {

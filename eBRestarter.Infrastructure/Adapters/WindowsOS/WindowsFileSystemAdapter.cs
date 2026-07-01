@@ -5,7 +5,7 @@ namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 /// <summary>
 /// Implements decoupled file system access operations on Windows.
 /// </summary>
-public sealed class WindowsFileSystemAdapter : IFileSystemPort
+public sealed class WindowsFileSystemAdapter : IFileSystemOutboundPort
 {
     public bool FileExists(string path) => File.Exists(path);
 

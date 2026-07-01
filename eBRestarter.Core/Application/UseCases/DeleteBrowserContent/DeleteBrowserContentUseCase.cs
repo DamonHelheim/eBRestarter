@@ -1,25 +1,26 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Core.Application.Models.Records;
 using FluentResults;
 using FluentValidation;
 
+
 namespace eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
 
 public sealed class DeleteBrowserContentUseCase(
-    IBrowserFactoryPort BrowserFactory,
-    IFileDeletionPort fileDeletionService,
-    IOsProcessControlPort processService,
+    IBrowserFactoryOutboundPort BrowserFactory,
+    IFileDeletionOutboundPort fileDeletionService,
+    IOsProcessControlOutboundPort processService,
     ILocalizationProvider LocalizationService,
     IValidator<DeleteBrowserContentRequest> validator) : IDeleteBrowserContentUseCase
 {
-    private readonly IBrowserFactoryPort _browserFactory = BrowserFactory;
-    private readonly IFileDeletionPort _fileDeletionService = fileDeletionService;
-    private readonly IOsProcessControlPort _processService = processService;
+    private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
+    private readonly IFileDeletionOutboundPort _fileDeletionService = fileDeletionService;
+    private readonly IOsProcessControlOutboundPort _processService = processService;
     private readonly ILocalizationProvider _localizationService = LocalizationService;
     private readonly IValidator<DeleteBrowserContentRequest> _validator = validator;
 

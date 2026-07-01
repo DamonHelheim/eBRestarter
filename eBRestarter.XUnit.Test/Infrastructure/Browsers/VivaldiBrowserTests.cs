@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+ï»¿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
@@ -14,26 +14,26 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
     public class VivaldiBrowserTests
     {
         /// <summary>
-        /// Vivaldi ist speziell: Es überschreibt die 'BrowserVersion' Property und sucht
+        /// Vivaldi ist speziell: Es ï¿½berschreibt die 'BrowserVersion' Property und sucht
         /// stattdessen in der Windows-Registry unter den Uninstall-Keys nach 'DisplayVersion'.
-        /// Wir müssen sicherstellen, dass diese Kaskade (erst HKCU, dann HKLM, dann WOW64) funktioniert.
+        /// Wir mï¿½ssen sicherstellen, dass diese Kaskade (erst HKCU, dann HKLM, dann WOW64) funktioniert.
         ///
         /// WAS WIRD GETESTET?
         /// Wir simulieren, dass der Uninstall-Key im CurrentUser (HKCU) leer ist,
         /// aber im LocalMachine (HKLM) die Version "5.3.2679.55 (Stable channel)" steht.
-        /// Der Test prüft, ob Vivaldi das findet und via CleanVersionString() korrekt bereinigt!
+        /// Der Test prï¿½ft, ob Vivaldi das findet und via CleanVersionString() korrekt bereinigt!
         /// </summary>
         [Fact]
         public void BrowserVersion_ShouldReturnVersionFromUninstallKey_AndCleanIt()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlPort>();
-            var mockSettings = new Mock<ISettingsPort>();
-            var mockFileSystem = new Mock<IFileSystemPort>();
+            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
+            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
             var mockLogger = new Mock<ILogger<VivaldiBrowser>>();
             
 
-            // 1. Simulation: In CurrentUser steht nichts (Rückgabe null)
+            // 1. Simulation: In CurrentUser steht nichts (Rï¿½ckgabe null)
             mockSettings.Setup(reg => reg.GetUserValue(It.IsAny<string>(), "DisplayVersion"))
                 .Returns(null);
 
@@ -52,18 +52,18 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         }
 
         /// <summary>
-        /// Wir prüfen das korrekte Pfad-Mapping für Vivaldi. Vivaldi speichert seine
+        /// Wir prï¿½fen das korrekte Pfad-Mapping fï¿½r Vivaldi. Vivaldi speichert seine
         /// Daten unter AppData\Local\Vivaldi\User Data.
         /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectDirectories_ForVivaldi()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlPort>();
-            var mockSettings = new Mock<ISettingsPort>();
+            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
+            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
             
             var mockLogger = new Mock<ILogger<VivaldiBrowser>>();
-            var mockFileSystem = new Mock<IFileSystemPort>();
+            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
             mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));

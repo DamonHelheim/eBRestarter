@@ -19,12 +19,12 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
     /// </summary>
     public class RemoveApiCredentialsUseCaseTests
     {
-        private readonly Mock<IEVisitorConfigPort> _mockConfigService;
+        private readonly Mock<IEVisitorConfigRepositoryOutboundPort> _mockConfigService;
         private readonly RemoveApiCredentialsUseCase _sut;
 
         public RemoveApiCredentialsUseCaseTests()
         {
-            _mockConfigService = new Mock<IEVisitorConfigPort>();
+            _mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
             _sut = new RemoveApiCredentialsUseCase(_mockConfigService.Object);
         }
         // 1. HAPPY PATH (KORREKTES L�SCHEN DER CREDENTIALS)

@@ -1,10 +1,10 @@
-using eBRestarter.Core.Application.Models.Records;
+﻿using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.Browsers;
 
-public abstract class ChromiumBrowserBase(IOsProcessControlPort processControlPort, ISettingsPort settingsPort, IFileSystemPort fileSystemPort, ILogger logger) : BrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
+public abstract class ChromiumBrowserBase(IOsProcessControlOutboundPort processControlPort, ISettingsRepositoryOutboundPort settingsPort, IFileSystemOutboundPort fileSystemPort, ILogger logger) : BrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
 {
     // These values must be provided by the concrete implementation classes
     protected abstract string ExeFileName { get; }          // e.g., "chrome.exe"

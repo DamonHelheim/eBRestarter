@@ -1,13 +1,13 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Application;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using System.Runtime.Versioning;
 
 namespace eBRestarter.Core.Application.Providers;
 
 [SupportedOSPlatform("windows")]
-public sealed class WindowsOsPathProvider(IAppPathPort pathProvider) : IOsPathProviderPort
+public sealed class WindowsOsPathProvider(IAppPathProviderOutboundPort pathProvider) : IOsPathProvider
 {
-    private readonly IAppPathPort _pathProvider = pathProvider;
+    private readonly IAppPathProviderOutboundPort _pathProvider = pathProvider;
 
     private const string AppFolderName = "eBRestarter";
     private const string ConfigFileName = "eBRestarterConfig.json"; // Migrated to JSON!

@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Scheduling;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -31,21 +31,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private const string GeneralErrorKey = "General_Error";
 
-        private readonly INextRestartDateProvider _retrieveNextRestartDateUseCase;
-        private readonly IComputerRestartSchedulerPort _computerRestartScheduler;
+        private readonly INextRestartDateHandler _nextRestartDateHandler;
+        private readonly IComputerRestartService _computerRestartScheduler;
         private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
         private readonly ILanguageService _languageService;
         private readonly ILocalizationProvider _localizationService;
         private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
-        private readonly IOsProcessControlPort _osProcessControlPort;
-        private readonly IOsAutoLogonPort _osAutoLogonPort;
-        private readonly ISystemInfoPort _windowsSystemInfo;
-        private readonly ISettingsPort _settingsPort;
-        private readonly IAutoStartPort _autoStartPort;
-        private readonly IFileSystemPort _fileSystemPort;
-        private readonly IBrowserConfigPort _browserConfigPort;
+        private readonly IOsProcessControlOutboundPort _osProcessControlPort;
+        private readonly IOsAutoLogonRepositoryOutboundPort _osAutoLogonPort;
+        private readonly ISystemInfoProviderOutboundPort _windowsSystemInfo;
         private readonly IThemeService _themeService;
         private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
         private readonly IUIOptionsProvider _uiOptionsService;
@@ -93,19 +89,19 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IConfigureAutoLogonUseCase configureAutoLogonUseCase,
             IToggleAppAutoStartUseCase toggleAppAutoStartUseCase,
             IManageApplicationUpdatesUseCase manageApplicationUpdatesUseCase,
-            IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort,
+            IOsProcessControlOutboundPort osProcessControlPort, IOsAutoLogonRepositoryOutboundPort osAutoLogonPort, ISystemInfoProviderOutboundPort windowsSystemInfo,
             IThemeService themeService,
-            IEVisitorConfigPort EVRestarterConfigRepository,
+            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
             ILanguageService languageService,
             ILocalizationProvider LocalizationProvider,
             IUIOptionsProvider uiOptionsService,
-            INextRestartDateProvider NextRestartDateProvider,
-            IComputerRestartSchedulerPort ComputerRestartHandler)
+            INextRestartDateHandler nextRestartDateHandler,
+            IComputerRestartService ComputerRestartService)
         {
             _isInitializing = true;
 
-            _retrieveNextRestartDateUseCase = NextRestartDateProvider;
-            _computerRestartScheduler = ComputerRestartHandler;
+            _nextRestartDateHandler = nextRestartDateHandler;
+            _computerRestartScheduler = ComputerRestartService;
             _configureAutoLogonUseCase = configureAutoLogonUseCase;
             _dialogService = dialogService;
             _EVRestarterConfigRepository = EVRestarterConfigRepository;
@@ -115,10 +111,6 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             _osProcessControlPort = osProcessControlPort;
             _osAutoLogonPort = osAutoLogonPort;
             _windowsSystemInfo = windowsSystemInfo;
-            _settingsPort = settingsPort;
-            _autoStartPort = autoStartPort;
-            _fileSystemPort = fileSystemPort;
-            _browserConfigPort = browserConfigPort;
             _themeService = themeService;
             _toggleAppAutoStartUseCase = toggleAppAutoStartUseCase;
             _uiOptionsService = uiOptionsService;
@@ -135,9 +127,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 var targetDateTime = _currentConfig.Computer.NextRestartDate.Value.Date.AddHours(_currentConfig.Computer.RestartClockTime);
                 if (DateTime.Now >= targetDateTime)
                 {
-                    _currentConfig.Computer.SetNextRestartDate(_retrieveNextRestartDateUseCase.RetrieveNextRestartDate(
-                        _currentConfig.Computer.ComputerRestartIntervalDays,
-                        _currentConfig.Computer.RestartClockTime));
+                    _currentConfig.Computer.SetNextRestartDate(_nextRestartDateHandler.RetrieveNextRestartDate(_currentConfig.Computer.ComputerRestartIntervalDays, _currentConfig.Computer.RestartClockTime));
                     SaveSettings();
                 }
             }
@@ -278,7 +268,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 {
                     await _dialogService.ShowMessageAsync(
                         _localizationService.RetrieveString("General_Error"),
-                        "Es sind Administratorrechte erforderlich, um diese Aktion auszuf�hren. Bitte starten Sie die Anwendung als Administrator.",
+                        "Es sind Administratorrechte erforderlich, um diese Aktion auszuf?hren. Bitte starten Sie die Anwendung als Administrator.",
                         DialogIcon.Error);
                 }
                 else if (status == AutoLogonResultStatus.ValidationError)

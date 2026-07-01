@@ -30,7 +30,7 @@ using eBRestarter.Core.Application.Models.Records;
 //            
 //            _sut = new ConfigureAutoLogonUseCase(
 //                _mockAutoLogonService.Object,
-//                null, // mock WindowsSystemInfoAdapter
+//                null, // mock WindowsSystemInfoProvider
 //                _mockCredentialUseCase.Object,
 //                new ConfigureAutoLogonValidator());
 //        }

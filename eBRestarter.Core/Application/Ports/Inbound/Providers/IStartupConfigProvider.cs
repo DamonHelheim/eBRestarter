@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Core.Application.Ports.Inbound.Providers;
 
@@ -8,9 +8,8 @@ namespace eBRestarter.Core.Application.Ports.Inbound.Providers;
 public interface IStartupConfigProvider
 {
     /// <summary>
-    /// Rolls forward the next browser-cache deletion date when it falls on today (and interval is active),
-    /// persists the config, then returns language and theme for WinUI bootstrap.
+    /// Returns language and theme for WinUI bootstrap by reading the configuration.
     /// </summary>
-    StartupDisplayPreferences PrepareConfigForLaunch();
+    StartupDisplayPreferences RetrieveStartupPreferences();
 }
 

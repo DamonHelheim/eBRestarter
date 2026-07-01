@@ -3,9 +3,9 @@ using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
 
-public sealed class RemoveApiCredentialsUseCase(IEVisitorConfigPort configService) : IRemoveApiCredentialsUseCase
+public sealed class RemoveApiCredentialsUseCase(IEVisitorConfigRepositoryOutboundPort configService) : IRemoveApiCredentialsUseCase
 {
-    private readonly IEVisitorConfigPort _configService = configService;
+    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
 
     public void Execute()
     {

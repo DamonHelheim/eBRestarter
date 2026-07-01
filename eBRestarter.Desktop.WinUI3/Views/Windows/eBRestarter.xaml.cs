@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
@@ -29,7 +29,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// </summary>
         private readonly INavigationService _navigationService;
 
-        private readonly IAppVersionInfoPort? _iAppVersionInfoService;
+        private readonly IAppVersionInfoProviderOutboundPort? _iAppVersionInfoService;
         private readonly IMainWindowProvider _mainWindowProvider;
         private readonly IAppWindowHelper _appWindowHelper;
 
@@ -44,7 +44,7 @@ namespace eBRestarter.Desktop.WinUI3
         /// <param name="navigationService">The injected navigation service (Dependency Injection).</param>
         public EBRestarter(
             INavigationService navigationService,
-            IAppVersionInfoPort iAppVersionInfoService,
+            IAppVersionInfoProviderOutboundPort iAppVersionInfoService,
             IMainWindowProvider mainWindowProvider,
             IAppWindowHelper appWindowHelper)
         {

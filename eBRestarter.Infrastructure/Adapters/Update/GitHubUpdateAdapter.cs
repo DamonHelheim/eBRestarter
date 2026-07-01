@@ -1,8 +1,8 @@
-﻿using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Update;
 using eBRestarter.Infrastructure.Network;
 using Microsoft.Extensions.Logging;
@@ -13,16 +13,16 @@ namespace eBRestarter.Infrastructure.Adapters.Update;
 
 public sealed class GitHubUpdateAdapter(
     IRestClientPort restClientUseCase,
-    IBrowserDownloadPort browserDownloadUseCase,
-    IOsProcessControlPort processControlPort,
-    IOsAutoLogonPort osAutoLogonPort,
-    ISystemInformationPort systemInfoPort,
-    ISettingsPort settingsPort,
-    IAutoStartPort autoStartPort,
-    IFileSystemPort fileSystemPort,
-    IBrowserConfigPort browserConfigPort,
-    IApplicationLifetimePort applicationLifetimeUseCase,
-    ILogger<GitHubUpdateAdapter> logger) : IUpdatePort
+    IHttpDownloadOutboundPort httpDownloadPort,
+    IOsProcessControlOutboundPort processControlPort,
+    IOsAutoLogonRepositoryOutboundPort osAutoLogonPort,
+    ISystemInformationProvider systemInfoProvider,
+    ISettingsRepositoryOutboundPort settingsPort,
+    IAutoStartRepositoryOutboundPort autoStartPort,
+    IFileSystemOutboundPort fileSystemPort,
+    IBrowserConfigRepositoryOutboundPort browserConfigPort,
+    IApplicationLifetimeOutboundPort applicationLifetimeUseCase,
+    ILogger<GitHubUpdateAdapter> logger) : IUpdateOutboundPort
 {
     // Adjust these constants to match your target repository!
     private const string RepoOwner = "DamonHelheim";
@@ -32,10 +32,10 @@ public sealed class GitHubUpdateAdapter(
     private const string GitHubApiUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/latest";
 
     private readonly IRestClientPort _restClientUseCase = restClientUseCase;
-    private readonly IBrowserDownloadPort _browserDownloadUseCase = browserDownloadUseCase;
-    private readonly IFileSystemPort _fileSystemPort = fileSystemPort;
-    private readonly IOsProcessControlPort _processControlPort = processControlPort;
-    private readonly IApplicationLifetimePort _applicationLifetimeUseCase = applicationLifetimeUseCase;
+    private readonly IHttpDownloadOutboundPort _httpDownloadPort = httpDownloadPort;
+    private readonly IFileSystemOutboundPort _fileSystemPort = fileSystemPort;
+    private readonly IOsProcessControlOutboundPort _processControlPort = processControlPort;
+    private readonly IApplicationLifetimeOutboundPort _applicationLifetimeUseCase = applicationLifetimeUseCase;
     private readonly ILogger<GitHubUpdateAdapter> _logger = logger;
 
     public async Task<UpdateInfo> CheckForUpdateAsync()
@@ -123,7 +123,7 @@ public sealed class GitHubUpdateAdapter(
         var tempDir = _fileSystemPort.ResolveEnvironmentPath("TEMP");
         var tempFile = _fileSystemPort.CombinePaths(tempDir, $"eBRestarter_Update_{updateInfo.LatestVersion}.exe");
 
-        await _browserDownloadUseCase.DownloadFileAsync(
+        await _httpDownloadPort.DownloadFileAsync(
             updateInfo.DownloadUrl,
             tempFile,
             new Progress<DownloadProgressStatus>(),

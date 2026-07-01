@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
@@ -9,16 +9,16 @@ using FluentValidation;
 namespace eBRestarter.Core.Application.UseCases.ConfigureAutoLogon;
 
 public sealed class ConfigureAutoLogonUseCase(
-    IOsAutoLogonPort autoLogonService,
-    ISystemInfoPort WindowsSystemInfoAdapter,
-    ICredentialValidationPort credentialValidationUseCase,
+    IOsAutoLogonRepositoryOutboundPort autoLogonPort,
+    ISystemInfoProviderOutboundPort systemInfoPort,
+    ICredentialValidationProviderOutboundPort credentialValidationPort,
     IValidator<ConfigureAutoLogonRequest> validator) : IConfigureAutoLogonUseCase
 {
     private const string StatusKey = "Status";
 
-    private readonly IOsAutoLogonPort _autoLogonService = autoLogonService;
-    private readonly ISystemInfoPort _windowsSystemInfoService = WindowsSystemInfoAdapter;
-    private readonly ICredentialValidationPort _credentialValidationUseCase = credentialValidationUseCase;
+    private readonly IOsAutoLogonRepositoryOutboundPort _autoLogonPort = autoLogonPort;
+    private readonly ISystemInfoProviderOutboundPort _systemInfoPort = systemInfoPort;
+    private readonly ICredentialValidationProviderOutboundPort _credentialValidationPort = credentialValidationPort;
     private readonly IValidator<ConfigureAutoLogonRequest> _validator = validator;
 
 
@@ -56,15 +56,15 @@ public sealed class ConfigureAutoLogonUseCase(
     {
         if (request.RestorePasswordlessMode)
         {
-            if (!_windowsSystemInfoService.IsUserAdministrator())
+            if (!_systemInfoPort.IsUserAdministrator())
             {
                 return Result.Fail(new Error("Administrator rights required to restore passwordless mode.")
                     .WithMetadata(StatusKey, AutoLogonResultStatus.AdminRequired));
             }
-            _autoLogonService.SetPasswordlessAuth(true);
+            _autoLogonPort.SetPasswordlessAuth(true);
         }
 
-        _autoLogonService.DisableAutoLogon();
+        _autoLogonPort.DisableAutoLogon();
         return Result.Ok(AutoLogonResultStatus.Deactivated);
     }
 
@@ -72,15 +72,15 @@ public sealed class ConfigureAutoLogonUseCase(
     {
         if (request.DisablePasswordlessMode)
         {
-            if (!_windowsSystemInfoService.IsUserAdministrator())
+            if (!_systemInfoPort.IsUserAdministrator())
             {
                 return Result.Fail(new Error("Administrator rights required to disable passwordless mode.")
                     .WithMetadata(StatusKey, AutoLogonResultStatus.AdminRequired));
             }
-            _autoLogonService.SetPasswordlessAuth(false);
+            _autoLogonPort.SetPasswordlessAuth(false);
         }
 
-        if (_autoLogonService.IsPasswordlessAuthEnabled())
+        if (_autoLogonPort.IsPasswordlessAuthEnabled())
         {
             return Result.Fail(new Error("Windows Hello Passwordless Mode ist aktiv. AutoLogon nicht mÃ¶glich.")
                 .WithMetadata(StatusKey, AutoLogonResultStatus.WindowsHelloBlockActive));
@@ -90,7 +90,7 @@ public sealed class ConfigureAutoLogonUseCase(
         {
             string domain = request.Domain ?? string.Empty;
 
-            var isValid = _credentialValidationUseCase.ValidateCredentials(request.Username, domain, request.Password);
+            var isValid = _credentialValidationPort.ValidateCredentials(request.Username, domain, request.Password);
 
             if (!isValid)
             {
@@ -98,7 +98,7 @@ public sealed class ConfigureAutoLogonUseCase(
                     .WithMetadata(StatusKey, AutoLogonResultStatus.ValidationError));
             }
 
-            _autoLogonService.EnableAutoLogon(request.Username, domain, request.Password);
+            _autoLogonPort.EnableAutoLogon(request.Username, domain, request.Password);
 
             return Result.Ok(AutoLogonResultStatus.Activated);
         }

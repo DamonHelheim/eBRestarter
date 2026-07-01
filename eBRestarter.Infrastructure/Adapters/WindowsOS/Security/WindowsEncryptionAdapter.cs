@@ -4,7 +4,7 @@ using System.Text;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS.Security;
 
-public sealed class WindowsEncryptionAdapter : IEncryptionPort
+public sealed class WindowsEncryptionAdapter : IEncryptionOutboundPort
 {
     // Optional: An additional "salt" value (entropy) ensuring only this application can handle decryption tasks
     private static readonly byte[] _entropy = Encoding.UTF8.GetBytes("eBRestarter_Secure_Entropy_2026");
