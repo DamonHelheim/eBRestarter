@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
@@ -13,28 +13,23 @@ namespace eBRestarter.XUnit.Test.Core.Application.Providers;
 public class StartupConfigProviderTests
 {
     [Fact]
-    public void PrepareConfigForLaunch_WhenNextDeleteIsToday_RollsForwardAndReturnsPreferences()
+    public void RetrieveStartupPreferences_ReturnsCorrectPreferences_WithoutSaving()
     {
-        var browser = new BrowserConfig();
-        browser.UpdateCleanupSettings(7, TimeProvider.System);
-        browser.SetNextCleanupDate(DateTime.Today);
         var config = new AppConfig
         {
-            Browser = browser,
             Settings = new SettingsConfig { Language = 0, Theme = "Dark" }
         };
 
-        var mockConfigService = new Mock<IEVisitorConfigPort>();
+        var mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
         mockConfigService.Setup(s => s.LoadConfig()).Returns(config);
 
         var sut = new StartupConfigProvider(mockConfigService.Object);
 
-        var prefs = sut.PrepareConfigForLaunch();
+        var prefs = sut.RetrieveStartupPreferences();
 
         prefs.LanguageCode.ShouldBe("de-DE");
         prefs.ThemeName.ShouldBe("Dark");
-        browser.NextBrowserDeleteCacheDate.ShouldBe(DateTime.Today.AddDays(7));
-        mockConfigService.Verify(s => s.SaveConfig(It.Is<AppConfig>(c => c.Browser.NextBrowserDeleteCacheDate == DateTime.Today.AddDays(7))), Times.Once);
+        mockConfigService.Verify(s => s.SaveConfig(It.IsAny<AppConfig>()), Times.Never);
     }
 }
 

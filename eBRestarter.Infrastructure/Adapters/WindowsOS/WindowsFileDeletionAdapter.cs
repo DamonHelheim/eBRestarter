@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 
-public sealed class WindowsFileDeletionAdapter(ILogger<WindowsFileDeletionAdapter> logger) : IFileDeletionPort
+public sealed class WindowsFileDeletionAdapter(ILogger<WindowsFileDeletionAdapter> logger) : IFileDeletionOutboundPort
 {
     private readonly ILogger<WindowsFileDeletionAdapter> _logger = logger;
 

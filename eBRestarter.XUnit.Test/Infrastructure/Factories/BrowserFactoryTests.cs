@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound;
+﻿using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
@@ -39,9 +39,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Factories
             var mockServiceProvider = new Mock<IServiceProvider>();
 
             // Um die konkreten Browser zu erstellen, brauchen wir Dummy-Mocks für deren Konstruktoren
-            var mockProcess = new Mock<IOsProcessControlPort>();
-            var mockSettings = new Mock<ISettingsPort>();
-            var mockFs = new Mock<IFileSystemPort>();
+            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
+            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockFs = new Mock<IFileSystemOutboundPort>();
 
             // Wir definieren für jeden Browser-Typ eine Dummy-Instanz.
             // Der ServiceProvider soll diese zurückgeben, wenn er danach gefragt wird.

@@ -22,16 +22,16 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
     /// </summary>
     public class ToggleEdgeStartupBoostUseCaseTests
     {
-        private readonly Mock<IBrowserConfigPort> _mockStartupService;
-        private readonly Mock<IBrowserFactoryPort> _mockBrowserFactory;
-        private readonly Mock<IBrowserPort> _mockEdgeBrowser;
+        private readonly Mock<IBrowserConfigRepositoryOutboundPort> _mockStartupService;
+        private readonly Mock<IBrowserFactoryOutboundPort> _mockBrowserFactory;
+        private readonly Mock<IBrowserOutboundPort> _mockEdgeBrowser;
         private readonly ToggleEdgeStartupBoostUseCase _sut;
 
         public ToggleEdgeStartupBoostUseCaseTests()
         {
-            _mockStartupService = new Mock<IBrowserConfigPort>();
-            _mockBrowserFactory = new Mock<IBrowserFactoryPort>();
-            _mockEdgeBrowser = new Mock<IBrowserPort>();
+            _mockStartupService = new Mock<IBrowserConfigRepositoryOutboundPort>();
+            _mockBrowserFactory = new Mock<IBrowserFactoryOutboundPort>();
+            _mockEdgeBrowser = new Mock<IBrowserOutboundPort>();
 
             // Standard-Setup: Wenn die Factory nach Edge gefragt wird, liefern wir unseren Mock zur�ck
             _mockBrowserFactory

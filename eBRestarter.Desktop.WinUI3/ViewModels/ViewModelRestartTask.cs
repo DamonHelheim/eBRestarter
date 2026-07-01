@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
@@ -6,10 +6,10 @@ using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageRestarterCycle;
+using eBRestarter.Core.Application.Ports.Inbound.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -37,18 +37,18 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
                                             IRecipient<NextDeletionProcessMessage>,
                                             IRecipient<NextDeletionProcessDate>
 {
-    private readonly IEVisitorConfigPort _configService;
+    private readonly IEVisitorConfigRepositoryOutboundPort _configService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IBrowserDiscoveryPort _browserService;
+    private readonly IBrowserDiscoveryProviderOutboundPort _browserService;
     private readonly eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
 
     private readonly ILocalizationProvider _localizationService;
 
-    private readonly IManageRestarterCycleUseCase _manageRestarterCycleUseCase;
+    private readonly IRestarterCycleService _restarterCycleService;
 
-    private readonly IRestartTaskDisplayStateProvider _restartTaskDisplayStateUseCase;
+    private readonly IRestartTaskDisplayStateHandler _restartTaskDisplayStateHandler;
 
     private bool _checkBrowserAliveRoutine;
 
@@ -92,29 +92,29 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
 
     /// <summary>
     /// Initializes the restart task view model with config and services, loads initial display state
-    /// from <see cref="IRestartTaskDisplayStateProvider"/>, and registers as recipient for app-wide
+    /// from <see cref="IRestartTaskDisplayStateHandler"/>, and registers as recipient for app-wide
     /// messages so the UI stays in sync when username, browser, or delete-content settings change.
     /// </summary>
     public ViewModelRestartTask(
-        IManageRestarterCycleUseCase manageRestarterCycleUseCase,
-        IEVisitorConfigPort configService,
+        IRestarterCycleService restarterCycleService,
+        IEVisitorConfigRepositoryOutboundPort configService,
         IDialogService dialogService,
         ILocalizationProvider LocalizationProvider,
-        IRestartTaskDisplayStateProvider RestartTaskDisplayStateProvider,
-        IBrowserDiscoveryPort browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
+        IRestartTaskDisplayStateHandler restartTaskDisplayStateHandler,
+        IBrowserDiscoveryProviderOutboundPort browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
     {
-        ArgumentNullException.ThrowIfNull(manageRestarterCycleUseCase);
+        ArgumentNullException.ThrowIfNull(restarterCycleService);
         ArgumentNullException.ThrowIfNull(configService);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(LocalizationProvider);
-        ArgumentNullException.ThrowIfNull(RestartTaskDisplayStateProvider);
+        ArgumentNullException.ThrowIfNull(restartTaskDisplayStateHandler);
         ArgumentNullException.ThrowIfNull(browserService);
 
-        _manageRestarterCycleUseCase = manageRestarterCycleUseCase;
+        _restarterCycleService = restarterCycleService;
         _configService = configService;
         _dialogService = dialogService;
         _localizationService = LocalizationProvider;
-        _restartTaskDisplayStateUseCase = RestartTaskDisplayStateProvider;
+        _restartTaskDisplayStateHandler = restartTaskDisplayStateHandler;
         _browserService = browserService;
         _browserDisplayNameResolver = browserDisplayNameResolver;
 
@@ -126,7 +126,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         ChosenBrowser = _localizationService.RetrieveString("Task_DefaultBrowser");
         StatusInfoText = _localizationService.RetrieveString("Task_StatusReady");
 
-        _manageRestarterCycleUseCase.ProgressChanged += OnCycleProgressChanged;
+        _restarterCycleService.ProgressChanged += OnCycleProgressChanged;
 
         LoadInitialConfigData();
 
@@ -213,15 +213,13 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     private void LoadInitialConfigData()
     {
         var appConfig = _configService.LoadConfig();
-
-        var currentConfigState = _restartTaskDisplayStateUseCase.RetrieveInitialState(appConfig);
+        var currentConfigState = _restartTaskDisplayStateHandler.RetrieveInitialState(appConfig);
 
         Username = currentConfigState.Username;
         ChosenBrowser = currentConfigState.ChosenBrowser;
         _checkBrowserAliveRoutine = currentConfigState.CheckBrowserAliveRoutine;
         _pauseSeconds = currentConfigState.PauseSeconds;
         _runtimeSeconds = currentConfigState.RuntimeSeconds;
-
         DeleteBrowserContentIsActive = currentConfigState.DeleteBrowserContentIsActive;
         DeleteIsActivatedMessage = currentConfigState.DeleteIsActivatedMessage;
         NextDeletionProcessMessage = currentConfigState.NextDeletionProcessMessage;
@@ -251,7 +249,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
             PauseSeconds: _pauseSeconds,
             CheckBrowserAliveRoutine: _checkBrowserAliveRoutine);
 
-        _manageRestarterCycleUseCase.StartAsync(manageRestarterCycleRequest, async () =>
+        _restarterCycleService.StartAsync(manageRestarterCycleRequest, async () =>
         {
             var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -280,7 +278,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
 
     private void StopLoop()
     {
-        _manageRestarterCycleUseCase.Stop();
+        _restarterCycleService.Stop();
     }
 
     private async Task CheckInstalledBrowsersAsync()

@@ -6,10 +6,10 @@ namespace eBRestarter.Core.Application.UseCases.ScheduleBrowserCleanup;
 
 
 public sealed class ScheduleBrowserCleanupUseCase(
-    IEVisitorConfigPort configService,
+    IEVisitorConfigRepositoryOutboundPort configService,
     TimeProvider timeProvider) : IScheduleBrowserCleanupUseCase
 {
-    private readonly IEVisitorConfigPort _configService = configService;
+    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
     private readonly TimeProvider _timeProvider = timeProvider;
 
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)

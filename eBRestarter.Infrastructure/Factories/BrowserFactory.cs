@@ -5,11 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Infrastructure.Factories;
 
-public sealed class BrowserFactory(IServiceProvider serviceProvider) : IBrowserFactoryPort
+public sealed class BrowserFactory(IServiceProvider serviceProvider) : IBrowserFactoryOutboundPort
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public IBrowserPort Create(BrowserType type)
+    public IBrowserOutboundPort Create(BrowserType type)
     {
         return type switch
         {

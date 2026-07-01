@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -16,14 +16,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     public sealed partial class ViewModelOptionsApi : ObservableObject
     {
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
         private readonly ILocalizationProvider _localizationService;
         private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
         private readonly AppConfig _currentConfig;
 
         public ViewModelOptionsApi(
             IDialogService dialogService,
-            IEVisitorConfigPort EVRestarterConfigRepository,
+            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
             ILocalizationProvider LocalizationProvider,
             IRemoveApiCredentialsUseCase removeApiCredentialsUseCase)
         {

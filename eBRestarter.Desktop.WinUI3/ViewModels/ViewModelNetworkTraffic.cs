@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models.UI;
 using Microsoft.UI.Dispatching;
 using System;
@@ -17,7 +17,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the network traffic / network cards page. Polls
-/// <see cref="INetworkInfoPort"/> on a timer for active interfaces and
+/// <see cref="INetworkInfoProvider"/> on a timer for active interfaces and
 /// bytes sent/received, then updates <see cref="NetworkCards"/> on the UI thread. Shows a
 /// single "not available" entry when the network is offline or an error occurs.
 /// </summary>
@@ -37,7 +37,7 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
 
     private readonly ILocalizationProvider _localizationService;
 
-    private readonly INetworkInfoPort _networkService;
+    private readonly INetworkInfoProvider _networkService;
 
     private readonly DispatcherQueue _dispatcherQueue;
 
@@ -53,7 +53,7 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     /// and applies results on the UI thread. Runs the first update immediately on a background thread.
     /// </summary>
     public ViewModelNetworkTraffic(
-        INetworkInfoPort networkService,
+        INetworkInfoProvider networkService,
         ILocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(networkService);

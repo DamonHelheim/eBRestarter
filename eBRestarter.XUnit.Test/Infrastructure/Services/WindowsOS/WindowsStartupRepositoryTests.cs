@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
@@ -22,8 +22,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     public class WindowsStartupRepositoryTests
     {
         private readonly Mock<ILogger<WindowsStartupRepository>> _mockLogger;
-        private readonly Mock<ISettingsPort> _mockRegistry;
-        private readonly Mock<IProcessInfoPort> _mockProcessInfo;
+        private readonly Mock<ISettingsRepositoryOutboundPort> _mockRegistry;
+        private readonly Mock<IProcessInfoProviderOutboundPort> _mockProcessInfo;
         private readonly WindowsStartupRepository _sut;
 
         // Konstanten, die in der Originalklasse verwendet werden (f?r pr?zise Verification)
@@ -34,8 +34,8 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         public WindowsStartupRepositoryTests()
         {
             _mockLogger = new Mock<ILogger<WindowsStartupRepository>>();
-            _mockRegistry = new Mock<ISettingsPort>();
-            _mockProcessInfo = new Mock<IProcessInfoPort>();
+            _mockRegistry = new Mock<ISettingsRepositoryOutboundPort>();
+            _mockProcessInfo = new Mock<IProcessInfoProviderOutboundPort>();
 
             _sut = new WindowsStartupRepository(_mockLogger.Object, _mockRegistry.Object, _mockProcessInfo.Object);
         }

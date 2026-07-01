@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace eBRestarter.Infrastructure.Adapters.Http;
 
-public sealed class HttpClientDownloadHandlerAdapter : IBrowserDownloadPort
+public sealed class HttpClientDownloadHandlerAdapter : IHttpDownloadOutboundPort
 {
     private readonly HttpClient _httpClient;
 

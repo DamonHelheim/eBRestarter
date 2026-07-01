@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
@@ -24,13 +24,7 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     private readonly IDialogService _dialogService;
     private readonly ILocalizationProvider _localizationService;
     private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
-    private readonly IOsProcessControlPort _osProcessControlPort;
-    private readonly IOsAutoLogonPort _osAutoLogonPort;
-    private readonly ISystemInfoPort _windowsSystemInfo;
-    private readonly ISettingsPort _settingsPort;
-    private readonly IAutoStartPort _autoStartPort;
-    private readonly IFileSystemPort _fileSystemPort;
-    private readonly IBrowserConfigPort _browserConfigPort;
+    private readonly ISystemInfoProviderOutboundPort _windowsSystemInfo;
 
     private bool _isRevertingState;
 
@@ -64,29 +58,17 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
         IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
         IDialogService dialogService,
         ILocalizationProvider LocalizationProvider,
-        IOsProcessControlPort osProcessControlPort, IOsAutoLogonPort osAutoLogonPort, ISystemInfoPort windowsSystemInfo, ISettingsPort settingsPort, IAutoStartPort autoStartPort, IFileSystemPort fileSystemPort, IBrowserConfigPort browserConfigPort)
+        ISystemInfoProviderOutboundPort windowsSystemInfo)
     {
         ArgumentNullException.ThrowIfNull(toggleEdgeStartupBoostUseCase);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(LocalizationProvider);
-        ArgumentNullException.ThrowIfNull(osProcessControlPort);
-        ArgumentNullException.ThrowIfNull(osAutoLogonPort);
         ArgumentNullException.ThrowIfNull(windowsSystemInfo);
-        ArgumentNullException.ThrowIfNull(settingsPort);
-        ArgumentNullException.ThrowIfNull(autoStartPort);
-        ArgumentNullException.ThrowIfNull(fileSystemPort);
-        ArgumentNullException.ThrowIfNull(browserConfigPort);
 
         _toggleEdgeStartupBoostUseCase = toggleEdgeStartupBoostUseCase;
         _dialogService = dialogService;
         _localizationService = LocalizationProvider;
-        _osProcessControlPort = osProcessControlPort;
-        _osAutoLogonPort = osAutoLogonPort;
         _windowsSystemInfo = windowsSystemInfo;
-        _settingsPort = settingsPort;
-        _autoStartPort = autoStartPort;
-        _fileSystemPort = fileSystemPort;
-        _browserConfigPort = browserConfigPort;
 
         IsAdministrator = _windowsSystemInfo.IsUserAdministrator();
         IsStartupBoostEnabled = _toggleEdgeStartupBoostUseCase.IsEnabled();

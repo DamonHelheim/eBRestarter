@@ -2,7 +2,7 @@
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 
-public sealed class WindowsApplicationLifetimeAdapter : IApplicationLifetimePort
+public sealed class WindowsApplicationLifetimeAdapter : IApplicationLifetimeOutboundPort
 {
     public WindowsApplicationLifetimeAdapter()
     {

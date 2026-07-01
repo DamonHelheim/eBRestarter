@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
@@ -15,8 +15,8 @@ namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 /// </summary>
 public sealed class WindowsStartupRepository(
     ILogger<WindowsStartupRepository> logger,
-    ISettingsPort registry,
-    IProcessInfoPort processInfo) : IAutoStartPort, IBrowserConfigPort
+    ISettingsRepositoryOutboundPort registry,
+    IProcessInfoProviderOutboundPort processInfo) : IAutoStartRepositoryOutboundPort, IBrowserConfigRepositoryOutboundPort
 {
     // Path for "Current User" Run-Key (Standard Autostart for the current user).
     private const string RegistryPathRun = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
@@ -29,8 +29,8 @@ public sealed class WindowsStartupRepository(
     private const string RegistryPathPasswordLess = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device";
 
     private readonly ILogger<WindowsStartupRepository> _logger = logger;
-    private readonly ISettingsPort _registry = registry;
-    private readonly IProcessInfoPort _processInfo = processInfo;
+    private readonly ISettingsRepositoryOutboundPort _registry = registry;
+    private readonly IProcessInfoProviderOutboundPort _processInfo = processInfo;
 
     public void EnableAutoStart()
     {

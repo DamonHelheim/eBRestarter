@@ -1,13 +1,13 @@
-﻿using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using System.Net.NetworkInformation;
 
 namespace eBRestarter.Core.Application.Providers;
 
-public sealed class NetworkInfoProvider(INetworkProviderPort WindowsNetworkProviderAdapter) : INetworkInfoPort
+public sealed class NetworkInfoProvider(INetworkProviderOutboundPort networkProvider) : INetworkInfoProvider
 {
-    private readonly INetworkProviderPort _networkProvider = WindowsNetworkProviderAdapter;
+    private readonly INetworkProviderOutboundPort _networkProvider = networkProvider;
 
     public bool IsNetworkAvailable() => _networkProvider.CheckIsNetworkAvailable();
 

@@ -1,5 +1,5 @@
-﻿using eBRestarter.Core.Application.Handlers;
-using eBRestarter.Core.Application.Parsers;
+using eBRestarter.Core.Application.Handlers;
+// Removed parser
 using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Authentication;
@@ -7,7 +7,8 @@ using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Scheduling;
+using eBRestarter.Core.Application.Ports.Inbound.Services;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Security;
 using eBRestarter.Core.Application.Ports.Outbound.Update;
 using eBRestarter.Core.Application.Providers;
@@ -37,25 +38,26 @@ public static class InfrastructureServiceRegistration
         services.AddLogging(builder => builder.AddDebug());
 
         services.AddSingleton<IProcessWrapper, ProcessWrapper>();
-        services.AddSingleton<IOsProcessControlPort, WindowsProcessControlAdapter>();
-        services.AddSingleton<IFileSystemPort, WindowsFileSystemAdapter>();
-        services.AddSingleton<IApplicationLifetimePort, WindowsApplicationLifetimeAdapter>();
-        services.AddSingleton<IComputerRestartSchedulerPort, ComputerRestartHandler>();
-        services.AddSingleton<IBrowserExtensionDeploymentPort, WindowsBrowserExtensionDeploymentAdapter>();
-        services.AddSingleton<IUpdatePort, GitHubUpdateAdapter>();
-        services.AddSingleton<IFileDeletionPort, WindowsFileDeletionAdapter>();
-        services.AddSingleton<IEncryptionPort, WindowsEncryptionAdapter>();
+        services.AddSingleton<IOsProcessControlOutboundPort, WindowsProcessControlAdapter>();
+        services.AddSingleton<IFileSystemOutboundPort, WindowsFileSystemAdapter>();
+        services.AddSingleton<IApplicationLifetimeOutboundPort, WindowsApplicationLifetimeAdapter>();
+        services.AddSingleton<WindowsBrowserExtensionDeploymentAdapter>();
+        services.AddSingleton<IBrowserExtensionDeploymentOutboundPort>(sp => sp.GetRequiredService<WindowsBrowserExtensionDeploymentAdapter>());
+        services.AddSingleton<IBrowserExtensionPathProviderOutboundPort>(sp => sp.GetRequiredService<WindowsBrowserExtensionDeploymentAdapter>());
+        services.AddSingleton<IUpdateOutboundPort, GitHubUpdateAdapter>();
+        services.AddSingleton<IFileDeletionOutboundPort, WindowsFileDeletionAdapter>();
+        services.AddSingleton<IEncryptionOutboundPort, WindowsEncryptionAdapter>();
 
-        services.AddSingleton<ISystemInfoPort, WindowsSystemInfoAdapter>();
-        services.AddSingleton<IProcessInfoPort, ProcessInfoAdapter>();
-        services.AddSingleton<IAppPathPort, WindowsAppPathProviderAdapter>();
-        services.AddSingleton<IHardwareInfoPort>(provider => provider.GetRequiredService<WmiHardwareProviderAdapter>());
-        services.AddSingleton<IOsEditionPort>(provider => provider.GetRequiredService<WmiHardwareProviderAdapter>());
-        services.AddSingleton<INetworkProviderPort, WindowsNetworkProviderAdapter>();
-        services.AddSingleton<INetworkInfoPort, NetworkInfoProvider>();
-        services.AddSingleton<IOsPathProviderPort, WindowsOsPathProvider>();
-        services.AddSingleton<IAppInfoPort, AppInfoProviderAdapter>();
-        services.AddSingleton<WmiHardwareProviderAdapter>();
+        services.AddSingleton<ISystemInfoProviderOutboundPort, WindowsSystemInfoProvider>();
+        services.AddSingleton<IProcessInfoProviderOutboundPort, ProcessInfoProvider>();
+        services.AddSingleton<IAppPathProviderOutboundPort, WindowsAppPathProvider>();
+        services.AddSingleton<IHardwareInfoProviderOutboundPort>(provider => provider.GetRequiredService<WmiHardwareProvider>());
+        services.AddSingleton<IOsEditionProviderOutboundPort>(provider => provider.GetRequiredService<WmiHardwareProvider>());
+        services.AddSingleton<INetworkProviderOutboundPort, WindowsNetworkProvider>();
+        services.AddSingleton<INetworkInfoProvider, NetworkInfoProvider>();
+        services.AddSingleton<IOsPathProvider, WindowsOsPathProvider>();
+        services.AddSingleton<IAppInfoProviderOutboundPort, AppInfoProvider>();
+        services.AddSingleton<WmiHardwareProvider>();
 
         services.AddTransient<ChromeBrowser>();
         services.AddTransient<FirefoxBrowser>();
@@ -63,37 +65,37 @@ public static class InfrastructureServiceRegistration
         services.AddTransient<BraveBrowser>();
         services.AddTransient<VivaldiBrowser>();
 
-        services.AddSingleton<IBrowserDownloadPort, HttpClientDownloadHandlerAdapter>();
+        services.AddSingleton<IHttpDownloadOutboundPort, HttpClientDownloadHandlerAdapter>();
 
-        services.AddSingleton<IBrowserFactoryPort, BrowserFactory>();
-        services.AddSingleton<IBrowserDiscoveryPort, WindowsBrowserDiscoveryProviderAdapter>();
+        services.AddSingleton<IBrowserFactoryOutboundPort, BrowserFactory>();
+        services.AddSingleton<IBrowserDiscoveryProviderOutboundPort, WindowsBrowserDiscoveryProvider>();
 
         services.AddSingleton<IRestClientPort, RestSharpClientAdapter>();
-        services.AddSingleton<IApiAuthenticationPort, EVisitorApiAuthenticationAdapter>();
-        services.AddSingleton<IEVisitorApiProviderPort, EVisitorApiProviderAdapter>();
-        services.AddSingleton<IEVisitorApiResponseParser, EVisitorApiResponseParser>();
-        services.AddSingleton<IActiveDirectoryPort, WindowsActiveDirectoryProviderAdapter>();
-        services.AddSingleton<ICredentialValidationPort, WindowsCredentialValidationAdapter>();
-        services.AddSingleton<IAppVersionInfoPort, WindowsAppVersionInfoProviderAdapter>();
+        services.AddSingleton<IApiAuthenticationProviderOutboundPort, EVisitorApiAuthenticationProvider>();
+        services.AddSingleton<IEVisitorApiProviderOutboundPort, EVisitorApiProvider>();
+        // services.AddSingleton<IEVisitorApiResponseParser, EVisitorApiResponseParser>();
+        services.AddSingleton<IActiveDirectoryProviderOutboundPort, WindowsActiveDirectoryProvider>();
+        services.AddSingleton<ICredentialValidationProviderOutboundPort, WindowsCredentialValidationProvider>();
+        services.AddSingleton<IAppVersionInfoProviderOutboundPort, WindowsAppVersionInfoProvider>();
 
         services.AddSingleton(TimeProvider.System);
-        services.AddSingleton<ISettingsPort, WindowsRegistryRepository>();
-        services.AddSingleton<IAutoStartPort, WindowsStartupRepository>();
-        services.AddSingleton<IBrowserConfigPort, WindowsStartupRepository>();
-        services.AddSingleton<IOsAutoLogonPort, WindowsAutoLogonRepository>();
+        services.AddSingleton<ISettingsRepositoryOutboundPort, WindowsRegistryRepository>();
+        services.AddSingleton<IAutoStartRepositoryOutboundPort, WindowsStartupRepository>();
+        services.AddSingleton<IBrowserConfigRepositoryOutboundPort, WindowsStartupRepository>();
+        services.AddSingleton<IOsAutoLogonRepositoryOutboundPort, WindowsAutoLogonRepository>();
         services.AddSingleton<EVRestarterConfigRepository>();
 
-        services.AddSingleton<IEVisitorConfigPort>(provider =>
+        services.AddSingleton<IEVisitorConfigRepositoryOutboundPort>(provider =>
 
             new EncryptedEVisitorConfigRepositoryDecorator(
 
                 provider.GetRequiredService<EVRestarterConfigRepository>(),
-                provider.GetRequiredService<IEncryptionPort>(),
+                provider.GetRequiredService<IEncryptionOutboundPort>(),
                 provider.GetRequiredService<ILogger<EncryptedEVisitorConfigRepositoryDecorator>>()
 
             ));
 
-        services.AddSingleton<ICredentialStorePort, JsonCredentialStoreRepository>();
+        services.AddSingleton<ICredentialStoreRepositoryOutboundPort, JsonCredentialStoreRepository>();
 
 
 

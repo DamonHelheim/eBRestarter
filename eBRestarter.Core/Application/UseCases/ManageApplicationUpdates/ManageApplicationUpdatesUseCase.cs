@@ -4,9 +4,9 @@ using eBRestarter.Core.Application.Models.Records;
 
 namespace eBRestarter.Core.Application.UseCases.ManageApplicationUpdates;
 
-public sealed class ManageApplicationUpdatesUseCase(IUpdatePort updateService) : IManageApplicationUpdatesUseCase
+public sealed class ManageApplicationUpdatesUseCase(IUpdateOutboundPort updateService) : IManageApplicationUpdatesUseCase
 {
-    private readonly IUpdatePort _updateService = updateService;
+    private readonly IUpdateOutboundPort _updateService = updateService;
 
     public async Task<CheckUpdateResponse> CheckForUpdatesAsync()
     {

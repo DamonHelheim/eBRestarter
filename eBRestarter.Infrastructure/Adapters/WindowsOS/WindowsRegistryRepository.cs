@@ -1,11 +1,11 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using Microsoft.Win32;
 using System.Runtime.Versioning;
 
 namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 
 [SupportedOSPlatform("windows")]
-public sealed class WindowsRegistryRepository : ISettingsPort
+public sealed class WindowsRegistryRepository : ISettingsRepositoryOutboundPort
 {
     public void SetUserValue(string subKey, string name, object value)
     {

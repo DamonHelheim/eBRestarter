@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Errors;
@@ -6,7 +6,7 @@ using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using System;
 using System.Diagnostics;
@@ -18,7 +18,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Delete browser content" (cache/cookies cleanup) dialog. Resolves the
-/// selected browser via <see cref="IBrowserFactoryPort"/>, collects paths from the browser implementation,
+/// selected browser via <see cref="IBrowserFactoryOutboundPort"/>, collects paths from the browser implementation,
 /// and runs cleanup through <see cref="IDeleteBrowserContentUseCase"/> with progress reporting.
 /// Can be run manually or as an auto-step from the restart task when cleanup is due.
 /// </summary>
@@ -32,11 +32,11 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
 
     private bool _isAutoMode;
 
-    private readonly IBrowserFactoryPort _browserFactory;
+    private readonly IBrowserFactoryOutboundPort _browserFactory;
 
     private readonly IDeleteBrowserContentUseCase _deleteBrowserContentUseCase;
 
-    private readonly IEVisitorConfigPort _EVRestarterConfigRepository;
+    private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
 
     private readonly ILocalizationProvider _localizationService;
 
@@ -91,8 +91,8 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     /// </summary>
     public ViewModelDeleteBrowserContent(
         IDeleteBrowserContentUseCase deleteBrowserContentUseCase,
-        IBrowserFactoryPort BrowserFactory,
-        IEVisitorConfigPort EVRestarterConfigRepository,
+        IBrowserFactoryOutboundPort BrowserFactory,
+        IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
         ILocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);

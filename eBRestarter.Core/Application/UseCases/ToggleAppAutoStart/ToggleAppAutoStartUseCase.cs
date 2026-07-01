@@ -5,11 +5,11 @@ using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 namespace eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
 
 public sealed class ToggleAppAutoStartUseCase(
-    IAutoStartPort startupManagerService,
-    IEVisitorConfigPort configService) : IToggleAppAutoStartUseCase
+    IAutoStartRepositoryOutboundPort startupManagerService,
+    IEVisitorConfigRepositoryOutboundPort configService) : IToggleAppAutoStartUseCase
 {
-    private readonly IAutoStartPort _startupManagerService = startupManagerService;
-    private readonly IEVisitorConfigPort _configService = configService;
+    private readonly IAutoStartRepositoryOutboundPort _startupManagerService = startupManagerService;
+    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
 
     public async Task<bool> InitializeAndGetStateAsync()
     {

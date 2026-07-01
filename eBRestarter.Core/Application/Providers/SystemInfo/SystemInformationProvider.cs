@@ -1,20 +1,20 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.SystemInfo;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 
 namespace eBRestarter.Core.Application.Providers.SystemInfo;
 
 using eBRestarter.Core.Application.Models.Records;
 
 public class SystemInformationProvider(
-    IHardwareInfoPort hardwareService,
-    IOsEditionPort osEditionService,
-    ISystemInfoPort systemInfoService) : ISystemInformationPort
+    IHardwareInfoProviderOutboundPort hardwareInfoProvider,
+    IOsEditionProviderOutboundPort osEditionProvider,
+    ISystemInfoProviderOutboundPort systemInfoProvider) : ISystemInformationProvider
 {
-    private readonly IHardwareInfoPort _hardwareService = hardwareService;
-    private readonly IOsEditionPort _osEditionService = osEditionService;
-    private readonly ISystemInfoPort _systemInfoService = systemInfoService;
+    private readonly IHardwareInfoProviderOutboundPort _hardwareService = hardwareInfoProvider;
+    private readonly IOsEditionProviderOutboundPort _osEditionService = osEditionProvider;
+    private readonly ISystemInfoProviderOutboundPort _systemInfoService = systemInfoProvider;
 
-    public async Task<SystemInformationResponse> ExecuteAsync()
+    public async Task<SystemInformationResponse> RetrieveAsync()
     {
         var hardware = await _hardwareService.RetrieveHardwareInfoAsync();
         var edition = await _osEditionService.RetrieveOsEditionAsync();

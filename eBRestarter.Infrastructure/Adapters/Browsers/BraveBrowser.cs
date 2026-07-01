@@ -1,11 +1,11 @@
-using eBRestarter.Core.Application.Enums;
+﻿using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Browser;
 using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.Infrastructure.Adapters.Browsers;
 
-public sealed class BraveBrowser(IOsProcessControlPort processControlPort, ISettingsPort settingsPort, IFileSystemPort fileSystemPort, ILogger<BraveBrowser> logger) : ChromiumBrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
+public sealed class BraveBrowser(IOsProcessControlOutboundPort processControlPort, ISettingsRepositoryOutboundPort settingsPort, IFileSystemOutboundPort fileSystemPort, ILogger<BraveBrowser> logger) : ChromiumBrowserBase(processControlPort, settingsPort, fileSystemPort, logger)
 {
     public override string DisplayName => "Brave";
     public override string IconPath => "ms-appx:///Resources/Visuals/Icons/Intersection/fa_brave.png";

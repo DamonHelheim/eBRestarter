@@ -1,5 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Formatters;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Core.Application.Enums;
@@ -23,22 +22,22 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Repositories.Config
     /// </summary>
     public class EVisitorConfigRepositoryTests
     {
-        private readonly Mock<IOsPathProviderPort> _mockPathUseCase;
-        private readonly Mock<IFileSystemPort> _mockFileSystem;
+        private readonly Mock<IOsPathProvider> _mockPathProvider;
+        private readonly Mock<IFileSystemOutboundPort> _mockFileSystem;
         private readonly Mock<ILogger<EVRestarterConfigRepository>> _mockLogger;
         private readonly EVRestarterConfigRepository _service;
         private const string FakeFilePath = @"C:\AppData\eBRestarter\config.json";
 
         public EVisitorConfigRepositoryTests()
         {
-            _mockPathUseCase = new Mock<IOsPathProviderPort>();
-            _mockFileSystem = new Mock<IFileSystemPort>();
+            _mockPathProvider = new Mock<IOsPathProvider>();
+            _mockFileSystem = new Mock<IFileSystemOutboundPort>();
             _mockLogger = new Mock<ILogger<EVRestarterConfigRepository>>();
 
-            _mockPathUseCase.Setup(p => p.RetrieveConfigFilePath()).Returns(FakeFilePath);
+            _mockPathProvider.Setup(p => p.RetrieveConfigFilePath()).Returns(FakeFilePath);
 
             _service = new EVRestarterConfigRepository(
-                _mockPathUseCase.Object, 
+                _mockPathProvider.Object, 
                 _mockFileSystem.Object, 
                 _mockLogger.Object
             );

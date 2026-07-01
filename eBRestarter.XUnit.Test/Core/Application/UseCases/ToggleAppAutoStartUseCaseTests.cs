@@ -22,14 +22,14 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
     /// </summary>
     public class ToggleAppAutoStartUseCaseTests
     {
-        private readonly Mock<IAutoStartPort> _mockStartupManager;
-        private readonly Mock<IEVisitorConfigPort> _mockConfigService;
+        private readonly Mock<IAutoStartRepositoryOutboundPort> _mockStartupManager;
+        private readonly Mock<IEVisitorConfigRepositoryOutboundPort> _mockConfigService;
         private readonly ToggleAppAutoStartUseCase _sut;
 
         public ToggleAppAutoStartUseCaseTests()
         {
-            _mockStartupManager = new Mock<IAutoStartPort>();
-            _mockConfigService = new Mock<IEVisitorConfigPort>();
+            _mockStartupManager = new Mock<IAutoStartRepositoryOutboundPort>();
+            _mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
 
             _sut = new ToggleAppAutoStartUseCase(
                 _mockStartupManager.Object,

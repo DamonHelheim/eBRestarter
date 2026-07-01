@@ -4,30 +4,16 @@ using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.Providers;
 
-public class StartupConfigProvider(IEVisitorConfigPort configService) : IStartupConfigProvider
+public class StartupConfigProvider(IEVisitorConfigRepositoryOutboundPort configService) : IStartupConfigProvider
 {
-    private readonly IEVisitorConfigPort _configService = configService;
+    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
 
     /// <inheritdoc />
-    public StartupDisplayPreferences PrepareConfigForLaunch()
+    public StartupDisplayPreferences RetrieveStartupPreferences()
     {
         var config = _configService.LoadConfig();
 
-        int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
-
-        DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
-
-        if (nextDate == DateTime.Today && intervalDays > 0)
-        {
-            nextDate = DateTime.Today.AddDays(intervalDays);
-        }
-
-        config.Browser?.SetNextCleanupDate(nextDate);
-
-        _configService.SaveConfig(config);
-
         string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
-
         string themeName = string.IsNullOrEmpty(config.Settings.Theme) ? "Light" : config.Settings.Theme;
 
         return new StartupDisplayPreferences(languageCode, themeName);
