@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
@@ -11,6 +10,7 @@ using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
+using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
@@ -42,7 +42,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
 
     private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     private readonly IOsProcessControlOutboundPort _osProcessControlPort;
 
@@ -107,7 +107,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         IScheduleBrowserCleanupUseCase scheduleBrowserCleanupUseCase,
         IOsProcessControlOutboundPort osProcessControlPort,
         IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
-        ILocalizationProvider LocalizationProvider,
+        IInboundPortLocalizationProvider LocalizationProvider,
         IUIOptionsProvider uiOptionsService,
         IDialogService dialogService,
         IBrowserDiscoveryProviderOutboundPort browserService)

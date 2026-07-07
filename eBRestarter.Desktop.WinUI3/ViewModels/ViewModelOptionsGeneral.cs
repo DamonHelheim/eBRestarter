@@ -4,9 +4,7 @@ using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ConfigureAutoLogon;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
@@ -24,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -31,13 +30,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private const string GeneralErrorKey = "General_Error";
 
-        private readonly INextRestartDateHandler _nextRestartDateHandler;
+        private readonly IInboundPortNextRestartDateHandler _nextRestartDateHandler;
         private readonly IComputerRestartService _computerRestartScheduler;
         private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
         private readonly ILanguageService _languageService;
-        private readonly ILocalizationProvider _localizationService;
+        private readonly IInboundPortLocalizationProvider _localizationService;
         private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
         private readonly IOsProcessControlOutboundPort _osProcessControlPort;
         private readonly IOsAutoLogonRepositoryOutboundPort _osAutoLogonPort;
@@ -93,9 +92,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IThemeService themeService,
             IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
             ILanguageService languageService,
-            ILocalizationProvider LocalizationProvider,
+            IInboundPortLocalizationProvider LocalizationProvider,
             IUIOptionsProvider uiOptionsService,
-            INextRestartDateHandler nextRestartDateHandler,
+            IInboundPortNextRestartDateHandler nextRestartDateHandler,
             IComputerRestartService ComputerRestartService)
         {
             _isInitializing = true;

@@ -1,5 +1,15 @@
 namespace eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 
+/// <summary>
+/// Port: Driven Port (Outbound) abstracting physical operating system file and directory operations (I/O).
+/// <para>
+/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND PORT (Driven Port / Steckdose für OS-Dateisystem)</strong><br/>
+/// - <strong>Aufrufer (Consumer):</strong> Liegt im Application Core (Use Cases wie <see cref="eBRestarter.Core.Application.UseCases.DownloadBrowserUseCase"/>, Repositories und Adapter).<br/>
+/// - <strong>Implementierung (Implementer):</strong> Liegt AUßERHALB des Application Cores (<see cref="eBRestarter.Infrastructure.Adapters.WindowsOS.WindowsFileSystemAdapter"/> via <c>System.IO</c>).<br/>
+/// - <strong>Begründung:</strong> Entkoppelt die gesamte Anwendungs- und Domänenlogik perfekt von physischen Dateioperationen auf dem Host-OS und ist daher nach Abschnitt 1 des Leitfadens ein vorbildlicher <strong>Outbound Port</strong>.<br/>
+/// - <em>Architektur-Hinweis:</em> Suffix <c>OutboundPort</c> ist perfekt.
+/// </para>
+/// </summary>
 public interface IFileSystemOutboundPort
 {
     bool FileExists(string path);

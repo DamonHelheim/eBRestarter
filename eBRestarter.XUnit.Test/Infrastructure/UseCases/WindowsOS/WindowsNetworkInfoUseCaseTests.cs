@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Providers;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
@@ -11,6 +10,7 @@ using Shouldly;
 using System.Linq;
 using System.Net.NetworkInformation;
 using Xunit;
+using eBRestarter.Infrastructure.Providers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
 {

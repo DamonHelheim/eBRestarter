@@ -38,7 +38,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         private readonly DispatcherQueue _dispatcherQueue;
 
-        private readonly ILocalizationProvider _localizationService;
+        private readonly IInboundPortLocalizationProvider _localizationService;
 
         [ObservableProperty]
         public partial string AddonStatusColor { get; set; }
@@ -75,7 +75,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         /// </summary>
         public ViewModelBrowserAddonStatus(
             IBrowserOutboundPort browser,
-            ILocalizationProvider LocalizationProvider)
+            IInboundPortLocalizationProvider LocalizationProvider)
         {
             ArgumentNullException.ThrowIfNull(browser);
             ArgumentNullException.ThrowIfNull(LocalizationProvider);

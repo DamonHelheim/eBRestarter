@@ -2,16 +2,19 @@ using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Core.Application.Validators;
+using eBRestarter.Core.Application.Ports.Inbound.Validators;
+using eBRestarter.Infrastructure.Adapters.Validators;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
-using eBRestarter.Core.Application.UseCases.DeleteBrowserContent;
-using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
 using Moq;
@@ -21,6 +24,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 {
@@ -29,7 +34,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
         private readonly Mock<IBrowserFactoryOutboundPort> _mockBrowserFactory;
         private readonly Mock<IFileDeletionOutboundPort> _mockFileDeletionService;
         private readonly Mock<IOsProcessControlOutboundPort> _mockProcessService;
-        private readonly Mock<ILocalizationProvider> _mockLocalizationService;
+        private readonly Mock<IInboundPortLocalizationProvider> _mockLocalizationService;
         private readonly DeleteBrowserContentUseCase _sut;
 
         public DeleteBrowserContentUseCaseTests()
@@ -37,7 +42,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
             _mockBrowserFactory = new Mock<IBrowserFactoryOutboundPort>();
             _mockFileDeletionService = new Mock<IFileDeletionOutboundPort>();
             _mockProcessService = new Mock<IOsProcessControlOutboundPort>();
-            _mockLocalizationService = new Mock<ILocalizationProvider>();
+            _mockLocalizationService = new Mock<IInboundPortLocalizationProvider>();
 
             _mockLocalizationService
                 .Setup(l => l.RetrieveString(It.IsAny<string>()))
@@ -48,7 +53,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
                 _mockFileDeletionService.Object,
                 _mockProcessService.Object,
                 _mockLocalizationService.Object,
-                new DeleteBrowserContentValidator());
+                new FluentValidationAdapter<DeleteBrowserContentRequest>(new DeleteBrowserContentValidator()));
         }
 
         [Fact]

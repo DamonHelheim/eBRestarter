@@ -1,5 +1,6 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.UseCases.InitializeBrowserCleanup;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Domain.Entities;
 using Moq;
 using Shouldly;

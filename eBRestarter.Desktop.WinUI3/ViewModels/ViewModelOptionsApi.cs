@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
@@ -10,6 +9,7 @@ using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -17,14 +17,14 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
-        private readonly ILocalizationProvider _localizationService;
+        private readonly IInboundPortLocalizationProvider _localizationService;
         private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
         private readonly AppConfig _currentConfig;
 
         public ViewModelOptionsApi(
             IDialogService dialogService,
             IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
-            ILocalizationProvider LocalizationProvider,
+            IInboundPortLocalizationProvider LocalizationProvider,
             IRemoveApiCredentialsUseCase removeApiCredentialsUseCase)
         {
             _dialogService = dialogService;

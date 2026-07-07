@@ -1,10 +1,8 @@
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.InitializeBrowserCleanup;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Extensions.DependencyInjections;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;
 using eBRestarter.Desktop.WinUI3.Helpers;
@@ -22,6 +20,9 @@ using Microsoft.Windows.Globalization;
 using System;
 using System.Globalization;
 using System.Threading;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Desktop.WinUI3.Utilities;
 
 
 namespace eBRestarter.Desktop.WinUI3;
@@ -64,10 +65,10 @@ public partial class App : Application
              services.AddViewModels();
 
              services.AddSingleton<ILanguageService, LanguageService>();
-             services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
-             services.AddSingleton<IUIOptionsProvider>(sp => (LocalizationProvider)sp.GetRequiredService<ILocalizationProvider>());
+             services.AddSingleton<IInboundPortLocalizationProvider, LocalizationProvider>();
+             services.AddSingleton<IUIOptionsProvider>(sp => (LocalizationProvider)sp.GetRequiredService<IInboundPortLocalizationProvider>());
              services.AddSingleton<IIconCreditProvider, IconCreditProvider>();
-             services.AddSingleton<eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility, eBRestarter.Desktop.WinUI3.Utilities.BrowserDisplayNameResolverUtility>();
+             services.AddSingleton<IBrowserDisplayNameResolverUtility, BrowserDisplayNameResolverUtility>();
 
              services.AddSingleton<IMainWindowProvider, MainWindowProvider>();
              services.AddSingleton<IAppWindowHelper, AppWindowHelper>();
@@ -83,7 +84,7 @@ public partial class App : Application
         StartupDisplayPreferences? launchConfig = null;
         try
         {
-            launchConfig = AppHost!.Services.GetRequiredService<IStartupConfigProvider>().RetrieveStartupPreferences();
+            launchConfig = AppHost!.Services.GetRequiredService<IInboundPortStartupConfigProvider>().RetrieveStartupPreferences();
             _ = AppHost!.Services.GetRequiredService<IInitializeBrowserCleanupUseCase>().ExecuteAsync();
             string languageCode = launchConfig.LanguageCode;
 

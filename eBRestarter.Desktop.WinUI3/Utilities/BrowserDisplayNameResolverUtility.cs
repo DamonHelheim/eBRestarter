@@ -8,7 +8,7 @@ public sealed class BrowserDisplayNameResolverUtility : IBrowserDisplayNameResol
     public BrowserType ResolveBrowserTypeFromDisplayName(string displayName, string defaultDisplayText)
     {
 
-        if (string.IsNullOrWhiteSpace(displayName) || displayName == defaultDisplayText || displayName == "Nicht gewÃ¤hlt")
+        if (string.IsNullOrWhiteSpace(displayName) || displayName == defaultDisplayText || displayName == "Nicht gewählt")
         {
             return BrowserType.Chrome;
         }

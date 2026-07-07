@@ -1,3 +1,4 @@
+using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Adapters.Authentication;
 using eBRestarter.Core.Application.Ports.Outbound.Authentication;
 using eBRestarter.Core.Application.Models.Records;
@@ -13,18 +14,18 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {
     /// <summary>
     /// Testet die Logik zur Validierung von Windows-/Domain-Anmeldedaten.
-    /// Wir pr�fen, ob je nach Domain der richtige Kontext gew�hlt wird und ob
-    /// die speziellen Active-Directory-Exceptions korrekt �bersetzt werden.
+    /// Wir prüfen, ob je nach Domain der richtige Kontext gewählt wird und ob
+    /// die speziellen Active-Directory-Exceptions korrekt übersetzt werden.
     /// </summary>
     public class WindowsCredentialValidationProviderTests
     {
         /// <summary>
         /// Wenn der Nutzer sich lokal am PC anmeldet (Domain = Computername), muss das System
-        /// zwingend den ContextType.Machine nutzen, da sonst die Anmeldung fehlschl�gt.
+        /// zwingend den DirectoryContextScope.Machine nutzen, da sonst die Anmeldung fehlschlägt.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir �bergeben als Domain den Namen des aktuellen Computers (Environment.MachineName).
-        /// Wir pr�fen mit Moq, ob der Wrapper exakt mit ContextType.Machine aufgerufen wurde.
+        /// Wir übergeben als Domain den Namen des aktuellen Computers (Environment.MachineName).
+        /// Wir prüfen mit Moq, ob der Wrapper exakt mit DirectoryContextScope.Machine aufgerufen wurde.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseMachineContext_WhenDomainIsLocalComputer()
@@ -34,7 +35,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
             // Wir sagen dem Mock: Wenn du aufgerufen wirst, antworte mit 'true'.
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<ContextType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(true);
 
             var useCase = new WindowsCredentialValidationProvider(mockAdService.Object);
@@ -47,9 +48,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde ContextType.Machine an das System �bergeben?
+            // WICHTIGSTER CHECK: Wurde DirectoryContextScope.Machine an das System übergeben?
             mockAdService.Verify(ad => ad.ValidateCredentials(
-                ContextType.Machine, // <-- Darauf kommt es an!
+                DirectoryContextScope.Machine, // <-- Darauf kommt es an!
                 localMachineName,
                 "TestUser",
                 "Password123"), Times.Once);
@@ -57,11 +58,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
         /// <summary>
         /// Wenn sich der Nutzer an einer echten Firmendomain anmeldet (z. B. "MEINEFIRMA"),
-        /// muss zwingend ContextType.Domain genutzt werden.
+        /// muss zwingend DirectoryContextScope.Domain genutzt werden.
         ///
         /// WAS WIRD GETESTET?
-        /// Wir �bergeben eine beliebige Domain, die nicht der Computername ist.
-        /// Wir pr�fen mit Moq, ob der Wrapper mit ContextType.Domain aufgerufen wurde.
+        /// Wir übergeben eine beliebige Domain, die nicht der Computername ist.
+        /// Wir prüfen mit Moq, ob der Wrapper mit DirectoryContextScope.Domain aufgerufen wurde.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseDomainContext_WhenDomainIsDifferentFromMachineName()
@@ -69,7 +70,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ARRANGE
             var mockAdService = new Mock<IActiveDirectoryProviderOutboundPort>();
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<ContextType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(true);
 
             var useCase = new WindowsCredentialValidationProvider(mockAdService.Object);
@@ -82,9 +83,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             // ASSERT
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde ContextType.Domain an das System �bergeben?
+            // WICHTIGSTER CHECK: Wurde DirectoryContextScope.Domain an das System übergeben?
             mockAdService.Verify(ad => ad.ValidateCredentials(
-                ContextType.Domain, // <-- Darauf kommt es an!
+                DirectoryContextScope.Domain, // <-- Darauf kommt es an!
                 someDomain,
                 "TestUser",
                 "Password123"), Times.Once);
@@ -93,11 +94,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         /// <summary>
         /// Wenn der Domain-Controller (Server) der Firma offline ist, wirft die Windows-API
         /// eine 'PrincipalServerDownException'. Deine Klasse soll das fangen und in eine eigene
-        /// 'InvalidOperationException' mit dem Text "PrincipalServerDown" �bersetzen.
+        /// 'InvalidOperationException' mit the Text "PrincipalServerDown" übersetzen.
         ///
         /// WAS WIRD GETESTET?
         /// Wir zwingen den Mock dazu, genau diese spezifische Exception zu werfen.
-        /// Dann pr�fen wir mit Shouldly, ob die �bersetzte Exception nach au�en dringt.
+        /// Dann prüfen wir mit Shouldly, ob die übersetzte Exception nach außen dringt.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldThrowInvalidOperationException_WhenServerIsDown()
@@ -107,13 +108,13 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
             // Wir simulieren einen Serverausfall
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<ContextType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new PrincipalServerDownException());
 
             var useCase = new WindowsCredentialValidationProvider(mockAdService.Object);
 
             // ACT & ASSERT
-            // Wir fangen die Exception ab und pr�fen ihren Typ und Inhalt
+            // Wir fangen die Exception ab und prüfen ihren Typ und Inhalt
             var exception = Should.Throw<InvalidOperationException>(() =>
             {
                 useCase.ValidateCredentials("TestUser", "DOMAIN", "Password");
@@ -124,12 +125,12 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
         /// <summary>
         /// Jede andere Art von Fehler (z.B. falsches Passwort, Account gesperrt, Netzwerkfehler)
-        /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zur�ckgegeben werden.
-        /// Die App darf nicht abst�rzen!
+        /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zurückgegeben werden.
+        /// Die App darf nicht abstürzen!
         ///
         /// WAS WIRD GETESTET?
-        /// Wir lassen den Mock eine allgemeine Exception werfen und pr�fen,
-        /// ob der Try-Catch-Block h�lt und 'false' zur�ckkommt.
+        /// Wir lassen den Mock eine allgemeine Exception werfen und prüfen,
+        /// ob der Try-Catch-Block hält und 'false' zurückkommt.
         /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldReturnFalse_OnAnyOtherException()
@@ -139,7 +140,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 
             // Wir simulieren einen x-beliebigen unerwarteten Fehler
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<ContextType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception("Irgendein unerwarteter Fehler im Windows-System"));
 
             var useCase = new WindowsCredentialValidationProvider(mockAdService.Object);

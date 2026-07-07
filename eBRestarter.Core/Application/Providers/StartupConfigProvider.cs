@@ -1,10 +1,10 @@
-﻿using eBRestarter.Core.Application.Models;
+﻿using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.Providers;
 
-public class StartupConfigProvider(IEVisitorConfigRepositoryOutboundPort configService) : IStartupConfigProvider
+public class StartupConfigProvider(IEVisitorConfigRepositoryOutboundPort configService) : IInboundPortStartupConfigProvider
 {
     private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
 
@@ -14,6 +14,7 @@ public class StartupConfigProvider(IEVisitorConfigRepositoryOutboundPort configS
         var config = _configService.LoadConfig();
 
         string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
+
         string themeName = string.IsNullOrEmpty(config.Settings.Theme) ? "Light" : config.Settings.Theme;
 
         return new StartupDisplayPreferences(languageCode, themeName);

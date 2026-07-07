@@ -1,5 +1,5 @@
+using eBRestarter.Core.Application.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-// Removed Strategies namespace
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
@@ -7,33 +7,36 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Handlers;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using FluentValidation;
+using eBRestarter.Core.Application.Ports.Inbound.Validators;
 
 namespace eBRestarter.Core.Application.Services;
 
 public sealed class RestarterCycleService(
     IBrowserFactoryOutboundPort BrowserFactory,
-    ILocalizationProvider LocalizationService,
+    IInboundPortLocalizationProvider LocalizationService,
 
     IEVisitorConfigRepositoryOutboundPort configService,
     IBrowserCleanupScheduleHandler browserCleanupScheduleHandler,
     TimeProvider timeProvider,
-    IValidator<ManageRestarterCycleRequest> validator,
+    IInboundPortApplicationValidator<ManageRestarterCycleRequest> validator,
     IDelayPhaseHandler delayPhaseHandler,
     IRunBrowserPhaseHandler runBrowserPhaseHandler) : IRestarterCycleService
 {
     private const string BaseUrl = "https://www.ebesucher.de/surfbar/";
+
     private const int InitialDelaySeconds = 5;
 
     private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
-    private readonly ILocalizationProvider _localizationService = LocalizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService = LocalizationService;
 
     private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
     private readonly IBrowserCleanupScheduleHandler _browserCleanupScheduleHandler = browserCleanupScheduleHandler;
-    private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly IValidator<ManageRestarterCycleRequest> _validator = validator;
+
+    private readonly IInboundPortApplicationValidator<ManageRestarterCycleRequest> _validator = validator;
     private readonly IDelayPhaseHandler _delayPhaseHandler = delayPhaseHandler;
     private readonly IRunBrowserPhaseHandler _runBrowserPhaseHandler = runBrowserPhaseHandler;
+
+    private readonly TimeProvider _timeProvider = timeProvider;
 
     private CancellationTokenSource? _cts;
 
@@ -116,7 +119,7 @@ public sealed class RestarterCycleService(
 
             var runPhaseResult = await _runBrowserPhaseHandler.ExecuteAsync(request, _currentBrowser, ReportProgress, token);
 
-            // Fall A: Browser ist abgestÃ¼rzt/geschlossen worden
+            // Fall A: Browser ist abgestürzt/geschlossen worden
             if (runPhaseResult == BrowserPhaseResult.BrowserClosed)
             {
                 CloseCurrentBrowser();
@@ -130,7 +133,7 @@ public sealed class RestarterCycleService(
                     await Task.Delay(TimeSpan.FromMilliseconds(1000), _timeProvider, token);
                 }
 
-                continue; // Springt wieder nach oben -> LÃ¤dt Config neu -> Startet!
+                continue; // Springt wieder nach oben -> Lädt Config neu -> Startet!
             }
 
             // Fall B & C: Cleanup oder Completed
@@ -142,8 +145,6 @@ public sealed class RestarterCycleService(
             await _delayPhaseHandler.ExecuteAsync(RestartTaskState.Cooldown, request.PauseSeconds, ReportProgress, token);
         }
     }
-
-
 
     private void LaunchBrowser(ManageRestarterCycleRequest request)
     {
@@ -183,12 +184,11 @@ public sealed class RestarterCycleService(
         if (browser is null || !_browserCleanupScheduleHandler.ShouldRunCleanupNow(browser.DeleteBrowserCacheIntervalDays, browser.NextBrowserDeleteCacheDate))
             return;
 
-
         CloseCurrentBrowser();
 
         await Task.Delay(TimeSpan.FromMilliseconds(1000), _timeProvider, token);
 
-        // UI benachrichtigen (Dialog Ã¶ffnen)
+        // UI benachrichtigen (Dialog öffnen)
         await performCleanupCallback();
 
         // Neues Datum berechnen und in der aktuellen Config speichern
@@ -224,15 +224,3 @@ public sealed class RestarterCycleService(
         };
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

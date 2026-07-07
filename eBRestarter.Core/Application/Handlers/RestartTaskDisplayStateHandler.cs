@@ -4,17 +4,17 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Domain.Validators;
 
-namespace eBRestarter.Core.Application.Services;
+namespace eBRestarter.Core.Application.Handlers;
 
 /// <summary>
 /// Erzeugt RestartTaskDisplayState aus Config und Lokalisierung.
 /// </summary>
 public class RestartTaskDisplayStateHandler(
-    ILocalizationProvider LocalizationService,
+    IInboundPortLocalizationProvider LocalizationService,
     ICacheDeletionIntervalValidator intervalValidator,
-    TimeProvider timeProvider) : IRestartTaskDisplayStateHandler
+    TimeProvider timeProvider) : IInboundPortRestartTaskDisplayStateHandler
 {
-    private readonly ILocalizationProvider _localizationService = LocalizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService = LocalizationService;
     private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator;
     private readonly TimeProvider _timeProvider = timeProvider;
 

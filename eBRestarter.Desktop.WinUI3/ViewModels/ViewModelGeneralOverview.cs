@@ -49,7 +49,7 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
 
     private readonly IEVisitorApiProviderOutboundPort _eVisitorApiService;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     private readonly INavigationService _navigationService;
 
@@ -154,7 +154,7 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
     public ViewModelGeneralOverview(
         INavigationService navigationService,
         IEVisitorApiProviderOutboundPort eVisitorApiService,
-        ILocalizationProvider LocalizationProvider,
+        IInboundPortLocalizationProvider LocalizationProvider,
         IEVisitorConfigRepositoryOutboundPort configService)
     {
         ArgumentNullException.ThrowIfNull(navigationService);

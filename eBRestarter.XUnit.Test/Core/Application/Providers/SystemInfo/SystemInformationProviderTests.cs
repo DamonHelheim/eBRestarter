@@ -4,13 +4,13 @@ using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Providers.SystemInfo;
 using Moq;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Providers;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
 {

@@ -17,7 +17,7 @@ public sealed partial class ViewModelAbout : ObservableObject
 
     private readonly IIconCreditProvider _iconCreditService;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     [ObservableProperty] public partial string AppVersion { get; set; }
 
@@ -30,7 +30,7 @@ public sealed partial class ViewModelAbout : ObservableObject
     /// </summary>
     public ViewModelAbout(
         IAppInfoProviderOutboundPort appInfoProvider,
-        ILocalizationProvider LocalizationProvider,
+        IInboundPortLocalizationProvider LocalizationProvider,
         IIconCreditProvider iconCreditService)
     {
         _appInfoProvider = appInfoProvider;

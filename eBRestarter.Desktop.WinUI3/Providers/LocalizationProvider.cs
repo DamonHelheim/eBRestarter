@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace eBRestarter.Desktop.WinUI3.Providers;
 
-public sealed class LocalizationProvider : ILocalizationProvider, IUIOptionsProvider
+public sealed class LocalizationProvider : IInboundPortLocalizationProvider, IUIOptionsProvider
 {
     private readonly ResourceManager _resourceManager;
     private readonly ResourceContext _resourceContext;

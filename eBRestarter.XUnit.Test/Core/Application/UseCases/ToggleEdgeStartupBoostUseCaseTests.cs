@@ -1,10 +1,9 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
-using eBRestarter.Core.Application.UseCases.ToggleEdgeStartupBoost;
-using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Enums;
 using Moq;

@@ -1,4 +1,5 @@
 using eBRestarter.Core.Application.Enums;
+
 namespace eBRestarter.Core.Application.Models.Records;
 
 public sealed record DeleteBrowserContentRequest(

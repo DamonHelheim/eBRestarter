@@ -3,13 +3,14 @@ using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.DownloadBrowser;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -31,7 +32,7 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
 
     private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     private readonly DispatcherTimer _refreshTimer;
 
@@ -48,7 +49,7 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
         IBrowserDiscoveryProviderOutboundPort browserService,
         IDownloadBrowserUseCase downloadBrowserUseCase,
         IDialogService dialogService,
-        ILocalizationProvider LocalizationProvider,
+        IInboundPortLocalizationProvider LocalizationProvider,
         IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository)
     {
         ArgumentNullException.ThrowIfNull(browserService);
