@@ -1,23 +1,23 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Validators;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 public sealed class ConfigureAutoLogonUseCase(
-    IOsAutoLogonRepositoryOutboundPort autoLogonPort,
-    ISystemInfoProviderOutboundPort systemInfoPort,
-    ICredentialValidationProviderOutboundPort credentialValidationPort,
-    IInboundPortApplicationValidator<ConfigureAutoLogonRequest> validator) : IConfigureAutoLogonUseCase
+    IOutboundPortOsAutoLogonRepository autoLogonPort,
+    IOutboundPortSystemInfoProvider systemInfoPort,
+    IOutboundPortCredentialValidationProvider credentialValidationPort,
+    IInboundPortApplicationValidator<ConfigureAutoLogonRequest> validator) : IUseCaseConfigureAutoLogon
 {
     private const string StatusKey = "Status";
 
-    private readonly IOsAutoLogonRepositoryOutboundPort _autoLogonPort = autoLogonPort;
-    private readonly ISystemInfoProviderOutboundPort _systemInfoPort = systemInfoPort;
-    private readonly ICredentialValidationProviderOutboundPort _credentialValidationPort = credentialValidationPort;
+    private readonly IOutboundPortOsAutoLogonRepository _autoLogonPort = autoLogonPort;
+    private readonly IOutboundPortSystemInfoProvider _systemInfoPort = systemInfoPort;
+    private readonly IOutboundPortCredentialValidationProvider _credentialValidationPort = credentialValidationPort;
     private readonly IInboundPortApplicationValidator<ConfigureAutoLogonRequest> _validator = validator;
 
     public Result<AutoLogonResultStatus> Execute(ConfigureAutoLogonRequest request)

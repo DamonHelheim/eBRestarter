@@ -1,26 +1,26 @@
-using eBRestarter.Core.Application.Ports.Outbound;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.Ports.Inbound.Validators;
 using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
 
 
 namespace eBRestarter.Core.Application.UseCases;
 
 public sealed class DeleteBrowserContentUseCase(
-    IBrowserFactoryOutboundPort BrowserFactory,
-    IFileDeletionOutboundPort fileDeletionService,
-    IOsProcessControlOutboundPort processService,
+    IOutboundPortBrowserFactory BrowserFactory,
+    IOutboundPortFileDeletion fileDeletionService,
+    IOutboundPortOsProcessControl processService,
     IInboundPortLocalizationProvider LocalizationService,
-    IInboundPortApplicationValidator<DeleteBrowserContentRequest> validator) : IDeleteBrowserContentUseCase
+    IInboundPortApplicationValidator<DeleteBrowserContentRequest> validator) : IUseCaseDeleteBrowserContent
 {
-    private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
-    private readonly IFileDeletionOutboundPort _fileDeletionService = fileDeletionService;
-    private readonly IOsProcessControlOutboundPort _processService = processService;
+    private readonly IOutboundPortBrowserFactory _browserFactory = BrowserFactory;
+    private readonly IOutboundPortFileDeletion _fileDeletionService = fileDeletionService;
+    private readonly IOutboundPortOsProcessControl _processService = processService;
     private readonly IInboundPortLocalizationProvider _localizationService = LocalizationService;
     private readonly IInboundPortApplicationValidator<DeleteBrowserContentRequest> _validator = validator;
 

@@ -161,12 +161,12 @@ namespace eBRestarter.Tests.Infrastructure.Handlers
         /// Da dein Use Case den HttpClient intern per 'new' erstellt,
         /// ist ein kleiner Trick nötig: Wir nutzen Reflection, um das private Feld zu setzen.
         /// </summary>
-        private HttpClientDownloadHandlerAdapter CreateUseCaseWithMockHandler()
+        private AdapterHttpClientDownloadHandler CreateUseCaseWithMockHandler()
         {
-            var service = new HttpClientDownloadHandlerAdapter();
+            var service = new AdapterHttpClientDownloadHandler();
             var client = new HttpClient(_handlerMock.Object);
 
-            var field = typeof(HttpClientDownloadHandlerAdapter).GetField("_httpClient",
+            var field = typeof(AdapterHttpClientDownloadHandler).GetField("_httpClient",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
             field?.SetValue(service, client);

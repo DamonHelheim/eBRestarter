@@ -1,10 +1,9 @@
 using eBRestarter.Core.Application.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Handlers.Interfaces;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Services;
 using eBRestarter.Core.Application.UseCases;
@@ -29,17 +28,17 @@ public static class ApplicationServiceExtensions
         services.AddSingleton<IInboundPortRestartTaskDisplayStateHandler, RestartTaskDisplayStateHandler>();
         services.AddTransient<IInboundPortSystemInformationProvider, SystemInformationProvider>();
 
-        services.AddTransient<IDeleteBrowserContentUseCase, DeleteBrowserContentUseCase>();
-        services.AddTransient<IInitializeBrowserCleanupUseCase, InitializeBrowserCleanupUseCase>();
-        services.AddTransient<IRestarterCycleService, RestarterCycleService>();
-        services.AddSingleton<IComputerRestartService, ComputerRestartService>();
-        services.AddTransient<IConfigureAutoLogonUseCase, ConfigureAutoLogonUseCase>();
-        services.AddTransient<IToggleAppAutoStartUseCase, ToggleAppAutoStartUseCase>();
-        services.AddTransient<IToggleEdgeStartupBoostUseCase, ToggleEdgeStartupBoostUseCase>();
-        services.AddTransient<IManageApplicationUpdatesUseCase, ManageApplicationUpdatesUseCase>();
-        services.AddTransient<IDownloadBrowserUseCase, DownloadBrowserUseCase>();
-        services.AddTransient<IScheduleBrowserCleanupUseCase, ScheduleBrowserCleanupUseCase>();
-        services.AddTransient<IRemoveApiCredentialsUseCase, RemoveApiCredentialsUseCase>();
+        services.AddTransient<IUseCaseDeleteBrowserContent, DeleteBrowserContentUseCase>();
+        services.AddTransient<IUseCaseInitializeBrowserCleanup, InitializeBrowserCleanupUseCase>();
+        services.AddTransient<IInboundPortRestarterCycleService, RestarterCycleService>();
+        services.AddSingleton<IInboundPortComputerRestartService, ComputerRestartService>();
+        services.AddTransient<IUseCaseConfigureAutoLogon, ConfigureAutoLogonUseCase>();
+        services.AddTransient<IUseCaseToggleAppAutoStart, ToggleAppAutoStartUseCase>();
+        services.AddTransient<IUseCaseToggleEdgeStartupBoost, ToggleEdgeStartupBoostUseCase>();
+        services.AddTransient<IUseCaseManageApplicationUpdates, ManageApplicationUpdatesUseCase>();
+        services.AddTransient<IUseCaseDownloadBrowser, DownloadBrowserUseCase>();
+        services.AddTransient<IUseCaseScheduleBrowserCleanup, ScheduleBrowserCleanupUseCase>();
+        services.AddTransient<IUseCaseRemoveApiCredentials, RemoveApiCredentialsUseCase>();
 
         services.AddSingleton<ICacheDeletionIntervalValidator, CacheDeletionIntervalValidator>();
 

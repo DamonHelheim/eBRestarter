@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Diagnostics;
@@ -64,6 +64,7 @@ public sealed partial class ViewModelInfocenter : ObservableObject
         _localizationService = LocalizationProvider;
 
         string loadingPlaceholder = _localizationService.RetrieveString(InfocenterLoadingResourceKey);
+
         BrowserText = loadingPlaceholder;
         GraphicsText = loadingPlaceholder;
         OsBuildText = loadingPlaceholder;

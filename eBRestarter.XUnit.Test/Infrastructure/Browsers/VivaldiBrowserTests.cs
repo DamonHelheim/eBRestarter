@@ -1,12 +1,12 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
+﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Infrastructure.Adapters.Browsers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -27,10 +27,10 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void BrowserVersion_ShouldReturnVersionFromUninstallKey_AndCleanIt()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
-            var mockLogger = new Mock<ILogger<VivaldiBrowser>>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
+            var mockLogger = new Mock<ILogger<AdapterVivaldiBrowser>>();
             
 
             // 1. Simulation: In CurrentUser steht nichts (R�ckgabe null)
@@ -41,7 +41,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             mockSettings.Setup(reg => reg.GetSystemValue(It.IsAny<string>(), "DisplayVersion"))
                 .Returns("5.3.2679.55 (Stable channel)"); // Typischer dreckiger Versionsstring
 
-            var VivaldiBrowser = new VivaldiBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var VivaldiBrowser = new AdapterVivaldiBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             string version = VivaldiBrowser.BrowserVersion;
@@ -59,11 +59,11 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void GetPaths_ShouldGenerateCorrectDirectories_ForVivaldi()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             
-            var mockLogger = new Mock<ILogger<VivaldiBrowser>>();
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockLogger = new Mock<ILogger<AdapterVivaldiBrowser>>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
             mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));
@@ -71,7 +71,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             string expectedDefaultProfilePath = @"C:\Local\Vivaldi\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 
-            var VivaldiBrowser = new VivaldiBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var VivaldiBrowser = new AdapterVivaldiBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             var paths = VivaldiBrowser.ResolvePaths();

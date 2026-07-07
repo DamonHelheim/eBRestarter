@@ -1,19 +1,19 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using System.Collections.ObjectModel;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the About page. Displays the application version from
-/// <see cref="IAppInfoProviderOutboundPort"/> and a list of icon credits, both localized where applicable.
+/// <see cref="IOutboundPortAppVersionInfoProvider"/> and a list of icon credits, both localized where applicable.
 /// </summary>
 public sealed partial class ViewModelAbout : ObservableObject
 {
-    private readonly IAppInfoProviderOutboundPort _appInfoProvider;
+    private readonly IOutboundPortAppVersionInfoProvider _appInfoProvider;
 
     private readonly IIconCreditProvider _iconCreditService;
 
@@ -29,7 +29,7 @@ public sealed partial class ViewModelAbout : ObservableObject
     /// for version, and loads version plus icon credits so the UI can bind immediately.
     /// </summary>
     public ViewModelAbout(
-        IAppInfoProviderOutboundPort appInfoProvider,
+        IOutboundPortAppVersionInfoProvider appInfoProvider,
         IInboundPortLocalizationProvider LocalizationProvider,
         IIconCreditProvider iconCreditService)
     {

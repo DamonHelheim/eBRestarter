@@ -13,12 +13,12 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// </summary>
     public class WindowsFileSystemServiceAdapterTests : IDisposable
     {
-        private readonly WindowsFileSystemAdapter _sut;
+        private readonly AdapterWindowsFileSystem _sut;
         private readonly string _tempTestDirectory;
 
         public WindowsFileSystemServiceAdapterTests()
         {
-            _sut = new WindowsFileSystemAdapter();
+            _sut = new AdapterWindowsFileSystem();
 
             // Für JEDEN Testdurchlauf einen einzigartigen, temporären Ordner erstellen
             // So stören sich parallele Tests nicht gegenseitig.

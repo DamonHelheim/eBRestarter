@@ -1,5 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models;
 using Moq;
@@ -8,6 +6,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
 {
@@ -18,11 +18,11 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
     /// </summary>
     public class WindowsBrowserDiscoveryProviderTests
     {
-        private readonly Mock<IBrowserFactoryOutboundPort> _mockBrowserFactory;
+        private readonly Mock<IOutboundPortBrowserFactory> _mockBrowserFactory;
 
         public WindowsBrowserDiscoveryProviderTests()
         {
-            _mockBrowserFactory = new Mock<IBrowserFactoryOutboundPort>();
+            _mockBrowserFactory = new Mock<IOutboundPortBrowserFactory>();
         }
         // 1. CONSTRUCTOR TESTS
 
@@ -37,7 +37,7 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
         public void Constructor_ShouldThrowArgumentNullException_WhenFactoryIsNull()
         {
             // ACT
-            Action act = () => new WindowsBrowserDiscoveryProvider(null!, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsBrowserDiscoveryProvider>.Instance);
+            Action act = () => new AdapterWindowsBrowserDiscoveryProvider(null!, Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsBrowserDiscoveryProvider>.Instance);
 
             // ASSERT
             act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("browserFactoryPort");
@@ -57,11 +57,11 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
         public async Task GetInstalledBrowsersAsync_ShouldMapInstalledBrowserCorrectly()
         {
             // ARRANGE
-            var service = new WindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsBrowserDiscoveryProvider>.Instance);
+            var service = new AdapterWindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsBrowserDiscoveryProvider>.Instance);
             int enumCount = Enum.GetValues<BrowserType>().Length;
 
             // Wir simulieren einen installierten Browser
-            var mockInstalledBrowser = new Mock<IBrowserOutboundPort>();
+            var mockInstalledBrowser = new Mock<IOutboundPortBrowser>();
             mockInstalledBrowser.Setup(b => b.IsInstalled).Returns(true);
             mockInstalledBrowser.Setup(b => b.BrowserVersion).Returns("120.0.6099.109");
             mockInstalledBrowser.Setup(b => b.DisplayName).Returns("Mocked Browser");
@@ -104,9 +104,9 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
         public async Task GetInstalledBrowsersAsync_ShouldMapUninstalledBrowserCorrectly()
         {
             // ARRANGE
-            var service = new WindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsBrowserDiscoveryProvider>.Instance);
+            var service = new AdapterWindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsBrowserDiscoveryProvider>.Instance);
 
-            var mockUninstalledBrowser = new Mock<IBrowserOutboundPort>();
+            var mockUninstalledBrowser = new Mock<IOutboundPortBrowser>();
             mockUninstalledBrowser.Setup(b => b.IsInstalled).Returns(false);
             mockUninstalledBrowser.Setup(b => b.BrowserVersion).Returns("Sollte ignoriert werden");
             mockUninstalledBrowser.Setup(b => b.DisplayName).Returns("Missing Browser");
@@ -140,7 +140,7 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
         public async Task GetInstalledBrowsersAsync_ShouldSkipBrowser_WhenFactoryThrowsNotSupportedException()
         {
             // ARRANGE
-            var service = new WindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsBrowserDiscoveryProvider>.Instance);
+            var service = new AdapterWindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsBrowserDiscoveryProvider>.Instance);
 
             // Egal welcher Typ reinkommt -> Werfe Exception
             _mockBrowserFactory
@@ -170,9 +170,9 @@ namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
         public async Task GetInstalledBrowsersAsync_ShouldHandleGeneralExceptions_Gracefully()
         {
             // ARRANGE
-            var service = new WindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsBrowserDiscoveryProvider>.Instance);
+            var service = new AdapterWindowsBrowserDiscoveryProvider(_mockBrowserFactory.Object, Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsBrowserDiscoveryProvider>.Instance);
 
-            var buggyBrowserMock = new Mock<IBrowserOutboundPort>();
+            var buggyBrowserMock = new Mock<IOutboundPortBrowser>();
             // Wir simulieren, dass beim Zugriff auf die Property ein Fehler passiert (z.B. Registry defekt)
             buggyBrowserMock.Setup(b => b.IsInstalled).Throws(new InvalidOperationException("Registry Error"));
 

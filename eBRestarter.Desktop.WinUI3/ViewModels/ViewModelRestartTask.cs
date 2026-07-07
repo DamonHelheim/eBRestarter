@@ -4,10 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Core.Application.Models;
@@ -21,6 +18,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -38,16 +38,16 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
                                             IRecipient<NextDeletionProcessMessage>,
                                             IRecipient<NextDeletionProcessDate>
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IBrowserDiscoveryProviderOutboundPort _browserService;
+    private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
     private readonly eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
 
     private readonly IInboundPortLocalizationProvider _localizationService;
 
-    private readonly IRestarterCycleService _restarterCycleService;
+    private readonly IInboundPortRestarterCycleService _restarterCycleService;
 
     private readonly IInboundPortRestartTaskDisplayStateHandler _restartTaskDisplayStateHandler;
 
@@ -97,12 +97,12 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     /// messages so the UI stays in sync when username, browser, or delete-content settings change.
     /// </summary>
     public ViewModelRestartTask(
-        IRestarterCycleService restarterCycleService,
-        IEVisitorConfigRepositoryOutboundPort configService,
+        IInboundPortRestarterCycleService restarterCycleService,
+        IOutboundPortEVisitorConfigRepository configService,
         IDialogService dialogService,
         IInboundPortLocalizationProvider LocalizationProvider,
         IInboundPortRestartTaskDisplayStateHandler restartTaskDisplayStateHandler,
-        IBrowserDiscoveryProviderOutboundPort browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
+        IOutboundPortBrowserDiscoveryProvider browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
     {
         ArgumentNullException.ThrowIfNull(restarterCycleService);
         ArgumentNullException.ThrowIfNull(configService);

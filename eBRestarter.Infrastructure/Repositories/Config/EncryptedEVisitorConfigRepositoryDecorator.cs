@@ -10,12 +10,12 @@ namespace eBRestarter.Infrastructure.Repositories.Config;
 /// of the sensitive API key during load and save operations (Decorator Pattern).
 /// </summary>
 public sealed class EncryptedEVisitorConfigRepositoryDecorator(
-    IEVisitorConfigRepositoryOutboundPort inner,
-    IEncryptionOutboundPort encryptionUseCase,
-    ILogger<EncryptedEVisitorConfigRepositoryDecorator> logger) : IEVisitorConfigRepositoryOutboundPort
+    IOutboundPortEVisitorConfigRepository inner,
+    IOutboundPortEncryption encryptionUseCase,
+    ILogger<EncryptedEVisitorConfigRepositoryDecorator> logger) : IOutboundPortEVisitorConfigRepository
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _inner = inner;
-    private readonly IEncryptionOutboundPort _encryptionUseCase = encryptionUseCase;
+    private readonly IOutboundPortEVisitorConfigRepository _inner = inner;
+    private readonly IOutboundPortEncryption _encryptionUseCase = encryptionUseCase;
     private readonly ILogger<EncryptedEVisitorConfigRepositoryDecorator> _logger = logger;
 
     /// <summary>

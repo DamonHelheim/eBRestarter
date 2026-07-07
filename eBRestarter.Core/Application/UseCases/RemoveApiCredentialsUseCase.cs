@@ -1,11 +1,11 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.UseCases;
 
-public sealed class RemoveApiCredentialsUseCase(IEVisitorConfigRepositoryOutboundPort configService) : IRemoveApiCredentialsUseCase
+public sealed class RemoveApiCredentialsUseCase(IOutboundPortEVisitorConfigRepository configService) : IUseCaseRemoveApiCredentials
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
 
     public void Execute()
     {

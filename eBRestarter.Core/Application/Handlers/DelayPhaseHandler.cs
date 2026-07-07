@@ -1,4 +1,5 @@
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Handlers.Interfaces;
 
 namespace eBRestarter.Core.Application.Handlers;
 

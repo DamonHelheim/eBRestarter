@@ -1,9 +1,6 @@
 ﻿using eBRestarter.Infrastructure.Network;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Infrastructure.Network;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
@@ -11,6 +8,8 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
+using eBRestarter.Infrastructure.Api;
+using eBRestarter.Infrastructure.Enums;
 
 namespace eBRestarter.Tests.Infrastructure.Services
 {
@@ -21,14 +20,14 @@ namespace eBRestarter.Tests.Infrastructure.Services
     /// </summary>
     public class RestSharpClientAdapterTests : IDisposable
     {
-        private readonly Mock<ILogger<RestSharpClientAdapter>> _loggerMock;
-        private readonly RestSharpClientAdapter _sut; // SUT = System Under Test
+        private readonly Mock<ILogger<RestSharpClient>> _loggerMock;
+        private readonly RestSharpClient _sut; // SUT = System Under Test
         private readonly WireMockServer _server;
 
         public RestSharpClientAdapterTests()
         {
-            _loggerMock = new Mock<ILogger<RestSharpClientAdapter>>();
-            _sut = new RestSharpClientAdapter(_loggerMock.Object);
+            _loggerMock = new Mock<ILogger<RestSharpClient>>();
+            _sut = new RestSharpClient(_loggerMock.Object);
 
             // Startet einen lokalen HTTP-Mock-Server für jeden Testdurchlauf.
             // Der Server läuft auf einem zufälligen, freien Port (z.B. localhost:51234).
@@ -63,7 +62,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             Assert.True(result.IsSuccess);
-            Assert.Equal(eBRestarter.Infrastructure.Api.ResponseCode.Success, result.StatusCode);
+            Assert.Equal(ResponseCode.Success, result.StatusCode);
             Assert.Equal("Test Content", result.Content);
         }
 
@@ -92,7 +91,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             Assert.True(result.IsSuccess);
-            Assert.Equal(eBRestarter.Infrastructure.Api.ResponseCode.RequestLimit, result.StatusCode);
+            Assert.Equal(ResponseCode.RequestLimit, result.StatusCode);
         }
 
         /// <summary>
@@ -117,7 +116,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             Assert.False(result.IsSuccess);
-            Assert.Equal(eBRestarter.Infrastructure.Api.ResponseCode.HttpRE401, result.StatusCode);
+            Assert.Equal(ResponseCode.HttpRE401, result.StatusCode);
 
             VerifyLoggerWarningWasCalled();
         }
@@ -180,7 +179,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             Assert.False(result.IsSuccess);
-            Assert.True(result.StatusCode == eBRestarter.Infrastructure.Api.ResponseCode.HTTPTimeout || result.StatusCode == eBRestarter.Infrastructure.Api.ResponseCode.GeneralExceptionError);
+            Assert.True(result.StatusCode == ResponseCode.HTTPTimeout || result.StatusCode == ResponseCode.GeneralExceptionError);
         }
 
         // 2. SYNC TESTS (ExecuteGet)
@@ -206,7 +205,7 @@ namespace eBRestarter.Tests.Infrastructure.Services
 
             // ASSERT
             Assert.True(result.IsSuccess);
-            Assert.Equal(eBRestarter.Infrastructure.Api.ResponseCode.Success, result.StatusCode);
+            Assert.Equal(ResponseCode.Success, result.StatusCode);
             Assert.Equal("Sync Content", result.Content);
         }
 

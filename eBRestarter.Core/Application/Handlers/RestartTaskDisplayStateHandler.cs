@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Models;
-using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Core.Domain.Validators;
 

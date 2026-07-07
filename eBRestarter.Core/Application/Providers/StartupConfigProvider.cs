@@ -1,12 +1,12 @@
 ﻿using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.Providers;
 
-public class StartupConfigProvider(IEVisitorConfigRepositoryOutboundPort configService) : IInboundPortStartupConfigProvider
+public class StartupConfigProvider(IOutboundPortEVisitorConfigRepository configService) : IInboundPortStartupConfigProvider
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
 
     /// <inheritdoc />
     public StartupDisplayPreferences RetrieveStartupPreferences()

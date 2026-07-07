@@ -1,13 +1,13 @@
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 using System.Net.NetworkInformation;
 
 namespace eBRestarter.Infrastructure.Providers;
 
-public sealed class NetworkInfoProvider(INetworkProviderOutboundPort networkProvider) : IInboundPortNetworkInfoProvider
+public sealed class NetworkInfoProvider(IOutboundPortNetworkProvider networkProvider) : IInboundPortNetworkInfoProvider
 {
-    private readonly INetworkProviderOutboundPort _networkProvider = networkProvider;
+    private readonly IOutboundPortNetworkProvider _networkProvider = networkProvider;
 
     public bool IsNetworkAvailable() => _networkProvider.CheckIsNetworkAvailable();
 

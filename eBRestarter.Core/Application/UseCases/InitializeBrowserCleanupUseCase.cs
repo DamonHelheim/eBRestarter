@@ -1,11 +1,11 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 
 namespace eBRestarter.Core.Application.UseCases;
 
-public class InitializeBrowserCleanupUseCase(IEVisitorConfigRepositoryOutboundPort configService) : IInitializeBrowserCleanupUseCase
+public class InitializeBrowserCleanupUseCase(IOutboundPortEVisitorConfigRepository configService) : IUseCaseInitializeBrowserCleanup
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
 
     public Task ExecuteAsync()
     {

@@ -1,24 +1,24 @@
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using System.Diagnostics;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 public sealed class DownloadBrowserUseCase(
-    IHttpDownloadOutboundPort downloadService,
+    IOutboundPortHttpDownload downloadService,
     IInboundPortOsAppPathProvider pathProvider,
-    IFileSystemOutboundPort fileSystemPort,
-    IOsProcessControlOutboundPort processControlPort) : IDownloadBrowserUseCase
+    IOutboundPortFileSystem fileSystemPort,
+    IOutboundPortOsProcessControl processControlPort) : IUseCaseDownloadBrowser
 {
     private const string InstallerFileNameSuffix = "_Installer.exe";
 
-    private readonly IHttpDownloadOutboundPort _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
+    private readonly IOutboundPortHttpDownload _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
     private readonly IInboundPortOsAppPathProvider _pathProvider = pathProvider ?? throw new ArgumentNullException(nameof(pathProvider));
-    private readonly IFileSystemOutboundPort _fileSystemPort = fileSystemPort ?? throw new ArgumentNullException(nameof(fileSystemPort));
-    private readonly IOsProcessControlOutboundPort _processControlPort = processControlPort ?? throw new ArgumentNullException(nameof(processControlPort));
+    private readonly IOutboundPortFileSystem _fileSystemPort = fileSystemPort ?? throw new ArgumentNullException(nameof(fileSystemPort));
+    private readonly IOutboundPortOsProcessControl _processControlPort = processControlPort ?? throw new ArgumentNullException(nameof(processControlPort));
 
     public async Task<string> DownloadInstallerAsync(
         string browserName,

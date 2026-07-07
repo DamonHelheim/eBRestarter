@@ -1,7 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Validators;
-
-
-namespace eBRestarter.Core.Application.Common.Results
+﻿namespace eBRestarter.Core.Application.Common.Results
 {
     public sealed record ValidationResult(bool IsValid, IReadOnlyList<ValidationError> Errors)
     {

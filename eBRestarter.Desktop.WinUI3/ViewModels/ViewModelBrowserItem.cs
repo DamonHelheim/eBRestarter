@@ -4,9 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Media;
@@ -16,9 +14,11 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -44,9 +44,9 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
 
     private CancellationTokenSource? _downloadCancellationTokenSource;
 
-    private readonly IDownloadBrowserUseCase _downloadBrowserUseCase;
+    private readonly IUseCaseDownloadBrowser _downloadBrowserUseCase;
 
-    private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+    private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
 
     private readonly IInboundPortLocalizationProvider _localizationService;
 
@@ -135,8 +135,8 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
     /// </summary>
     public ViewModelBrowserItem(
         BrowserInfo browserInfo,
-        IDownloadBrowserUseCase downloadBrowserUseCase,
-        IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+        IUseCaseDownloadBrowser downloadBrowserUseCase,
+        IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
         IDialogService dialogService,
         IInboundPortLocalizationProvider LocalizationProvider)
     {
@@ -190,7 +190,7 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
     /// or version check). Only applies when install state or version actually changed; then
     /// refreshes version text and notifies dependent properties so the UI updates.
     /// </summary>
-    /// <param name="updatedBrowserInfo">New snapshot from <see cref="IBrowserDiscoveryProviderOutboundPort"/>.</param>
+    /// <param name="updatedBrowserInfo">New snapshot from <see cref="IOutboundPortBrowserDiscoveryProvider"/>.</param>
     public void Update(BrowserInfo updatedBrowserInfo)
     {
         ArgumentNullException.ThrowIfNull(updatedBrowserInfo);

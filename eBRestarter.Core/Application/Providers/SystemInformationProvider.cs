@@ -1,17 +1,17 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.Providers;
 
 public class SystemInformationProvider(
-    IHardwareInfoProviderOutboundPort hardwareInfoProvider,
-    IOsEditionProviderOutboundPort osEditionProvider,
-    ISystemInfoProviderOutboundPort systemInfoProvider) : IInboundPortSystemInformationProvider
+    IOutboundPortHardwareInfoProvider hardwareInfoProvider,
+    IOutboundPortOsEditionProvider osEditionProvider,
+    IOutboundPortSystemInfoProvider systemInfoProvider) : IInboundPortSystemInformationProvider
 {
-    private readonly IHardwareInfoProviderOutboundPort _hardwareService = hardwareInfoProvider;
-    private readonly IOsEditionProviderOutboundPort _osEditionService = osEditionProvider;
-    private readonly ISystemInfoProviderOutboundPort _systemInfoService = systemInfoProvider;
+    private readonly IOutboundPortHardwareInfoProvider _hardwareService = hardwareInfoProvider;
+    private readonly IOutboundPortOsEditionProvider _osEditionService = osEditionProvider;
+    private readonly IOutboundPortSystemInfoProvider _systemInfoService = systemInfoProvider;
 
     public async Task<SystemInformationResponse> RetrieveAsync()
     {

@@ -1,15 +1,15 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 public sealed class ToggleAppAutoStartUseCase(
-    IAutoStartRepositoryOutboundPort startupManagerService,
-    IEVisitorConfigRepositoryOutboundPort configService) : IToggleAppAutoStartUseCase
+    IOutboundPortAutoStartRepository startupManagerService,
+    IOutboundPortEVisitorConfigRepository configService) : IUseCaseToggleAppAutoStart
 {
-    private readonly IAutoStartRepositoryOutboundPort _startupManagerService = startupManagerService;
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortAutoStartRepository _startupManagerService = startupManagerService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
 
     public async Task<bool> InitializeAndGetStateAsync()
     {

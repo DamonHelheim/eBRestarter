@@ -1,6 +1,7 @@
+using eBRestarter.Infrastructure.Adapters.Wrapper;
 using System.Diagnostics;
 
-namespace eBRestarter.Infrastructure.Adapters.Wrapper;
+namespace eBRestarter.Infrastructure.Wrappers;
 
 /// <summary>
 /// Kapselt statische Methoden von <see cref="Process"/> für Unit-Tests und Mocking im Infrastructure Layer.

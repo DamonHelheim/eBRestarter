@@ -1,12 +1,12 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
-using eBRestarter.Core.Application.Ports.Outbound.Update;
-using eBRestarter.Core.Application.Models.Records;
+﻿using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Update;
 
 namespace eBRestarter.Core.Application.UseCases;
 
-public sealed class ManageApplicationUpdatesUseCase(IUpdateOutboundPort updateService) : IManageApplicationUpdatesUseCase
+public sealed class ManageApplicationUpdatesUseCase(IOutboundPortUpdate updateService) : IUseCaseManageApplicationUpdates
 {
-    private readonly IUpdateOutboundPort _updateService = updateService;
+    private readonly IOutboundPortUpdate _updateService = updateService;
 
     public async Task<CheckUpdateResponse> CheckForUpdatesAsync()
     {

@@ -1,6 +1,4 @@
-﻿using eBRestarter.Infrastructure.Adapters.Browsers;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
+﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Enums;
@@ -10,6 +8,8 @@ using Moq;
 using Shouldly;
 using System.Collections.Generic;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -26,9 +26,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         /// Wir erstellen hier eine minimale, konkrete Implementierung NUR für unsere Tests.
         /// Sie dient als "Hülle", um an die Methoden der Basisklasse heranzukommen.
         /// </summary>
-        private class TestDummyBrowser : BrowserBase
+        private class TestDummyBrowser : AdapterBrowserBase
         {
-            public TestDummyBrowser(IOsProcessControlOutboundPort os, ISettingsRepositoryOutboundPort settings, IFileSystemOutboundPort fs, ILogger logger) : base(os, settings, fs, logger) { }
+            public TestDummyBrowser(IOutboundPortOsProcessControl os, IOutboundPortSystemConfigurationRepository settings, IOutboundPortFileSystem fs, ILogger logger) : base(os, settings, fs, logger) { }
 
             // Dummy-Werte für die abstrakten Properties. Diese Werte sind für die Tests gröÃŸtenteils egal,
             // sie befriedigen nur den Compiler, damit die Klasse instanziiert werden kann.
@@ -77,9 +77,9 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         {
             // ARRANGE (Vorbereitung):
             // Da diese Regex-Methode das Betriebssystem gar nicht nutzt, reichen leere Mock-Objekte aus.
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
             var mockLogger = new Mock<ILogger>();
             var dummyBrowser = new TestDummyBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
@@ -106,8 +106,8 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void Start_ShouldFindExecutableAndCallProcessService_WithUrlAndArguments()
         {
             // ARRANGE (Vorbereitung):
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             
             var mockLogger = new Mock<ILogger>();
 
@@ -115,7 +115,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             // Die Start()-Methode ruft intern GetExecutablePath() auf. Diese sucht in unserer Liste
             // von ExecutablePaths nach einer Datei, die wirklich existiert. Wir weisen unseren Fake-File-Service
             // an, immer 'true' zu antworten, wenn nach "C:\FakePath\browser.exe" gefragt wird.
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
             mockFileSystem.
                 Setup(fs => fs.FileExists(@"C:\FakePath\browser.exe")).
                 Returns(true);
@@ -157,13 +157,13 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void Start_ShouldLogError_WhenExecutableIsNotFound()
         {
             // ARRANGE (Vorbereitung):
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             
             var mockLogger = new Mock<ILogger>();
 
             // Diesmal bringen wir dem FileSystem bei: "Egal welcher Pfad gefragt wird, antworte mit 'false'!"
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
             mockFileSystem
                 .Setup(fs => fs.FileExists(It.IsAny<string>()))
                 .Returns(false);

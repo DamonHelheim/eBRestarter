@@ -3,18 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ManageApplicationUpdates;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using eBRestarter.Infrastructure.OperatingSystem;
 using Microsoft.UI.Dispatching;
 using Microsoft.Windows.AppLifecycle;
 using System;
@@ -22,7 +17,10 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -30,19 +28,20 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
     {
         private const string GeneralErrorKey = "General_Error";
 
+        private readonly IInboundPortOsAppPathProvider _appPathProvider;
         private readonly IInboundPortNextRestartDateHandler _nextRestartDateHandler;
-        private readonly IComputerRestartService _computerRestartScheduler;
-        private readonly IConfigureAutoLogonUseCase _configureAutoLogonUseCase;
+        private readonly IInboundPortComputerRestartService _computerRestartScheduler;
+        private readonly IUseCaseConfigureAutoLogon _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+        private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
         private readonly ILanguageService _languageService;
         private readonly IInboundPortLocalizationProvider _localizationService;
-        private readonly IManageApplicationUpdatesUseCase _manageApplicationUpdatesUseCase;
-        private readonly IOsProcessControlOutboundPort _osProcessControlPort;
-        private readonly IOsAutoLogonRepositoryOutboundPort _osAutoLogonPort;
-        private readonly ISystemInfoProviderOutboundPort _windowsSystemInfo;
+        private readonly IUseCaseManageApplicationUpdates _manageApplicationUpdatesUseCase;
+        private readonly IOutboundPortOsProcessControl _osProcessControlPort;
+        private readonly IOutboundPortOsAutoLogonRepository _osAutoLogonPort;
+        private readonly IOutboundPortSystemInfoProvider _windowsSystemInfo;
         private readonly IThemeService _themeService;
-        private readonly IToggleAppAutoStartUseCase _toggleAppAutoStartUseCase;
+        private readonly IUseCaseToggleAppAutoStart _toggleAppAutoStartUseCase;
         private readonly IUIOptionsProvider _uiOptionsService;
 
         private bool _isInitializing;
@@ -85,20 +84,22 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
 
         public ViewModelOptionsGeneral(
             IDialogService dialogService,
-            IConfigureAutoLogonUseCase configureAutoLogonUseCase,
-            IToggleAppAutoStartUseCase toggleAppAutoStartUseCase,
-            IManageApplicationUpdatesUseCase manageApplicationUpdatesUseCase,
-            IOsProcessControlOutboundPort osProcessControlPort, IOsAutoLogonRepositoryOutboundPort osAutoLogonPort, ISystemInfoProviderOutboundPort windowsSystemInfo,
+            IUseCaseConfigureAutoLogon configureAutoLogonUseCase,
+            IUseCaseToggleAppAutoStart toggleAppAutoStartUseCase,
+            IUseCaseManageApplicationUpdates manageApplicationUpdatesUseCase,
+            IOutboundPortOsProcessControl osProcessControlPort, IOutboundPortOsAutoLogonRepository osAutoLogonPort, IOutboundPortSystemInfoProvider windowsSystemInfo,
             IThemeService themeService,
-            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+            IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
             ILanguageService languageService,
             IInboundPortLocalizationProvider LocalizationProvider,
             IUIOptionsProvider uiOptionsService,
             IInboundPortNextRestartDateHandler nextRestartDateHandler,
-            IComputerRestartService ComputerRestartService)
+            IInboundPortComputerRestartService ComputerRestartService,
+            IInboundPortOsAppPathProvider appPathProvider)
         {
             _isInitializing = true;
 
+            _appPathProvider = appPathProvider;
             _nextRestartDateHandler = nextRestartDateHandler;
             _computerRestartScheduler = ComputerRestartService;
             _configureAutoLogonUseCase = configureAutoLogonUseCase;
@@ -295,7 +296,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         [RelayCommand]
         private void OpenSettingsDataFolder()
         {
-            _osProcessControlPort.OpenDirectoryInFileBrowser(SystemPaths.ApplicationDataBasePath);
+            _osProcessControlPort.OpenDirectoryInFileBrowser(_appPathProvider.RetrieveAppDataPath());
         }
 
         [RelayCommand]

@@ -2,7 +2,6 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Models.Records;
 using Moq;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using Xunit;
 using eBRestarter.Infrastructure.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
 {
@@ -21,12 +21,12 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
     /// </summary>
     public class WindowsNetworkInfoUseCaseTests
     {
-        private readonly Mock<INetworkProviderOutboundPort> _mockProvider;
+        private readonly Mock<IOutboundPortNetworkProvider> _mockProvider;
         private readonly NetworkInfoProvider _sut;
 
         public WindowsNetworkInfoUseCaseTests()
         {
-            _mockProvider = new Mock<INetworkProviderOutboundPort>();
+            _mockProvider = new Mock<IOutboundPortNetworkProvider>();
             _sut = new NetworkInfoProvider(_mockProvider.Object);
         }
 

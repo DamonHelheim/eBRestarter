@@ -1,10 +1,10 @@
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Infrastructure.Repositories.Config;
 
@@ -14,11 +14,11 @@ namespace eBRestarter.Infrastructure.Repositories.Config;
 /// </summary>
 public sealed class EVRestarterConfigRepository(
     IInboundPortOsAppPathProvider pathProvider,
-    IFileSystemOutboundPort fileSystem,
-    ILogger<EVRestarterConfigRepository> logger) : IEVisitorConfigRepositoryOutboundPort
+    IOutboundPortFileSystem fileSystem,
+    ILogger<EVRestarterConfigRepository> logger) : IOutboundPortEVisitorConfigRepository
 {
     private readonly IInboundPortOsAppPathProvider _pathProvider = pathProvider;
-    private readonly IFileSystemOutboundPort _fileSystem = fileSystem;
+    private readonly IOutboundPortFileSystem _fileSystem = fileSystem;
     private readonly ILogger<EVRestarterConfigRepository> _logger = logger;
 
     private readonly JsonSerializerOptions _jsonOptions = new()

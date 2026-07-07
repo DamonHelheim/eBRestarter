@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
@@ -11,6 +10,7 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
 {
@@ -21,14 +21,14 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
     /// </summary>
     public class ToggleAppAutoStartUseCaseTests
     {
-        private readonly Mock<IAutoStartRepositoryOutboundPort> _mockStartupManager;
-        private readonly Mock<IEVisitorConfigRepositoryOutboundPort> _mockConfigService;
+        private readonly Mock<IOutboundPortAutoStartRepository> _mockStartupManager;
+        private readonly Mock<IOutboundPortEVisitorConfigRepository> _mockConfigService;
         private readonly ToggleAppAutoStartUseCase _sut;
 
         public ToggleAppAutoStartUseCaseTests()
         {
-            _mockStartupManager = new Mock<IAutoStartRepositoryOutboundPort>();
-            _mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
+            _mockStartupManager = new Mock<IOutboundPortAutoStartRepository>();
+            _mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
 
             _sut = new ToggleAppAutoStartUseCase(
                 _mockStartupManager.Object,
