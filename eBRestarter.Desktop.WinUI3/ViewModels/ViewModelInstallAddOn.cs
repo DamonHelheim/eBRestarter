@@ -32,7 +32,7 @@ public sealed partial class ViewModelInstallAddOn : ObservableObject, IDisposabl
     /// </summary>
     /// <param name="BrowserFactory">Used to create browser instances for status checks. Must not be null.</param>
     /// <param name="LocalizationProvider">Passed to each ViewModelBrowserAddonStatus for localized strings. Must not be null.</param>
-    public ViewModelInstallAddOn(IBrowserFactoryOutboundPort BrowserFactory, ILocalizationProvider LocalizationProvider)
+    public ViewModelInstallAddOn(IBrowserFactoryOutboundPort BrowserFactory, IInboundPortLocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(BrowserFactory);
         ArgumentNullException.ThrowIfNull(LocalizationProvider);

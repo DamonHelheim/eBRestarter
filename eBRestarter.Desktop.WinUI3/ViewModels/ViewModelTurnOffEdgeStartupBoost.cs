@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleEdgeStartupBoost;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
@@ -9,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -22,7 +22,7 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     private const string EdgeStartupBoostSettingsClipboardText = "edge://settings/?search=Startup-Boost";
 
     private readonly IDialogService _dialogService;
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
     private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
     private readonly ISystemInfoProviderOutboundPort _windowsSystemInfo;
 
@@ -57,7 +57,7 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     public ViewModelTurnOffEdgeStartupBoost(
         IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
         IDialogService dialogService,
-        ILocalizationProvider LocalizationProvider,
+        IInboundPortLocalizationProvider LocalizationProvider,
         ISystemInfoProviderOutboundPort windowsSystemInfo)
     {
         ArgumentNullException.ThrowIfNull(toggleEdgeStartupBoostUseCase);

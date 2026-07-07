@@ -4,7 +4,8 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Domain.Handlers;
-using eBRestarter.Core.Application.Validators;
+using eBRestarter.Core.Application.Ports.Inbound.Validators;
+using eBRestarter.Infrastructure.Adapters.Validators;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Browser;
 using eBRestarter.Infrastructure.OperatingSystem;
@@ -15,9 +16,8 @@ using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Application.Services;
-using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Handlers.ManageRestarterCycle;
+using eBRestarter.Core.Application.Handlers;
 // Removed Strategies namespace
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Domain.Entities;
@@ -35,7 +35,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.Services
     public class RestarterCycleServiceTests
     {
         private readonly Mock<IBrowserFactoryOutboundPort> _mockBrowserFactory;
-        private readonly Mock<ILocalizationProvider> _mockLocalizationService;
+        private readonly Mock<IInboundPortLocalizationProvider> _mockLocalizationService;
         private readonly Mock<IEVisitorConfigRepositoryOutboundPort> _mockConfigService;
         private readonly Mock<IBrowserCleanupScheduleHandler> _mockCleanupScheduleHandler;
         private readonly Mock<IOsProcessControlOutboundPort> _mockProcessService;
@@ -47,7 +47,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.Services
         public RestarterCycleServiceTests()
         {
             _mockBrowserFactory = new Mock<IBrowserFactoryOutboundPort>();
-            _mockLocalizationService = new Mock<ILocalizationProvider>();
+            _mockLocalizationService = new Mock<IInboundPortLocalizationProvider>();
             _mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
             _mockCleanupScheduleHandler = new Mock<IBrowserCleanupScheduleHandler>();
             _mockProcessService = new Mock<IOsProcessControlOutboundPort>();
@@ -69,7 +69,7 @@ namespace eBRestarter.XUnit.Test.Core.Application.Services
                 _mockConfigService.Object,
                 _mockCleanupScheduleHandler.Object,
                 _fakeTimeProvider,
-                new ManageRestarterCycleValidator(),
+                new FluentValidationAdapter<ManageRestarterCycleRequest>(new ManageRestarterCycleValidator()),
                 delayStrategy,
                 runStrategy);
         }

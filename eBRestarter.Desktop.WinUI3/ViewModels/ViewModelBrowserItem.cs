@@ -3,12 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.DownloadBrowser;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Media;
@@ -18,6 +16,9 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Models;
+using eBRestarter.Desktop.WinUI3.Models;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -47,7 +48,7 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
 
     private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     [ObservableProperty]
     public partial double DownloadProgressValue { get; set; }
@@ -95,10 +96,10 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
     public string HeaderTitleBrowser => _browserInfo.Name;
 
     /// <summary>Icon height for layout.</summary>
-    public string ImageSizeHeightBrowser => _browserInfo.IconHeight;
+    public string ImageSizeHeightBrowser => "32";
 
     /// <summary>Icon width for layout.</summary>
-    public string ImageSizeWidthBrowser => _browserInfo.IconWidth;
+    public string ImageSizeWidthBrowser => "32";
 
     /// <summary>Display symbol for install state: check mark if installed, ballot X otherwise.</summary>
     public string InstallStateGlyph => _browserInfo.IsInstalled
@@ -137,7 +138,7 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         IDownloadBrowserUseCase downloadBrowserUseCase,
         IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
         IDialogService dialogService,
-        ILocalizationProvider LocalizationProvider)
+        IInboundPortLocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(browserInfo);
         ArgumentNullException.ThrowIfNull(downloadBrowserUseCase);

@@ -1,7 +1,6 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.RemoveApiCredentials;
-using eBRestarter.Core.Application.UseCases.RemoveApiCredentials;
-using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
@@ -9,6 +8,7 @@ using Moq;
 using Shouldly;
 using System;
 using Xunit;
+using eBRestarter.Core.Application.UseCases;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
 {

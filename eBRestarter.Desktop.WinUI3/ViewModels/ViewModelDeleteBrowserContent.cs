@@ -1,9 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Errors;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.DeleteBrowserContent;
 using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
@@ -13,6 +11,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Models;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -38,7 +38,7 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
 
     private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     private BrowserType _selectedBrowserType;
 
@@ -93,7 +93,7 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         IDeleteBrowserContentUseCase deleteBrowserContentUseCase,
         IBrowserFactoryOutboundPort BrowserFactory,
         IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
-        ILocalizationProvider LocalizationProvider)
+        IInboundPortLocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);
         ArgumentNullException.ThrowIfNull(BrowserFactory);

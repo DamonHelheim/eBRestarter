@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Ports.Outbound;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
@@ -18,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Outbound.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -38,7 +40,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IBrowserExtensionPathProviderOutboundPort _browserExtensionPathProvider;
         private readonly IDialogService _dialogService;
         private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
-        private readonly ILocalizationProvider _localizationService;
+        private readonly IInboundPortLocalizationProvider _localizationService;
         private readonly IOsProcessControlOutboundPort _osProcessControlPort;
         private readonly IUIOptionsProvider _uiOptionsService;
         private readonly AppConfig _currentConfig;
@@ -62,7 +64,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IBrowserExtensionPathProviderOutboundPort browserExtensionPathProvider,
             IDialogService dialogService,
             IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
-            ILocalizationProvider LocalizationProvider,
+            IInboundPortLocalizationProvider LocalizationProvider,
             IOsProcessControlOutboundPort osProcessControlPort,
             IUIOptionsProvider uiOptionsService)
         {

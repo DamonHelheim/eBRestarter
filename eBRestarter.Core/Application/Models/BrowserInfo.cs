@@ -9,7 +9,5 @@ public sealed class BrowserInfo
     public string Version { get; set; } = string.Empty;
     public bool IsInstalled { get; set; }
     public string IconPath { get; set; } = string.Empty;
-    public string IconWidth { get; } = "32";
-    public string IconHeight { get; } = "32";
     public string DownloadUrl { get; set; } = string.Empty;
 }

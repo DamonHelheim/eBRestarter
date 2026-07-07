@@ -10,7 +10,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the Infocenter / system info page. Loads hardware and OS information via
-/// <see cref="ISystemInformationProvider"/> and exposes localized text for display.
+/// <see cref="IInboundPortSystemInformationProvider"/> and exposes localized text for display.
 /// Also provides commands to open the support website and the About dialog.
 /// </summary>
 public sealed partial class ViewModelInfocenter : ObservableObject
@@ -21,9 +21,9 @@ public sealed partial class ViewModelInfocenter : ObservableObject
 
     private readonly IDialogService _dialogService;
 
-    private readonly ISystemInformationProvider _systemInformationProvider;
+    private readonly IInboundPortSystemInformationProvider _systemInformationProvider;
 
-    private readonly ILocalizationProvider _localizationService;
+    private readonly IInboundPortLocalizationProvider _localizationService;
 
     [ObservableProperty]
     public partial string BrowserText { get; set; }
@@ -51,9 +51,9 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     /// fields to a loading placeholder and starts async load so the page shows data as it becomes available.
     /// </summary>
     public ViewModelInfocenter(
-        ISystemInformationProvider systemInformationProvider,
+        IInboundPortSystemInformationProvider systemInformationProvider,
         IDialogService dialogService,
-        ILocalizationProvider LocalizationProvider)
+        IInboundPortLocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(systemInformationProvider);
         ArgumentNullException.ThrowIfNull(dialogService);

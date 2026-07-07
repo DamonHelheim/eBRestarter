@@ -1,10 +1,8 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ToggleAppAutoStart;
-using eBRestarter.Core.Application.UseCases.ToggleAppAutoStart;
-using eBRestarter.Core.Application.Models.Errors;
+using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Domain.Entities;
@@ -12,6 +10,7 @@ using Moq;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.UseCases;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.ToggleAppAutoStart
 {
