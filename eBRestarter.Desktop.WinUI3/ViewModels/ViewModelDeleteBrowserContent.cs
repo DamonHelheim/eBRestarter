@@ -2,24 +2,24 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Delete browser content" (cache/cookies cleanup) dialog. Resolves the
-/// selected browser via <see cref="IBrowserFactoryOutboundPort"/>, collects paths from the browser implementation,
-/// and runs cleanup through <see cref="IDeleteBrowserContentUseCase"/> with progress reporting.
+/// selected browser via <see cref="IOutboundPortBrowserFactory"/>, collects paths from the browser implementation,
+/// and runs cleanup through <see cref="IUseCaseDeleteBrowserContent"/> with progress reporting.
 /// Can be run manually or as an auto-step from the restart task when cleanup is due.
 /// </summary>
 public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
@@ -32,11 +32,11 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
 
     private bool _isAutoMode;
 
-    private readonly IBrowserFactoryOutboundPort _browserFactory;
+    private readonly IOutboundPortBrowserFactory _browserFactory;
 
-    private readonly IDeleteBrowserContentUseCase _deleteBrowserContentUseCase;
+    private readonly IUseCaseDeleteBrowserContent _deleteBrowserContentUseCase;
 
-    private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+    private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
 
     private readonly IInboundPortLocalizationProvider _localizationService;
 
@@ -90,9 +90,9 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     /// If the config value is not a valid <see cref="BrowserType"/>, sets an error message instead.
     /// </summary>
     public ViewModelDeleteBrowserContent(
-        IDeleteBrowserContentUseCase deleteBrowserContentUseCase,
-        IBrowserFactoryOutboundPort BrowserFactory,
-        IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+        IUseCaseDeleteBrowserContent deleteBrowserContentUseCase,
+        IOutboundPortBrowserFactory BrowserFactory,
+        IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
         IInboundPortLocalizationProvider LocalizationProvider)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);

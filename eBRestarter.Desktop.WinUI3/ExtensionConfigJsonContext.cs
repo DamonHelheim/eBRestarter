@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
-using eBRestarter.Infrastructure.Config;
+using eBRestarter.Infrastructure.Models.Config;
 
 namespace eBRestarter.Desktop.WinUI3;
 
-[JsonSerializable(typeof(ExtensionConfigDto))]
+[JsonSerializable(typeof(ExtensionConfig))]
 internal partial class ExtensionConfigJsonContext : JsonSerializerContext
 {
 }

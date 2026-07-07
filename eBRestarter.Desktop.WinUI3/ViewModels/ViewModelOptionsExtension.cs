@@ -1,17 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Ports.Outbound;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using eBRestarter.Infrastructure.Browser;
-using eBRestarter.Infrastructure.Config;
+using eBRestarter.Infrastructure.Common.Statics;
+using eBRestarter.Infrastructure.Models.Config;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -19,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -36,12 +34,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             TypeInfoResolver = ExtensionConfigJsonContext.Default
         };
 
-        private readonly IBrowserExtensionDeploymentOutboundPort _browserExtensionDeploymentService;
-        private readonly IBrowserExtensionPathProviderOutboundPort _browserExtensionPathProvider;
+        private readonly IOutboundPortBrowserExtensionDeployment _browserExtensionDeploymentService;
+        private readonly IOutboundPortBrowserExtensionPathProvider _browserExtensionPathProvider;
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+        private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
         private readonly IInboundPortLocalizationProvider _localizationService;
-        private readonly IOsProcessControlOutboundPort _osProcessControlPort;
+        private readonly IOutboundPortOsProcessControl _osProcessControlPort;
         private readonly IUIOptionsProvider _uiOptionsService;
         private readonly AppConfig _currentConfig;
 
@@ -60,12 +58,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         public ReadOnlyCollection<LanguageOption> ExtensionLanguages { get; }
 
         public ViewModelOptionsExtension(
-            IBrowserExtensionDeploymentOutboundPort browserExtensionDeploymentService,
-            IBrowserExtensionPathProviderOutboundPort browserExtensionPathProvider,
+            IOutboundPortBrowserExtensionDeployment browserExtensionDeploymentService,
+            IOutboundPortBrowserExtensionPathProvider browserExtensionPathProvider,
             IDialogService dialogService,
-            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+            IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
             IInboundPortLocalizationProvider LocalizationProvider,
-            IOsProcessControlOutboundPort osProcessControlPort,
+            IOutboundPortOsProcessControl osProcessControlPort,
             IUIOptionsProvider uiOptionsService)
         {
             _browserExtensionDeploymentService = browserExtensionDeploymentService;
@@ -124,7 +122,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 string extensionPath = _browserExtensionPathProvider.RetrieveExtensionFolderPath();
                 string configPath = Path.Combine(extensionPath, ExtensionConfigFileName);
 
-                var extensionConfigDto = new ExtensionConfigDto
+                var extensionConfigDto = new ExtensionConfig
                 {
                     LANGUAGE = SelectedExtensionLanguage?.Index == 0 ? "DE" : "EN",
                     ZIEL_URL = $"{WebLinks.EVisitorSurflink}{_currentConfig.Username}",
@@ -163,7 +161,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
                 if (File.Exists(configPath))
                 {
                     string jsonString = File.ReadAllText(configPath);
-                    var extensionConfigDto = JsonSerializer.Deserialize(jsonString, ExtensionConfigJsonContext.Default.ExtensionConfigDto);
+                    var extensionConfigDto = JsonSerializer.Deserialize(jsonString, ExtensionConfigJsonContext.Default.ExtensionConfig);
 
                     if (extensionConfigDto != null)
                     {

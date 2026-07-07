@@ -3,18 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Core.Application.Models;
 using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using eBRestarter.Infrastructure.Browser;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System;
@@ -23,30 +18,35 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.Common.Statics;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Restarter properties" / task configuration page. Manages runtime hours,
 /// pause seconds, browser-alive check, start-with-program, cache-delete interval, and username.
-/// Persists via <see cref="IEVisitorConfigRepositoryOutboundPort"/> and broadcasts changes with
+/// Persists via <see cref="IOutboundPortEVisitorConfigRepository"/> and broadcasts changes with
 /// <see cref="WeakReferenceMessenger"/> so the restart task and other pages stay in sync.
 /// </summary>
 public sealed partial class ViewModelRestarterProperties : ObservableObject
 {
     private const int BrowserInstallCheckIntervalSeconds = 5;
 
-    private readonly IBrowserDiscoveryProviderOutboundPort _browserService;
+    private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
 
     private readonly IDialogService _dialogService;
 
-    private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+    private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
 
     private readonly IInboundPortLocalizationProvider _localizationService;
 
-    private readonly IOsProcessControlOutboundPort _osProcessControlPort;
+    private readonly IOutboundPortOsProcessControl _osProcessControlPort;
 
-    private readonly IScheduleBrowserCleanupUseCase _scheduleBrowserCleanupUseCase;
+    private readonly IUseCaseScheduleBrowserCleanup _scheduleBrowserCleanupUseCase;
 
     private readonly IUIOptionsProvider _uiOptionsService;
 
@@ -104,13 +104,13 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     /// Does not send messages yet; property change handlers do that when the user edits.
     /// </summary>
     public ViewModelRestarterProperties(
-        IScheduleBrowserCleanupUseCase scheduleBrowserCleanupUseCase,
-        IOsProcessControlOutboundPort osProcessControlPort,
-        IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+        IUseCaseScheduleBrowserCleanup scheduleBrowserCleanupUseCase,
+        IOutboundPortOsProcessControl osProcessControlPort,
+        IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
         IInboundPortLocalizationProvider LocalizationProvider,
         IUIOptionsProvider uiOptionsService,
         IDialogService dialogService,
-        IBrowserDiscoveryProviderOutboundPort browserService)
+        IOutboundPortBrowserDiscoveryProvider browserService)
     {
         ArgumentNullException.ThrowIfNull(scheduleBrowserCleanupUseCase);
         ArgumentNullException.ThrowIfNull(osProcessControlPort);

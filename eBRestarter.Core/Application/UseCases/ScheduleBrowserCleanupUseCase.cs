@@ -1,13 +1,13 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+﻿using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 
-public sealed class ScheduleBrowserCleanupUseCase(IEVisitorConfigRepositoryOutboundPort configService, TimeProvider timeProvider) : IScheduleBrowserCleanupUseCase
+public sealed class ScheduleBrowserCleanupUseCase(IOutboundPortEVisitorConfigRepository configService, TimeProvider timeProvider) : IUseCaseScheduleBrowserCleanup
 {
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
     private readonly TimeProvider _timeProvider = timeProvider;
 
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)

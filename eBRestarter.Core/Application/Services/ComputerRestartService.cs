@@ -1,26 +1,26 @@
-using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Logging;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.Services;
 
 public class ComputerRestartService(
-    IEVisitorConfigRepositoryOutboundPort configService,
-    IOsProcessControlOutboundPort processService,
-    IApplicationLifetimeOutboundPort applicationLifetime,
+    IOutboundPortEVisitorConfigRepository configService,
+    IOutboundPortOsProcessControl processService,
+    IOutboundPortApplicationLifetime applicationLifetime,
     TimeProvider timeProvider,
-    IApplicationLoggerOutboundPort<ComputerRestartService> logger) : IComputerRestartService, IDisposable
+    IOutboundPortApplicationLogger<ComputerRestartService> logger) : IInboundPortComputerRestartService, IDisposable
 {
     private bool _disposed;
 
     // Dependencies (Dependency Inversion Principle)
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
-    private readonly IOsProcessControlOutboundPort _processService = processService;
-    private readonly IApplicationLifetimeOutboundPort _applicationLifetime = applicationLifetime;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
+    private readonly IOutboundPortOsProcessControl _processService = processService;
+    private readonly IOutboundPortApplicationLifetime _applicationLifetime = applicationLifetime;
     private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly IApplicationLoggerOutboundPort<ComputerRestartService> _logger = logger;
+    private readonly IOutboundPortApplicationLogger<ComputerRestartService> _logger = logger;
 
     // Controls for the background task
     private PeriodicTimer? _timer;

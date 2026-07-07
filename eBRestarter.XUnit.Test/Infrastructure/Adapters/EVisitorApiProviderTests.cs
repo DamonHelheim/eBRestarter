@@ -1,12 +1,9 @@
-using eBRestarter.Infrastructure.Adapters;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Infrastructure.Adapters.RestSharp;
 using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Browser;
@@ -19,6 +16,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Infrastructure.Api.Interfaces;
+using eBRestarter.Infrastructure.Adapters.Outbound.API;
+using eBRestarter.Infrastructure.Models.Network;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters
 {
@@ -29,18 +29,18 @@ namespace eBRestarter.Tests.Infrastructure.Adapters
     /// </summary>
     public class EVisitorApiProviderTests
     {
-        private readonly Mock<IRestClientPort> _mockRestClient;
-        private readonly Mock<IEVisitorConfigRepositoryOutboundPort> _mockConfigService;
-        private readonly Mock<ILogger<EVisitorApiProvider>> _mockLogger;
-        private readonly EVisitorApiProvider _sut;
+        private readonly Mock<IRestClient> _mockRestClient;
+        private readonly Mock<IOutboundPortEVisitorConfigRepository> _mockConfigService;
+        private readonly Mock<ILogger<AdapterEVisitorApiProvider>> _mockLogger;
+        private readonly AdapterEVisitorApiProvider _sut;
 
         public EVisitorApiProviderTests()
         {
-            _mockRestClient = new Mock<IRestClientPort>();
-            _mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
-            _mockLogger = new Mock<ILogger<EVisitorApiProvider>>();
+            _mockRestClient = new Mock<IRestClient>();
+            _mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
+            _mockLogger = new Mock<ILogger<AdapterEVisitorApiProvider>>();
 
-            _sut = new EVisitorApiProvider(
+            _sut = new AdapterEVisitorApiProvider(
                 _mockRestClient.Object,
                 _mockConfigService.Object,
                 _mockLogger.Object);

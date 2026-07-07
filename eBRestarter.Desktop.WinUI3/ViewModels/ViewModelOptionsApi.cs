@@ -2,30 +2,30 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
     public sealed partial class ViewModelOptionsApi : ObservableObject
     {
         private readonly IDialogService _dialogService;
-        private readonly IEVisitorConfigRepositoryOutboundPort _EVRestarterConfigRepository;
+        private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
         private readonly IInboundPortLocalizationProvider _localizationService;
-        private readonly IRemoveApiCredentialsUseCase _removeApiCredentialsUseCase;
+        private readonly IUseCaseRemoveApiCredentials _removeApiCredentialsUseCase;
         private readonly AppConfig _currentConfig;
 
         public ViewModelOptionsApi(
             IDialogService dialogService,
-            IEVisitorConfigRepositoryOutboundPort EVRestarterConfigRepository,
+            IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
             IInboundPortLocalizationProvider LocalizationProvider,
-            IRemoveApiCredentialsUseCase removeApiCredentialsUseCase)
+            IUseCaseRemoveApiCredentials removeApiCredentialsUseCase)
         {
             _dialogService = dialogService;
             _EVRestarterConfigRepository = EVRestarterConfigRepository;

@@ -1,14 +1,13 @@
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
 using Moq;
 using Shouldly;
 using System.IO;
 using Xunit;
 using eBRestarter.Infrastructure.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
@@ -19,14 +18,14 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// </summary>
     public class WindowsOsPathProviderAdapterTests
     {
-        private readonly Mock<IAppPathProviderOutboundPort> _mockPathProvider;
+        private readonly Mock<IOutboundPortAppPathProvider> _mockPathProvider;
         private readonly WindowsAppPathProvider _sut;
 
         public WindowsOsPathProviderAdapterTests()
         {
             // Wir mocken den Provider, damit wir nicht auf echte Windows-Pfade angewiesen sind.
             // So funktionieren die Tests auf jedem PC exakt gleich.
-            _mockPathProvider = new Mock<IAppPathProviderOutboundPort>();
+            _mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
 
             _sut = new WindowsAppPathProvider(_mockPathProvider.Object);
         }

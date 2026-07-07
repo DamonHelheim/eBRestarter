@@ -1,13 +1,13 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
+﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Infrastructure.Adapters.Browsers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using System.Collections.Generic;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -31,10 +31,10 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void IsExtensionInstalled_ShouldReturnTrue_WhenExtensionFolderExists()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
-            var mockLogger = new Mock<ILogger<ChromeBrowser>>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
+            var mockLogger = new Mock<ILogger<AdapterChromeBrowser>>();
             
 
             // 1. LocalAppData vorgeben
@@ -59,7 +59,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             // 5. Dem Dateisystem sagen, dass DIESER Extension-Ordner physisch existiert
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedExtensionDir)).Returns(true);
 
-            var ChromeBrowser = new ChromeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var ChromeBrowser = new AdapterChromeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             // ChromeBrowser holt erst ResolvePaths() -> Findet das "Default" Profil -> Generiert den Extension-Pfad.
@@ -81,10 +81,10 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         public void IsExtensionInstalled_ShouldReturnFalse_WhenExtensionFolderIsMissing()
         {
             // ARRANGE
-            var mockProcess = new Mock<IOsProcessControlOutboundPort>();
-            var mockSettings = new Mock<ISettingsRepositoryOutboundPort>();
-            var mockFileSystem = new Mock<IFileSystemOutboundPort>();
-            var mockLogger = new Mock<ILogger<ChromeBrowser>>();
+            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
+            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
+            var mockLogger = new Mock<ILogger<AdapterChromeBrowser>>();
             
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath(It.IsAny<string>())).Returns(@"C:\FakeAppData");
@@ -92,7 +92,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             // WICHTIG: Die Methode fragt ab, ob der kombinierte Pfad existiert. Wir sagen NEIN.
             mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
 
-            var ChromeBrowser = new ChromeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var ChromeBrowser = new AdapterChromeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             bool result = ChromeBrowser.IsExtensionInstalled();

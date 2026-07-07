@@ -1,35 +1,34 @@
-using eBRestarter.Core.Application.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Domain.Handlers;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Handlers.Interfaces;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Validators;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
+using eBRestarter.Core.Application.Ports.Inbound.Services;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Domain.Handlers;
 
 namespace eBRestarter.Core.Application.Services;
 
 public sealed class RestarterCycleService(
-    IBrowserFactoryOutboundPort BrowserFactory,
+    IOutboundPortBrowserFactory BrowserFactory,
     IInboundPortLocalizationProvider LocalizationService,
 
-    IEVisitorConfigRepositoryOutboundPort configService,
+    IOutboundPortEVisitorConfigRepository configService,
     IBrowserCleanupScheduleHandler browserCleanupScheduleHandler,
     TimeProvider timeProvider,
     IInboundPortApplicationValidator<ManageRestarterCycleRequest> validator,
     IDelayPhaseHandler delayPhaseHandler,
-    IRunBrowserPhaseHandler runBrowserPhaseHandler) : IRestarterCycleService
+    IRunBrowserPhaseHandler runBrowserPhaseHandler) : IInboundPortRestarterCycleService
 {
     private const string BaseUrl = "https://www.ebesucher.de/surfbar/";
 
     private const int InitialDelaySeconds = 5;
 
-    private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
+    private readonly IOutboundPortBrowserFactory _browserFactory = BrowserFactory;
     private readonly IInboundPortLocalizationProvider _localizationService = LocalizationService;
 
-    private readonly IEVisitorConfigRepositoryOutboundPort _configService = configService;
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
     private readonly IBrowserCleanupScheduleHandler _browserCleanupScheduleHandler = browserCleanupScheduleHandler;
 
     private readonly IInboundPortApplicationValidator<ManageRestarterCycleRequest> _validator = validator;
@@ -40,7 +39,7 @@ public sealed class RestarterCycleService(
 
     private CancellationTokenSource? _cts;
 
-    private IBrowserOutboundPort? _currentBrowser;
+    private IOutboundPortBrowser? _currentBrowser;
 
     public event EventHandler<RestarterCycleProgress>? ProgressChanged;
 

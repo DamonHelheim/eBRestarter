@@ -20,7 +20,7 @@ public class StartupConfigProviderTests
             Settings = new SettingsConfig { Language = 0, Theme = "Dark" }
         };
 
-        var mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
+        var mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
         mockConfigService.Setup(s => s.LoadConfig()).Returns(config);
 
         var sut = new StartupConfigProvider(mockConfigService.Object);

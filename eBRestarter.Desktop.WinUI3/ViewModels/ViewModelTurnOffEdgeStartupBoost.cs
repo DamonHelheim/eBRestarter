@@ -1,20 +1,20 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
 /// <summary>
 /// View model for the "Turn off Edge Startup Boost" dialog. Reads and toggles the Edge
-/// Startup Boost setting via <see cref="IToggleEdgeStartupBoostUseCase"/> and shows success/error
+/// Startup Boost setting via <see cref="IUseCaseToggleEdgeStartupBoost"/> and shows success/error
 /// in an InfoBar. Provides a command to copy the settings URL for users who prefer to change it manually in Edge.
 /// </summary>
 public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
@@ -23,8 +23,8 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
 
     private readonly IDialogService _dialogService;
     private readonly IInboundPortLocalizationProvider _localizationService;
-    private readonly IToggleEdgeStartupBoostUseCase _toggleEdgeStartupBoostUseCase;
-    private readonly ISystemInfoProviderOutboundPort _windowsSystemInfo;
+    private readonly IUseCaseToggleEdgeStartupBoost _toggleEdgeStartupBoostUseCase;
+    private readonly IOutboundPortSystemInfoProvider _windowsSystemInfo;
 
     private bool _isRevertingState;
 
@@ -55,10 +55,10 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     /// state so the toggle reflects the actual setting when the dialog opens.
     /// </summary>
     public ViewModelTurnOffEdgeStartupBoost(
-        IToggleEdgeStartupBoostUseCase toggleEdgeStartupBoostUseCase,
+        IUseCaseToggleEdgeStartupBoost toggleEdgeStartupBoostUseCase,
         IDialogService dialogService,
         IInboundPortLocalizationProvider LocalizationProvider,
-        ISystemInfoProviderOutboundPort windowsSystemInfo)
+        IOutboundPortSystemInfoProvider windowsSystemInfo)
     {
         ArgumentNullException.ThrowIfNull(toggleEdgeStartupBoostUseCase);
         ArgumentNullException.ThrowIfNull(dialogService);

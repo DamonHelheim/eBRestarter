@@ -18,12 +18,12 @@ namespace eBRestarter.Tests.Infrastructure.Handlers
     /// </summary>
     public class WindowsFileDeletionServiceAdapterTests : IDisposable
     {
-        private readonly WindowsFileDeletionServiceAdapter _sut;
+        private readonly AdapterWindowsFileDeletionService _sut;
         private readonly string _baseTestDir;
 
         public WindowsFileDeletionServiceAdapterTests()
         {
-            _sut = new WindowsFileDeletionServiceAdapter(Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowsFileDeletionServiceAdapter>.Instance);
+            _sut = new AdapterWindowsFileDeletionService(Microsoft.Extensions.Logging.Abstractions.NullLogger<AdapterWindowsFileDeletionService>.Instance);
             _baseTestDir = Path.Combine(Path.GetTempPath(), $"FileDeletionTest_{Guid.NewGuid()}");
             Directory.CreateDirectory(_baseTestDir);
         }

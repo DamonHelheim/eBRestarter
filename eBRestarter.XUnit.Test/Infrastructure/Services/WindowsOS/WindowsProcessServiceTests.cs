@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Infrastructure.Wrappers;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
@@ -20,16 +21,16 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
     /// </summary>
     public class WindowsProcessServiceTests
     {
-        private readonly Mock<ILogger<WindowsProcessControlAdapter>> _mockLogger;
+        private readonly Mock<ILogger<AdapterWindowsProcessControl>> _mockLogger;
         private readonly Mock<IProcessWrapper> _mockProcessWrapper;
-        private readonly WindowsProcessControlAdapter _sut;
+        private readonly AdapterWindowsProcessControl _sut;
 
         public WindowsProcessServiceTests()
         {
-            _mockLogger = new Mock<ILogger<WindowsProcessControlAdapter>>();
+            _mockLogger = new Mock<ILogger<AdapterWindowsProcessControl>>();
             _mockProcessWrapper = new Mock<IProcessWrapper>();
 
-            _sut = new WindowsProcessControlAdapter(_mockLogger.Object, _mockProcessWrapper.Object);
+            _sut = new AdapterWindowsProcessControl(_mockLogger.Object, _mockProcessWrapper.Object);
         }
         // 1. START EXECUTABLE TESTS
 

@@ -1,17 +1,17 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Browser;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Enums;
+﻿using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 public sealed class ToggleEdgeStartupBoostUseCase(
-    IBrowserConfigRepositoryOutboundPort startupService,
-    IBrowserFactoryOutboundPort BrowserFactory) : IToggleEdgeStartupBoostUseCase
+    IOutboundPortBrowserConfigRepository startupService,
+    IOutboundPortBrowserFactory BrowserFactory) : IUseCaseToggleEdgeStartupBoost
 {
-    private readonly IBrowserConfigRepositoryOutboundPort _startupService = startupService;
-    private readonly IBrowserFactoryOutboundPort _browserFactory = BrowserFactory;
+    private readonly IOutboundPortBrowserConfigRepository _startupService = startupService;
+    private readonly IOutboundPortBrowserFactory _browserFactory = BrowserFactory;
 
     public bool IsEnabled() =>
         _startupService.IsBrowserStartupBoostEnabled();

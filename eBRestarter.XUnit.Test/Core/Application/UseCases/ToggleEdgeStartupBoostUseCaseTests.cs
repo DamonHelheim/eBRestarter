@@ -1,5 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
@@ -10,6 +8,8 @@ using Moq;
 using Shouldly;
 using System;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
 {
@@ -21,16 +21,16 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
     /// </summary>
     public class ToggleEdgeStartupBoostUseCaseTests
     {
-        private readonly Mock<IBrowserConfigRepositoryOutboundPort> _mockStartupService;
-        private readonly Mock<IBrowserFactoryOutboundPort> _mockBrowserFactory;
-        private readonly Mock<IBrowserOutboundPort> _mockEdgeBrowser;
+        private readonly Mock<IOutboundPortBrowserConfigRepository> _mockStartupService;
+        private readonly Mock<IOutboundPortBrowserFactory> _mockBrowserFactory;
+        private readonly Mock<IOutboundPortBrowser> _mockEdgeBrowser;
         private readonly ToggleEdgeStartupBoostUseCase _sut;
 
         public ToggleEdgeStartupBoostUseCaseTests()
         {
-            _mockStartupService = new Mock<IBrowserConfigRepositoryOutboundPort>();
-            _mockBrowserFactory = new Mock<IBrowserFactoryOutboundPort>();
-            _mockEdgeBrowser = new Mock<IBrowserOutboundPort>();
+            _mockStartupService = new Mock<IOutboundPortBrowserConfigRepository>();
+            _mockBrowserFactory = new Mock<IOutboundPortBrowserFactory>();
+            _mockEdgeBrowser = new Mock<IOutboundPortBrowser>();
 
             // Standard-Setup: Wenn die Factory nach Edge gefragt wird, liefern wir unseren Mock zur�ck
             _mockBrowserFactory

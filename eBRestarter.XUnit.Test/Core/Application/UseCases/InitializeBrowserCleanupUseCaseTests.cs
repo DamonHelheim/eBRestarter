@@ -23,7 +23,7 @@ public class InitializeBrowserCleanupUseCaseTests
             Browser = browser
         };
 
-        var mockConfigService = new Mock<IEVisitorConfigRepositoryOutboundPort>();
+        var mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
         mockConfigService.Setup(s => s.LoadConfig()).Returns(config);
 
         var sut = new InitializeBrowserCleanupUseCase(mockConfigService.Object);

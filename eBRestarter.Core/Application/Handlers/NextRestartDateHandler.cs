@@ -1,4 +1,4 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Handlers;
+﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 using eBRestarter.Core.Domain.Handlers;
 
 namespace eBRestarter.Core.Application.Handlers;

@@ -1,8 +1,6 @@
 using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using Moq;
 using Shouldly;
@@ -11,6 +9,7 @@ using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
 {
@@ -21,16 +20,16 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
     /// </summary>
     public class SystemInformationProviderTests
     {
-        private readonly Mock<IHardwareInfoProviderOutboundPort> _mockHardwareService;
-        private readonly Mock<IOsEditionProviderOutboundPort> _mockOsEditionService;
-        private readonly Mock<ISystemInfoProviderOutboundPort> _mockSystemInfoService;
+        private readonly Mock<IOutboundPortHardwareInfoProvider> _mockHardwareService;
+        private readonly Mock<IOutboundPortOsEditionProvider> _mockOsEditionService;
+        private readonly Mock<IOutboundPortSystemInfoProvider> _mockSystemInfoService;
         private readonly SystemInformationProvider _sut;
 
         public SystemInformationProviderTests()
         {
-            _mockHardwareService = new Mock<IHardwareInfoProviderOutboundPort>();
-            _mockOsEditionService = new Mock<IOsEditionProviderOutboundPort>();
-            _mockSystemInfoService = new Mock<ISystemInfoProviderOutboundPort>();
+            _mockHardwareService = new Mock<IOutboundPortHardwareInfoProvider>();
+            _mockOsEditionService = new Mock<IOutboundPortOsEditionProvider>();
+            _mockSystemInfoService = new Mock<IOutboundPortSystemInfoProvider>();
 
             _sut = new SystemInformationProvider(
                 _mockHardwareService.Object,

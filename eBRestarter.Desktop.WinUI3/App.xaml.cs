@@ -1,9 +1,8 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Extensions.DependencyInjections;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
+using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;
 using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
@@ -11,6 +10,7 @@ using eBRestarter.Desktop.WinUI3.Providers;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Utilities;
 using eBRestarter.Infrastructure.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,9 +20,6 @@ using Microsoft.Windows.Globalization;
 using System;
 using System.Globalization;
 using System.Threading;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Desktop.WinUI3.Utilities;
 
 
 namespace eBRestarter.Desktop.WinUI3;
@@ -85,7 +82,7 @@ public partial class App : Application
         try
         {
             launchConfig = AppHost!.Services.GetRequiredService<IInboundPortStartupConfigProvider>().RetrieveStartupPreferences();
-            _ = AppHost!.Services.GetRequiredService<IInitializeBrowserCleanupUseCase>().ExecuteAsync();
+            _ = AppHost!.Services.GetRequiredService<IUseCaseInitializeBrowserCleanup>().ExecuteAsync();
             string languageCode = launchConfig.LanguageCode;
 
             ApplicationLanguages.PrimaryLanguageOverride = languageCode;
@@ -103,7 +100,7 @@ public partial class App : Application
 
         try
         {
-            var restartScheduler = AppHost!.Services.GetRequiredService<IComputerRestartService>();
+            var restartScheduler = AppHost!.Services.GetRequiredService<IInboundPortComputerRestartService>();
             restartScheduler.StartScheduler();
         }
         catch (Exception ex)
