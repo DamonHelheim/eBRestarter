@@ -12,7 +12,7 @@ This project was built to demonstrate professional-level competency in modern C#
 
 ## Architecture
 
-The application is structured using **Ports and Adapters (Hexagonal Architecture)** / **Clean Architecture**, separating the core business rules from infrastructure and UI concerns.
+The application is structured using **Ports and Adapters (Hexagonal Architecture)** / **Clean Architecture**, separating the core business rules from infrastructure and UI concerns. Following modern DDD and SOLID principles, all layers clearly distinguish their data structures using explicit **Object Archetypes** (`DTOs`, `Records`, `ObservableModels`, and `TypedErrors`).
 
 ```mermaid
 graph LR
@@ -20,59 +20,74 @@ graph LR
     subgraph Driving [Driving Adapters : eBRestarter.Desktop.WinUI3]
         WinUI3_UI[UI Components\nPages, Dialogs, UserControls]
         WinUI3_VM[ViewModels\nCommunityToolkit.Mvvm]
-        WinUI3_Host[App Host & Background Services\nMicrosoft.Extensions.Hosting]
+        WinUI3_Nav[Navigation & Handlers\nWinUIFrameNavigator, Handlers]
+        WinUI3_Arch[Presentation Archetypes\nObservableModel, SignalDTO, UIOptionDTO]
         
         WinUI3_UI --> WinUI3_VM
+        WinUI3_VM --> WinUI3_Nav
     end
 
     %% Application Core (Hexagon)
     subgraph Core [Application Core : eBRestarter.Core]
-        subgraph Inbound [Inbound Ports]
-            UseCases[Application Use Cases\ne.g., ManageRestarterCycle]
-            Validators[Validators\nFluentValidation]
+        subgraph Inbound [Inbound Ports : Ports.Inbound.Interfaces]
+            UseCases[Application Use Cases\nManageRestarterCycle, ConfigureAutoLogon]
+            InboundServices[Application Services & Handlers\nComputerRestartService]
+            Validators[Request Validators\nFluentValidation]
         end
 
-        subgraph Domain [Domain Layer]
+        subgraph Domain [Domain Layer : Domain]
             Entities[Rich Domain Entities\nAppConfig, Computer, BrowserConfig]
-            Rules[Domain Services & Enums]
+            Rules[Domain Services & Value Objects]
         end
 
-        subgraph Outbound [Outbound Ports]
-            Interfaces[Interfaces\ne.g., IBrowserService, IApiAdapter]
+        subgraph Outbound [Outbound Ports : Ports.Outbound.Interfaces]
+            OutInterfaces[Categorized Outbound Contracts\nAPI, Browser, Config, OS, Security, Update]
+        end
+        
+        subgraph CoreArch [Core Archetypes : ObjectArchetypes]
+            CoreDTOs[Immutable Snapshots & DTO Records]
+            TypedErrors[Domain Marker Errors\ne.g., ProcessConflictError]
         end
         
         UseCases -. Validates Request .-> Validators
         UseCases --> Domain
-        UseCases --> Interfaces
+        UseCases --> OutInterfaces
     end
 
     %% Secondary Adapters (Driven)
-    subgraph Driven [Driven Adapters : eBRestarter.Infrastructure]
-        Infra_OS[Windows OS Facades\nP/Invoke, Registry]
-        Infra_Browser[Browser Automation\nChromium, Firefox]
-        Infra_API[REST API Clients\nRestSharp]
-        Infra_Config[Configuration Persistence\nJSON]
-        Infra_Logs[Structured Logging\nSerilog]
+    subgraph Driven [Driven Adapters : eBRestarter.Infrastructure.Adapters.Outbound]
+        Infra_OS[Windows OS Adapters\nRegistry, P/Invoke, FileSystem, ProcessControl]
+        Infra_Browser[Browser Automation Adapters\nChromium, Firefox, Discovery]
+        Infra_API[REST API Adapters\nEVisitorApiProvider via RestSharp]
+        Infra_Config[Configuration Persistence\nJSON & Encrypted Decorators]
+        Infra_Logs[Structured Logging\nMicrosoft.Extensions.Logging / Serilog]
     end
 
     %% Flow
     WinUI3_VM == Invokes \n (FluentResults) ==> UseCases
-    WinUI3_Host == Schedules ==> UseCases
     
-    Infra_OS -. Implements .-> Interfaces
-    Infra_Browser -. Implements .-> Interfaces
-    Infra_API -. Implements .-> Interfaces
-    Infra_Config -. Implements .-> Interfaces
-    Infra_Logs -. Implements .-> Interfaces
+    Infra_OS -. Implements .-> OutInterfaces
+    Infra_Browser -. Implements .-> OutInterfaces
+    Infra_API -. Implements .-> OutInterfaces
+    Infra_Config -. Implements .-> OutInterfaces
+    Infra_Logs -. Implements .-> OutInterfaces
 ```
 
-### Key Architectural Decisions
+### Key Architectural Decisions & Structure
 
-1. **Clean Architecture & Dependency Inversion:** The Core project has zero dependencies on the UI or Infrastructure. All OS-level interactions (Registry, Process Management, File System) are abstracted behind interfaces in the Application layer and implemented in the Infrastructure layer.
-2. **Rich Domain Model:** Configuration settings (`AppConfig`, `Computer`, `BrowserConfig`) are modeled as Domain Entities with encapsulated state and built-in business logic (e.g., calculating next restart dates).
-3. **Result Pattern:** The Application layer uses `FluentResults` to avoid exception-driven control flow. Use Cases return `Result<T>` instead of throwing exceptions, ensuring robust error handling.
-4. **Validation:** `FluentValidation` is used to validate all Use Case requests before execution.
-5. **MVVM Pattern:** The WinUI 3 frontend strictly adheres to MVVM, utilizing the `CommunityToolkit.Mvvm` for source-generated properties and commands. God classes have been refactored into smaller, focused ViewModels.
+1. **Strict Hexagonal Separation (`Ports` & `Adapters`):**
+   - **Inbound Ports (`eBRestarter.Core.Application.Ports.Inbound.Interfaces`):** Define the entry points into the core business logic (`UseCases`, `Services`, `Handlers`, `Providers`, `Validators`).
+   - **Outbound Ports (`eBRestarter.Core.Application.Ports.Outbound.Interfaces`):** Define modular interfaces categorized by domain capability (`API`, `Browser`, `Config`, `OperatingSystem`, `Security`, `Update`).
+   - **Driven Adapters (`eBRestarter.Infrastructure.Adapters.Outbound`):** Provide concrete implementations for each outbound port (`WindowsOS`, `Browsers`, `API`, `Http`, `Logging`).
+2. **Explicit Object Archetypes (`ObjectArchetypes/`):**
+   Instead of mixing arbitrary data classes, models across all layers are structured into semantic archetypes (detailed in `Csharp_Models_Vergleich.md`):
+   - **Immutable Snapshots / DTO Records:** Positional and `init`-only records used for data transfer across boundaries.
+   - **Observable UI Models:** Presentation models inheriting from `ObservableObject` (`[ObservableProperty]`) in WinUI 3.
+   - **Signal DTOs / Event Messages:** Lightweight records used for decoupled ViewModel pub-sub communication (`WeakReferenceMessenger`).
+   - **Typed Errors / Marker Types:** Strongly-typed errors (such as `ProcessConflictError`) enabling clean C# pattern matching instead of string parsing.
+3. **Rich Domain Model:** Configuration settings (`AppConfig`, `Computer`, `BrowserConfig`) are modeled as encapsulated Domain Entities with rich domain behavior.
+4. **Railway Oriented / Result Pattern:** The Application layer uses `FluentResults` (`Result<T>`) across all Use Cases and Adapters, eliminating fragile exception-driven flow control.
+5. **Clean Presentation Layer:** The WinUI 3 desktop UI strictly adheres to MVVM, delegating navigation to explicit navigators (`WinUIFrameNavigator`) and organizing UI-specific options and messages into presentation archetypes.
 
 ## Tech Stack
 
