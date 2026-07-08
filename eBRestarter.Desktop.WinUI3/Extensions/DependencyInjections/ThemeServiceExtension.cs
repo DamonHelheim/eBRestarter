@@ -1,4 +1,4 @@
-using eBRestarter.Desktop.WinUI3.Services;
+using eBRestarter.Desktop.WinUI3.Handler;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +11,7 @@ public static class ThemeServiceExtension
 {
     public static IServiceCollection AddThemeHandler(this IServiceCollection services)
     {
-        services.AddSingleton<IThemeService, ThemeService>();
+        services.AddSingleton<IThemeHandler, ThemeHandler>();
         return services;
     }
 }

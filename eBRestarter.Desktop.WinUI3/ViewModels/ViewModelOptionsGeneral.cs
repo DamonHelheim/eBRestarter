@@ -7,7 +7,6 @@ using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
@@ -21,6 +20,9 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Desktop.WinUI3.Enums;
+using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {
@@ -34,13 +36,13 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
         private readonly IUseCaseConfigureAutoLogon _configureAutoLogonUseCase;
         private readonly IDialogService _dialogService;
         private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
-        private readonly ILanguageService _languageService;
+        private readonly ILanguageHandler _languageService;
         private readonly IInboundPortLocalizationProvider _localizationService;
         private readonly IUseCaseManageApplicationUpdates _manageApplicationUpdatesUseCase;
         private readonly IOutboundPortOsProcessControl _osProcessControlPort;
         private readonly IOutboundPortOsAutoLogonRepository _osAutoLogonPort;
         private readonly IOutboundPortSystemInfoProvider _windowsSystemInfo;
-        private readonly IThemeService _themeService;
+        private readonly IThemeHandler _themeService;
         private readonly IUseCaseToggleAppAutoStart _toggleAppAutoStartUseCase;
         private readonly IUIOptionsProvider _uiOptionsService;
 
@@ -88,9 +90,9 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels
             IUseCaseToggleAppAutoStart toggleAppAutoStartUseCase,
             IUseCaseManageApplicationUpdates manageApplicationUpdatesUseCase,
             IOutboundPortOsProcessControl osProcessControlPort, IOutboundPortOsAutoLogonRepository osAutoLogonPort, IOutboundPortSystemInfoProvider windowsSystemInfo,
-            IThemeService themeService,
+            IThemeHandler themeService,
             IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
-            ILanguageService languageService,
+            ILanguageHandler languageService,
             IInboundPortLocalizationProvider LocalizationProvider,
             IUIOptionsProvider uiOptionsService,
             IInboundPortNextRestartDateHandler nextRestartDateHandler,

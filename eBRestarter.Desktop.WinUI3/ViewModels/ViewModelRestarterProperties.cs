@@ -5,9 +5,6 @@ using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Domain.Entities;
-using eBRestarter.Desktop.WinUI3.Messages;
-using eBRestarter.Core.Application.Models;
-using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
@@ -23,6 +20,9 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Common.Statics;
+using eBRestarter.Core.Application.ObjectArchetypes.Models;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 

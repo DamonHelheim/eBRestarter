@@ -1,6 +1,5 @@
 using eBRestarter.Infrastructure.Adapters.Http;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Models.Records;
 using Moq;
 using Moq.Protected;
 using Shouldly;
@@ -14,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
 namespace eBRestarter.Tests.Infrastructure.Handlers
 {

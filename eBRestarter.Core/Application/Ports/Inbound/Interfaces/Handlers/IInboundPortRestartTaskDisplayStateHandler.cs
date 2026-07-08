@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.ImmutableSnapshot;
 using eBRestarter.Core.Domain.Entities;
 
 namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;

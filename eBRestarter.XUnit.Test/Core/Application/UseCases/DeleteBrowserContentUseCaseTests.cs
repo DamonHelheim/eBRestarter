@@ -8,7 +8,6 @@ using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
 using Moq;
 using Shouldly;
 using System;
@@ -17,11 +16,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Application.Models;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.Common.TypedError;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 {

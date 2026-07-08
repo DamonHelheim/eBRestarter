@@ -2,7 +2,6 @@
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {

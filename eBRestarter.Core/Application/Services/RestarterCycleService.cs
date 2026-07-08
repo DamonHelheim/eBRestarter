@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Handlers.Interfaces;
-using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
 using eBRestarter.Core.Application.Ports.Inbound.Services;

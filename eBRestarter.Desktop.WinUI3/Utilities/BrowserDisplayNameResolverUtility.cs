@@ -1,4 +1,5 @@
 ﻿using eBRestarter.Core.Application.Enums;
+using eBRestarter.Desktop.WinUI3.Utilities.Interfaces;
 
 namespace eBRestarter.Desktop.WinUI3.Utilities;
 

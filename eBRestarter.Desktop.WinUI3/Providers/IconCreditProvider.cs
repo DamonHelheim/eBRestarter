@@ -1,6 +1,6 @@
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
-using eBRestarter.Desktop.WinUI3.Models;
 using System.Collections.Generic;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO;
 
 namespace eBRestarter.Desktop.WinUI3.Providers;
 

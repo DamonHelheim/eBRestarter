@@ -1,5 +1,5 @@
-using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
+using eBRestarter.Desktop.WinUI3.Enums;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Models.FormModels;
 using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.Services.Interfaces;
