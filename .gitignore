@@ -366,3 +366,6 @@ FodyWeavers.xsd
 *.md
 !README.md
 !README_Technical.md
+
+# Text files
+*.txt
