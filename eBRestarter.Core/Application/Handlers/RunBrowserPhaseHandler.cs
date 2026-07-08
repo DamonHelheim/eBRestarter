@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Handlers.Interfaces;
-using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;

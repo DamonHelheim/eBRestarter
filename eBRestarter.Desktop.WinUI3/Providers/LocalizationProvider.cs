@@ -1,5 +1,6 @@
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System.Collections.Generic;

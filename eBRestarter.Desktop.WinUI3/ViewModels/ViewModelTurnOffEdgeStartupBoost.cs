@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -9,6 +8,7 @@ using Windows.ApplicationModel.DataTransfer;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Desktop.WinUI3.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 

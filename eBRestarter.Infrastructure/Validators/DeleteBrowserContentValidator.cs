@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using FluentValidation;
 
 namespace eBRestarter.Infrastructure.Adapters.Validators;

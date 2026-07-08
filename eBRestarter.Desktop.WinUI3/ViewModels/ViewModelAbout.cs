@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using System.Collections.ObjectModel;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 

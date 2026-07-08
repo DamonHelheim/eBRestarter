@@ -1,6 +1,7 @@
 using eBRestarter.Infrastructure.Api.Interfaces;
 using eBRestarter.Infrastructure.Enums;
 using eBRestarter.Infrastructure.Models.Network;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using RestSharp.Authenticators;

@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Models;
+using eBRestarter.Core.Application.ObjectArchetypes.Models;
 
 namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 

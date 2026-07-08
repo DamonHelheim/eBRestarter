@@ -1,9 +1,10 @@
 using eBRestarter.Core.Application.Extensions.DependencyInjections;
-using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;
+using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Providers;
@@ -11,6 +12,7 @@ using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Utilities;
+using eBRestarter.Desktop.WinUI3.Utilities.Interfaces;
 using eBRestarter.Infrastructure.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,7 +63,7 @@ public partial class App : Application
 
              services.AddViewModels();
 
-             services.AddSingleton<ILanguageService, LanguageService>();
+             services.AddSingleton<ILanguageHandler, LanguageHandler>();
              services.AddSingleton<IInboundPortLocalizationProvider, LocalizationProvider>();
              services.AddSingleton<IUIOptionsProvider>(sp => (LocalizationProvider)sp.GetRequiredService<IInboundPortLocalizationProvider>());
              services.AddSingleton<IIconCreditProvider, IconCreditProvider>();
@@ -113,7 +115,7 @@ public partial class App : Application
 
         try
         {
-            var themeService = AppHost!.Services.GetRequiredService<IThemeService>();
+            var themeService = AppHost!.Services.GetRequiredService<IThemeHandler>();
             string themeToSet = launchConfig != null && !string.IsNullOrEmpty(launchConfig.ThemeName)
                 ? launchConfig.ThemeName
                 : "Light";

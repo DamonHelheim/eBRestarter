@@ -3,12 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Desktop.WinUI3.Messages;
-using eBRestarter.Core.Application.Models;
-using eBRestarter.Desktop.WinUI3.Models.Enums;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -21,6 +17,11 @@ using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Desktop.WinUI3.Enums;
+using eBRestarter.Desktop.WinUI3.Utilities.Interfaces;
+using eBRestarter.Core.Application.ObjectArchetypes.Models;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -43,7 +44,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     private readonly IDialogService _dialogService;
 
     private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
-    private readonly eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
+    private readonly IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
 
     private readonly IInboundPortLocalizationProvider _localizationService;
 
@@ -102,7 +103,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         IDialogService dialogService,
         IInboundPortLocalizationProvider LocalizationProvider,
         IInboundPortRestartTaskDisplayStateHandler restartTaskDisplayStateHandler,
-        IOutboundPortBrowserDiscoveryProvider browserService, eBRestarter.Desktop.WinUI3.Utilities.IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
+        IOutboundPortBrowserDiscoveryProvider browserService, IBrowserDisplayNameResolverUtility browserDisplayNameResolver)
     {
         ArgumentNullException.ThrowIfNull(restarterCycleService);
         ArgumentNullException.ThrowIfNull(configService);

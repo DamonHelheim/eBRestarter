@@ -1,4 +1,5 @@
 ﻿using eBRestarter.Infrastructure.Models.Network;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 namespace eBRestarter.Infrastructure.Api.Interfaces;
 

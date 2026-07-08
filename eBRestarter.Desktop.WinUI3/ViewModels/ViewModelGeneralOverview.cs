@@ -1,10 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Desktop.WinUI3.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
@@ -20,6 +18,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 

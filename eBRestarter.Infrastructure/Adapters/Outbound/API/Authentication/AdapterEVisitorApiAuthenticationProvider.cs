@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Models.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Authentication;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Api.Interfaces;
