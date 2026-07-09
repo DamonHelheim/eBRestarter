@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Enums;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;

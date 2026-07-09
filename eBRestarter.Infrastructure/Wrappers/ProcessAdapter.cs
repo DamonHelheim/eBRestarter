@@ -1,15 +1,7 @@
 using System.Diagnostics;
 
-namespace eBRestarter.Infrastructure.Adapters.Wrapper;
+namespace eBRestarter.Infrastructure.Wrappers;
 
-/// <summary>
-/// Implementierung von <see cref="IProcess"/>, die eine nativ ausgeführte <see cref="Process"/>-Instanz kapselt.
-/// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): KEIN ADAPTER (Fall A - Infrastruktur-Hilfsklasse / Wrapper)</strong><br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 1.1 des Leitfadens ist diese Klasse trotz des Suffixes „Adapter“ <strong>kein echter Adapter</strong> im Sinne der hexagonalen Architektur, da sie kein Port-Interface aus dem Application Core implementiert. Sie dient rein als technischer Wrapper zur Entkopplung von OS-Prozessen innerhalb der Infrastruktur.<br/>
-/// - <strong>Aktion:</strong> Wurde aus <c>Infrastructure/Adapters/Wrapper</c> in den Ordner <c>Infrastructure/Wrappers</c> verschoben.
-/// </para>
-/// </summary>
 public partial class ProcessAdapter(Process process) : IProcess
 {
     private bool _disposedValue;

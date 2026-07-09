@@ -1,5 +1,5 @@
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using System.DirectoryServices.AccountManagement;
 

@@ -1,6 +1,6 @@
+using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using Microsoft.UI.Xaml;

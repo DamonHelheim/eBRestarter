@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
-namespace eBRestarter.Core.Application.Ports.Outbound;
+namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces;
 
 /// <summary>
 /// Port: Driven Port (Outbound) for retrieving external E-Visitor API data (IP info and earnings) via HTTP.

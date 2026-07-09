@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Domain.Entities;
@@ -7,6 +6,7 @@ using Shouldly;
 using Xunit;
 using System;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.XUnit.Test.Core.Application.UseCases;
 

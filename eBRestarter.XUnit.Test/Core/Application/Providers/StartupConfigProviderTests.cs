@@ -2,11 +2,11 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Domain.Entities;
 using Moq;
 using Shouldly;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.XUnit.Test.Core.Application.Providers;
 

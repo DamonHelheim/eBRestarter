@@ -1,5 +1,5 @@
 ﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.UseCases;
 

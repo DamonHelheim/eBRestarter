@@ -1,10 +1,10 @@
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Infrastructure.Repositories.Config;
 

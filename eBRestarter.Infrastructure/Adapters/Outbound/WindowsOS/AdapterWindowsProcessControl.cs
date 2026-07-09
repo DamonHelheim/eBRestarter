@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Wrapper;
 using eBRestarter.Infrastructure.Wrappers;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -64,12 +63,12 @@ public sealed partial class AdapterWindowsProcessControl(ILogger<AdapterWindowsP
     /// <summary>
     /// Starts an MSI installer (via msiexec.exe) and logs its text output.
     /// </summary>
-    /// <param name="msiFilePath">The path to the .msi file.</param>
+    /// <param name="installerPath">The path to the .msi file.</param>
     /// <remarks>
     /// <b>Warning:</b> This method runs <i>synchronously</i> and blocks the calling thread
     /// until the installation is complete in order to fully read the logs (StdOut/StdErr).
     /// </remarks>
-    public void RunInstaller(string msiFilePath)
+    public void RunInstaller(string installerPath)
     {
         // SonarQube Fix: Get the absolute path to msiexec.exe from the System32 folder
         // to prevent path hijacking via environment variables.
@@ -79,7 +78,7 @@ public sealed partial class AdapterWindowsProcessControl(ILogger<AdapterWindowsP
         var startInfo = new ProcessStartInfo
         {
             FileName = msiExecPath, // <-- We are now using the absolutely secure path here!
-            Arguments = $"/i \"{msiFilePath}\"",
+            Arguments = $"/i \"{installerPath}\"",
 
             // UseShellExecute = false is strictly required to redirect output streams.
             UseShellExecute = false,
@@ -99,7 +98,7 @@ public sealed partial class AdapterWindowsProcessControl(ILogger<AdapterWindowsP
             {
                 if (_logger.IsEnabled(LogLevel.Warning))
                 {
-                    _logger.LogWarning("MSI process could not be started (null): {Path}", msiFilePath);
+                    _logger.LogWarning("MSI process could not be started (null): {Path}", installerPath);
                 }
                 return;
             }
@@ -123,7 +122,7 @@ public sealed partial class AdapterWindowsProcessControl(ILogger<AdapterWindowsP
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error starting the MSI installer: {Path}", msiFilePath);
+            _logger.LogError(ex, "Error starting the MSI installer: {Path}", installerPath);
         }
     }
 

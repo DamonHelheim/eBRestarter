@@ -1,6 +1,6 @@
 ﻿using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.Providers;
 

@@ -1,16 +1,15 @@
 using eBRestarter.Core.Application.Extensions.DependencyInjections;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
-using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;
+using eBRestarter.Desktop.WinUI3.Handler;
 using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.Helpers;
 using eBRestarter.Desktop.WinUI3.Helpers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Providers;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
-using eBRestarter.Desktop.WinUI3.Services;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.Utilities;
 using eBRestarter.Desktop.WinUI3.Utilities.Interfaces;
 using eBRestarter.Infrastructure.Extensions.DependencyInjection;
@@ -130,11 +129,3 @@ public partial class App : Application
         MainWindoweBRestarter.Activate();
     }
 }
-
-
-
-
-
-
-
-

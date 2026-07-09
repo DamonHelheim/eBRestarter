@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
-namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) encapsulating Windows file system I/O operations.

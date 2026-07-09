@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Enums;
 
-namespace eBRestarter.Core.Application.Ports.Outbound.Authentication;
+namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 
 /// <summary>
 /// Port: Driven Port (Outbound) for validating user credentials against Windows Active Directory / SAM account database.

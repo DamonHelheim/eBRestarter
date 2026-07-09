@@ -1,16 +1,7 @@
-using eBRestarter.Infrastructure.Wrappers;
 using System.Diagnostics;
 
-namespace eBRestarter.Infrastructure.Adapters.Wrapper;
+namespace eBRestarter.Infrastructure.Wrappers;
 
-/// <summary>
-/// Implementierung von <see cref="IProcessWrapper"/>, die statische <see cref="Process"/>-Methoden kapselt.
-/// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): KEIN ADAPTER (Fall A - Infrastruktur-Hilfsklasse / Thin Wrapper)</strong><br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 1.1 des Leitfadens ist diese Klasse <strong>kein Adapter</strong> im Sinne der hexagonalen Architektur, da sie kein Port-Interface aus dem Application Core implementiert. Sie dient als reiner technischer "Thin Wrapper" für Unittests in der Infrastruktur.<br/>
-/// - <strong>Aktion:</strong> Wurde aus <c>Infrastructure/Adapters/Wrapper</c> in den Ordner <c>Infrastructure/Wrappers</c> verschoben.
-/// </para>
-/// </summary>
 public sealed class ProcessWrapper : IProcessWrapper
 {
     /// <summary>

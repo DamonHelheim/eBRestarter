@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
@@ -9,6 +8,7 @@ using Shouldly;
 using System;
 using Xunit;
 using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.ScheduleBrowserCleanup
 {

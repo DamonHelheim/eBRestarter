@@ -1,7 +1,6 @@
-namespace eBRestarter.Core.Application.Extensions;
-
-using System;
 using System.Globalization;
+
+namespace eBRestarter.Core.Application.Extensions;
 
 public static class Int64Extensions
 {

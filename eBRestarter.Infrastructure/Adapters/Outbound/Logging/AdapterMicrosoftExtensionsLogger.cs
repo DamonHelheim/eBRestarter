@@ -12,11 +12,15 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.Logging;
 /// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt und einen Outbound Port implementiert, um externes Logging zu kapseln.
 /// </para>
 /// </summary>
+#pragma warning disable S6672 // Generic logger injection should match enclosing type
 public sealed class AdapterMicrosoftExtensionsLogger<TCategory>(ILogger<TCategory> logger) : IOutboundPortApplicationLogger<TCategory>
+#pragma warning restore S6672 // Generic logger injection should match enclosing type
 {
-    public void LogInformation(string message, params object?[] args) => logger.LogInformation(message, args);
+    public ILogger<TCategory> Logger { get; } = logger;
 
-    public void LogWarning(string message, params object?[] args) => logger.LogWarning(message, args);
+    public void LogInformation(string message, params object?[] args) => Logger.LogInformation(message, args);
 
-    public void LogError(Exception? exception, string message, params object?[] args) => logger.LogError(exception, message, args);
+    public void LogWarning(string message, params object?[] args) => Logger.LogWarning(message, args);
+
+    public void LogError(Exception? exception, string message, params object?[] args) => Logger.LogError(exception, message, args);
 }

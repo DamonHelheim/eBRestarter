@@ -1,12 +1,12 @@
 ﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Infrastructure.Adapters.Browsers;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {

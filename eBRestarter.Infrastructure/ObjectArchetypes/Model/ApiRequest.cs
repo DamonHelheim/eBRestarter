@@ -1,4 +1,4 @@
-﻿namespace eBRestarter.Infrastructure.Models.Network;
+﻿namespace eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 public sealed class ApiRequest
 {

@@ -1,4 +1,4 @@
-namespace eBRestarter.Desktop.WinUI3.Services.Interfaces;
+namespace eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 
 public interface IThemeHandler
 {

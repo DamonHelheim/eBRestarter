@@ -1,8 +1,8 @@
-using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Application.Ports.Inbound.Services;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.Services;
 

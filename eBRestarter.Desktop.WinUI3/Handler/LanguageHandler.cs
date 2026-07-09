@@ -1,7 +1,7 @@
 using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using Microsoft.Windows.Globalization;
 
-namespace eBRestarter.Desktop.WinUI3.Services;
+namespace eBRestarter.Desktop.WinUI3.Handler;
 
 public sealed class LanguageHandler : ILanguageHandler
 {
