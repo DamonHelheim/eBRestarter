@@ -5,7 +5,6 @@ using eBRestarter.Infrastructure.Adapters.Validators;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
@@ -27,6 +26,7 @@ using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Common.Statics;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.XUnit.Test.Core.Application.Services
 {

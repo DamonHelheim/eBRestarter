@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Infrastructure.Adapters.RestSharp;
 using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Application.Models.Records;
@@ -18,7 +17,8 @@ using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Infrastructure.Api.Interfaces;
 using eBRestarter.Infrastructure.Adapters.Outbound.API;
-using eBRestarter.Infrastructure.Models.Network;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters
 {

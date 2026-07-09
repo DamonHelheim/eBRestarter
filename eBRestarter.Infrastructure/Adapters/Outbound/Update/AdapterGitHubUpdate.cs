@@ -1,16 +1,15 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Update;
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.Models.Network;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Text.Json;
 
-namespace eBRestarter.Infrastructure.Adapters.Update;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.Update;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) for checking and processing application updates via GitHub releases.

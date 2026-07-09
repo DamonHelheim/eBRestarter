@@ -1,6 +1,5 @@
 ﻿using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Enums;
-using eBRestarter.Infrastructure.Adapters.Browsers;
 using eBRestarter.Infrastructure.Factories;
 using Microsoft.Extensions.Logging;
 using Moq;

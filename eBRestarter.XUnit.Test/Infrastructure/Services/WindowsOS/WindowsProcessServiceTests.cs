@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Wrapper;
 using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using Microsoft.Extensions.Logging;
 using Moq;

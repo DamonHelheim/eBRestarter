@@ -1,6 +1,5 @@
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
-using eBRestarter.Infrastructure.Adapters.Browsers;
 using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 using Microsoft.Extensions.DependencyInjection;
 

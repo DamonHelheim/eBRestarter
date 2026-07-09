@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using FluentValidation;
 
-namespace eBRestarter.Infrastructure.Adapters.Validators;
+namespace eBRestarter.Infrastructure.Validators;
 
 /// <summary>
 /// Validierungsregel für <see cref="ManageRestarterCycleRequest"/>.
@@ -11,7 +11,7 @@ namespace eBRestarter.Infrastructure.Adapters.Validators;
 /// - <strong>Aktion:</strong> Wurde aus <c>Infrastructure/Adapters/Validators</c> in den Ordner <c>Infrastructure/Validators</c> verschoben.
 /// </para>
 /// </summary>
-public sealed class ManageRestarterCycleValidator : AbstractValidator<ManageRestarterCycleRequest>
+public sealed partial class ManageRestarterCycleValidator : AbstractValidator<ManageRestarterCycleRequest>
 {
     public ManageRestarterCycleValidator()
     {

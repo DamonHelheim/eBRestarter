@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Repository;
+using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Repositories;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {

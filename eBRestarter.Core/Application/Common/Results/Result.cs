@@ -17,7 +17,7 @@ public class Result
 
     public static Result Ok() => new([]);
 
-    public static Result<TValue> Ok<TValue>(TValue value) => new(value, Array.Empty<Error>());
+    public static Result<TValue> Ok<TValue>(TValue value) => new(value, []);
 
     public static FailedResult Fail(string errorMessage) => new([new Error(errorMessage)]);
 

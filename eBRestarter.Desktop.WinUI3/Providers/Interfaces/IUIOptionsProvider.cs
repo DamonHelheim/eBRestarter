@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;
 
 namespace eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 

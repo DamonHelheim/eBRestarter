@@ -10,7 +10,9 @@ namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 /// - <em>Architektur-Hinweis (Gelöst):</em> Der Name wurde von <c>IApplicationLoggerPort</c> auf <c>IApplicationLoggerOutboundPort</c> konform zum Leitfaden-Suffix aktualisiert.
 /// </para>
 /// </summary>
+#pragma warning disable S2326 // Unused type parameters should be removed
 public interface IOutboundPortApplicationLogger<out TCategory>
+#pragma warning restore S2326 // Unused type parameters should be removed
 {
     void LogInformation(string message, params object?[] args);
     void LogWarning(string message, params object?[] args);

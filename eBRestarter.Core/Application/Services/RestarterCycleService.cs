@@ -2,10 +2,10 @@ using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Handlers.Interfaces;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
-using eBRestarter.Core.Application.Ports.Inbound.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Domain.Handlers;
 
 namespace eBRestarter.Core.Application.Services;

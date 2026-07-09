@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace eBRestarter.Desktop.WinUI3.Models.UI;
+namespace eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
 
 /// <summary>
 /// UI display model for hardware specification (processor, graphics, RAM).

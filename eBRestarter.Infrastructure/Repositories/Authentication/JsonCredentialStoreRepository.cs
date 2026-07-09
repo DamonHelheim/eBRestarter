@@ -1,8 +1,8 @@
-﻿using eBRestarter.Core.Application.Ports.Outbound.Authentication;
+﻿using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using System.Text.Json;
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
 namespace eBRestarter.Infrastructure.Repositories.Authentication;
 

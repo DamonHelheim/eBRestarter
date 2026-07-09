@@ -1,8 +1,8 @@
-using eBRestarter.Core.Application.Ports.Outbound.Security;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace eBRestarter.Infrastructure.Adapters.WindowsOS.Security;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Security;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) for encrypting and decrypting strings using Windows DPAPI.

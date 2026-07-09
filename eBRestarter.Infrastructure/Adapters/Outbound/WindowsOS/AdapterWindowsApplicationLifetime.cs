@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 
-namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) managing Windows application shutdown and restart lifecycle.
@@ -13,10 +13,6 @@ namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
 /// </summary>
 public sealed class AdapterWindowsApplicationLifetime : IOutboundPortApplicationLifetime
 {
-    public AdapterWindowsApplicationLifetime()
-    {
-    }
-
     public void ExitApplication(int exitCode)
     {
         Environment.Exit(exitCode);

@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace eBRestarter.Desktop.WinUI3.Models.UI;
+namespace eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
 
 /// <summary>
 /// Display model for a network card entry in the UI (immutable-style record for list binding).

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
-namespace eBRestarter.Infrastructure.Adapters.Http;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.Http;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) for executing HTTP file downloads and network I/O.

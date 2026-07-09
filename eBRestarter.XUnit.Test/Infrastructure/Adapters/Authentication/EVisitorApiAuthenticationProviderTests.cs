@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Infrastructure.Api.Interfaces;
 using eBRestarter.Infrastructure.Enums;
-using eBRestarter.Infrastructure.Models.Network;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Adapters.Authentication
 {

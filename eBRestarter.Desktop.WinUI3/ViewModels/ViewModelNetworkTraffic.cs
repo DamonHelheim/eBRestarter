@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Desktop.WinUI3.Models.UI;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
 using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;

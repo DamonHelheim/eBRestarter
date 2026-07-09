@@ -1,6 +1,5 @@
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Adapters.Authentication;
-using eBRestarter.Core.Application.Ports.Outbound.Authentication;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Infrastructure.Repositories.Authentication;
@@ -9,6 +8,7 @@ using Shouldly;
 using System;
 using System.DirectoryServices.AccountManagement;
 using Xunit;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {

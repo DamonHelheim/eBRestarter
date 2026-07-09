@@ -7,7 +7,6 @@ public class NextRestartDateHandler(IRestartCalculationHandler restartCalculatio
 {
     private readonly IRestartCalculationHandler _restartCalculation = restartCalculationHandler;
 
-    /// <inheritdoc />
     public DateTime RetrieveNextRestartDate(int intervalDays, int restartClockTime) => _restartCalculation.RetrieveNextRestartDate(intervalDays, restartClockTime);
 }
 

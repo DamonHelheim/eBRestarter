@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
-namespace eBRestarter.Core.Application.Ports.Outbound.Authentication;
+namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 
 /// <summary>
 /// Port: Driven Port (Outbound) for verifying user API credentials against the remote E-Visitor web service via HTTP.

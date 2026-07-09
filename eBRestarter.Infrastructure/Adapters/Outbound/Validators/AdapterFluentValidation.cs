@@ -24,7 +24,8 @@ public sealed class AdapterFluentValidation<T>(IValidator<T> validator) : IInbou
             return ValidationResult.Success();
         }
 
-        var errors = result.Errors.Select(e => new ValidationError(e.ErrorMessage)).ToList();
+        var errors = result.Errors.ConvertAll(e => new ValidationError(e.ErrorMessage));
+
         return new ValidationResult(false, errors);
     }
 }

@@ -1,7 +1,6 @@
-using eBRestarter.Core.Application.Ports.Outbound;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 
-namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Provider) for deploying and locating browser extensions in Windows AppData.

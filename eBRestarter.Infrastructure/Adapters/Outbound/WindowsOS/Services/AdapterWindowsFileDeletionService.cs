@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace eBRestarter.Infrastructure.Adapters.WindowsOS;
+namespace eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Services;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) for deleting temporary files and browser cache folders on Windows.

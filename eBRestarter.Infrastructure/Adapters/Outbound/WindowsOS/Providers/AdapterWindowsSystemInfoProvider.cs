@@ -69,12 +69,9 @@ public sealed class AdapterWindowsSystemInfoProvider(ILogger<AdapterWindowsSyste
             return "-";
         }
 
-        if (!string.Equals(progIdHttp, progIdHttps, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(progIdHttp, progIdHttps, StringComparison.OrdinalIgnoreCase) && _logger.IsEnabled(LogLevel.Information))
         {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Different browsers detected for HTTP ({Http}) and HTTPS ({Https}).", progIdHttp, progIdHttps);
-            }
+            _logger.LogInformation("Different browsers detected for HTTP ({Http}) and HTTPS ({Https}).", progIdHttp, progIdHttps);
         }
 
         // 2. Mapping

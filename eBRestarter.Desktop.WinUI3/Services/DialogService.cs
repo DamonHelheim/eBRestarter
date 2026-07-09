@@ -145,7 +145,7 @@ public sealed class DialogService : IDialogService
         return await dialog.ShowAsync();
     }
 
-    private object CreateTitleContent(string title, DialogIcon icon)
+    private static object CreateTitleContent(string title, DialogIcon icon)
     {
         if (icon == DialogIcon.None) return title;
 

@@ -1,5 +1,5 @@
 using eBRestarter.Desktop.WinUI3.Handler;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;

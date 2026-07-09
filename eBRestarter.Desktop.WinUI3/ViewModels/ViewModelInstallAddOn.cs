@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using System;
 using System.Collections.ObjectModel;
 using System.Timers;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 

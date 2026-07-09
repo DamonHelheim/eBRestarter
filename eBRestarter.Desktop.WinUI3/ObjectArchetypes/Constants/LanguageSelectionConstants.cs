@@ -1,6 +1,7 @@
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;
 using System.Collections.ObjectModel;
 
-namespace eBRestarter.Desktop.WinUI3.Models.Constants;
+namespace eBRestarter.Desktop.WinUI3.ObjectArchetypes.Constants;
 
 public static class LanguageSelectionConstants
 {

@@ -3,7 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.Models;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -12,13 +18,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using eBRestarter.Desktop.WinUI3.Models;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
-using eBRestarter.Core.Application.ObjectArchetypes.Models;
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
-using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -96,10 +95,10 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
     public string HeaderTitleBrowser => _browserInfo.Name;
 
     /// <summary>Icon height for layout.</summary>
-    public string ImageSizeHeightBrowser => "32";
+    public static string ImageSizeHeightBrowser => "32";
 
     /// <summary>Icon width for layout.</summary>
-    public string ImageSizeWidthBrowser => "32";
+    public static string ImageSizeWidthBrowser => "32";
 
     /// <summary>Display symbol for install state: check mark if installed, ballot X otherwise.</summary>
     public string InstallStateGlyph => _browserInfo.IsInstalled
