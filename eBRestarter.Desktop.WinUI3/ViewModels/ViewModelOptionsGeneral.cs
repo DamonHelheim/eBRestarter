@@ -2,11 +2,18 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Extensions;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Inbound.Services;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Desktop.WinUI3.Enums;
+using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.Models;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Dispatching;
@@ -16,13 +23,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Desktop.WinUI3.Enums;
-using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
-using eBRestarter.Desktop.WinUI3.ObjectArchetypes.UIOptionDTO;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {

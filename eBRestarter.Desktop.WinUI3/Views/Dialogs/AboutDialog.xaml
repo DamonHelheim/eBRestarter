@@ -3,11 +3,11 @@
     x:Class="eBRestarter.Desktop.WinUI3.Views.Dialogs.AboutDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:DTOs="using:eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:eBRestarter.Desktop.WinUI3.Models"
     x:Uid="AboutDialog"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelAbout}"
     DefaultButton="Close"
@@ -59,7 +59,7 @@
 
                 <ItemsControl.ItemTemplate>
 
-                    <DataTemplate x:DataType="models:IconCredit">
+                    <DataTemplate x:DataType="DTOs:IconCredit">
 
                         <Grid Margin="0,5">
 

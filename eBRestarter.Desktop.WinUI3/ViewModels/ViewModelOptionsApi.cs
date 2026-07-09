@@ -1,15 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using eBRestarter.Core.Application.Ports.Outbound.Config;
-using eBRestarter.Core.Domain.Entities;
-using eBRestarter.Desktop.WinUI3.Messages;
-using eBRestarter.Desktop.WinUI3.Services.Interfaces;
-using System;
-using System.Threading.Tasks;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Config;
+using eBRestarter.Core.Domain.Entities;
 using eBRestarter.Desktop.WinUI3.Enums;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
+using eBRestarter.Desktop.WinUI3.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels
 {

@@ -10,7 +10,7 @@ using eBRestarter.Desktop.WinUI3.Models;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using eBRestarter.Infrastructure.Common.Statics;
-using eBRestarter.Infrastructure.Models.Config;
+using eBRestarter.Infrastructure.ObjectArchetypes.DTOs;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

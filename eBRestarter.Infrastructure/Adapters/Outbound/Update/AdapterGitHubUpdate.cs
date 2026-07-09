@@ -30,7 +30,7 @@ public sealed class AdapterGitHubUpdate(
     ILogger<AdapterGitHubUpdate> logger) : IOutboundPortUpdate
 {
     // Adjust these constants to match your target repository!
-    private const string RepoOwner = "DamonHelheim";
+    private const string RepoOwner = "NeoVelora";
     private const string RepoName = "eBRestarter";
 
     // GitHub API URL configured to query the absolute latest release package

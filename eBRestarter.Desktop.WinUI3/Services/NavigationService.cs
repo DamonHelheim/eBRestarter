@@ -1,4 +1,4 @@
-using eBRestarter.Desktop.WinUI3.Adapters;
+using eBRestarter.Desktop.WinUI3.Navigation;
 using eBRestarter.Desktop.WinUI3.Services.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Animation;
