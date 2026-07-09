@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<WindowsPackageType>None</WindowsPackageType>
+		<Platforms>AnyCPU;x64</Platforms>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="DTOs\**" />
+	  <Content Remove="DTOs\**" />
+	  <EmbeddedResource Remove="DTOs\**" />
+	  <None Remove="DTOs\**" />
+	  <Page Remove="DTOs\**" />
+	  <PRIResource Remove="DTOs\**" />
+	</ItemGroup>
+	<!--
+
+	 <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+	<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+	<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<WindowsPackageType>None</WindowsPackageType>
+	<Platforms>AnyCPU;x64</Platforms>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+  </PropertyGroup>
+	-->
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+    <PackageReference Include="RestSharp" Version="114.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.28.0.143324">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.9" />
+    <PackageReference Include="System.Management" Version="10.0.9" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eBRestarter.Core\eBRestarter.Core.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+﻿C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\package-lock.json
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\background.js
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\Icons\eBRestarter_Redirect_Off.png
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\Icons\eBRestarter_Redirect_Off_small.png
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\Icons\eBRestarter_Redirect_On.png
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\Icons\eBRestarter_Redirect_On_small.png
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\manifest.json
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\options.js
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\popup.html
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\popup.js
+C:\Users\Workstation\source\repos\eBRestarter\eBRestarter.TabRestarterExtension\TabRestarterExtension\tab_restarter_config.json

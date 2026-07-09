@@ -1,0 +1,490 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+	<LangVersion>preview</LangVersion>
+    <RootNamespace>eBRestarter.Desktop.WinUI3</RootNamespace>
+    <AssemblyName>eBRestarter</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <WinUISDKReferences>false</WinUISDKReferences>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <Nullable>enable</Nullable>
+	<ApplicationIcon>Assets\eB Restarter.ico</ApplicationIcon>
+    <SupportedUICultures>de-DE;en-US</SupportedUICultures>
+    <DefaultLanguage>en-US</DefaultLanguage>
+	<WindowsPackageType>None</WindowsPackageType>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Resources\Images\**" />
+    <EmbeddedResource Remove="Resources\Images\**" />
+    <None Remove="Resources\Images\**" />
+    <Page Remove="Resources\Images\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="Resources\Visuals\Icons\DarkTheme\download_dark_theme_old.png" />
+    <None Remove="Resources\Visuals\Icons\DarkTheme\globe_dark_theme.png" />
+    <None Remove="Resources\Visuals\Icons\Intersection\globe.png" />
+    <None Remove="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png" />
+    <None Remove="Resources\Visuals\Icons\LightTheme\globe.png" />
+    <None Remove="Resources\Visuals\Icons\LightTheme\globe_light_theme.png" />
+    <None Remove="Resources\Visuals\Images\EVisitorAddOnInfo.png" />
+    <None Remove="Views\Dialogs\AboutDialog.xaml" />
+    <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
+    <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
+    <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
+    <None Remove="Views\Dialogs\InstallAddOnInfoDialog.xaml" />
+    <None Remove="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml" />
+    <None Remove="Views\Pages\P_CommonOverview.xaml" />
+    <None Remove="Views\Pages\P_Infocenter.xaml" />
+    <None Remove="Views\Pages\P_Options.xaml" />
+    <None Remove="Views\Pages\P_RestarterProperties.xaml" />
+    <None Remove="Views\Pages\P_Settings.xaml" />
+    <None Remove="Views\UserControls\UC_AdditionalOptions.xaml" />
+    <None Remove="Views\UserControls\UC_AutomatedTasks.xaml" />
+    <None Remove="Views\UserControls\UC_Browser.xaml" />
+    <None Remove="Views\UserControls\UC_CommonOverview.xaml" />
+    <None Remove="Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
+    <None Remove="Views\UserControls\UC_EarningsAmount.xaml" />
+    <None Remove="Views\UserControls\UC_eVisitorUsername.xaml" />
+    <None Remove="Views\UserControls\UC_Infocenter.xaml" />
+    <None Remove="Views\UserControls\UC_InformationCardUrls.xaml" />
+    <None Remove="Views\UserControls\UC_InformationsCard.xaml" />
+    <None Remove="Views\UserControls\UC_InstalledBrowsers.xaml" />
+    <None Remove="Views\UserControls\UC_IPInformation.xaml" />
+    <None Remove="Views\UserControls\UC_Networktraffic.xaml" />
+    <None Remove="Views\UserControls\UC_Options.xaml" />
+    <None Remove="Views\UserControls\UC_PointsOutput.xaml" />
+    <None Remove="Views\UserControls\UC_RestartAgent.xaml" />
+    <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
+    <None Remove="Views\UserControls\UC_RestartTask.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Resources\Styles\Themes\DarkTheme - Kopieren.xaml" />
+    <Page Remove="Resources\Styles\Themes\DarkTheme.xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme - Kopieren (2).xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme - Kopieren.xaml" />
+    <Page Remove="Resources\Styles\Themes\LightTheme.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\SplashScreen.scale-200.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\LockScreenLogo.scale-200.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Square150x150Logo.scale-200.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Square44x44Logo.scale-200.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\eBRestarterLogo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Wide310x150Logo.scale-200.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Styles\Themes\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Styles\Themes\LightTheme.xaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\calendar_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\circle_with_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\clock_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\data-cleaning_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\download_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_circle-plus_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_clock-rotate-left_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\fa_whmcs_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\globe_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\ip-address_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\network-interface-card_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\send-data-dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\status_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\User_2_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\user_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\windows_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\DarkTheme\workstation_dark_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\api.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\deactivate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_brave.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_chrome.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_edge.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_firefox.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\fa_keyaccess.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\globe-grid.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\globe.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\icons8_vivaldi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\play.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\plus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\tasks.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\timer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\Intersection\user.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\calendar_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\circle_with_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\clock_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\data-cleaning_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\download_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_circle-plus_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_clock-rotate-left_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\fa_whmcs_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\globe_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\ip-address_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\network-interface-card_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\send-data-light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\status_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\user_2_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\user_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\windows_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Icons\LightTheme\workstation_light_theme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Visuals\Images\EVisitorAddOnInfo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!--
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
+    <PackageReference Include="CommunityToolkit.WinUI.Helpers" Version="8.2.251219" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
+	<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+	<PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eBRestarter.Infrastructure\eBRestarter.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\eB Restarter.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Assets\eB Restarter.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\InstallAddOnInfoDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartAgent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\ActivateApiDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\InstallAddOnDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\DeleteBrowserContentDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Dialogs\AboutDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\ContentDialog\AutoLogonDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_CommonOverview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_PointsOutput.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_EarningsAmount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Networktraffic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_IPInformation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Infocenter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InformationCardUrls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InformationsCard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Options.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartAndRuntimeOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_InstalledBrowsers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_Browser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_AutomatedTasks.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_AdditionalOptions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_eVisitorUsername.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_DeleteBrowserContentTask.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\UserControls\UC_RestartTask.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\P_Settings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\P_Infocenter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\P_Options.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\P_RestarterProperties.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\P_CommonOverview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <!--
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if
+    the Windows App SDK Nuget package has not yet been restored.
+  -->
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+
+  <!-- Publish Properties -->
+  <PropertyGroup>
+    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PRIResource Update="Strings\en-US\Resources.resw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </PRIResource>
+    <PRIResource Update="Strings\de-DE\Resources.resw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Remove="Resources\Images\**" />
+  </ItemGroup>
+</Project>

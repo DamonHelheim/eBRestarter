@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_RestartAndRuntimeOptions"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
+    mc:Ignorable="d">
+
+    <Border
+        x:Name="Border_Restart_and_Runtime_Options"
+        Padding="16"
+        Background="{ThemeResource DashletBackgroundColor_1}"
+        BorderThickness="1"
+        CornerRadius="8">
+
+        <!--  Haupt-StackPanel, das alle Sektionen mit sauberen Abständen (Spacing) trennt  -->
+        <StackPanel Spacing="20">
+
+            <!--  HEADER  -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Image
+                    x:Name="image_restart_and_runtime_options"
+                    Width="24"
+                    Height="24"
+                    VerticalAlignment="Center"
+                    Source="{ThemeResource ClockRotateIcon}" />
+
+                <TextBlock
+                    x:Name="tbl_Restart_and_Runtime_Option"
+                    x:Uid="Restart_And_Runtime_Options"
+                    VerticalAlignment="Center"
+                    FontSize="17"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource FontColor_1}" />
+            </StackPanel>
+
+            <!--  BEREICH 1: WARTEZEIT  -->
+            <StackPanel Spacing="8">
+                <TextBlock
+                    x:Name="Tbl_waiting_time_until_the_browser_starts"
+                    x:Uid="Waiting_time_until_the_browser_restarts"
+                    FontSize="15"
+                    Foreground="{ThemeResource FontColor_1}" />
+
+                <!--  Ein sauberes Grid ordnet Slider, TextBox und Einheit ("s") perfekt nebeneinander an  -->
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <!--  Der Slider nimmt sich den kompletten restlichen Platz (*)  -->
+                        <ColumnDefinition Width="*" />
+                        <!--  Das Eingabefeld bekommt eine feste Breite  -->
+                        <ColumnDefinition Width="120" />
+                        <!--  Die Einheit bekommt nur so viel Platz wie nötig (Auto)  -->
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Slider
+                        x:Name="SliderBrowserWaitingTimeToStart"
+                        Grid.Column="0"
+                        Padding="2,0,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="#FF00D4BC"
+                        Maximum="{Binding RuntimePauseSecondsMax, Mode=OneTime}"
+                        Minimum="{Binding RuntimePauseSecondsMin, Mode=OneTime}"
+                        Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <NumberBox
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        BorderBrush="{ThemeResource FontColor_1}"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Maximum="60"
+                        Minimum="20"
+                        SmallChange="1"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                    <TextBlock
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="s" />
+                </Grid>
+            </StackPanel>
+
+            <!--  BEREICH 2: BROWSERLAUFZEIT  -->
+            <StackPanel Spacing="8">
+                <TextBlock
+                    x:Name="Tbl_set_your_browser_runtime"
+                    x:Uid="Determine_your_browser_runtime_here"
+                    FontSize="15"
+                    Foreground="{ThemeResource FontColor_1}" />
+
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Slider
+                        x:Name="SliderBrowserRuntime"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Foreground="#FF00D4BC"
+                        Maximum="{Binding BrowserRuntimeHoursMax, Mode=OneTime}"
+                        Minimum="{Binding BrowserRuntimeHoursMin, Mode=OneTime}"
+                        Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <NumberBox
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        BorderBrush="{ThemeResource FontColor_1}"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Maximum="12"
+                        Minimum="1"
+                        SmallChange="1"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+
+                    <TextBlock
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="h" />
+                </Grid>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
+</UserControl>

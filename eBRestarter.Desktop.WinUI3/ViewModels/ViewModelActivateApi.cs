@@ -1,0 +1,152 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace eBRestarter.Desktop.WinUI3.ViewModels;
+
+/// <summary>
+/// View model for the "Activate API" dialog. Lets the user enter or import eBesucher API
+/// credentials; validates them via <see cref="IOutboundPortApiAuthenticationProvider"/> and persists
+/// to config when valid.
+/// </summary>
+public sealed partial class ViewModelActivateApi : ObservableObject
+{
+    private readonly IOutboundPortApiAuthenticationProvider _apiAuthenticationService;
+
+    private readonly IOutboundPortEVisitorConfigRepository _configService;
+
+    private readonly IInboundPortLocalizationProvider _localizationService;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
+    public partial string ApiKey { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string StatusColor { get; set; } = "Transparent";
+
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
+    public partial string Username { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial bool IsBusy { get; set; }
+
+    /// <summary>Submit is allowed only when both username and API key are non-empty and the VM is not busy.</summary>
+    private bool CanSubmit => !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(ApiKey) && !IsBusy;
+
+    /// <summary>
+    /// Builds the VM with API authentication, config, and localization services and pre-fills
+    /// <see cref="Username"/> and <see cref="ApiKey"/> from saved config if present.
+    /// </summary>
+    public ViewModelActivateApi(
+        IOutboundPortApiAuthenticationProvider apiAuthenticationService,
+        IOutboundPortEVisitorConfigRepository configService,
+        IInboundPortLocalizationProvider LocalizationProvider)
+    {
+        ArgumentNullException.ThrowIfNull(apiAuthenticationService);
+        ArgumentNullException.ThrowIfNull(configService);
+        ArgumentNullException.ThrowIfNull(LocalizationProvider);
+
+        _apiAuthenticationService = apiAuthenticationService;
+        _configService = configService;
+        _localizationService = LocalizationProvider;
+
+        var config = _configService.LoadConfig();
+        Username = config.Settings.ApiUsername;
+        ApiKey = config.Settings.ApiKey;
+    }
+
+    /// <summary>
+    /// Verifies the current <see cref="Username"/> and <see cref="ApiKey"/> with the API.
+    /// On success, saves them to config and sets a green success message; on failure, sets
+    /// a red status message without changing config.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanSubmit))]
+    private async Task Submit()
+    {
+        IsBusy = true;
+        StatusMessage = _localizationService.RetrieveString("ActivateApi_Checking");
+
+        try
+        {
+            var (isValid, verificationDetail) = await _apiAuthenticationService.VerifyCredentialsAsync(
+                Username ?? string.Empty,
+                ApiKey ?? string.Empty);
+
+            if (isValid)
+            {
+                var currentConfig = _configService.LoadConfig();
+                currentConfig.Settings.ApiUsername = Username ?? string.Empty;
+                currentConfig.Settings.ApiKey = ApiKey ?? string.Empty;
+                _configService.SaveConfig(currentConfig);
+                StatusMessage = _localizationService.RetrieveString("ActivateApi_Success");
+                StatusColor = "#7ED422";
+
+                WeakReferenceMessenger.Default.Send(new ApiCredentialsUpdatedMessage());
+            }
+            else
+            {
+                StatusMessage = verificationDetail ?? string.Empty;
+                StatusColor = "#E40E87";
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Imports username and API key from a legacy binary file (e.g. old eBesucher format).
+    /// Expects two length-prefixed strings. On success, sets Username and ApiKey and a success message;
+    /// on missing file or read error, sets an error message and clears credentials.
+    /// </summary>
+    /// <param name="filePath">Full path to the import file. If null or missing, sets file-not-found message.</param>
+    public void ImportLegacyFile(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+        {
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_FileNotFound");
+            StatusColor = "#E40E87";
+            return;
+        }
+
+        try
+        {
+            using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+            using var reader = new BinaryReader(stream);
+            var importedUser = reader.ReadString();
+            var importedKey = reader.ReadString();
+            Username = importedUser;
+            ApiKey = importedKey;
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_ImportSuccess");
+            StatusColor = "{ThemeResource SystemFillColorSuccessBrush}";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ObjectDisposedException)
+        {
+            StatusMessage = _localizationService.RetrieveString("ActivateApi_ImportError");
+            StatusColor = "#E40E87";
+            Username = string.Empty;
+            ApiKey = string.Empty;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+

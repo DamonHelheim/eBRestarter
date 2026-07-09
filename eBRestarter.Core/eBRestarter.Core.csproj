@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Domain\Exceptions\" />
+    <Folder Include="Domain\Entities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Application\Ports\Outbound\Interfaces\OperatingSystem\IOutboundPortOsAutoLogonRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.28.0.143324">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.9" />
+  </ItemGroup>
+
+</Project>

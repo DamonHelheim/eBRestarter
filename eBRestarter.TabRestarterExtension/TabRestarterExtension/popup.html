@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Tab Restarter Popup</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 15px;
+            width: 280px;
+            background: #f9f9f9;
+            margin: 0;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .lang-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .lang-label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        #languageSelect {
+            padding: 3px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+        }
+
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        #onOffBtn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-on {
+            background: #008000;
+        }
+
+        .btn-off {
+            background: #cc0000;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            box-sizing: border-box;
+        }
+
+        .checkbox-label {
+            font-weight: normal;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            background: #eef;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+            .checkbox-label input {
+                margin-right: 8px;
+                margin-top: 2px;
+            }
+
+        #saveBtn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 8px;
+            background: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            #saveBtn:hover {
+                background: #004085;
+            }
+
+        #status {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: green;
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-row">
+        <h2 data-i18n="title">Tab Restarter</h2>
+        <div class="lang-container">
+            <span class="lang-label" data-i18n="langLabel">Sprache:</span>
+            <select id="languageSelect">
+                <option value="AUTO" data-i18n="langAuto">Auto (Config)</option>
+                <option value="DE">Deutsch</option>
+                <option value="EN">English</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="toggle-container">
+        <span data-i18n="statusLabel">Status der Umleitung:</span>
+        <button id="onOffBtn" data-i18n="loading">LADE...</button>
+    </div>
+
+    <label class="checkbox-label">
+        <input type="checkbox" id="useCustom">
+        <span data-i18n="checkboxLabel">Manuelle Werte nutzen<br><small>(Ignoriert die eBRestarter Tab Restarter Status config.json)</small></span>
+    </label>
+
+    <div id="settingsArea" style="opacity: 0.5; pointer-events: none;">
+        <label for="zielUrl" data-i18n="urlLabel">Ziel-URL:</label>
+        <input type="text" id="zielUrl" placeholder="https://...">
+
+        <label for="wartezeitMin" data-i18n="timeLabel">Wartezeit (Minuten):</label>
+        <input type="number" id="wartezeitMin" placeholder="3" min="1">
+    </div>
+
+    <button id="saveBtn" data-i18n="saveBtn">Einstellungen Speichern</button>
+    <div id="status"></div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

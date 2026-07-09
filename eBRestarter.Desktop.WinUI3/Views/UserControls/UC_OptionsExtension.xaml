@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_OptionsExtension"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelOptionsExtension}"
+    mc:Ignorable="d">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid
+            Margin="20,10,20,20"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Width="824"
+                Margin="0,0,0,20"
+                Padding="16"
+                HorizontalAlignment="Left"
+                Background="{ThemeResource DashletBackgroundColor_2}"
+                CornerRadius="6">
+
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <FontIcon
+                        Margin="0,2,0,0"
+                        VerticalAlignment="Top"
+                        FontSize="28"
+                        Foreground="#FF00CAD4"
+                        Glyph="&#xE946;" />
+
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="BrowserExtension_WhyNeededTitle"
+                            Margin="0,0,0,6"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <TextBlock
+                            x:Uid="BrowserExtension_WhyNeededDesc"
+                            Width="740"
+                            Foreground="{ThemeResource FontColor_1}"
+                            LineHeight="20"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Width="400"
+                Margin="0,0,24,0"
+                Padding="16"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{ThemeResource DashletBackgroundColor_2}"
+                CornerRadius="6">
+
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        x:Uid="BrowserExtension_InstallTitle"
+                        Margin="0,0,0,12"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <TextBlock
+                        x:Uid="BrowserExtension_InstallDesc"
+                        Margin="0,0,0,15"
+                        Foreground="{ThemeResource FontColor_1}"
+                        TextWrapping="Wrap" />
+
+                    <StackPanel Margin="0,0,0,20" Spacing="8">
+                        <TextBlock
+                            x:Uid="BrowserExtension_Step1"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <TextBox IsReadOnly="True" Text="chrome://extensions/" />
+
+                        <TextBlock
+                            x:Uid="BrowserExtension_Step2"
+                            Margin="0,5,0,0"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <TextBlock
+                            x:Uid="BrowserExtension_Step3"
+                            Margin="0,5,0,0"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <TextBlock
+                            x:Uid="BrowserExtension_Step4"
+                            Margin="0,5,0,0"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+                    </StackPanel>
+
+                    <Button
+                        x:Uid="BrowserExtension_BtnOpenFolder"
+                        Height="40"
+                        Margin="0,17.5,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="#FF1598C9"
+                        BorderBrush="{x:Null}"
+                        Command="{Binding OpenExtensionFolderCommand}"
+                        Foreground="White" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="400"
+                Padding="16"
+                VerticalAlignment="Top"
+                Background="{ThemeResource DashletBackgroundColor_2}"
+                CornerRadius="6">
+
+                <StackPanel Spacing="14">
+                    <TextBlock
+                        x:Uid="BrowserExtension_ConfigTitle"
+                        Margin="0,0,0,6"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="BrowserExtension_TargetUrl"
+                            Margin="0,0,0,4"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+                        <TextBox x:Uid="BrowserExtension_TargetUrlBox" Text="{Binding ExtensionUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="BrowserExtension_WaitTime"
+                            Margin="0,0,0,4"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+                        <NumberBox
+                            Minimum="1"
+                            SpinButtonPlacementMode="Compact"
+                            Value="{Binding ExtensionWaitTimeMinutes, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel>
+
+                        <TextBlock
+                            x:Uid="BrowserExtension_Language"
+                            Margin="0,0,0,4"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="DisplayText"
+                            ItemsSource="{Binding ExtensionLanguages}"
+                            SelectedItem="{Binding SelectedExtensionLanguage, Mode=TwoWay}" />
+
+                    </StackPanel>
+
+                    <Border
+                        Height="1"
+                        Margin="0,10,0,5"
+                        Background="#33000000" />
+
+                    <Button
+                        x:Uid="BrowserExtension_BtnSave"
+                        Height="40"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="#FF00CAD4"
+                        BorderBrush="{x:Null}"
+                        Command="{Binding SaveExtensionConfigCommand}"
+                        Foreground="White" />
+
+                    <TextBlock
+                        Height="20"
+                        HorizontalAlignment="Center"
+                        FontWeight="Bold"
+                        Foreground="#FF4DC89E"
+                        Text="{Binding ExtensionSaveStatus}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,987 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GeneralOverviewNavigation.Content" xml:space="preserve">
+    <value>Allgemeine Übersicht</value>
+  </data>
+  <data name="Infocenter.Text" xml:space="preserve">
+    <value>Infocenter</value>
+  </data>
+  <data name="Options.Text" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="Properties.Text" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="IPInformation.Text" xml:space="preserve">
+    <value>IP Informationen</value>
+  </data>
+  <data name="NetworkTraffic.Text" xml:space="preserve">
+    <value>Netzwerktraffic</value>
+  </data>
+  <data name="RestarterAgent.Text" xml:space="preserve">
+    <value>Restarter Agent</value>
+  </data>
+  <data name="Browser.Text" xml:space="preserve">
+    <value>Browser:</value>
+  </data>
+  <data name="User.Text" xml:space="preserve">
+    <value>Nutzer:</value>
+  </data>
+  <data name="Status.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="BrowserCleanup.Text" xml:space="preserve">
+    <value>Browserbereinigung</value>
+  </data>
+  <data name="eVisitorUsername.Text" xml:space="preserve">
+    <value>eBesucher Nutzername</value>
+  </data>
+  <data name="RegisterWitheVisitor.Content" xml:space="preserve">
+    <value>Bei eBesucher registrieren</value>
+  </data>
+  <data name="Please_Enter_Your_Username_Here.Text" xml:space="preserve">
+    <value>Bitte gebe hier deinen Nutzernamen ein:</value>
+  </data>
+  <data name="Add.Content" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="Restart_And_Runtime_Options.Text" xml:space="preserve">
+    <value>Neustart- und Laufzeitoptionen</value>
+  </data>
+  <data name="Waiting_time_until_the_browser_restarts.Text" xml:space="preserve">
+    <value>Wartezeit bis der Browser wieder startet</value>
+  </data>
+  <data name="Determine_your_browser_runtime_here.Text" xml:space="preserve">
+    <value>Bestimme hier deine Browserlaufzeit</value>
+  </data>
+  <data name="AutomatedTasks.Text" xml:space="preserve">
+    <value>Automatisierte Aufgaben</value>
+  </data>
+  <data name="TSStartBrowserWithProgrammStart.OffContent" xml:space="preserve">
+    <value>Mit Programmstart, Restarter starten</value>
+  </data>
+  <data name="StartupEdgeBoost_Info.Text" xml:space="preserve">
+    <value>Deaktiviere den Startup-Boost im Edge, damit diese Funktion nutzen kannst. (Klicke auf den Text für mehr)</value>
+  </data>
+  <data name="Do_not_delete_cache_and_cookies.Text" xml:space="preserve">
+    <value>Cache und Cookies nicht löschen</value>
+  </data>
+  <data name="Delete_cache_and_cookies_every_day.Text" xml:space="preserve">
+    <value>Cache und Cookies jeden Tag löschen</value>
+  </data>
+  <data name="Delete_cache_and_cookies_every_3_days.Text" xml:space="preserve">
+    <value>Cache und Cookies alle 3 Tage löschen</value>
+  </data>
+  <data name="Delete_cache_and_cookies_every_7_days.Text" xml:space="preserve">
+    <value>Cache und Cookies alle 7 Tage löschen</value>
+  </data>
+  <data name="Delete_cache_and_cookies_every_14_days.Text" xml:space="preserve">
+    <value>Cache und Cookies alle 14 Tage löschen</value>
+  </data>
+  <data name="AdditionalOptions.Text" xml:space="preserve">
+    <value>Zusatzoptionen</value>
+  </data>
+  <data name="No_Browsers_Installed.Text" xml:space="preserve">
+    <value>Keine Browser installiert.</value>
+  </data>
+  <data name="Delete_browser_content.Content" xml:space="preserve">
+    <value>Browserinhalte löschen</value>
+  </data>
+  <data name="Install_eVisitor_add_on.Content" xml:space="preserve">
+    <value>Installiere eBesucher Add-on</value>
+  </data>
+  <data name="Important_information_about_the_add_on.Content" xml:space="preserve">
+    <value>Wichtige Info zum Add-on</value>
+  </data>
+  <data name="General.Text" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="API_Access.Text" xml:space="preserve">
+    <value>API Zugang</value>
+  </data>
+  <data name="Windows.Text" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Start_eV_Restarter_with_Windows.Text" xml:space="preserve">
+    <value>eBRestarter mit Windows starten</value>
+  </data>
+  <data name="Computer_restart_options.Text" xml:space="preserve">
+    <value>Computer Neustartoptionen</value>
+  </data>
+  <data name="Check_for_updates.Content" xml:space="preserve">
+    <value>Auf Updates prüfen</value>
+  </data>
+  <data name="Configuration_storage_location.Text" xml:space="preserve">
+    <value>Speicherort Konfig</value>
+  </data>
+  <data name="Standard.Content" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Dark.Content" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="Language.Text" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="Username.Text" xml:space="preserve">
+    <value>Nutzername:</value>
+  </data>
+  <data name="API_Key.Text" xml:space="preserve">
+    <value>API Schlüssel:</value>
+  </data>
+  <data name="API_Information.Text" xml:space="preserve">
+    <value>API Information</value>
+  </data>
+  <data name="eVisitor_API_Options.Text" xml:space="preserve">
+    <value>eBesucher API Optionen</value>
+  </data>
+  <data name="Connect_to_API_interface.Content" xml:space="preserve">
+    <value>Mit API Schnittstelle verbinden</value>
+  </data>
+  <data name="Establish_API_connection_with_file_import.Content" xml:space="preserve">
+    <value>API Verbindung mit Datei Import herstellen</value>
+  </data>
+  <data name="Export_API_access_file.Content" xml:space="preserve">
+    <value>API Zugangsdatei exportieren</value>
+  </data>
+  <data name="Deactivate_API_interface.Content" xml:space="preserve">
+    <value>API Schnittstelle deaktivieren</value>
+  </data>
+  <data name="TSStartBrowserWithProgrammStart.OnContent" xml:space="preserve">
+    <value>Mit Programmstart, Restarter starten</value>
+  </data>
+  <data name="TSCheckBrowserIsAlive.OnContent" xml:space="preserve">
+    <value>Prüfe, ob Browser geschlossen wurde</value>
+  </data>
+  <data name="TSCheckBrowserIsAlive.OffContent" xml:space="preserve">
+    <value>Prüfe, ob Browser geschlossen wurde</value>
+  </data>
+  <data name="Installed_browser.Text" xml:space="preserve">
+    <value>Installierte Browser</value>
+  </data>
+  <data name="OptionsNavigation.Content" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="InfocenterNavigation.Content" xml:space="preserve">
+    <value>Infocenter</value>
+  </data>
+  <data name="PropertiesNavigation.Content" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="GeneralOverview.Text" xml:space="preserve">
+    <value>Allgemeine Übersicht</value>
+  </data>
+  <data name="Go_to_API_options.Text" xml:space="preserve">
+    <value>Zu API Optionen</value>
+  </data>
+  <data name="Automatic_User_Login.Content" xml:space="preserve">
+    <value>Automatische Nutzeranmeldung</value>
+  </data>
+  <data name="TS_OptionsStartWithWindows.OffContent" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="TS_OptionsStartWithWindows.OnContent" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="Update.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Go_to_storage_location.Content" xml:space="preserve">
+    <value>Gehe zu Speicherort</value>
+  </data>
+  <data name="Themes.Text" xml:space="preserve">
+    <value>Themes</value>
+  </data>
+  <data name="Show.Content" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+  <data name="Browser_download_links.Text" xml:space="preserve">
+    <value>Browser Downloadverlinkungen</value>
+  </data>
+  <data name="About_eV_Restarter.Text" xml:space="preserve">
+    <value>Über eBRestarter</value>
+  </data>
+  <data name="AppTitleBar.Title" xml:space="preserve">
+    <value>eBRestarter</value>
+  </data>
+  <data name="Set_the_time.Text" xml:space="preserve">
+    <value>Lege die Uhrzeit fest:</value>
+  </data>
+  <data name="Lang_German" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>Englisch</value>
+  </data>
+  <data name="RestartOption_0" xml:space="preserve">
+    <value>Computer nicht neustarten</value>
+  </data>
+  <data name="RestartOption_1" xml:space="preserve">
+    <value>Computer jeden Tag neustarten</value>
+  </data>
+  <data name="RestartOption_3" xml:space="preserve">
+    <value>Computer alle 3 Tage neustarten</value>
+  </data>
+  <data name="RestartOption_7" xml:space="preserve">
+    <value>Computer alle 7 Tage neustarten</value>
+  </data>
+  <data name="RestartOption_14" xml:space="preserve">
+    <value>Computer alle 14 Tage neustarten</value>
+  </data>
+  <data name="BrowserCacheOption_0" xml:space="preserve">
+    <value>Cache und Cookies nicht löschen</value>
+  </data>
+  <data name="BrowserCacheOption_1" xml:space="preserve">
+    <value>Cache und Cookies jeden Tag löschen</value>
+  </data>
+  <data name="BrowserCacheOption_3" xml:space="preserve">
+    <value>Cache und Cookies alle 3 Tage löschen</value>
+  </data>
+  <data name="BrowserCacheOption_7" xml:space="preserve">
+    <value>Cache und Cookies alle 7 Tage löschen</value>
+  </data>
+  <data name="BrowserCacheOption_14" xml:space="preserve">
+    <value>Cache und Cookies alle 14 Tage löschen</value>
+  </data>
+  <data name="Network_CardPrefix" xml:space="preserve">
+    <value>Netzwerkkarte</value>
+  </data>
+  <data name="Network_Received" xml:space="preserve">
+    <value>Empfangen</value>
+  </data>
+  <data name="Network_Sent" xml:space="preserve">
+    <value>Gesendet</value>
+  </data>
+  <data name="Network_NotAvailable" xml:space="preserve">
+    <value>nicht verfügbar</value>
+  </data>
+  <data name="Chart_YAxisPoints" xml:space="preserve">
+    <value>Punkte</value>
+  </data>
+  <data name="Chart_TitleHourly" xml:space="preserve">
+    <value>Stundenübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleDaily" xml:space="preserve">
+    <value>Tagesübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleYearly" xml:space="preserve">
+    <value>Jahresübersicht ({0})</value>
+  </data>
+  <data name="Chart_TitleOverview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="Chart_SeriesEarnings" xml:space="preserve">
+    <value>Verdienst</value>
+  </data>
+  <data name="Chart_XAxisTime" xml:space="preserve">
+    <value>Uhrzeit (0-23h)</value>
+  </data>
+  <data name="Chart_XAxisDay" xml:space="preserve">
+    <value>Tag im Monat</value>
+  </data>
+  <data name="Chart_XAxisMonth" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="Chart_MonthsShort" xml:space="preserve">
+    <value>Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez</value>
+  </data>
+  <data name="General_Today" xml:space="preserve">
+    <value>Heute</value>
+  </data>
+  <data name="Year.Text" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="Month.Text" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="Today.Text" xml:space="preserve">
+    <value>Heute</value>
+  </data>
+  <data name="General_NextRefresh" xml:space="preserve">
+    <value>Nächste Aktualisierung: {0}</value>
+  </data>
+  <data name="ShowIPDetails.Text" xml:space="preserve">
+    <value>Zeige IP Details</value>
+  </data>
+  <data name="IPAddress.Text" xml:space="preserve">
+    <value>IP Adresse:</value>
+  </data>
+  <data name="Host.Text" xml:space="preserve">
+    <value>Host:</value>
+  </data>
+  <data name="Location.Text" xml:space="preserve">
+    <value>Standort:</value>
+  </data>
+  <data name="Select.Content" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="Browser_NotInstalled" xml:space="preserve">
+    <value>Nicht installiert</value>
+  </data>
+  <data name="Browser_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="General_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="General_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Install_DialogTitle" xml:space="preserve">
+    <value>Installation</value>
+  </data>
+  <data name="Install_DialogQuestion" xml:space="preserve">
+    <value>Möchtest du den ausgewählten Browser installieren?</value>
+  </data>
+  <data name="Install_FinishedTitle" xml:space="preserve">
+    <value>Installation beendet</value>
+  </data>
+  <data name="Install_FinishedMessage" xml:space="preserve">
+    <value>Der Browser wurde installiert.</value>
+  </data>
+  <data name="Cleanup_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Cleanup_Ready" xml:space="preserve">
+    <value>Bereit.</value>
+  </data>
+  <data name="Cleanup_ConfigError" xml:space="preserve">
+    <value>Konfiguration fehlerhaft: Unbekannter Browser '{0}'.</value>
+  </data>
+  <data name="Cleanup_Canceling" xml:space="preserve">
+    <value>Breche ab...</value>
+  </data>
+  <data name="Cleanup_BrowserRunning" xml:space="preserve">
+    <value>Browser läuft noch. Bitte Aktion wählen.</value>
+  </data>
+  <data name="Cleanup_ClosingBrowser" xml:space="preserve">
+    <value>Beende Browser...</value>
+  </data>
+  <data name="Cleanup_CloseFailed" xml:space="preserve">
+    <value>Konnte Browser nicht beenden. Bitte manuell schließen.</value>
+  </data>
+  <data name="Cleanup_CanceledByUser" xml:space="preserve">
+    <value>Abbruch durch Benutzer.</value>
+  </data>
+  <data name="Cleanup_NoPaths" xml:space="preserve">
+    <value>Keine gültigen Pfade gefunden.</value>
+  </data>
+  <data name="Cleanup_Analyzing" xml:space="preserve">
+    <value>Analysiere Dateien...</value>
+  </data>
+  <data name="Cleanup_Finished" xml:space="preserve">
+    <value>Bereinigung abgeschlossen.</value>
+  </data>
+  <data name="General_ErrorPrefix" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="General_LoadErrorPrefix" xml:space="preserve">
+    <value>Fehler beim Laden: {0}</value>
+  </data>
+  <data name="DeleteDialog_HeaderOptions.Text" xml:space="preserve">
+    <value>Verfügbare Optionen</value>
+  </data>
+  <data name="DeleteDialog_CheckCookies.Content" xml:space="preserve">
+    <value>Lösche Cookies</value>
+  </data>
+  <data name="DeleteDialog_CheckCache.Content" xml:space="preserve">
+    <value>Lösche Internetcache</value>
+  </data>
+  <data name="DeleteDialog_HeaderProgress.Text" xml:space="preserve">
+    <value>Löschfortschritt</value>
+  </data>
+  <data name="DeleteDialog_BtnStart.Content" xml:space="preserve">
+    <value>Ausgewählte Inhalte löschen</value>
+  </data>
+  <data name="DeleteDialog_BtnCancel.Content" xml:space="preserve">
+    <value>Löschvorgang stoppen</value>
+  </data>
+  <data name="DeleteDialog_ConflictTitle.Text" xml:space="preserve">
+    <value>Browser läuft noch!</value>
+  </data>
+  <data name="DeleteDialog_ConflictMessage.Text" xml:space="preserve">
+    <value>Der Browser muss beendet werden, um die Dateien sicher zu löschen. Soll er jetzt geschlossen werden?</value>
+  </data>
+  <data name="DeleteDialog_BtnForceClose.Content" xml:space="preserve">
+    <value>Ja, beenden &amp; löschen</value>
+  </data>
+  <data name="DeleteDialog.Title" xml:space="preserve">
+    <value>Browser Daten bereinigen</value>
+  </data>
+  <data name="DeleteDialog_BtnAbort.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DeleteDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Addon_StatusChecking" xml:space="preserve">
+    <value>Prüfe...</value>
+  </data>
+  <data name="Addon_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Addon_BrowserInstalled" xml:space="preserve">
+    <value>{0} ist installiert</value>
+  </data>
+  <data name="Addon_BrowserNotInstalled" xml:space="preserve">
+    <value>{0} ist nicht installiert</value>
+  </data>
+  <data name="Addon_ExtensionInstalled" xml:space="preserve">
+    <value>Add-on ist installiert</value>
+  </data>
+  <data name="Addon_ExtensionNotInstalled" xml:space="preserve">
+    <value>Add-on ist nicht installiert</value>
+  </data>
+  <data name="Addon_BtnManage" xml:space="preserve">
+    <value>Add-on verwalten</value>
+  </data>
+  <data name="Addon_BtnInstall" xml:space="preserve">
+    <value>Add-on installieren</value>
+  </data>
+  <data name="Addon_BtnBrowserMissing" xml:space="preserve">
+    <value>Browser fehlt</value>
+  </data>
+  <data name="InstallAddOnDialog.Title" xml:space="preserve">
+    <value>Ebesucher Add-on verwalten</value>
+  </data>
+  <data name="InstallAddOnDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="InstallAddOnDialog_Instruction.Text" xml:space="preserve">
+    <value>Wähle einen Browser aus, um das Add-on zu installieren oder zu verwalten.</value>
+  </data>
+  <data name="AutoLogonDialog.Title" xml:space="preserve">
+    <value>Automatische Anmeldung konfigurieren</value>
+  </data>
+  <data name="AutoLogonDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="AutoLogonDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="AutoLogonDialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Title" xml:space="preserve">
+    <value>Sicherheitshinweis</value>
+  </data>
+  <data name="AutoLogon_InfoSecurity.Message" xml:space="preserve">
+    <value>Das Kennwort wird verschlüsselt gespeichert. Der PC wird beim Starten jedoch nicht gesperrt sein.</value>
+  </data>
+  <data name="AutoLogon_InputUser.Header" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="AutoLogon_InputUser.PlaceholderText" xml:space="preserve">
+    <value>Nutzername eingeben</value>
+  </data>
+  <data name="AutoLogon_InputDomain.Header" xml:space="preserve">
+    <value>Domäne (Optional)</value>
+  </data>
+  <data name="AutoLogon_InputDomain.PlaceholderText" xml:space="preserve">
+    <value>Leer lassen für lokalen User</value>
+  </data>
+  <data name="AutoLogon_InputPassword.Header" xml:space="preserve">
+    <value>Kennwort</value>
+  </data>
+  <data name="AutoLogon_InputPassword.PlaceholderText" xml:space="preserve">
+    <value>Windows Kennwort eingeben</value>
+  </data>
+  <data name="ActivateApi_Checking" xml:space="preserve">
+    <value>Prüfe Zugangsdaten...</value>
+  </data>
+  <data name="ActivateApi_Success" xml:space="preserve">
+    <value>Erfolgreich aktiviert &amp; verschlüsselt gespeichert!</value>
+  </data>
+  <data name="ActivateApi_FileNotFound" xml:space="preserve">
+    <value>Datei nicht gefunden.</value>
+  </data>
+  <data name="ActivateApi_ImportSuccess" xml:space="preserve">
+    <value>Daten importiert. Bitte jetzt 'Aktivieren' klicken.</value>
+  </data>
+  <data name="ActivateApi_ImportError" xml:space="preserve">
+    <value>Fehler: Die Datei hat ein falsches Format.</value>
+  </data>
+  <data name="ActivateApiDialog.Title" xml:space="preserve">
+    <value>API Zugang aktivieren</value>
+  </data>
+  <data name="ActivateApiDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="ActivateApiDialog_Header.Text" xml:space="preserve">
+    <value>Eingabe der API Zugangsdaten</value>
+  </data>
+  <data name="ActivateApiDialog_Username.Header" xml:space="preserve">
+    <value>Nutzername</value>
+  </data>
+  <data name="ActivateApiDialog_Username.PlaceholderText" xml:space="preserve">
+    <value>eBesucher Nutzername</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.Header" xml:space="preserve">
+    <value>API Schlüssel</value>
+  </data>
+  <data name="ActivateApiDialog_ApiKey.PlaceholderText" xml:space="preserve">
+    <value>Ihr API Key</value>
+  </data>
+  <data name="ActivateApiDialog_SubmitBtn.Content" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="Infocenter_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="Infocenter_LoadFailed" xml:space="preserve">
+    <value>Systeminformationen konnten nicht geladen werden.</value>
+  </data>
+  <data name="Infocenter_ProcessorPrefix" xml:space="preserve">
+    <value>Prozessor:</value>
+  </data>
+  <data name="Infocenter_GraphicsPrefix" xml:space="preserve">
+    <value>Grafikkarte:</value>
+  </data>
+  <data name="Infocenter_RamPrefix" xml:space="preserve">
+    <value>Installierter RAM:</value>
+  </data>
+  <data name="Infocenter_EditionPrefix" xml:space="preserve">
+    <value>Edition:</value>
+  </data>
+  <data name="Infocenter_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="Infocenter_BuildPrefix" xml:space="preserve">
+    <value>Betriebssystembuild:</value>
+  </data>
+  <data name="Infocenter_BrowserPrefix" xml:space="preserve">
+    <value>Standardbrowser:</value>
+  </data>
+  <data name="Infocenter_Title.Text" xml:space="preserve">
+    <value>Infocenter</value>
+  </data>
+  <data name="Infocenter_CardHardware.HeaderTitle" xml:space="preserve">
+    <value>Hardwarespezifikation</value>
+  </data>
+  <data name="Infocenter_CardWindows.HeaderTitle" xml:space="preserve">
+    <value>Windows-Spezifikation</value>
+  </data>
+  <data name="Infocenter_BtnAbout.Text" xml:space="preserve">
+    <value>Über eBRestarter</value>
+  </data>
+  <data name="About_Loading" xml:space="preserve">
+    <value>Lade...</value>
+  </data>
+  <data name="About_VersionPrefix" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="AboutDialog.Title" xml:space="preserve">
+    <value>Über eBRestarter</value>
+  </data>
+  <data name="AboutDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AboutDialog_VersionHeader.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutDialog_CreditsHeader.Text" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="AboutDialog_DevRole.Text" xml:space="preserve">
+    <value>Fullstack Entwicklung</value>
+  </data>
+  <data name="AboutDialog_DevName.Text" xml:space="preserve">
+    <value>Neo Velora</value>
+  </data>
+  <data name="AboutDialog_AssetsHeader.Text" xml:space="preserve">
+    <value>Icons und Assets</value>
+  </data>
+  <data name="Options_RestartStatus_None" xml:space="preserve">
+    <value>Computer wird nicht neugestartet</value>
+  </data>
+  <data name="Options_RestartStatus_Scheduled" xml:space="preserve">
+    <value>Computer wird am {0} um {1} Uhr neugestartet</value>
+  </data>
+  <data name="Options_UpdateAvailable" xml:space="preserve">
+    <value>Version {0} verfügbar!</value>
+  </data>
+  <data name="Options_RemoveCreds_Title" xml:space="preserve">
+    <value>API Zugang</value>
+  </data>
+  <data name="Options_RemoveCreds_Message" xml:space="preserve">
+    <value>Deine API Zugangsdaten wurden entfernt.</value>
+  </data>
+  <data name="Options_AutoLogon_Deactivated" xml:space="preserve">
+    <value>Die automatische Anmeldung wurde deaktiviert.</value>
+  </data>
+  <data name="Options_AutoLogon_DomainError" xml:space="preserve">
+    <value>Der Domänen-Controller konnte zur Überprüfung nicht erreicht werden.</value>
+  </data>
+  <data name="General_UnexpectedError" xml:space="preserve">
+    <value>Ein unerwarteter Fehler ist aufgetreten: {0}</value>
+  </data>
+  <data name="Task_DefaultBrowser" xml:space="preserve">
+    <value>Nicht gewählt</value>
+  </data>
+  <data name="Task_StatusReady" xml:space="preserve">
+    <value>Bereit.</value>
+  </data>
+  <data name="Task_StatusStopped" xml:space="preserve">
+    <value>Restarter gestoppt.</value>
+  </data>
+  <data name="Task_StatusRunning" xml:space="preserve">
+    <value>Browser läuft.</value>
+  </data>
+  <data name="Task_StatusStartIn" xml:space="preserve">
+    <value>Start in {0}s...</value>
+  </data>
+  <data name="Task_StatusRestartIn" xml:space="preserve">
+    <value>Neustart in {0}s...</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="NextDeletionProcess" xml:space="preserve">
+    <value>Nächster Löschvorgang:</value>
+  </data>
+  <data name="Browser_NextDeleteDate_Format" xml:space="preserve">
+    <value>am {0:dd.MM.yyyy} um 0 Uhr.</value>
+  </data>
+  <data name="AddOnInfoDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AddOnInfo_HeaderMain.Text" xml:space="preserve">
+    <value>Info zum eBesucher Add-on</value>
+  </data>
+  <data name="AddOnInfo_BodyMain.Text" xml:space="preserve">
+    <value>Du musst zwingend das eBesucher Add-on installieren, damit die Surfbar automatisch mit deinem Nutzernamen startet. Ohne die Installation startet die Surfbar nicht automatisch, wenn der Restarter aktiv ist.</value>
+  </data>
+  <data name="AddOnInfo_HeaderSettings.Text" xml:space="preserve">
+    <value>Add-on Einstellungen</value>
+  </data>
+  <data name="AddOnInfo_BodySettings.Text" xml:space="preserve">
+    <value>Wenn du magst, setze ein Häkchen bei der Privatsphäre und gib im Add-on deinen Nutzernamen ein (keine Pflicht).</value>
+  </data>
+  <data name="StartupBoostDialog.Title" xml:space="preserve">
+    <value>Edge Startup-Boost deaktivieren</value>
+  </data>
+  <data name="StartupBoostDialog_BtnAuto" xml:space="preserve">
+    <value>Jetzt deaktivieren</value>
+  </data>
+  <data name="StartupBoostDialog_LinkText" xml:space="preserve">
+    <value>edge://settings/?search=Startup-Boost</value>
+  </data>
+  <data name="StartupBoostDialog_BtnCopy.Content" xml:space="preserve">
+    <value>Link kopieren &amp; Edge öffnen</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessTitle" xml:space="preserve">
+    <value>Erfolg</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessMessage" xml:space="preserve">
+    <value>Startup-Boost wurde deaktiviert. Bitte starte deinen PC oder Edge neu, damit es wirksam wird.</value>
+  </data>
+  <data name="StartupBoostDialog_CopyMessage" xml:space="preserve">
+    <value>Link kopiert! Füge ihn in Edge ein, um die Einstellung zu finden.</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.Header" xml:space="preserve">
+    <value>Startup Boost Status</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.OnContent" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="StartupBoostDialog_SwitchStatus.OffContent" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="StartupBoostDialog_SuccessStatus_Activated" xml:space="preserve">
+    <value>Startup-Boost wurde aktiviert.</value>
+  </data>
+  <data name="StartupBoostDialog_ErrorTitle" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="StartupBoostDialog_InfoText.Text" xml:space="preserve">
+    <value>Wenn du den Startup-Boost deaktivieren willst, hast du zwei Möglichkeiten.</value>
+  </data>
+  <data name="StartupBoostDialog_OptionAuto_Header.Text" xml:space="preserve">
+    <value>1. Automatisch (Registry)</value>
+  </data>
+  <data name="StartupBoostDialog_OptionAuto_Desc.Text" xml:space="preserve">
+    <value>Schaltet die Funktion direkt über die Windows-Richtlinien an oder aus.</value>
+  </data>
+  <data name="StartupBoostDialog_OptionManual_Header.Text" xml:space="preserve">
+    <value>2. Manuell</value>
+  </data>
+  <data name="StartupBoostDialog_OptionManual_Desc.Text" xml:space="preserve">
+    <value>Link kopieren, Edge öffnen und in die Adressleiste einfügen.</value>
+  </data>
+  <data name="StartupBoostDialog.CloseButtonText" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Task_Username" xml:space="preserve">
+    <value>Nutzername</value>
+  </data>
+  <data name="Task_NoUsernameFound" xml:space="preserve">
+    <value>Du hast keinen Nutzernamen eingetragen, bitte trage einen Nutzernamen, damit du den Restarter nutzen kannst.</value>
+  </data>
+  <data name="Options_AutoLogon_Success" xml:space="preserve">
+    <value>Autologin erfolgreich!</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorTitle" xml:space="preserve">
+    <value>Windows Hello blockiert AutoLogon</value>
+  </data>
+  <data name="Options_AutoLogon_WindowsHelloErrorMessage" xml:space="preserve">
+    <value>Bitte deaktiviere in den Windows-Einstellungen unter 'Konten' -&gt; 'Anmeldeoptionen' die Option:
+
+"Aus Sicherheitsgründen nur Windows Hello-Anmeldung für Microsoft-Konten auf diesem Gerät zulassen."
+
+Nutze anschließend für den AutoLogon dein echtes Microsoft-Passwort (nicht deine PIN).</value>
+  </data>
+  <data name="Options_UpdateAvailable_Title" xml:space="preserve">
+    <value>Update verfügbar</value>
+  </data>
+  <data name="Options_UpdateAvailable_TitleFallback" xml:space="preserve">
+    <value>Update verfügbar</value>
+  </data>
+  <data name="Options_UpdatePrompt_Message" xml:space="preserve">
+    <value>{0}\n\nMöchten Sie die neue Version jetzt herunterladen und installieren?\nDas Programm wird dafür automatisch neu gestartet.</value>
+  </data>
+  <data name="Options_UpdateNoUpdate_Title" xml:space="preserve">
+    <value>Kein Update</value>
+  </data>
+  <data name="Options_UpdateNoUpdate_Message" xml:space="preserve">
+    <value>Die Anwendung ist bereits auf dem neuesten Stand.</value>
+  </data>
+  <data name="Options_UpdateError_Title" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Options_UpdateCheckError_Message" xml:space="preserve">
+    <value>Bei der Suche nach Updates ist ein Fehler aufgetreten:\n{0}</value>
+  </data>
+  <data name="Options_UpdateFailed_Title" xml:space="preserve">
+    <value>Update fehlgeschlagen</value>
+  </data>
+  <data name="Options_UpdateFailed_Message" xml:space="preserve">
+    <value>Das Update konnte nicht heruntergeladen oder installiert werden:\n{0}</value>
+  </data>
+  <data name="General_Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="General_No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="BrowserExtension.Text" xml:space="preserve">
+    <value>Browser Erweiterung</value>
+  </data>
+  <data name="BrowserExtension_WhyNeededTitle.Text" xml:space="preserve">
+    <value>Warum wird diese Erweiterung benötigt?</value>
+  </data>
+  <data name="BrowserExtension_WhyNeededDesc.Text" xml:space="preserve">
+    <value>Der Tab Restarter überwacht Chrome im Hintergrund. Sollte eine Webseite einfrieren, nicht mehr laden (z. B. bei Netzwerkfehlern) oder ein eingestelltes Zeitlimit auf einer Seite ablaufen, leitet die Erweiterung automatisch auf die definierte Ziel-URL um. Das stellt sicher, dass der automatische Betrieb niemals stehen bleibt und ohne manuelle Eingriffe fehlerfrei weiterläuft.</value>
+  </data>
+  <data name="BrowserExtension_InstallTitle.Text" xml:space="preserve">
+    <value>Installation in Google Chrome</value>
+  </data>
+  <data name="BrowserExtension_InstallDesc.Text" xml:space="preserve">
+    <value>Damit der Tab Restarter funktioniert, muss die Erweiterung in Chrome geladen werden.</value>
+  </data>
+  <data name="BrowserExtension_Step1.Text" xml:space="preserve">
+    <value>1. Öffne in Chrome die Adresse:</value>
+  </data>
+  <data name="BrowserExtension_Step2.Text" xml:space="preserve">
+    <value>2. Aktiviere oben rechts den Entwicklermodus.</value>
+  </data>
+  <data name="BrowserExtension_Step3.Text" xml:space="preserve">
+    <value>3. Klicke auf 'Entpackte Erweiterung laden'.</value>
+  </data>
+  <data name="BrowserExtension_Step4.Text" xml:space="preserve">
+    <value>4. Wähle den folgenden Ordner aus:</value>
+  </data>
+  <data name="BrowserExtension_BtnOpenFolder.Content" xml:space="preserve">
+    <value>Erweiterungs-Ordner öffnen</value>
+  </data>
+  <data name="BrowserExtension_ConfigTitle.Text" xml:space="preserve">
+    <value>Konfiguration (config.json)</value>
+  </data>
+  <data name="BrowserExtension_TargetUrl.Text" xml:space="preserve">
+    <value>Ziel-URL (inkl. https://)</value>
+  </data>
+  <data name="BrowserExtension_TargetUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://www.beispiel.de</value>
+  </data>
+  <data name="BrowserExtension_WaitTime.Text" xml:space="preserve">
+    <value>Wartezeit bis zur Umleitung (Minuten)</value>
+  </data>
+  <data name="BrowserExtension_Language.Text" xml:space="preserve">
+    <value>Sprache des Erweiterungs-Menüs</value>
+  </data>
+  <data name="BrowserExtension_BtnSave.Content" xml:space="preserve">
+    <value>Konfiguration speichern</value>
+  </data>
+  <data name="Options_SavedSuccessfully" xml:space="preserve">
+    <value>Erfolgreich gespeichert!</value>
+  </data>
+  <data name="BrowserExtension_Config_Error_Message" xml:space="preserve">
+    <value>Konnte tab_restarter_config.json nicht speichern:</value>
+  </data>
+  <data name="General_Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="General_Success" xml:space="preserve">
+    <value>Erfolg</value>
+  </data>
+  <data name="General_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Title" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+  <data name="Options_LanguageChanged_Restart_Message" xml:space="preserve">
+    <value>Die Sprache wurde geändert. Damit alle Texte aktualisiert werden, muss die Anwendung neu gestartet werden.
+
+Möchten Sie die Anwendung jetzt neu starten?</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Title" xml:space="preserve">
+    <value>Ordner konnte nicht geöffnet werden</value>
+  </data>
+  <data name="Options_ExtensionFolderOpenError_Message" xml:space="preserve">
+    <value>Der Erweiterungsordner konnte nicht geöffnet oder erstellt werden: {0}</value>
+  </data>
+  <data name="HTTPS_Timeout_Message" xml:space="preserve">
+    <value>Die Anfrage hat das Zeitlimit Überschritten</value>
+  </data>
+  <data name="RestartWarning.Text" xml:space="preserve">
+    <value>Wichtiger Hinweis: Der automatische Neustart erfolgt auf eigene Gefahr. Bitte beachten Sie, dass dabei sämtliche aktiven Programme, Hintergrundprozesse und Netzwerkverbindungen unterbrochen werden. Der Entwickler übernimmt keine Haftung für daraus resultierende Datenverluste oder abgebrochene Vorgänge.</value>
+  </data>
+  <data name="StartupBoostDialog_AdminWarning.Title" xml:space="preserve">
+    <value>Administrator-Rechte erforderlich</value>
+  </data>
+  <data name="StartupBoostDialog_AdminWarning.Message" xml:space="preserve">
+    <value>Bitte starte die eBRestarter Software als Administrator, um diese Einstellung (Registry) ändern zu können.</value>
+  </data>
+  <data name="API_isNotEnabled" xml:space="preserve">
+    <value>Punkte Statistik nicht sichtbar, da API nicht aktiviert ist.</value>
+  </data>
+  <data name="AboutDialog_QARole.Text" xml:space="preserve">
+    <value>Qualitätssicherung</value>
+  </data>
+  <data name="Chart_FakeDataMode" xml:space="preserve">
+    <value> (Test-Modus)</value>
+  </data>
+  <data name="Cleanup_Running" xml:space="preserve">
+    <value>Löschvorgang läuft...</value>
+  </data>
+</root>

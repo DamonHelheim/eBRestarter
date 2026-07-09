@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.Views.UserControls.UC_DeleteBrowserContentTask"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelRestartTask}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <converters:BoolToImageConverter
+            x:Key="BoolToImageConverter"
+            ImagePathWhenFalse="ms-appx:///Resources/Visuals/Icons/Intersection/deactivate.png"
+            ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/plus.png" />
+
+    </UserControl.Resources>
+
+    <Border
+        x:Name="Border_Browser_Cleaning"
+        Canvas.Left="612"
+        Canvas.Top="18"
+        Width="405"
+        Height="130"
+        Margin="0,0,0,0"
+        Background="{ThemeResource DashletBackgroundColor_3}"
+        BorderThickness="1"
+        CornerRadius="5">
+
+        <Canvas>
+
+            <Image
+                x:Name="image_browser_cleaning"
+                Canvas.Left="7"
+                Canvas.Top="5"
+                Width="30"
+                Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Source="{ThemeResource CleaningBrushIcon}" />
+
+            <TextBlock
+                x:Name="tbl_BrowserCleaning"
+                x:Uid="BrowserCleanup"
+                Canvas.Left="46"
+                Canvas.Top="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                FontSize="16"
+                Foreground="{ThemeResource FontColor_1}" />
+
+            <Image
+                x:Name="image_restarter_agent_Copy"
+                Canvas.Left="370"
+                Canvas.Top="8"
+                Width="25"
+                Height="25"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Source="{Binding DeleteBrowserContentIsActive, Converter={StaticResource BoolToImageConverter}}" />
+
+            <TextBlock
+                x:Name="tbl_DateOfNextCleaning"
+                Canvas.Left="10"
+                Canvas.Top="49"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                FontSize="16"
+                Foreground="{ThemeResource FontColor_1}"
+                Text="{Binding NextDeletionProcessMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                x:Name="tbl_txtCleaningInfo"
+                Canvas.Left="10"
+                Canvas.Top="87"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="16"
+                Foreground="{ThemeResource FontColor_1}"
+                Text="{Binding NextDeletionProcessDateMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <StackPanel
+                Canvas.Left="238"
+                Canvas.Top="11"
+                Width="126"
+                Height="22"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top">
+
+                <TextBlock
+                    x:Name="tbl_BrowserCleaningStatus"
+                    Canvas.Top="18"
+                    HorizontalAlignment="Right"
+                    FontSize="16"
+                    Foreground="{ThemeResource FontColor_1}"
+                    Text="{Binding DeleteIsActivatedMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+
+        </Canvas>
+
+    </Border>
+
+</UserControl>
