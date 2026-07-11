@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Ports.Inbound.UseCases.ScheduleBrowserCleanup;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using Microsoft.Extensions.Time.Testing;
 using Moq;
 using Shouldly;

@@ -1,6 +1,6 @@
-namespace eBRestarter.Core.Domain.Entities;
+namespace eBRestarter.Core.Domain.ValueObjects;
 
-public sealed class SettingsConfig
+public sealed record SettingsConfig
 {
     public string Theme { get; set; } = "Light";
     public int Language { get; set; }

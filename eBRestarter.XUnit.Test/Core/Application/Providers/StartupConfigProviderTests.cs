@@ -2,7 +2,7 @@ using eBRestarter.Core.Application.Ports.Inbound.Providers;
 using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using Moq;
 using Shouldly;
 using Xunit;

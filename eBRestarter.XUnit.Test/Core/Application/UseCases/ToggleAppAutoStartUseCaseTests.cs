@@ -3,7 +3,7 @@ using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using Moq;
 using Shouldly;
 using System.Threading.Tasks;

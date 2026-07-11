@@ -4,7 +4,7 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Desktop.WinUI3.Enums;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;
 using eBRestarter.Desktop.WinUI3.Providers.Interfaces;

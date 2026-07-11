@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.ImmutableSnapshot;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Core.Domain.Validators;
 
 namespace eBRestarter.Core.Application.Handlers;

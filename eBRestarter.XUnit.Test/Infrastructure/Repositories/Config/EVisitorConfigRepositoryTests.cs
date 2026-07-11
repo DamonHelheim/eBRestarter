@@ -3,7 +3,7 @@ using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Infrastructure.Repositories.Config;
 using Microsoft.Extensions.Logging;
 using Moq;

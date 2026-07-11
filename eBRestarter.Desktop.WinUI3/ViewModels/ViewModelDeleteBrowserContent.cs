@@ -7,7 +7,7 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using System;
 using System.Diagnostics;
 using System.IO;

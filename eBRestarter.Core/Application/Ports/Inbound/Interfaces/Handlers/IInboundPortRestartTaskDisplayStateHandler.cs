@@ -1,5 +1,5 @@
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.ImmutableSnapshot;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 
 namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 

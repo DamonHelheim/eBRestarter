@@ -3,7 +3,7 @@ using eBRestarter.Infrastructure.Network;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Infrastructure.Adapters.RestSharp;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Browser;
 using eBRestarter.Infrastructure.OperatingSystem;

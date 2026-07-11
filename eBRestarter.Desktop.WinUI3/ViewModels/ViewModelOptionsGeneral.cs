@@ -9,7 +9,7 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Desktop.WinUI3.Enums;
 using eBRestarter.Desktop.WinUI3.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;

@@ -1,6 +1,6 @@
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
 using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Domain.Entities;
+using eBRestarter.Core.Domain.ValueObjects;
 using Moq;
 using Shouldly;
 using Xunit;
