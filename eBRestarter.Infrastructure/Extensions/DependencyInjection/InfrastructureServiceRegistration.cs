@@ -1,3 +1,4 @@
+using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Validators;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
@@ -75,6 +76,13 @@ public static class InfrastructureServiceRegistration
         services.AddTransient<AdapterEdgeBrowser>();
         services.AddTransient<AdapterBraveBrowser>();
         services.AddTransient<AdapterVivaldiBrowser>();
+
+        // Keyed Services DI Registrierung für Factory Pattern (.NET 10 Enterprise Standard)
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterChromeBrowser>(BrowserType.Chrome);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterFirefoxBrowser>(BrowserType.Firefox);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterEdgeBrowser>(BrowserType.Edge);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterBraveBrowser>(BrowserType.Brave);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterVivaldiBrowser>(BrowserType.Vivaldi);
 
         services.AddSingleton<IOutboundPortHttpDownload, AdapterHttpClientDownloadHandler>();
 

@@ -5,19 +5,27 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Infrastructure.Factories;
 
+/// <summary>
+/// Enterprise-Standard .NET 10 Keyed Services DI-Factory gemäß Hexagonaler Architektur.
+/// </summary>
 public sealed class BrowserFactory(IServiceProvider serviceProvider) : IOutboundPortBrowserFactory
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-
     public IOutboundPortBrowser Create(BrowserType type)
     {
+        // Enterprise Keyed Services DI-Auflösung (.NET 10 Standard)
+        if (serviceProvider.GetKeyedService<IOutboundPortBrowser>(type) is { } keyedBrowser)
+        {
+            return keyedBrowser;
+        }
+
+        // Fallback für Mocks & Legacy-Auflösung
         return type switch
         {
-            BrowserType.Chrome => _serviceProvider.GetRequiredService<AdapterChromeBrowser>(),
-            BrowserType.Firefox => _serviceProvider.GetRequiredService<AdapterFirefoxBrowser>(),
-            BrowserType.Edge => _serviceProvider.GetRequiredService<AdapterEdgeBrowser>(),
-            BrowserType.Brave => _serviceProvider.GetRequiredService<AdapterBraveBrowser>(),
-            BrowserType.Vivaldi => _serviceProvider.GetRequiredService<AdapterVivaldiBrowser>(),
+            BrowserType.Chrome => serviceProvider.GetRequiredService<AdapterChromeBrowser>(),
+            BrowserType.Firefox => serviceProvider.GetRequiredService<AdapterFirefoxBrowser>(),
+            BrowserType.Edge => serviceProvider.GetRequiredService<AdapterEdgeBrowser>(),
+            BrowserType.Brave => serviceProvider.GetRequiredService<AdapterBraveBrowser>(),
+            BrowserType.Vivaldi => serviceProvider.GetRequiredService<AdapterVivaldiBrowser>(),
             _ => throw new NotSupportedException($"Browser {type} ist noch nicht implementiert.")
         };
     }
