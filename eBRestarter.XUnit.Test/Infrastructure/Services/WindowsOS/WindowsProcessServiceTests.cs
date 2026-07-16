@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using eBRestarter.Infrastructure.Wrappers;
+using eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {

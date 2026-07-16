@@ -1,5 +1,5 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Wrappers;
+using eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

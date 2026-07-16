@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.Models;
 using Moq;
 using Shouldly;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
 {

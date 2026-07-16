@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Extensions;
+using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using Shouldly;
 using System.Globalization;
 using Xunit;

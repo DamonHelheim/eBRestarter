@@ -49,7 +49,7 @@ public sealed class AdapterGitHubUpdate(
         var request = new ApiRequest
         {
             Url = GitHubApiUrl,
-            Method = Enums.HttpMethod.GET
+            Method = ObjectArchetypes.Enums.HttpMethod.GET
         };
 
         var response = await _restClientUseCase.ExecuteGetAsync(request);

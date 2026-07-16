@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_OptionsGeneral"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=VM:ViewModelOptionsGeneral}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{ThemeResource FontColor_1}" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid
+            x:Name="Grid_Options_General"
+            Margin="20,10,20,20"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Height="auto"
+                Margin="0,0,24,0"
+                Padding="16"
+                Background="{ThemeResource DashletBackgroundColor_2}"
+                CornerRadius="6">
+
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        x:Name="lbl_Options_OperatingSettings"
+                        x:Uid="Windows"
+                        Margin="0,0,0,12"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <Button
+                        x:Name="btnOptionsAutomaticWindowsUserLogin"
+                        x:Uid="Automatic_User_Login"
+                        Width="311"
+                        Height="50"
+                        Margin="0,0,0,12"
+                        HorizontalAlignment="Left"
+                        Background="#FF00CAD4"
+                        BorderBrush="{x:Null}"
+                        Command="{Binding ConfigureAutoLogonCommand}"
+                        FontSize="16"
+                        Foreground="#DDFFFFFF" />
+
+                    <TextBlock
+                        x:Uid="Start_eV_Restarter_with_Windows"
+                        Margin="10,8,0,4"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <ToggleSwitch
+                        x:Name="TS_OptionsStartWithWindows"
+                        x:Uid="TS_OptionsStartWithWindows"
+                        Width="250"
+                        Height="40"
+                        Margin="10,0,0,12"
+                        HorizontalAlignment="Left"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        IsOn="{Binding StartWithWindows, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock
+                        x:Name="lbl_Computer_Restartoptionen"
+                        x:Uid="Computer_restart_options"
+                        Margin="10,0,0,8"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <ComboBox
+                        x:Name="ComboboxComputerRestartOptions"
+                        Width="300"
+                        Margin="10,0,10,12"
+                        DisplayMemberPath="DisplayText"
+                        FontSize="16"
+                        ItemsSource="{Binding ComputerRestartList}"
+                        SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <StackPanel
+                        Width="300"
+                        Margin="10,5,10,10"
+                        HorizontalAlignment="Left"
+                        Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+
+                        <TextBlock
+                            x:Uid="Set_the_time"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Left"
+                            FontSize="14"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Text="Lege die Uhrzeit fest:" />
+
+                        <Slider
+                            x:Name="SliderRestartComputer"
+                            HorizontalAlignment="Stretch"
+                            Foreground="#FF167DA4"
+                            Maximum="{Binding ComputerRestartClockTimeMax, Mode=OneTime}"
+                            Minimum="{Binding ComputerRestartClockTimeMin, Mode=OneTime}"
+                            SnapsTo="StepValues"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Grid Margin="0,-5,0,0">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Grid.Column="0"
+                                FontSize="12"
+                                Foreground="Gray"
+                                Text="{Binding ComputerRestartClockTimeMin, Mode=OneTime}" />
+
+                            <TextBlock
+                                Grid.Column="2"
+                                FontSize="12"
+                                Foreground="Gray"
+                                Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" />
+                        </Grid>
+
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Name="lbl_Options_DateOfRestartComputerInfo"
+                        Margin="10,0,0,4"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="{Binding RestartStatusText, Mode=OneWay}" />
+
+                    <TextBlock
+                        x:Name="tbl_restart_information"
+                        x:Uid="RestartWarning"
+                        Width="336"
+                        Height="auto"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"
+                        FontSize="12"
+                        Foreground="#de1043"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+
+                </StackPanel>
+
+            </Border>
+
+            <Border
+                Grid.Column="1"
+                Margin="0,0,24,0"
+                Padding="16"
+                Background="{ThemeResource DashletBackgroundColor_2}"
+                CornerRadius="6">
+
+                <StackPanel Spacing="14">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="Update" Style="{StaticResource SectionTitleStyle}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button
+                                x:Name="BtnCheckForUpdates"
+                                x:Uid="Check_for_updates"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="#FF4DC89E"
+                                BorderBrush="{x:Null}"
+                                Command="{Binding CheckForUpdatesCommand}"
+                                Foreground="#DDFFFFFF" />
+
+                            <ProgressRing
+                                Grid.Column="1"
+                                Width="24"
+                                Height="24"
+                                Margin="12,0,0,0"
+                                IsActive="{Binding IsCheckingForUpdates}"
+                                Visibility="{Binding IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                        </Grid>
+
+                        <TextBlock
+                            Foreground="{ThemeResource FontColor_1}"
+                            Text="{Binding UpdateMessage, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            Visibility="{Binding IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                    </StackPanel>
+
+                    <Border Height="1" Background="#33000000" />
+
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="Configuration_storage_location" Style="{StaticResource SectionTitleStyle}" />
+
+                        <Button
+                            x:Name="Btn_go_to_settings_data"
+                            x:Uid="Go_to_storage_location"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Background="#FF149DAE"
+                            BorderBrush="{x:Null}"
+                            Command="{Binding OpenSettingsDataFolderCommand}"
+                            Foreground="#DDFFFFFF" />
+                    </StackPanel>
+
+                    <Border Height="1" Background="#33000000" />
+
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="Themes" Style="{StaticResource SectionTitleStyle}" />
+
+                        <Button
+                            x:Name="BtnSetStandardTheme"
+                            x:Uid="Standard"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Background="#FFD5D5D5"
+                            BorderBrush="{x:Null}"
+                            Command="{Binding SetLightThemeCommand}"
+                            Foreground="Black" />
+
+                        <Button
+                            x:Name="BtnSetDarkTheme"
+                            x:Uid="Dark"
+                            Margin="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Background="#FF414D4F"
+                            BorderBrush="{x:Null}"
+                            Command="{Binding SetDarkThemeCommand}"
+                            Foreground="White" />
+                    </StackPanel>
+
+                    <Border Height="1" Background="#33000000" />
+
+                    <StackPanel Spacing="8">
+                        <TextBlock
+                            x:Uid="Language"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Foreground="{ThemeResource FontColor_1}" />
+
+                        <ComboBox
+                            Width="300"
+                            Margin="0,0,10,12"
+                            DisplayMemberPath="DisplayText"
+                            FontSize="16"
+                            ItemsSource="{Binding LanguageList}"
+                            SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

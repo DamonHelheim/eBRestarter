@@ -7,7 +7,6 @@ using eBRestarter.Core.Application.Ports.Outbound.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Network;
 using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.Enums;
 using Moq;
 using Shouldly;
 using System;
@@ -22,6 +21,7 @@ using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Common.TypedError;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.DeleteBrowserContent
 {

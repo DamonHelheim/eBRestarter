@@ -1,0 +1,130 @@
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_Networktraffic"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel"
+    mc:Ignorable="d">
+
+    <Border
+        Padding="0"
+        Background="{ThemeResource MenuBackgroundColor}"
+        BorderThickness="1"
+        CornerRadius="2">
+
+        <StackPanel>
+
+            <StackPanel Height="46" Orientation="Horizontal">
+
+                <Image
+                    Width="32"
+                    Height="32"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Source="/Resources/Visuals/Icons/Intersection/globe-grid.png" />
+
+                <TextBlock
+                    x:Uid="NetworkTraffic"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="20"
+                    Foreground="{ThemeResource FontColor_1}" />
+
+            </StackPanel>
+
+            <Grid
+                Width="280"
+                Height="180"
+                HorizontalAlignment="Center">
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+
+                    <ItemsControl ItemsSource="{x:Bind ViewModelNetworkTraffic.NetworkCards, Mode=OneWay}">
+
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate x:DataType="models:NetworkCardDisplayModel">
+
+                                <Grid Margin="0,0,0,15">
+
+                                    <Grid.RowDefinitions>
+
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel
+                                        Grid.Row="0"
+                                        Margin="0,0,0,5"
+                                        Orientation="Horizontal">
+
+                                        <Image
+                                            Width="23"
+                                            Height="23"
+                                            Margin="5,0,0,0"
+                                            Source="{ThemeResource NetworkCardIcon}" />
+
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontSize="15"
+                                            Foreground="{ThemeResource FontColor_1}"
+                                            Text="{x:Bind AdapterName, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Grid.Row="1"
+                                        Margin="0,0,0,5"
+                                        Orientation="Horizontal">
+
+                                        <Image
+                                            Width="23"
+                                            Height="23"
+                                            Margin="5,0,0,0"
+                                            Source="{ThemeResource DownloadIcon}" />
+
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontSize="15"
+                                            Foreground="{ThemeResource FontColor_1}"
+                                            Text="{x:Bind ReceivedData, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+
+                                        <Image
+                                            Width="23"
+                                            Height="23"
+                                            Margin="5,0,0,0"
+                                            Source="{ThemeResource SendDataIcon}" />
+
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontSize="15"
+                                            Foreground="{ThemeResource FontColor_1}"
+                                            Text="{x:Bind SentData, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                </Grid>
+
+                            </DataTemplate>
+
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                </ScrollViewer>
+
+            </Grid>
+
+        </StackPanel>
+
+    </Border>
+
+</UserControl>

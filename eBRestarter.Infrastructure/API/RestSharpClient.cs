@@ -1,5 +1,5 @@
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.Enums;
+using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
 using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 using Microsoft.Extensions.Logging;
 using RestSharp;

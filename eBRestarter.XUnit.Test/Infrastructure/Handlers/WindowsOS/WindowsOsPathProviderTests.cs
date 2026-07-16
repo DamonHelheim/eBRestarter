@@ -6,8 +6,8 @@ using Moq;
 using Shouldly;
 using System.IO;
 using Xunit;
-using eBRestarter.Infrastructure.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Infrastructure.BehavioralComponents.Providers;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {

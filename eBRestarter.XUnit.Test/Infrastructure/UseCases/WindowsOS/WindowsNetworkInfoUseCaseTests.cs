@@ -9,8 +9,8 @@ using Shouldly;
 using System.Linq;
 using System.Net.NetworkInformation;
 using Xunit;
-using eBRestarter.Infrastructure.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
+using eBRestarter.Infrastructure.BehavioralComponents.Providers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
 {

@@ -1,7 +1,7 @@
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 using eBRestarter.Core.Domain.ValueObjects;
-using eBRestarter.Infrastructure.Repositories.Config;
+using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;

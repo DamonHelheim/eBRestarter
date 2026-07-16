@@ -2,7 +2,7 @@ using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.Enums;
+using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
 using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.API.Authentication;

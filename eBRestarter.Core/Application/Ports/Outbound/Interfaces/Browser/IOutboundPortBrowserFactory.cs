@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 

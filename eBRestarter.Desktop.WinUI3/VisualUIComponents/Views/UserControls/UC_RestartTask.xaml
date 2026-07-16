@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_RestartTask"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+
+        <converters:BoolToImageConverter
+            x:Key="BoolToImageConverter"
+            ImagePathWhenFalse="ms-appx:///Resources/Visuals/Icons/Intersection/play.png"
+            ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/tasks.png" />
+
+        <converters:TimerStateToTextConverter x:Key="TextConverter" />
+
+        <converters:TimerStateToColorConverter x:Key="ColorConverter" />
+
+        <converters:SecondsToTimeFormatConverter x:Key="TimeConverter" />
+
+    </UserControl.Resources>
+
+    <Border
+        x:Name="Border_Restarter_Agent"
+        Width="585"
+        Height="130"
+        Margin="0,0,0,0"
+        Background="{ThemeResource DashletBackgroundColor_3}"
+        BorderThickness="1"
+        CornerRadius="5">
+
+        <Grid>
+
+            <!--  2 Spalten: links Button, rechts Inhalt  -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="78" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  RECHTE SEITE: Inhalt  -->
+            <Grid Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  Row 0: statt DockPanel jetzt ein Grid mit 2 Spalten  -->
+                <Grid Grid.Row="0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  links: Icon + "Restarter Agent"  -->
+                    <StackPanel
+                        Grid.Column="0"
+                        Width="301"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+
+                        <Image
+                            x:Name="image_restarter_agent"
+                            Width="30"
+                            Height="30"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Source="/Resources/Visuals/Icons/Intersection/timer.png" />
+
+                        <TextBlock
+                            x:Name="tbl_Restarter_Agent"
+                            x:Uid="RestarterAgent"
+                            Width="110"
+                            Height="23"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Text="Restarter Agent" />
+                    </StackPanel>
+
+                    <!--  rechts: Timer + Status-Icon  -->
+                    <StackPanel
+                        Grid.Column="1"
+                        Width="203"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+
+                        <StackPanel
+                            Width="166"
+                            Height="26"
+                            VerticalAlignment="Center">
+
+                            <TextBlock
+                                x:Name="tbl_Timer"
+                                Width="Auto"
+                                Height="26"
+                                Margin="0,0,10,0"
+                                HorizontalAlignment="Right"
+                                FontSize="20"
+                                Foreground="{ThemeResource FontColor_1}"
+                                Text="{Binding SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}" />
+
+                        </StackPanel>
+
+                        <Image
+                            x:Name="tbl_CurrentStatusIcon"
+                            Width="32"
+                            Height="32"
+                            Source="{Binding IsActive, Converter={StaticResource BoolToImageConverter}}" />
+
+                    </StackPanel>
+
+                </Grid>
+
+                <!--  Row 1: Browser  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        x:Name="image_restarter_agent_Copy"
+                        Width="30"
+                        Height="25"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource GlobeIcon2}" />
+
+                    <TextBlock
+                        x:Name="tbl_Browser"
+                        x:Uid="Browser"
+                        Width="62"
+                        Height="22"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <TextBlock
+                        x:Name="tbl_SelectedBrowser"
+                        Width="Auto"
+                        Height="21"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="{Binding ChosenBrowser}" />
+
+                </StackPanel>
+
+                <!--  Row 2: Nutzer  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        x:Name="image_restarter_agent_Copy1"
+                        Width="25"
+                        Height="22"
+                        Margin="12,0,2,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource UserIcon2}" />
+
+                    <TextBlock
+                        x:Name="tbl_User"
+                        x:Uid="User"
+                        Width="69"
+                        Height="Auto"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <StackPanel Width="387" Orientation="Horizontal">
+
+                        <TextBlock
+                            x:Name="tbl_Username"
+                            Width="Auto"
+                            Height="22"
+                            Margin="10,0,0,0"
+                            FontSize="16"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Text="{Binding Username}"
+                            TextAlignment="Center"
+                            TextWrapping="WrapWholeWords" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!--  Row 3: Status  -->
+                <StackPanel
+                    Grid.Row="3"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        x:Name="image_restarter_agent_Copy2"
+                        Width="22"
+                        Height="22"
+                        Margin="13,0,5,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource StatusIcon}" />
+
+
+                    <TextBlock
+                        x:Name="tbl_Status"
+                        x:Uid="Status"
+                        Width="65"
+                        Height="22"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <TextBlock
+                        x:Name="tbl_CurrentStatusInfo"
+                        Width="Auto"
+                        Height="22"
+                        Margin="13,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="{Binding StatusInfoText, Mode=OneWay}" />
+
+                </StackPanel>
+
+            </Grid>
+
+            <!--  LINKE SEITE: ToggleButton  -->
+            <ToggleButton
+                x:Name="tbtn_StartTimerSchudeler"
+                Grid.Column="0"
+                Width="78"
+                Height="128"
+                VerticalAlignment="Center"
+                Background="#FF0DB290"
+                Command="{Binding ExecuteStartTimerSchedulerCommand}"
+                CommandParameter="{Binding ElementName=tbtn_StartTimerSchudeler, Path=IsChecked}"
+                Content="{Binding IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
+                Foreground="White"
+                IsChecked="{Binding IsActive, Mode=TwoWay}"
+                IsEnabled="{Binding HasInstalledBrowsers}">
+
+                <ToggleButton.Resources>
+
+                    <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#b30c2e" />
+
+                    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#CCBA224D" />
+
+                    <SolidColorBrush x:Key="ToggleButtonBackgroundPointerOver" Color="#FF0DB290" />
+
+                    <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#990000" />
+
+                    <SolidColorBrush x:Key="ToggleButtonBackgroundPressed" Color="#6ff292" />
+                    <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="White" />
+                    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="White" />
+                    <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="White" />
+                    <SolidColorBrush x:Key="ToggleButtonForegroundPressed" Color="White" />
+
+                </ToggleButton.Resources>
+
+            </ToggleButton>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

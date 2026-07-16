@@ -1,5 +1,4 @@
 using eBRestarter.Core.Application.Ports.Outbound;
-using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Factories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +8,7 @@ using System;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Factories
 {

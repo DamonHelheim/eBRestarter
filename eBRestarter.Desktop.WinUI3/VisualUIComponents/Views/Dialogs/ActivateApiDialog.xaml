@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.Dialogs.ActivateApiDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d"
+    x:Uid="ActivateApiDialog"
+    CloseButtonText="Schließen"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    RequestedTheme="Dark">
+
+    <ContentDialog.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
+    </ContentDialog.Resources>
+
+    <Grid MinWidth="400" RowSpacing="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Spacing="15">
+
+            <Image Source="ms-appx:///Resources/Visuals/Icons/Intersection/fa_keyaccess.png" 
+                   Width="40" Height="40"/>
+
+            <TextBlock x:Uid="ActivateApiDialog_Header"
+                       VerticalAlignment="Center"
+                       Style="{ThemeResource SubtitleTextBlockStyle}"/>
+        </StackPanel>
+
+        <TextBox Grid.Row="1" 
+                 x:Uid="ActivateApiDialog_Username"
+                 Text="{x:Bind ViewModelActivateApi.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+
+        <PasswordBox Grid.Row="2" 
+                     x:Uid="ActivateApiDialog_ApiKey"
+                     Password="{x:Bind ViewModelActivateApi.ApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+
+        <Button Grid.Row="3" 
+                x:Uid="ActivateApiDialog_SubmitBtn"
+                Command="{x:Bind ViewModelActivateApi.SubmitCommand}"
+                HorizontalAlignment="Stretch"
+                Style="{ThemeResource AccentButtonStyle}"/>
+
+        <StackPanel Grid.Row="4" Spacing="10">
+            <ProgressBar IsIndeterminate="True" 
+                         Visibility="{x:Bind ViewModelActivateApi.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"/>
+
+            <TextBlock Text="{x:Bind ViewModelActivateApi.StatusMessage, Mode=OneWay}"
+                       Foreground="{x:Bind ViewModelActivateApi.StatusColor, Mode=OneWay}"
+                       HorizontalAlignment="Center" FontWeight="SemiBold" TextWrapping="Wrap"/>
+        </StackPanel>
+
+    </Grid>
+</ContentDialog>

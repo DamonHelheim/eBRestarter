@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -37,35 +37,35 @@
     <None Remove="Resources\Visuals\Icons\LightTheme\globe.png" />
     <None Remove="Resources\Visuals\Icons\LightTheme\globe_light_theme.png" />
     <None Remove="Resources\Visuals\Images\EVisitorAddOnInfo.png" />
-    <None Remove="Views\Dialogs\AboutDialog.xaml" />
-    <None Remove="Views\Dialogs\ActivateApiDialog.xaml" />
-    <None Remove="Views\Dialogs\AutoLogonDialog.xaml" />
-    <None Remove="Views\Dialogs\DeleteBrowserContentDialog.xaml" />
-    <None Remove="Views\Dialogs\InstallAddOnInfoDialog.xaml" />
-    <None Remove="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml" />
-    <None Remove="Views\Pages\P_CommonOverview.xaml" />
-    <None Remove="Views\Pages\P_Infocenter.xaml" />
-    <None Remove="Views\Pages\P_Options.xaml" />
-    <None Remove="Views\Pages\P_RestarterProperties.xaml" />
-    <None Remove="Views\Pages\P_Settings.xaml" />
-    <None Remove="Views\UserControls\UC_AdditionalOptions.xaml" />
-    <None Remove="Views\UserControls\UC_AutomatedTasks.xaml" />
-    <None Remove="Views\UserControls\UC_Browser.xaml" />
-    <None Remove="Views\UserControls\UC_CommonOverview.xaml" />
-    <None Remove="Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
-    <None Remove="Views\UserControls\UC_EarningsAmount.xaml" />
-    <None Remove="Views\UserControls\UC_eVisitorUsername.xaml" />
-    <None Remove="Views\UserControls\UC_Infocenter.xaml" />
-    <None Remove="Views\UserControls\UC_InformationCardUrls.xaml" />
-    <None Remove="Views\UserControls\UC_InformationsCard.xaml" />
-    <None Remove="Views\UserControls\UC_InstalledBrowsers.xaml" />
-    <None Remove="Views\UserControls\UC_IPInformation.xaml" />
-    <None Remove="Views\UserControls\UC_Networktraffic.xaml" />
-    <None Remove="Views\UserControls\UC_Options.xaml" />
-    <None Remove="Views\UserControls\UC_PointsOutput.xaml" />
-    <None Remove="Views\UserControls\UC_RestartAgent.xaml" />
-    <None Remove="Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
-    <None Remove="Views\UserControls\UC_RestartTask.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\AboutDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\ActivateApiDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\AutoLogonDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\DeleteBrowserContentDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\InstallAddOnInfoDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml" />
+    <None Remove="VisualUIComponents\Views\Pages\P_CommonOverview.xaml" />
+    <None Remove="VisualUIComponents\Views\Pages\P_Infocenter.xaml" />
+    <None Remove="VisualUIComponents\Views\Pages\P_Options.xaml" />
+    <None Remove="VisualUIComponents\Views\Pages\P_RestarterProperties.xaml" />
+    <None Remove="VisualUIComponents\Views\Pages\P_Settings.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_AdditionalOptions.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_AutomatedTasks.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_Browser.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_CommonOverview.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_DeleteBrowserContentTask.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_EarningsAmount.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_eVisitorUsername.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_Infocenter.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_InformationCardUrls.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_InformationsCard.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_InstalledBrowsers.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_IPInformation.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_Networktraffic.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_Options.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_PointsOutput.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_RestartAgent.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_RestartAndRuntimeOptions.xaml" />
+    <None Remove="VisualUIComponents\Views\UserControls\UC_RestartTask.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Page Remove="Resources\Styles\Themes\DarkTheme - Kopieren.xaml" />
@@ -306,152 +306,152 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\TurnOffEdgeStartupBoostDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\InstallAddOnInfoDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\InstallAddOnInfoDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_RestartAgent.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_RestartAgent.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\ActivateApiDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\ActivateApiDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\InstallAddOnDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\InstallAddOnDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\DeleteBrowserContentDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\DeleteBrowserContentDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Dialogs\AboutDialog.xaml">
+    <Page Update="VisualUIComponents\Views\Dialogs\AboutDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\ContentDialog\AutoLogonDialog.xaml">
+    <Page Update="VisualUIComponents\Views\ContentDialog\AutoLogonDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_CommonOverview.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_CommonOverview.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_PointsOutput.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_PointsOutput.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_EarningsAmount.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_EarningsAmount.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_Networktraffic.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_Networktraffic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_IPInformation.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_IPInformation.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_Infocenter.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_Infocenter.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_InformationCardUrls.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_InformationCardUrls.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_InformationsCard.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_InformationsCard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_Options.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_Options.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_RestartAndRuntimeOptions.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_RestartAndRuntimeOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_InstalledBrowsers.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_InstalledBrowsers.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_Browser.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_Browser.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_AutomatedTasks.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_AutomatedTasks.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_AdditionalOptions.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_AdditionalOptions.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_eVisitorUsername.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_eVisitorUsername.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_DeleteBrowserContentTask.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_DeleteBrowserContentTask.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\UserControls\UC_RestartTask.xaml">
+    <Page Update="VisualUIComponents\Views\UserControls\UC_RestartTask.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\P_Settings.xaml">
+    <Page Update="VisualUIComponents\Views\Pages\P_Settings.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\P_Infocenter.xaml">
+    <Page Update="VisualUIComponents\Views\Pages\P_Infocenter.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\P_Options.xaml">
+    <Page Update="VisualUIComponents\Views\Pages\P_Options.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\P_RestarterProperties.xaml">
+    <Page Update="VisualUIComponents\Views\Pages\P_RestarterProperties.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\Pages\P_CommonOverview.xaml">
+    <Page Update="VisualUIComponents\Views\Pages\P_CommonOverview.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

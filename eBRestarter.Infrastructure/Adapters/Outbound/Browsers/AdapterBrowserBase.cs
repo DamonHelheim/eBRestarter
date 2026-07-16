@@ -1,5 +1,5 @@
-using eBRestarter.Core.Application.Enums;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using Microsoft.Extensions.Logging;

@@ -11,8 +11,8 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.Enums;
 using eBRestarter.Infrastructure.ObjectArchetypes.Model;
+using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Adapters.Authentication
 {

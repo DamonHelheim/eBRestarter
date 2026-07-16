@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using System.DirectoryServices.AccountManagement;
 

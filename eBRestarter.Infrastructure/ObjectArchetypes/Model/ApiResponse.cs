@@ -1,4 +1,4 @@
-﻿using eBRestarter.Infrastructure.Enums;
+﻿using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Infrastructure.ObjectArchetypes.Model;
 

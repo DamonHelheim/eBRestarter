@@ -1,4 +1,3 @@
-using eBRestarter.Core.Application.Enums;
 using eBRestarter.Infrastructure.Adapters.Authentication;
 using eBRestarter.Core.Application.Models.Records;
 using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
@@ -9,6 +8,7 @@ using System;
 using System.DirectoryServices.AccountManagement;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {

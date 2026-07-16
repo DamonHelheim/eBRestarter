@@ -1,0 +1,236 @@
+<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_PointsOutput"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    mc:Ignorable="d">
+
+    <Grid
+        Background="{ThemeResource DashletBackgroundColor_2}"
+        BorderThickness="1"
+        CornerRadius="8">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="12,12,12,4">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+
+            </Grid.ColumnDefinitions>
+
+            <Pivot Grid.Column="1" SelectedIndex="{Binding SelectedPivotIndex, Mode=TwoWay}">
+
+                <PivotItem>
+
+                    <PivotItem.Header>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+
+                            <FontIcon
+                                FontSize="16"
+                                Foreground="{ThemeResource FontColor_1}"
+                                Glyph="&#xE916;" />
+
+                            <TextBlock
+                                x:Uid="Today"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource FontColor_1}" />
+
+                        </StackPanel>
+
+                    </PivotItem.Header>
+
+                </PivotItem>
+
+                <PivotItem>
+
+                    <PivotItem.Header>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+
+                            <FontIcon
+                                FontSize="16"
+                                Foreground="{ThemeResource FontColor_1}"
+                                Glyph="&#xE787;" />
+
+                            <TextBlock
+                                x:Uid="Month"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource FontColor_1}" />
+
+                        </StackPanel>
+
+                    </PivotItem.Header>
+
+                </PivotItem>
+
+                <PivotItem>
+
+                    <PivotItem.Header>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+
+                            <FontIcon
+                                FontSize="16"
+                                Foreground="{ThemeResource FontColor_1}"
+                                Glyph="&#xE909;" />
+
+                            <TextBlock
+                                x:Uid="Year"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource FontColor_1}" />
+
+                        </StackPanel>
+
+
+                    </PivotItem.Header>
+
+                </PivotItem>
+
+            </Pivot>
+
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Margin="12"
+            Background="{ThemeResource ChartBorderBackground}"
+            BorderThickness="1"
+            CornerRadius="8">
+
+            <lvc:CartesianChart
+                MinHeight="250"
+                Margin="12"
+                CornerRadius="5"
+                RequestedTheme="{ThemeResource GeneralRequestedTheme}"
+                Series="{Binding Series, Mode=OneWay}"
+                TooltipPosition="Top"
+                XAxes="{Binding XAxes, Mode=OneWay}"
+                YAxes="{Binding YAxes, Mode=OneWay}" />
+
+        </Border>
+
+
+
+    </Grid>
+</UserControl>
+
+<!--<UserControl
+    x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_PointsOutput"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:vm="using:eBRestarter.Desktop.WinUI3.ViewModels"
+    mc:Ignorable="d">
+
+    <Grid CornerRadius="8"
+          BorderThickness="1"
+          Background="{ThemeResource DashletBackgroundColor_2}">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="12,12,12,4">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="{Binding ChartTitle, Mode=OneWay}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       VerticalAlignment="Center"/>
+
+            <Pivot Grid.Column="1"
+                   RequestedTheme="Light"
+                   SelectedIndex="{Binding SelectedPivotIndex, Mode=TwoWay}">
+
+                <Pivot.Resources>
+                    <SolidColorBrush x:Key="PivotHeaderItemSelectedForeground" Color="Black" />
+                    <Style TargetType="PivotHeaderItem">
+                        <Setter Property="Foreground" Value="{ThemeResource FontColor_1}" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
+                    </Style>
+                </Pivot.Resources>
+
+                <Pivot.Resources>
+                    <SolidColorBrush x:Key="PivotHeaderItemSelectedForeground" Color="Black" />
+
+                    <SolidColorBrush x:Key="PivotHeaderItemForeground" Color="Black" />
+
+                    <SolidColorBrush x:Key="PivotHeaderItemForegroundPointerOver" Color="Black" />
+                    <SolidColorBrush x:Key="PivotHeaderItemSelectedForegroundPointerOver" Color="Black" />
+
+                    <SolidColorBrush x:Key="PivotHeaderItemSelectedPipeFill" Color="Black" />
+                </Pivot.Resources>
+
+                <PivotItem Header="Heute" />
+                <PivotItem Header="Monat" />
+                <PivotItem Header="Jahr" />
+
+            </Pivot>
+
+        </Grid>
+
+        <lvc:CartesianChart Grid.Row="1"
+                            Margin="12"
+                            MinHeight="250"
+                            Series="{Binding Series, Mode=OneWay}"
+                            XAxes="{Binding XAxes, Mode=OneWay}"
+                            YAxes="{Binding YAxes, Mode=OneWay}"
+                            TooltipPosition="Top">
+
+        </lvc:CartesianChart>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Spacing="24"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,16">
+
+            <StackPanel>
+                <TextBlock Text="Heute" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
+                <TextBlock Text="{Binding EarningsThisDaySum, Mode=OneWay}" FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <Border Width="1" Height="20" Background="Gray" Opacity="0.3"/>
+
+            <StackPanel>
+                <TextBlock Text="Diesen Monat" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
+                <TextBlock Text="{Binding EarningsThisMonthSum, Mode=OneWay}" FontWeight="SemiBold"/>
+            </StackPanel>
+
+            <Border Width="1" Height="20" Background="Gray" Opacity="0.3"/>
+
+            <StackPanel>
+                <TextBlock Text="Dieses Jahr" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
+                <TextBlock Text="{Binding EarningsThisYearSum, Mode=OneWay}" FontWeight="SemiBold"/>
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</UserControl>-->

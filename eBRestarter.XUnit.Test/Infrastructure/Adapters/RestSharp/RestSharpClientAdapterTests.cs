@@ -9,7 +9,7 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
 using eBRestarter.Infrastructure.Api;
-using eBRestarter.Infrastructure.Enums;
+using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Tests.Infrastructure.Services
 {

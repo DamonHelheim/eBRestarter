@@ -1,4 +1,4 @@
-using eBRestarter.Core.Application.Enums;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Common.Statics;
 using Microsoft.Extensions.Logging;

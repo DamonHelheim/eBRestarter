@@ -7,7 +7,7 @@ namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 /// <para>
 /// <strong>Architektonische Klassifizierung (Leitfaden): INBOUND PORT / USE CASE INTERFACE</strong><br/>
 /// - <strong>Aufrufer (Consumer):</strong> Liegt AUßERHALB des Application Cores (<see cref="eBRestarter.Desktop.WinUI3.App"/> im Presentation Layer beim Anwendungsstart).<br/>
-/// - <strong>Implementierung (Implementer):</strong> Liegt INNERHALB des Application Cores (<see cref="Application.Providers.StartupConfigProvider"/>).<br/>
+/// - <strong>Implementierung (Implementer):</strong> Liegt INNERHALB des Application Cores (<see cref="BehavioralComponents.Providers.StartupConfigProvider"/>).<br/>
 /// - <strong>Begründung:</strong> Dient als Eingangstür in den Anwendungskern für das UI-Bootstrap, um dem Desktop-Client beim Start die initialen Anzeigeeinstellungen (Theme, Sprache) bereitzustellen.
 /// </para>
 /// </summary>

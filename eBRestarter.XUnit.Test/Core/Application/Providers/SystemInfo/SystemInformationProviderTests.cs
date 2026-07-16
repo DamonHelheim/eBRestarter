@@ -8,8 +8,8 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.BehavioralComponents.Providers;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
 {
