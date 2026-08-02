@@ -454,14 +454,14 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
     [RelayCommand]
     private void SetDarkTheme()
     {
-        _themeService.SetTheme(DarkThemeName);
+        _themeService.SetTheme(AppTheme.Dark);
         SaveThemeConfig(DarkThemeName);
     }
 
     [RelayCommand]
     private void SetLightTheme()
     {
-        _themeService.SetTheme(LightThemeName);
+        _themeService.SetTheme(AppTheme.Light);
         SaveThemeConfig(LightThemeName);
     }
 

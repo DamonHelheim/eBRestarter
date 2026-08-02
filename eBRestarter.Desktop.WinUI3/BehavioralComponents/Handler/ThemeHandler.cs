@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Handler.Interfaces;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.BehavioralUIComponents.Helpers.Interfaces;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Enums;
 
 namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Handler;
 
@@ -18,12 +19,6 @@ public sealed class ThemeHandler(
     IAppWindowHelper appWindowHelper,
     IMainWindowProvider mainWindowProvider) : IThemeHandler
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
-    private const string ThemeDark = "Dark";
-    private const string ThemeLight = "Light";
-
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
@@ -36,31 +31,34 @@ public sealed class ThemeHandler(
     //  6. Properties
     // ═══════════════════════════════════════════════════════
     /// <summary>
-    /// Gets the name of the currently active UI theme.
+    /// Gets the name of the currently active UI theme enum.
     /// </summary>
-    public string CurrentTheme { get; private set; } = ThemeLight;
+    public AppTheme CurrentTheme { get; private set; } = AppTheme.Light;
 
 
     // ═══════════════════════════════════════════════════════
     //  8. Methods
     // ═══════════════════════════════════════════════════════
     /// <summary>
-    /// Applies the specified theme name to the main window root element, title bar, and chart controls.
+    /// Applies the specified <see cref="AppTheme"/> enum to the main window root element, title bar, and chart controls.
     /// </summary>
-    /// <param name="themeName">The target theme name (e.g. "Dark" or "Light").</param>
-    public void SetTheme(string themeName)
+    /// <param name="theme">The target <see cref="AppTheme"/> value.</param>
+    public void SetTheme(AppTheme theme)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(themeName);
-
-        bool isDark = string.Equals(themeName, ThemeDark, StringComparison.OrdinalIgnoreCase);
-        var theme = isDark ? ElementTheme.Dark : ElementTheme.Light;
+        bool isDark = theme == AppTheme.Dark;
+        var elementTheme = theme switch
+        {
+            AppTheme.Dark => ElementTheme.Dark,
+            AppTheme.Light => ElementTheme.Light,
+            _ => ElementTheme.Default
+        };
 
         var mainWindow = _mainWindowProvider.MainWindow;
 
         if (mainWindow?.Content is FrameworkElement rootElement)
         {
-            rootElement.RequestedTheme = theme;
-            _appWindowHelper.UpdateTitleBarTheme(mainWindow, theme);
+            rootElement.RequestedTheme = elementTheme;
+            _appWindowHelper.UpdateTitleBarTheme(mainWindow, elementTheme);
         }
 
         if (isDark)
@@ -72,6 +70,21 @@ public sealed class ThemeHandler(
             LiveCharts.Configure(config => config.AddLightTheme());
         }
 
-        CurrentTheme = themeName;
+        CurrentTheme = theme;
+    }
+
+    /// <summary>
+    /// Applies the theme matching the specified theme name string.
+    /// </summary>
+    /// <param name="themeName">The target theme name string (e.g. "Dark" or "Light").</param>
+    public void SetTheme(string themeName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(themeName);
+
+        AppTheme parsedTheme = Enum.TryParse<AppTheme>(themeName, true, out var result)
+            ? result
+            : AppTheme.Light;
+
+        SetTheme(parsedTheme);
     }
 }
