@@ -1,104 +1,156 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
-namespace eBRestarter.Core.Application.Services;
+namespace eBRestarter.Core.Application.BehavioralComponents.Services;
 
-public class ComputerRestartService(
-    IOutboundPortEVisitorConfigRepository configService,
-    IOutboundPortOsProcessControl processService,
+/// <summary>
+/// Service responsible for managing automated computer system restarts according to configuration rules.
+/// </summary>
+public sealed class ComputerRestartService(
     IOutboundPortApplicationLifetime applicationLifetime,
-    TimeProvider timeProvider,
-    IOutboundPortApplicationLogger<ComputerRestartService> logger) : IInboundPortComputerRestartService, IDisposable
+    IOutboundPortEVisitorConfigRepository configService,
+    IOutboundPortApplicationLogger<ComputerRestartService> logger,
+    IOutboundPortOsProcessControl processService,
+    TimeProvider timeProvider) : IInboundPortComputerRestartService, IDisposable
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+    private static readonly TimeSpan SchedulerTimerInterval = TimeSpan.FromSeconds(30);
+
+    private const int ApplicationExitSuccessCode = 0;
+    private const int MissedSlotToleranceMinutes = 5;
+    private const int ProcessCloseTimeoutMilliseconds = 30000;
+
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    private readonly IOutboundPortApplicationLifetime _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService ?? throw new ArgumentNullException(nameof(configService));
+    private readonly IOutboundPortApplicationLogger<ComputerRestartService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IOutboundPortOsProcessControl _processService = processService ?? throw new ArgumentNullException(nameof(processService));
+    private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+
+    // ── Block 2: Primitive Typen & Strings ──
     private bool _disposed;
 
-    // Dependencies (Dependency Inversion Principle)
-    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
-    private readonly IOutboundPortOsProcessControl _processService = processService;
-    private readonly IOutboundPortApplicationLifetime _applicationLifetime = applicationLifetime;
-    private readonly TimeProvider _timeProvider = timeProvider;
-    private readonly IOutboundPortApplicationLogger<ComputerRestartService> _logger = logger;
-
-    // Controls for the background task
-    private PeriodicTimer? _timer;
+    // ── Block 4: Komplexe Typen & Sync-Elemente (alphabetisch A–Z) ──
     private Task? _backgroundTask;
     private CancellationTokenSource? _cts;
+    private readonly System.Threading.Lock _syncLock = new();
+    private PeriodicTimer? _timer;
 
-    public event EventHandler<DateTime?>? OnNextRestartDateChanged;
 
+    // ═══════════════════════════════════════════════════════
+    //  5. Events & Delegates
+    // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Occurs when the scheduled next restart date is updated or recalculated.
+    /// </summary>
+    public event EventHandler<DateTime?>? NextRestartDateChanged;
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Starts the background restart scheduler timer loop.
+    /// </summary>
     public void StartScheduler()
     {
-        if (_backgroundTask is not null) return; // Already running
+        lock (_syncLock)
+        {
+            if (_backgroundTask is not null) return;
 
-        _logger.LogInformation("Computer Restart Scheduler started.");
+            _logger.LogInformation("Computer Restart Scheduler started.");
 
-        _cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
+            _timer = new PeriodicTimer(SchedulerTimerInterval, _timeProvider);
 
-        // Check every 30 seconds (sufficient precision for minute-based checks)
-        _timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+            PeriodicTimer timer = _timer;
+            CancellationToken token = _cts.Token;
 
-        // Fire & Forget: Launch the background processing loop task
-        _backgroundTask = Task.Run(async () => await LoopAsync(_cts.Token));
+            _backgroundTask = Task.Run(() => LoopAsync(timer, token));
+        }
     }
 
+    /// <summary>
+    /// Stops the background restart scheduler gracefully.
+    /// </summary>
     public async Task StopSchedulerAsync()
     {
-        if (_cts is not null)
+        CancellationTokenSource? cts;
+        Task? backgroundTask;
+        PeriodicTimer? timer;
+
+        lock (_syncLock)
         {
-            await _cts.CancelAsync();
-            _cts.Dispose();
+            if (_backgroundTask is null) return;
+
+            cts = _cts;
+            backgroundTask = _backgroundTask;
+            timer = _timer;
+
             _cts = null;
+            _backgroundTask = null;
+            _timer = null;
         }
 
-        if (_backgroundTask is not null)
+        if (cts is not null)
+        {
+            await cts.CancelAsync();
+            cts.Dispose();
+        }
+
+        timer?.Dispose();
+
+        if (backgroundTask is not null)
         {
             try
             {
-                // Await clean exit completion of the background task loop thread
-                await _backgroundTask;
+                await backgroundTask;
             }
-            catch (OperationCanceledException) { /* Expected behavior */ }
-
-            _backgroundTask = null;
+            catch (OperationCanceledException)
+            {
+                // Expected behavior during shutdown
+            }
         }
 
         _logger.LogInformation("Computer Restart Scheduler stopped.");
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
-        // Invoke the core resource cleanup strategy method
-        Dispose(true);
-
-        // Instruct the Garbage Collector that finalizer execution tasks can be skipped
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        // Prevent duplicate tear-down processing sequences
-        if (!_disposed)
+        lock (_syncLock)
         {
-            if (disposing)
-            {
-                // Release managed resource object allocations
-                _timer?.Dispose();
-                _cts?.Dispose();
-            }
-
+            if (_disposed) return;
             _disposed = true;
+
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _timer?.Dispose();
         }
     }
 
-    private async Task LoopAsync(CancellationToken token)
+    private void OnNextRestartDateChanged(DateTime? nextRestartDate)
+    {
+        NextRestartDateChanged?.Invoke(this, nextRestartDate);
+    }
+
+    private async Task LoopAsync(PeriodicTimer timer, CancellationToken cancellationToken)
     {
         try
         {
-            // Await next scheduled window pulse asynchronously without block-freezing processing threads
-            while (await _timer!.WaitForNextTickAsync(token))
+            while (await timer.WaitForNextTickAsync(cancellationToken))
             {
                 await CheckAndExecuteRestartAsync();
             }
@@ -115,62 +167,45 @@ public class ComputerRestartService(
 
     private async Task CheckAndExecuteRestartAsync()
     {
-        // 1. Resolve configuration (guarantees evaluating the latest modified properties states)
-        var config = _configService.LoadConfig();
+        var appConfig = _configService.LoadConfig();
 
-        // 2. Validation constraints verification: Verify if valid targeted intervals are defined
-        if (config.Computer.NextRestartDate is null || config.Computer.ComputerRestartIntervalDays <= 0)
+        if (appConfig.Computer.NextRestartDate is null || appConfig.Computer.ComputerRestartIntervalDays <= 0)
         {
-            return; // Feature tracking configuration node is inactive
+            return;
         }
 
         var now = _timeProvider.GetLocalNow();
-        var targetDateTime = config.Computer.NextRestartDate.Value.Date.AddHours(config.Computer.RestartClockTime);
+        var targetDateTime = appConfig.Computer.NextRestartDate.Value.Date.AddHours(appConfig.Computer.RestartClockTime);
+
+        if (now < targetDateTime)
+        {
+            return;
+        }
+
         var today = now.Date;
 
-        // Verify if the targeted date timeline structure points to a historical past frame
-        if (now >= targetDateTime)
+        if (now > targetDateTime.AddMinutes(MissedSlotToleranceMinutes))
         {
-            // If the targeted execution slot window passed, BUT the tracking timestamp does not map precisely
-            // right NOW (incorporating threshold margins), then the target schedule slot was missed (e.g. system was off).
-            // In this specific edge scenario, skip executing a force reboot cycle and shift the target window out.
-            // Tolerance threshold configuration setup: Allow force reboots execution tasks if inside a 5-minute execution delay window.
-            if (now > targetDateTime.AddMinutes(5))
-            {
-                _logger.LogWarning("Missed the targeted automated computer restart slot scheduled at {Target}. Recalculating new target execution window...", targetDateTime);
+            _logger.LogWarning("Missed the targeted automated computer restart slot scheduled at {Target}. Recalculating new target execution window...", targetDateTime);
 
-                // Compute next clean milestone execution slot using the tracking intervals configuration metadata
-                DateTime newTargetDate;
+            DateTime newTargetDate = now.Hour >= appConfig.Computer.RestartClockTime
+                ? today.AddDays(appConfig.Computer.ComputerRestartIntervalDays).AddHours(appConfig.Computer.RestartClockTime)
+                : today.AddHours(appConfig.Computer.RestartClockTime);
 
-                // If the clock hours metric tracking context already passed the defined threshold, add the interval delay bounds out from today.
-                if (now.Hour >= config.Computer.RestartClockTime)
-                {
-                    newTargetDate = today.AddDays(config.Computer.ComputerRestartIntervalDays).AddHours(config.Computer.RestartClockTime);
-                }
-                else
-                {
-                    // Safe fall-back logic trace adjustment: If execution falls behind but remains ahead hour-wise, target the remaining day timeline
-                    newTargetDate = today.AddHours(config.Computer.RestartClockTime);
-                }
+            appConfig.Computer.SetNextRestartDate(newTargetDate);
+            _configService.SaveConfig(appConfig);
 
-                config.Computer.SetNextRestartDate(newTargetDate);
-                _configService.SaveConfig(config);
+            OnNextRestartDateChanged(newTargetDate);
+            return;
+        }
 
-                // Notify UI systems that the scheduled threshold shifted onto a updated target tracking structure
-                OnNextRestartDateChanged?.Invoke(this, newTargetDate);
-                return;
-            }
+        var restartDate = appConfig.Computer.NextRestartDate.Value.Date;
+        bool isCorrectDay = restartDate == today;
+        bool isCorrectTime = now.Hour == appConfig.Computer.RestartClockTime;
 
-            // Execution state metrics fit within the correct target threshold bounds (inside the 5-minute maximum runtime window variation deviation check)
-            // Perform safe validation tracks confirming targeted processing properties line values align perfectly
-            var restartDate = config.Computer.NextRestartDate.Value.Date;
-            bool isCorrectDay = restartDate == today;
-            bool isCorrectTime = now.Hour == config.Computer.RestartClockTime;
-
-            if (isCorrectDay && isCorrectTime)
-            {
-                await ExecuteRestartSequenceAsync();
-            }
+        if (isCorrectDay && isCorrectTime)
+        {
+            await ExecuteRestartSequenceAsync();
         }
     }
 
@@ -180,16 +215,13 @@ public class ComputerRestartService(
 
         try
         {
-            // 1. Request graceful desktop applications termination
             _logger.LogInformation("Requesting graceful closure across all active desktop applications windows...");
-            await _processService.CloseAllOpenProgramsAsync(30000); // Established maximum graceful wait threshold window: 30 seconds timeout
+            await _processService.CloseAllOpenProgramsAsync(ProcessCloseTimeoutMilliseconds);
 
-            // 2. Dispatch force reboot instructions
             _logger.LogInformation("Dispatching system level hardware reboot instruction sets...");
             _processService.ShutdownComputer();
 
-            // 3. Gracefully kill own execution context boundaries to halt localized logs operations tracing blocks before the kernel handles absolute termination
-            _applicationLifetime.ExitApplication(0);
+            _applicationLifetime.ExitApplication(ApplicationExitSuccessCode);
         }
         catch (Exception ex)
         {
@@ -197,5 +229,3 @@ public class ComputerRestartService(
         }
     }
 }
-
-

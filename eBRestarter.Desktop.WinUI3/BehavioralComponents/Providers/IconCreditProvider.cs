@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO;
 
 namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers;
 
@@ -11,7 +11,12 @@ public sealed class IconCreditProvider : IIconCreditProvider
     private const string FlaticonUrl = "https://www.flaticon.com/free-icon/";
     private const string Icons8Url = "https://icons8.com/icon/";
 
-    public List<IconCredit> GetIconCredits()
+    // ✅ .NET 10: Static caching reduces GC allocations to 0 bytes on repeated queries
+    private static readonly List<IconCredit> StaticIconCredits = BuildIconCredits();
+
+    public List<IconCredit> GetIconCredits() => StaticIconCredits;
+
+    private static List<IconCredit> BuildIconCredits()
     {
         static IconCredit CreateCredit(string creator, string source, string url) => new()
         {
@@ -49,4 +54,3 @@ public sealed class IconCreditProvider : IIconCreditProvider
         ];
     }
 }
-

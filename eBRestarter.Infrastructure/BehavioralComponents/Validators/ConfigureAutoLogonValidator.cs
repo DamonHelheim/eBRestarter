@@ -1,20 +1,34 @@
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using FluentValidation;
 
-namespace eBRestarter.Infrastructure.Validators;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
-public sealed partial class ConfigureAutoLogonValidator : AbstractValidator<ConfigureAutoLogonRequest>
+namespace eBRestarter.Infrastructure.BehavioralComponents.Validators;
+
+public sealed class ConfigureAutoLogonValidator : AbstractValidator<ConfigureAutoLogonRequest>
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+
+    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    private const string PasswordRequiredErrorMessage = "Password is required when activating AutoLogon.";
+    private const string UsernameRequiredErrorMessage = "Username is required when activating AutoLogon.";
+
+
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
+
     public ConfigureAutoLogonValidator()
     {
-        RuleFor(x => x.Username)
+        RuleFor(request => request.Username)
             .NotEmpty()
-            .When(x => !x.IsDeactivateAction)
-            .WithMessage("Username is required when activating AutoLogon.");
+            .When(request => !request.IsDeactivateAction)
+            .WithMessage(UsernameRequiredErrorMessage);
 
-        RuleFor(x => x.Password)
+        RuleFor(request => request.Password)
             .NotEmpty()
-            .When(x => !x.IsDeactivateAction)
-            .WithMessage("Password is required when activating AutoLogon.");
+            .When(request => !request.IsDeactivateAction)
+            .WithMessage(PasswordRequiredErrorMessage);
     }
 }

@@ -1,48 +1,75 @@
+using System;
+
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.ImmutableSnapshot;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Core.Domain.Validators;
+using eBRestarter.Core.Domain.ValueObjects;
 
 namespace eBRestarter.Core.Application.BehavioralComponents.Handlers;
 
 /// <summary>
-/// Erzeugt RestartTaskDisplayState aus Config und Lokalisierung.
+/// Erzeugt den initialen <see cref="RestartTaskDisplayState"/> aus der Anwendungskonfiguration und den Lokalisierungsressourcen.
 /// </summary>
-public class RestartTaskDisplayStateHandler(
-    IInboundPortLocalizationProvider LocalizationService,
+public sealed class RestartTaskDisplayStateHandler(
     ICacheDeletionIntervalValidator intervalValidator,
+    IInboundPortLocalizationProvider localizationService,
     TimeProvider timeProvider) : IInboundPortRestartTaskDisplayStateHandler
 {
-    private readonly IInboundPortLocalizationProvider _localizationService = LocalizationService;
-    private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator;
-    private readonly TimeProvider _timeProvider = timeProvider;
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+    private const int DefaultPauseSeconds = 20;
+    private const int DefaultRuntimeSeconds = 3600;
+    private const int SecondsPerHour = 3600;
+    private const string DefaultUsernameFallback = "-";
 
-    /// <inheritdoc />
+    private const string LocalizationKeyActivate = "Activate";
+    private const string LocalizationKeyDisabled = "Disabled";
+    private const string LocalizationKeyNextDeleteDateFormat = "Browser_NextDeleteDate_Format";
+    private const string LocalizationKeyNextDeletionProcess = "NextDeletionProcess";
+    private const string LocalizationKeyTaskDefaultBrowser = "Task_DefaultBrowser";
+
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator ?? throw new ArgumentNullException(nameof(intervalValidator));
+    private readonly IInboundPortLocalizationProvider _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+    private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Ermittelt und erzeugt den Anzeigezustand basierend auf der übergebenen Konfiguration.
+    /// </summary>
+    /// <param name="config">Die aktuelle Anwendungskonfiguration.</param>
+    /// <returns>Ein immutable <see cref="RestartTaskDisplayState"/> mit aufbereiteten Anzeigewerten.</returns>
     public RestartTaskDisplayState RetrieveInitialState(AppConfig config)
     {
         if (config is null)
         {
             return new RestartTaskDisplayState
             {
-                ChosenBrowser = _localizationService.RetrieveString("Task_DefaultBrowser"),
-                PauseSeconds = 20,
-                RuntimeSeconds = 3600
+                ChosenBrowser = _localizationService.RetrieveString(LocalizationKeyTaskDefaultBrowser),
+                PauseSeconds = DefaultPauseSeconds,
+                RuntimeSeconds = DefaultRuntimeSeconds
             };
         }
 
-        string username = config.Username ?? "-";
-        string chosenBrowser = config.Browser?.Selected ?? _localizationService.RetrieveString("Task_DefaultBrowser");
+        var browser = config.Browser;
+        string username = config.Username ?? DefaultUsernameFallback;
+        string chosenBrowser = browser?.Selected ?? _localizationService.RetrieveString(LocalizationKeyTaskDefaultBrowser);
 
-        int runtimeSeconds = config.Browser is null ? 3600 : config.Browser.RuntimeHours * 3600;
-        int pauseSeconds = config.Browser?.RuntimePauseSeconds ?? 20;
+        int runtimeSeconds = browser is null ? DefaultRuntimeSeconds : browser.RuntimeHours * SecondsPerHour;
+        int pauseSeconds = browser?.RuntimePauseSeconds ?? DefaultPauseSeconds;
 
-        bool checkBrowserAliveRoutine = config.Browser?.CheckBrowserAliveRoutine ?? false;
+        bool checkBrowserAliveRoutine = browser?.CheckBrowserAliveRoutine ?? false;
+        int intervalDays = browser?.DeleteBrowserCacheIntervalDays ?? 0;
+        DateTime nextDate = browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
 
-        int intervalDays = config.Browser?.DeleteBrowserCacheIntervalDays ?? 0;
-        DateTime nextDate = config.Browser?.NextBrowserDeleteCacheDate ?? DateTime.MinValue;
-
-        var deleteBrowserContentIsActive = _intervalValidator.IsValidIntervalDays(intervalDays);
+        bool deleteBrowserContentIsActive = _intervalValidator.IsValidIntervalDays(intervalDays);
 
         string deleteIsActivatedMessage;
         string nextDeletionProcessMessage;
@@ -50,12 +77,11 @@ public class RestartTaskDisplayStateHandler(
 
         if (deleteBrowserContentIsActive)
         {
-            deleteIsActivatedMessage = _localizationService.RetrieveString("Activate");
-            nextDeletionProcessMessage = _localizationService.RetrieveString("NextDeletionProcess");
+            deleteIsActivatedMessage = _localizationService.RetrieveString(LocalizationKeyActivate);
+            nextDeletionProcessMessage = _localizationService.RetrieveString(LocalizationKeyNextDeletionProcess);
 
-            var formatPattern = _localizationService.RetrieveString("Browser_NextDeleteDate_Format");
-
-            var today = _timeProvider.GetLocalNow().Date;
+            string formatPattern = _localizationService.RetrieveString(LocalizationKeyNextDeleteDateFormat);
+            DateTime today = _timeProvider.GetLocalNow().Date;
 
             if (nextDate == today && intervalDays > 0)
             {
@@ -66,7 +92,7 @@ public class RestartTaskDisplayStateHandler(
         }
         else
         {
-            deleteIsActivatedMessage = _localizationService.RetrieveString("Disabled");
+            deleteIsActivatedMessage = _localizationService.RetrieveString(LocalizationKeyDisabled);
             nextDeletionProcessMessage = string.Empty;
             nextDeletionProcessDateMessage = string.Empty;
         }
@@ -85,6 +111,3 @@ public class RestartTaskDisplayStateHandler(
         };
     }
 }
-
-
-

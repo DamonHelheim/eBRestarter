@@ -1,19 +1,46 @@
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
 namespace eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.Dialogs;
 
 public sealed partial class AutoLogonDialog : ContentDialog
 {
+    // ═══════════════════════════════════════════════════════
+    //  4. Properties
+    // ═══════════════════════════════════════════════════════
+    // ── Block 2: Primitive Typen & Strings ──
+    public bool DisablePasswordlessMode => CbDisablePasswordless.IsChecked ?? false;
+    public bool RestorePasswordlessMode => CbRestorePasswordless.IsChecked ?? false;
+
+
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
     public AutoLogonDialog()
     {
-        this.InitializeComponent();
+        InitializeComponent();
     }
-    public void SetDefaults(string user, string domain, bool isPasswordlessEnabled = false, bool isAdmin = false)
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods (public → private)
+    // ═══════════════════════════════════════════════════════
+    public AutoLogonCredentials GetCredentials()
     {
-        if (!string.IsNullOrEmpty(user))
+        return new AutoLogonCredentials(TxtUsername.Text, TxtDomain.Text, PbPassword.Password);
+    }
+
+    public void SetDefaults(
+        string username,
+        string domain,
+        bool isPasswordlessEnabled = false,
+        bool isAdmin = false)
+    {
+        if (!string.IsNullOrEmpty(username))
         {
-            TxtUsername.Text = user;
+            TxtUsername.Text = username;
         }
 
         if (!string.IsNullOrEmpty(domain))
@@ -21,34 +48,25 @@ public sealed partial class AutoLogonDialog : ContentDialog
             TxtDomain.Text = domain;
         }
 
-        if (isPasswordlessEnabled)
+        if (!isPasswordlessEnabled)
         {
-            if (!isAdmin)
+            if (isAdmin)
             {
-                AdminWarningInfoBar.IsOpen = true;
-                IsPrimaryButtonEnabled = false;
+                CbRestorePasswordless.Visibility = Visibility.Visible;
             }
-            else
-            {
-                CbDisablePasswordless.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-                CbDisablePasswordless.IsChecked = true;
-            }
+
+            return;
         }
-        else if (isAdmin)
+
+        if (!isAdmin)
         {
-            CbRestorePasswordless.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            AdminWarningInfoBar.IsOpen = true;
+            IsPrimaryButtonEnabled = false;
+
+            return;
         }
-    }
 
-    public bool DisablePasswordlessMode => CbDisablePasswordless.IsChecked ?? false;
-    public bool RestorePasswordlessMode => CbRestorePasswordless.IsChecked ?? false;
-
-    public AutoLogonCredentials GetCredentials()
-    {
-        return new AutoLogonCredentials(
-            TxtUsername.Text,
-            TxtDomain.Text,
-            PbPassword.Password
-        );
+        CbDisablePasswordless.Visibility = Visibility.Visible;
+        CbDisablePasswordless.IsChecked = true;
     }
 }

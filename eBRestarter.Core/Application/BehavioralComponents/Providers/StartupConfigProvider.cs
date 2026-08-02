@@ -1,24 +1,51 @@
-﻿using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using System;
+
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.BehavioralComponents.Providers;
 
-public class StartupConfigProvider(IOutboundPortEVisitorConfigRepository configService) : IInboundPortStartupConfigProvider
+/// <summary>
+/// Provides startup configuration preferences such as language and UI theme derived from the application configuration repository.
+/// </summary>
+public sealed class StartupConfigProvider(IOutboundPortEVisitorConfigRepository configService) : IInboundPortStartupConfigProvider
 {
-    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+    private const int GermanLanguageCode = 0;
 
-    /// <inheritdoc />
+    private const string DefaultEnglishCultureCode = "en-US";
+    private const string DefaultGermanCultureCode = "de-DE";
+    private const string DefaultThemeName = "Light";
+
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService ?? throw new ArgumentNullException(nameof(configService));
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Retrieves the initial startup display preferences including language code and theme name.
+    /// </summary>
+    /// <returns>A <see cref="StartupDisplayPreferences"/> instance populated with default or configured values.</returns>
     public StartupDisplayPreferences RetrieveStartupPreferences()
     {
-        var config = _configService.LoadConfig();
+        var appConfig = _configService.LoadConfig();
 
-        string languageCode = config.Settings.Language == 0 ? "de-DE" : "en-US";
+        string languageCode = appConfig?.Settings?.Language == GermanLanguageCode
+            ? DefaultGermanCultureCode
+            : DefaultEnglishCultureCode;
 
-        string themeName = string.IsNullOrEmpty(config.Settings.Theme) ? "Light" : config.Settings.Theme;
+        string? rawTheme = appConfig?.Settings?.Theme;
+        string themeName = string.IsNullOrWhiteSpace(rawTheme)
+            ? DefaultThemeName
+            : rawTheme;
 
         return new StartupDisplayPreferences(languageCode, themeName);
     }
 }
-
-

@@ -6,7 +6,7 @@ using Moq;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -31,7 +31,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockProcess = new Mock<IOutboundPortOsProcessControl>();
             var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterChromeBrowser>>();
+            var mockLogger = new Mock<ILogger<AdapterChromeBrowserWrapper>>();
             
 
             // 1. LocalAppData vorgeben
@@ -47,7 +47,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             string expectedDefaultProfilePath = @"C:\Users\Test\AppData\Local\Google\Chrome\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 
-            var ChromeBrowser = new AdapterChromeBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var ChromeBrowser = new AdapterChromeBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             var paths = ChromeBrowser.ResolvePaths();

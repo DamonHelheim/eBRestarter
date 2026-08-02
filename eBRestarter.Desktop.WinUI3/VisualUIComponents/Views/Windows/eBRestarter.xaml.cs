@@ -1,7 +1,3 @@
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
-using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
-using eBRestarter.Desktop.WinUI3.BehavioralUIComponents.Helpers.Interfaces;
-using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -10,8 +6,10 @@ using Microsoft.UI.Xaml.Media.Animation;
 using System;
 using System.IO;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
+using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
+using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
+using eBRestarter.Desktop.WinUI3.BehavioralUIComponents.Helpers.Interfaces;
 
 namespace eBRestarter.Desktop.WinUI3;
 
@@ -23,135 +21,125 @@ namespace eBRestarter.Desktop.WinUI3;
 /// </summary>
 public sealed partial class EBRestarter : Window
 {
-    /// <summary>
-    /// The navigation service encapsulating the page transition logic.
-    /// </summary>
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+    // ── Block 2: Primitive Typen & Strings ──
+    private const string ApplicationIconFileName = "eB Restarter.ico";
+    private const string AssetsFolderName = "Assets";
+    private const string CommonOverviewPageTag = "CommonOverview";
+    private const int NavigationFrameCacheSize = 10;
+
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    private readonly IAppWindowHelper _appWindowHelper;
+    private readonly IOutboundPortAppVersionInfoProvider? _appVersionInfoService;
+    private readonly IMainWindowProvider _mainWindowProvider;
     private readonly INavigationService _navigationService;
 
-    private readonly IOutboundPortAppVersionInfoProvider? _iAppVersionInfoService;
-    private readonly IMainWindowProvider _mainWindowProvider;
-    private readonly IAppWindowHelper _appWindowHelper;
-
+    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
     /// <summary>
     /// The default animation for page transitions (here: "DrillIn" effect).
     /// </summary>
     private readonly NavigationTransitionInfo _defaultTransition = new DrillInNavigationTransitionInfo();
 
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Initializes a new instance of the main window.
     /// </summary>
-    /// <param name="navigationService">The injected navigation service (Dependency Injection).</param>
     public EBRestarter(
-        INavigationService navigationService,
-        IOutboundPortAppVersionInfoProvider iAppVersionInfoService,
+        IAppWindowHelper appWindowHelper,
+        IOutboundPortAppVersionInfoProvider appVersionInfoService,
         IMainWindowProvider mainWindowProvider,
-        IAppWindowHelper appWindowHelper)
+        INavigationService navigationService)
     {
+        ArgumentNullException.ThrowIfNull(appWindowHelper);
+        ArgumentNullException.ThrowIfNull(appVersionInfoService);
+        ArgumentNullException.ThrowIfNull(mainWindowProvider);
+        ArgumentNullException.ThrowIfNull(navigationService);
+
         InitializeComponent();
 
-        _mainWindowProvider = mainWindowProvider;
         _appWindowHelper = appWindowHelper;
+        _appVersionInfoService = appVersionInfoService;
+        _mainWindowProvider = mainWindowProvider;
+        _navigationService = navigationService;
 
         _mainWindowProvider.SetMainWindow(this);
 
-        // 1. SRP (Single Responsibility Principle):
-        // The configuration of the title bar (colors, behavior) has been moved to a separate service
-        // to keep this class's code-behind clean.
         _appWindowHelper.ConfigureTitleBarColors(this);
 
-        // Performance optimization: Caches the last 10 pages in memory to enable fast back-navigation.
-        NavigationFrame.CacheSize = 10;
+        NavigationFrame.CacheSize = NavigationFrameCacheSize;
 
-        _navigationService = navigationService;
-
-        _iAppVersionInfoService = iAppVersionInfoService;
-
-        // IMPORTANT: Connecting UI (View) and logic (Service).
-        // We pass the XAML frame to the service so it can handle navigation.
         _navigationService.AttachFrame(NavigationFrame);
 
-        // Initial navigation on application startup.
-        // We use the string key "CommonOverview" so the window doesn't need to know the concrete type of the Page.
-        _navigationService.NavigateTo("CommonOverview", transitionInfo: new DrillInNavigationTransitionInfo());
+        _navigationService.NavigateTo(CommonOverviewPageTag, transitionInfo: new DrillInNavigationTransitionInfo());
 
-        // 1. Retrieve AppWindow (Standard procedure in WinUI 3)
         IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-        // Set window and taskbar icon (required at runtime in WinUI 3)
-        string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "eB Restarter.ico");
+        string iconPath = Path.Combine(AppContext.BaseDirectory, AssetsFolderName, ApplicationIconFileName);
 
         if (File.Exists(iconPath))
         {
             appWindow.SetIcon(iconPath);
         }
 
-        // 2. Retrieve the "Presenter" and maximize
-        // OverlappedPresenter is the default for desktop applications
         if (appWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.Maximize();
         }
 
-        TxbVersion.Text = "v" + _iAppVersionInfoService?.RetrieveAppVersion();
-
-        //// 1. Get window handle
-        //IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-
-        //// 2. Create WindowId from it
-        //Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-
-        //// 3. Get the AppWindow
-        //AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-
-        //// 4. Resize (Width, Height) in pixels
-        //appWindow.Resize(new SizeInt32(2300, 2080));
+        TxbVersion.Text = $"v{_appVersionInfoService?.RetrieveAppVersion()}";
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods (public → private)
+    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Event handler for the "Back" button in the custom title bar.
     /// </summary>
-    private void AppTitleBar_BackRequested(TitleBar sender, object args)
+    private void AppTitleBar_BackRequested(TitleBar sender, object eventArgs)
     {
-        // Checks directly against the frame if backward navigation is possible.
-        if (NavigationFrame.CanGoBack)
+        if (!NavigationFrame.CanGoBack)
         {
-            NavigationFrame.GoBack();
+            return;
         }
+
+        NavigationFrame.GoBack();
     }
 
     /// <summary>
     /// Event handler for the "Hamburger" button (menu toggle) in the title bar.
     /// </summary>
-    private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
+    private void AppTitleBar_PaneToggleRequested(TitleBar sender, object eventArgs)
     {
-        // Opens or closes the navigation menu pane.
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
     }
 
     /// <summary>
     /// Central handler for clicks on menu items within the NavigationView.
-    /// <br/>
     /// Unifies the logic for SelectionChanged and ItemInvoked.
     /// </summary>
-    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs eventArgs)
     {
         ArgumentNullException.ThrowIfNull(sender);
-        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(eventArgs);
 
-        if (args.InvokedItemContainer is NavigationViewItem nvi
-            && nvi.Tag is string tag)
+        if (eventArgs.InvokedItemContainer is not NavigationViewItem navigationViewItem ||
+            navigationViewItem.Tag is not string pageTag)
         {
-            _navigationService.NavigateTo(
-                tag,
-                parameter: null!,
-                transitionInfo: _defaultTransition
-            );
+            return;
         }
+
+        _navigationService.NavigateTo(
+            pageTag,
+            parameter: null!,
+            transitionInfo: _defaultTransition);
     }
 }
-
-
-
-

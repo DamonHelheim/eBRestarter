@@ -1,39 +1,54 @@
-using eBRestarter.Core.Application.ObjectArchetypes.Enums;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace eBRestarter.Infrastructure.Factories;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
+
+namespace eBRestarter.Infrastructure.BehavioralComponents.Factories;
 
 /// <summary>
 /// Enterprise-Standard .NET 10 Keyed Services DI-Factory gemäß Hexagonaler Architektur.
 /// </summary>
-public sealed class BrowserFactory(IServiceProvider serviceProvider) : IOutboundPortBrowserFactory
+public sealed class BrowserFactory(
+    IServiceProvider serviceProvider)
+    : IOutboundPortBrowserFactory
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+
+    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    private const string UnsupportedBrowserErrorMessagePattern = "Browser '{0}' is not supported by {1}.";
+
+
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+
+    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    private readonly IServiceProvider _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+
     public IOutboundPortBrowser Create(BrowserType type)
     {
-        // Enterprise Keyed Services DI-Auflösung (.NET 10 Standard)
-        if (serviceProvider.GetKeyedService<IOutboundPortBrowser>(type) is { } keyedBrowser)
+        if (_serviceProvider.GetKeyedService<IOutboundPortBrowser>(type) is { } keyedBrowser)
         {
             return keyedBrowser;
         }
 
-        // Fallback für Mocks & Legacy-Auflösung
         return type switch
         {
-            BrowserType.Chrome => serviceProvider.GetRequiredService<AdapterChromeBrowser>(),
-            BrowserType.Firefox => serviceProvider.GetRequiredService<AdapterFirefoxBrowser>(),
-            BrowserType.Edge => serviceProvider.GetRequiredService<AdapterEdgeBrowser>(),
-            BrowserType.Brave => serviceProvider.GetRequiredService<AdapterBraveBrowser>(),
-            BrowserType.Vivaldi => serviceProvider.GetRequiredService<AdapterVivaldiBrowser>(),
-            _ => throw new NotSupportedException($"Browser {type} ist noch nicht implementiert.")
+            BrowserType.Chrome => _serviceProvider.GetRequiredService<AdapterChromeBrowserWrapper>(),
+            BrowserType.Firefox => _serviceProvider.GetRequiredService<AdapterFirefoxBrowserWrapper>(),
+            BrowserType.Edge => _serviceProvider.GetRequiredService<AdapterEdgeBrowserWrapper>(),
+            BrowserType.Brave => _serviceProvider.GetRequiredService<AdapterBraveBrowserWrapper>(),
+            BrowserType.Vivaldi => _serviceProvider.GetRequiredService<AdapterVivaldiBrowserWrapper>(),
+            _ => throw new NotSupportedException(string.Format(UnsupportedBrowserErrorMessagePattern, type, nameof(BrowserFactory)))
         };
     }
 }
-
-
-
-
-
-
-

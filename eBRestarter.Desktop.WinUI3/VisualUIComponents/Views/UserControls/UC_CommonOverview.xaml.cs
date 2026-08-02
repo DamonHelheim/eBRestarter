@@ -11,6 +11,7 @@ namespace eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls;
 public sealed partial class UC_CommonOverview : UserControl
 {
     public ViewModelGeneralOverview ViewModelGeneralOverView { get; }
+    
     public UC_CommonOverview()
     {
         InitializeComponent();

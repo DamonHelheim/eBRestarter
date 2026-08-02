@@ -6,7 +6,7 @@ using Moq;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -33,7 +33,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockProcess = new Mock<IOutboundPortOsProcessControl>();
             var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowser>>();
+            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
             
 
             // 1. Windows-Umgebungsvariablen simulieren (Roaming f�r Cookies, Local f�r Cache)
@@ -67,7 +67,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             // Wenn der FirefoxBrowser die Datei liest, geben wir ihm unser gef�lschtes Array zur�ck
             mockFileSystem.Setup(fs => fs.ReadAllLines(fakeIniPath)).Returns(fakeIniContent);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
             // ACT (Ausf�hrung der Logik)
             var paths = FirefoxBrowser.ResolvePaths();
             // ASSERT (Pr�fung der Ergebnisse)
@@ -100,7 +100,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockProcess = new Mock<IOutboundPortOsProcessControl>();
             var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowser>>();
+            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
             
 
             string fakeRoamingExtensionsDir = @"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\extensions";
@@ -125,7 +125,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             // 2. Die .xpi Datei existiert!
             mockFileSystem.Setup(fs => fs.FileExists(fullXpiPath)).Returns(true);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
             // ACT
             bool isInstalled = FirefoxBrowser.IsExtensionInstalled();
             // ASSERT
@@ -148,7 +148,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockProcess = new Mock<IOutboundPortOsProcessControl>();
             var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowser>>();
+            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
             
 
             string fakeRoamingExtensionsDir = @"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\extensions";
@@ -175,7 +175,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             string extractedFolderPath = $@"{fakeRoamingExtensionsDir}\{{fef425dc-a60f-4484-954d-71ecf2544846}}";
             mockFileSystem.Setup(fs => fs.DirectoryExists(extractedFolderPath)).Returns(true);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
             // ACT
             bool isInstalled = FirefoxBrowser.IsExtensionInstalled();
             // ASSERT

@@ -1,4 +1,4 @@
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Repositories;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
 using Microsoft.Win32;
 using Shouldly;
 using System;

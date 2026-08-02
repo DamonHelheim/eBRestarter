@@ -1,30 +1,26 @@
-using eBRestarter.Infrastructure.Wrappers;
+using System;
 using System.Diagnostics;
 
 namespace eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
 
+/// <summary>
+/// Infrastructure Wrapper Component: Provides process creation, query, and termination operations wrapping system diagnostics.
+/// </summary>
 public sealed class ProcessWrapper : IProcessWrapper
 {
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+
     /// <summary>
-    /// Starts a process resource specified by the <see cref="ProcessStartInfo"/> parameter
-    /// and associates the resource with a new <see cref="Process"/> component.
+    /// Retrieves all running processes and wraps them into our testable adapters.
     /// </summary>
-    /// <param name="info">The <see cref="ProcessStartInfo"/> containing startup data (file name, arguments, etc.).</param>
-    /// <returns>
-    /// A new <see cref="Process"/> component associated with the process resource,
-    /// or <c>null</c> if no process resource was started.
-    /// </returns>
-    public IProcess? Start(ProcessStartInfo info)
+    public IProcess[] GetProcesses()
     {
-        var process = Process.Start(info);
+        var processes = Process.GetProcesses();
 
-        // If the startup was successful, we wrap the real process into our adapter
-        if (process is not null)
-        {
-            return new ProcessAdapter(process);
-        }
-
-        return null;
+        // ✅ .NET 10 Hot-Path Performance: Array.ConvertAll anstelle von LINQ-Allokationen
+        return Array.ConvertAll(processes, static process => (IProcess)new ProcessAdapter(process));
     }
 
     /// <summary>
@@ -34,8 +30,20 @@ public sealed class ProcessWrapper : IProcessWrapper
     /// <returns><c>true</c> if the process is running; otherwise, <c>false</c>.</returns>
     public bool IsProcessRunning(string name)
     {
-        // Forwards directly to the static .NET API
-        return Process.GetProcessesByName(name).Length > 0;
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        var processes = Process.GetProcessesByName(name);
+        try
+        {
+            return processes.Length > 0;
+        }
+        finally
+        {
+            foreach (var process in processes)
+            {
+                process.Dispose();
+            }
+        }
     }
 
     /// <summary>
@@ -48,22 +56,38 @@ public sealed class ProcessWrapper : IProcessWrapper
     /// </remarks>
     public void KillProcess(string name)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
         var processes = Process.GetProcessesByName(name);
         foreach (var process in processes)
         {
-            process.Kill();
+            try
+            {
+                process.Kill();
+            }
+            finally
+            {
+                process.Dispose();
+            }
         }
     }
 
     /// <summary>
-    /// Retrieves all running processes and wraps them into our testable adapters.
+    /// Starts a process resource specified by the <see cref="ProcessStartInfo"/> parameter
+    /// and associates the resource with a new <see cref="Process"/> component.
     /// </summary>
-    public IProcess[] GetProcesses()
+    /// <param name="info">The <see cref="ProcessStartInfo"/> containing startup data (file name, arguments, etc.).</param>
+    /// <returns>
+    /// A new <see cref="Process"/> component associated with the process resource,
+    /// or <c>null</c> if no process resource was started.
+    /// </returns>
+    public IProcess? Start(ProcessStartInfo info)
     {
-        var processes = Process.GetProcesses();
+        ArgumentNullException.ThrowIfNull(info);
 
-        // RESOLUTION: We take each real process (p) and encapsulate it within the ProcessAdapter.
-        // The resulting collection is then converted into an array of IProcess.
-        return [.. processes.Select(p => (IProcess)new ProcessAdapter(p))];
+        var process = Process.Start(info);
+
+        // If the startup was successful, we wrap the real process into our adapter
+        return process is not null ? new ProcessAdapter(process) : null;
     }
 }

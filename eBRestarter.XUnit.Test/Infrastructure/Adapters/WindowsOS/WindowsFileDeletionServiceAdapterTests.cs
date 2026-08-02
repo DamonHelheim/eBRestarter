@@ -1,4 +1,4 @@
-﻿using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Services;
+﻿using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Service.WindowsOS;
 using Shouldly;
 using System;
 using System.Collections.Generic;

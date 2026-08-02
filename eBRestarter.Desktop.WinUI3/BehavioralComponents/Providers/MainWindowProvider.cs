@@ -1,6 +1,6 @@
+using System;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
 using Microsoft.UI.Xaml;
-using System;
 
 namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers;
 
@@ -12,6 +12,9 @@ public sealed class MainWindowProvider : IMainWindowProvider
 
     public void SetMainWindow(Window window)
     {
+        // ✅ .NET 10 Guard Clause
+        ArgumentNullException.ThrowIfNull(window);
+
         _mainWindow = window;
     }
 }

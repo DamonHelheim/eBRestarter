@@ -1,18 +1,32 @@
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using FluentValidation;
 
-namespace eBRestarter.Infrastructure.Validators;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
-public sealed partial class DeleteBrowserContentValidator : AbstractValidator<DeleteBrowserContentRequest>
+namespace eBRestarter.Infrastructure.BehavioralComponents.Validators;
+
+public sealed class DeleteBrowserContentValidator : AbstractValidator<DeleteBrowserContentRequest>
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+
+    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    private const string BrowserTypeRequiredErrorMessage = "A valid browser type must be selected.";
+    private const string DeletionOptionRequiredErrorMessage = "At least one deletion option (Cache or Cookies) must be selected.";
+
+
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
+
     public DeleteBrowserContentValidator()
     {
-        RuleFor(x => x.BrowserType)
+        RuleFor(request => request.BrowserType)
             .IsInEnum()
-            .WithMessage("A valid browser type must be selected.");
+            .WithMessage(BrowserTypeRequiredErrorMessage);
 
-        RuleFor(x => x)
-            .Must(x => x.DeleteCache || x.DeleteCookies)
-            .WithMessage("At least one deletion option (Cache or Cookies) must be selected.");
+        RuleFor(request => request)
+            .Must(request => request.DeleteCache || request.DeleteCookies)
+            .WithMessage(DeletionOptionRequiredErrorMessage);
     }
 }

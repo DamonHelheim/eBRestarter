@@ -7,9 +7,9 @@ using Shouldly;
 using System.Collections.Generic;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -26,7 +26,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
         /// Wir erstellen hier eine minimale, konkrete Implementierung NUR für unsere Tests.
         /// Sie dient als "Hülle", um an die Methoden der Basisklasse heranzukommen.
         /// </summary>
-        private class TestDummyBrowser : AdapterBrowserBase
+        private class TestDummyBrowser : AdapterBrowserBaseWrapper
         {
             public TestDummyBrowser(IOutboundPortOsProcessControl os, IOutboundPortSystemConfigurationRepository settings, IOutboundPortFileSystem fs, ILogger logger) : base(os, settings, fs, logger) { }
 

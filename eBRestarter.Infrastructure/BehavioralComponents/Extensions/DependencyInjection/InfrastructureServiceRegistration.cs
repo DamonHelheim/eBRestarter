@@ -11,31 +11,28 @@ using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Update;
-using eBRestarter.Infrastructure.Adapters.Outbound.API;
-using eBRestarter.Infrastructure.Adapters.Outbound.API.Authentication;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
-using eBRestarter.Infrastructure.Adapters.Outbound.Http;
-using eBRestarter.Infrastructure.Adapters.Outbound.Logging;
-using eBRestarter.Infrastructure.Adapters.Outbound.Update;
-using eBRestarter.Infrastructure.Adapters.Outbound.Validators;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Authentication;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers.Wrapper;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Repositories;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Security;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Services;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
-using eBRestarter.Infrastructure.Adapters.WindowsOS.Security;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Handler.Http;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Handler.WindowsOS;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.API;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.API.Authentication;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS.Authentication;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Service.Update;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Service.WindowsOS;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Utility;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Logging;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Validators;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.WindowsOS;
 using eBRestarter.Infrastructure.Api.Interfaces;
 using eBRestarter.Infrastructure.API;
 using eBRestarter.Infrastructure.BehavioralComponents.Providers;
 using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Authentication;
 using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
 using eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
-using eBRestarter.Infrastructure.Factories;
-using eBRestarter.Infrastructure.Repositories.Config;
-using eBRestarter.Infrastructure.Validators;
+using eBRestarter.Infrastructure.BehavioralComponents.Factories;
+using eBRestarter.Infrastructure.BehavioralComponents.Validators;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -49,15 +46,15 @@ public static class InfrastructureServiceRegistration
         services.AddLogging(builder => builder.AddDebug());
 
         services.AddSingleton<IProcessWrapper, ProcessWrapper>();
-        services.AddSingleton<IOutboundPortOsProcessControl, AdapterWindowsProcessControl>();
+        services.AddSingleton<IOutboundPortOsProcessControl, AdapterWindowsProcessControlWrapper>();
         services.AddSingleton<IOutboundPortFileSystem, AdapterWindowsFileSystem>();
-        services.AddSingleton<IOutboundPortApplicationLifetime, AdapterWindowsApplicationLifetime>();
-        services.AddSingleton<AdapterWindowsBrowserExtensionDeployment>();
-        services.AddSingleton<IOutboundPortBrowserExtensionDeployment>(sp => sp.GetRequiredService<AdapterWindowsBrowserExtensionDeployment>());
-        services.AddSingleton<IOutboundPortBrowserExtensionPathProvider>(sp => sp.GetRequiredService<AdapterWindowsBrowserExtensionDeployment>());
-        services.AddSingleton<IOutboundPortUpdate, AdapterGitHubUpdate>();
+        services.AddSingleton<IOutboundPortApplicationLifetime, AdapterWindowsApplicationLifetimeHandler>();
+        services.AddSingleton<AdapterWindowsBrowserExtensionDeploymentProvider>();
+        services.AddSingleton<IOutboundPortBrowserExtensionDeployment>(sp => sp.GetRequiredService<AdapterWindowsBrowserExtensionDeploymentProvider>());
+        services.AddSingleton<IOutboundPortBrowserExtensionPathProvider>(sp => sp.GetRequiredService<AdapterWindowsBrowserExtensionDeploymentProvider>());
+        services.AddSingleton<IOutboundPortUpdate, AdapterGitHubUpdateService>();
         services.AddSingleton<IOutboundPortFileDeletion, AdapterWindowsFileDeletionService>();
-        services.AddSingleton<IOutboundPortEncryption, AdapterWindowsEncryption>();
+        services.AddSingleton<IOutboundPortEncryption, AdapterWindowsEncryptionUtility>();
         services.AddSingleton<IOutboundPortBrowserFactory, BrowserFactory>();
         services.AddSingleton<IOutboundPortBrowserDiscoveryProvider, AdapterWindowsBrowserDiscoveryProvider>();
         services.AddSingleton<IOutboundPortSystemInfoProvider, AdapterWindowsSystemInfoProvider>();
@@ -72,18 +69,18 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IInboundPortOsAppPathProvider, WindowsAppPathProvider>();
         services.AddSingleton<AdapterWmiHardwareProvider>();
 
-        services.AddTransient<AdapterChromeBrowser>();
-        services.AddTransient<AdapterFirefoxBrowser>();
-        services.AddTransient<AdapterEdgeBrowser>();
-        services.AddTransient<AdapterBraveBrowser>();
-        services.AddTransient<AdapterVivaldiBrowser>();
+        services.AddTransient<AdapterChromeBrowserWrapper>();
+        services.AddTransient<AdapterFirefoxBrowserWrapper>();
+        services.AddTransient<AdapterEdgeBrowserWrapper>();
+        services.AddTransient<AdapterBraveBrowserWrapper>();
+        services.AddTransient<AdapterVivaldiBrowserWrapper>();
 
         // Keyed Services DI Registrierung für Factory Pattern (.NET 10 Enterprise Standard)
-        services.AddKeyedTransient<IOutboundPortBrowser, AdapterChromeBrowser>(BrowserType.Chrome);
-        services.AddKeyedTransient<IOutboundPortBrowser, AdapterFirefoxBrowser>(BrowserType.Firefox);
-        services.AddKeyedTransient<IOutboundPortBrowser, AdapterEdgeBrowser>(BrowserType.Edge);
-        services.AddKeyedTransient<IOutboundPortBrowser, AdapterBraveBrowser>(BrowserType.Brave);
-        services.AddKeyedTransient<IOutboundPortBrowser, AdapterVivaldiBrowser>(BrowserType.Vivaldi);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterChromeBrowserWrapper>(BrowserType.Chrome);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterFirefoxBrowserWrapper>(BrowserType.Firefox);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterEdgeBrowserWrapper>(BrowserType.Edge);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterBraveBrowserWrapper>(BrowserType.Brave);
+        services.AddKeyedTransient<IOutboundPortBrowser, AdapterVivaldiBrowserWrapper>(BrowserType.Vivaldi);
 
         services.AddSingleton<IOutboundPortHttpDownload, AdapterHttpClientDownloadHandler>();
 
@@ -113,8 +110,8 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IOutboundPortCredentialStoreRepository, JsonCredentialStoreRepository>();
 
         services.AddValidatorsFromAssemblyContaining<ConfigureAutoLogonValidator>();
-        services.AddTransient(typeof(IInboundPortApplicationValidator<>), typeof(AdapterFluentValidation<>));
-        services.AddSingleton(typeof(IOutboundPortApplicationLogger<>), typeof(AdapterMicrosoftExtensionsLogger<>));
+        services.AddTransient(typeof(IInboundPortApplicationValidator<>), typeof(AdapterFluentValidationWrapper<>));
+        services.AddSingleton(typeof(IOutboundPortApplicationLogger<>), typeof(AdapterMicrosoftExtensionsLoggerWrapper<>));
 
         return services;
     }

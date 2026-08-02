@@ -1,39 +1,81 @@
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using System;
 using System.Globalization;
 using System.Text.Json;
+
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 
 namespace eBRestarter.Infrastructure.BehavioralComponents.Utilities;
 
 public static class EVisitorApiResponseUtility
 {
-    public static IpInfoData? ParseIpInfo(string jsonContent)
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
+
+    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    private const string CountryCodePropertyName = "countryCode";
+    private const string CountryNamePropertyName = "countryName";
+    private const string DefaultFallbackString = "-";
+    private const string FromW3CPropertyName = "from_w3c";
+    private const string HostPropertyName = "host";
+    private const int HoursInDayCount = 24;
+    private const string IpPropertyName = "ip";
+    private const int MonthsInYearCount = 12;
+    private const string ValuePropertyName = "value";
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+
+    public static double[] ParseDailyEarnings(string jsonContent, int daysInMonth)
     {
-        if (string.IsNullOrWhiteSpace(jsonContent))
+        var dailyEarnings = new double[daysInMonth];
+
+        if (string.IsNullOrWhiteSpace(jsonContent) || daysInMonth <= 0)
         {
-            return null;
+            return dailyEarnings;
         }
 
         try
         {
-            using var doc = JsonDocument.Parse(jsonContent);
-            var root = doc.RootElement;
+            using var jsonDocument = JsonDocument.Parse(jsonContent);
+            var root = jsonDocument.RootElement;
 
-            return new IpInfoData(
-                IpAddress: RetrieveStringSafe(root, "ip"),
-                Hostname: RetrieveStringSafe(root, "host"),
-                CountryCode: RetrieveStringSafe(root, "countryCode"),
-                CountryName: RetrieveStringSafe(root, "countryName")
-            );
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var jsonElement in root.EnumerateArray())
+                {
+                    if (jsonElement.TryGetProperty(FromW3CPropertyName, out var dateProperty) &&
+                        dateProperty.GetString() is { Length: > 0 } dateString &&
+                        DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var date) &&
+                        date.Day - 1 is int dayIndex && dayIndex >= 0 && dayIndex < daysInMonth)
+                    {
+                        dailyEarnings[dayIndex] += RetrieveValueSafe(jsonElement);
+                    }
+                }
+            }
+
+            for (var index = 0; index < dailyEarnings.Length; index++)
+            {
+                dailyEarnings[index] = Math.Round(dailyEarnings[index], 2);
+            }
         }
-        catch
+        catch (JsonException)
         {
-            return null;
+            // Failures are tolerated; default array returned
         }
+        catch (Exception)
+        {
+            // Failures are tolerated; default array returned
+        }
+
+        return dailyEarnings;
     }
 
     public static double[] ParseHourlyEarnings(string jsonContent)
     {
-        double[] hourly = new double[24];
+        var hourly = new double[HoursInDayCount];
 
         if (string.IsNullOrWhiteSpace(jsonContent))
         {
@@ -42,8 +84,8 @@ public static class EVisitorApiResponseUtility
 
         try
         {
-            using var doc = JsonDocument.Parse(jsonContent);
-            var root = doc.RootElement;
+            using var jsonDocument = JsonDocument.Parse(jsonContent);
+            var root = jsonDocument.RootElement;
 
             if (root.ValueKind == JsonValueKind.Object)
             {
@@ -54,97 +96,84 @@ public static class EVisitorApiResponseUtility
                 ParseHourlyEarningsFromJsonArray(root, hourly);
             }
         }
-        catch
+        catch (JsonException)
         {
             // Failures are tolerated; an empty array is returned
+        }
+        catch (Exception)
+        {
+            // Failures are tolerated
         }
 
         return hourly;
     }
 
-    public static double[] ParseDailyEarnings(string jsonContent, int daysInMonth)
+    public static IpInfoData? ParseIpInfo(string jsonContent)
     {
-        double[] dailyEarnings = new double[daysInMonth];
-
         if (string.IsNullOrWhiteSpace(jsonContent))
-            return dailyEarnings;
+        {
+            return null;
+        }
 
         try
         {
-            using var doc = JsonDocument.Parse(jsonContent);
-            var root = doc.RootElement;
+            using var jsonDocument = JsonDocument.Parse(jsonContent);
+            var root = jsonDocument.RootElement;
 
-            if (root.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in root.EnumerateArray())
-                {
-                    if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
-                    {
-                        string dateStr = dateProp.GetString() ?? "";
-
-                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
-                        {
-                            int dayIndex = date.Day - 1;
-                            if (dayIndex >= 0 && dayIndex < daysInMonth)
-                            {
-                                dailyEarnings[dayIndex] += RetrieveValueSafe(item);
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < dailyEarnings.Length; i++)
-            {
-                dailyEarnings[i] = Math.Round(dailyEarnings[i], 2);
-            }
+            return new IpInfoData(
+                IpAddress: RetrieveStringSafe(root, IpPropertyName),
+                Hostname: RetrieveStringSafe(root, HostPropertyName),
+                CountryCode: RetrieveStringSafe(root, CountryCodePropertyName),
+                CountryName: RetrieveStringSafe(root, CountryNamePropertyName));
         }
-        catch
+        catch (JsonException)
         {
-            // Failures are tolerated
+            return null;
         }
-
-        return dailyEarnings;
+        catch (Exception)
+        {
+            return null;
+        }
     }
 
     public static double[] ParseMonthlyEarnings(string jsonContent)
     {
-        double[] monthlyEarnings = new double[12]; // Jan=0, Dec=11
+        var monthlyEarnings = new double[MonthsInYearCount];
 
         if (string.IsNullOrWhiteSpace(jsonContent))
+        {
             return monthlyEarnings;
+        }
 
         try
         {
-            using var doc = JsonDocument.Parse(jsonContent);
-            var root = doc.RootElement;
+            using var jsonDocument = JsonDocument.Parse(jsonContent);
+            var root = jsonDocument.RootElement;
 
             if (root.ValueKind == JsonValueKind.Array)
             {
-                foreach (var item in root.EnumerateArray())
+                foreach (var jsonElement in root.EnumerateArray())
                 {
-                    if (item.TryGetProperty("from_w3c", out JsonElement dateProp))
+                    if (jsonElement.TryGetProperty(FromW3CPropertyName, out var dateProperty) &&
+                        dateProperty.GetString() is { Length: > 0 } dateString &&
+                        DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var date) &&
+                        date.Month - 1 is int monthIndex && monthIndex >= 0 && monthIndex < MonthsInYearCount)
                     {
-                        string dateStr = dateProp.GetString() ?? "";
-
-                        if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
-                        {
-                            int monthIndex = date.Month - 1;
-                            if (monthIndex >= 0 && monthIndex < 12)
-                            {
-                                monthlyEarnings[monthIndex] += RetrieveValueSafe(item);
-                            }
-                        }
+                        monthlyEarnings[monthIndex] += RetrieveValueSafe(jsonElement);
                     }
                 }
             }
 
-            for (int i = 0; i < monthlyEarnings.Length; i++)
+            for (var index = 0; index < monthlyEarnings.Length; index++)
             {
-                monthlyEarnings[i] = Math.Round(monthlyEarnings[i], 2);
+                monthlyEarnings[index] = Math.Round(monthlyEarnings[index], 2);
             }
         }
-        catch
+        catch (JsonException)
+        {
+            // Failures are tolerated
+        }
+        catch (Exception)
         {
             // Failures are tolerated
         }
@@ -152,51 +181,66 @@ public static class EVisitorApiResponseUtility
         return monthlyEarnings;
     }
 
+    private static void ParseHourlyEarningsFromJsonArray(JsonElement root, double[] hourly)
+    {
+        var index = 0;
+
+        foreach (var element in root.EnumerateArray())
+        {
+            if (index >= HoursInDayCount)
+            {
+                break;
+            }
+
+            hourly[index] = element.TryGetDouble(out var value) ? Math.Round(value, 2) : 0.0;
+            index++;
+        }
+    }
+
     private static void ParseHourlyEarningsFromJsonObject(JsonElement root, double[] hourly)
     {
         foreach (var property in root.EnumerateObject())
         {
-            if (int.TryParse(property.Name, out int hour) && hour >= 1 && hour <= 24)
+            if (int.TryParse(property.Name, out var hour) && hour is >= 1 and <= HoursInDayCount)
             {
-                hourly[hour - 1] = property.Value.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0;
+                hourly[hour - 1] = property.Value.TryGetDouble(out var value) ? Math.Round(value, 2) : 0.0;
             }
         }
-    }
-
-    private static void ParseHourlyEarningsFromJsonArray(JsonElement root, double[] hourly)
-    {
-        var parsedArray = root.EnumerateArray()
-            .Select(x => x.TryGetDouble(out double val) ? Math.Round(val, 2) : 0.0)
-            .ToArray();
-
-        Array.Copy(parsedArray, hourly, Math.Min(parsedArray.Length, 24));
-    }
-
-    private static double RetrieveValueSafe(JsonElement item)
-    {
-        if (item.TryGetProperty("value", out JsonElement valProp))
-        {
-            if (valProp.ValueKind == JsonValueKind.Number)
-            {
-                return valProp.GetDouble();
-            }
-            else if (valProp.ValueKind == JsonValueKind.String
-                      && double.TryParse(valProp.GetString()?.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double dVal))
-            {
-                return dVal;
-            }
-        }
-        return 0.0;
     }
 
     private static string RetrieveStringSafe(JsonElement element, string propertyName)
     {
-        if (element.TryGetProperty(propertyName, out JsonElement prop)
-            && prop.ValueKind == JsonValueKind.String)
+        if (element.TryGetProperty(propertyName, out var property) && property.ValueKind == JsonValueKind.String)
         {
-            return prop.GetString() ?? "-";
+            return property.GetString() ?? DefaultFallbackString;
         }
-        return "-";
+
+        return DefaultFallbackString;
+    }
+
+    private static double RetrieveValueSafe(JsonElement item)
+    {
+        if (item.TryGetProperty(ValuePropertyName, out var valueProperty))
+        {
+            if (valueProperty.ValueKind == JsonValueKind.Number)
+            {
+                return valueProperty.GetDouble();
+            }
+
+            if (valueProperty.ValueKind == JsonValueKind.String && valueProperty.GetString() is { Length: > 0 } valueString)
+            {
+                if (double.TryParse(valueString, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedValue))
+                {
+                    return parsedValue;
+                }
+
+                if (double.TryParse(valueString.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedValueReplaced))
+                {
+                    return parsedValueReplaced;
+                }
+            }
+        }
+
+        return 0.0;
     }
 }
-

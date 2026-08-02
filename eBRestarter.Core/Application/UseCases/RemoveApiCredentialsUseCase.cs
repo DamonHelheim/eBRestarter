@@ -1,15 +1,36 @@
-﻿using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using System;
+
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 
 namespace eBRestarter.Core.Application.UseCases;
 
-public sealed class RemoveApiCredentialsUseCase(IOutboundPortEVisitorConfigRepository configService) : IUseCaseRemoveApiCredentials
+/// <summary>
+/// Use case implementation for resetting and clearing stored eBesucher API credentials from the application configuration.
+/// </summary>
+public sealed class RemoveApiCredentialsUseCase(
+    IOutboundPortEVisitorConfigRepository configService) : IUseCaseRemoveApiCredentials
 {
-    private readonly IOutboundPortEVisitorConfigRepository _configService = configService;
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    private readonly IOutboundPortEVisitorConfigRepository _configService = configService ?? throw new ArgumentNullException(nameof(configService));
 
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Removes the stored API username and API key from the configuration and saves the updated settings.
+    /// </summary>
     public void Execute()
     {
         var currentConfig = _configService.LoadConfig();
+        if (currentConfig.Settings is null)
+        {
+            return;
+        }
 
         currentConfig.Settings.ApiUsername = string.Empty;
         currentConfig.Settings.ApiKey = string.Empty;
@@ -17,5 +38,3 @@ public sealed class RemoveApiCredentialsUseCase(IOutboundPortEVisitorConfigRepos
         _configService.SaveConfig(currentConfig);
     }
 }
-
-

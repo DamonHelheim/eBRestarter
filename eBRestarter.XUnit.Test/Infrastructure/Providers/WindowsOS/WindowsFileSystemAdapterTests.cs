@@ -1,4 +1,4 @@
-﻿using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS;
+﻿using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.WindowsOS;
 using Shouldly;
 using System;
 using System.IO;

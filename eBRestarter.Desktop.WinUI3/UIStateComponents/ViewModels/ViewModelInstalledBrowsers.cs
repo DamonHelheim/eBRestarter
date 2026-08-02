@@ -1,15 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+
 using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
-using Microsoft.UI.Xaml;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -21,24 +22,32 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// </summary>
 public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisposable
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
     private const int BrowserListRefreshIntervalSeconds = 2;
 
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
     private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
-
-    private readonly IUseCaseDownloadBrowser _downloadBrowserUseCase;
-
     private readonly IDialogService _dialogService;
-
-    private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
-
+    private readonly IUseCaseDownloadBrowser _downloadBrowserUseCase;
+    private readonly IOutboundPortEVisitorConfigRepository _evRestarterConfigRepository;
     private readonly IInboundPortLocalizationProvider _localizationService;
 
     private readonly DispatcherTimer _refreshTimer;
 
-    [ObservableProperty]
-    public partial ObservableCollection<ViewModelBrowserItem> Browsers { get; set; } = [];
 
+    // ═══════════════════════════════════════════════════════
+    //  4. Properties
+    // ═══════════════════════════════════════════════════════
+    /// <summary>One entry per supported browser type.</summary>
+    public ObservableCollection<ViewModelBrowserItem> Browsers { get; } = [];
 
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Wires up services and a dispatcher timer that repeatedly calls
     /// <see cref="LoadBrowsersSmartAsync"/> so the browser list stays in sync with
@@ -46,22 +55,22 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
     /// </summary>
     public ViewModelInstalledBrowsers(
         IOutboundPortBrowserDiscoveryProvider browserService,
-        IUseCaseDownloadBrowser downloadBrowserUseCase,
         IDialogService dialogService,
-        IInboundPortLocalizationProvider LocalizationProvider,
-        IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository)
+        IUseCaseDownloadBrowser downloadBrowserUseCase,
+        IInboundPortLocalizationProvider localizationService,
+        IOutboundPortEVisitorConfigRepository evRestarterConfigRepository)
     {
         ArgumentNullException.ThrowIfNull(browserService);
-        ArgumentNullException.ThrowIfNull(downloadBrowserUseCase);
         ArgumentNullException.ThrowIfNull(dialogService);
-        ArgumentNullException.ThrowIfNull(LocalizationProvider);
-        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
+        ArgumentNullException.ThrowIfNull(downloadBrowserUseCase);
+        ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
 
         _browserService = browserService;
-        _downloadBrowserUseCase = downloadBrowserUseCase;
         _dialogService = dialogService;
-        _localizationService = LocalizationProvider;
-        _EVRestarterConfigRepository = EVRestarterConfigRepository;
+        _downloadBrowserUseCase = downloadBrowserUseCase;
+        _localizationService = localizationService;
+        _evRestarterConfigRepository = evRestarterConfigRepository;
 
         _refreshTimer = new DispatcherTimer
         {
@@ -74,6 +83,9 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
         _refreshTimer.Start();
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods (public → private)
+    // ═══════════════════════════════════════════════════════
     /// <summary>Stops the refresh timer and unsubscribes from tick events. Call when leaving the page or disposing the VM.</summary>
     public void Dispose()
     {
@@ -95,20 +107,20 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
         {
             var existingBrowserItem = Browsers.FirstOrDefault(browserItem => browserItem.BrowserType == installedBrowserInfo.Type);
 
-            if (existingBrowserItem != null)
+            if (existingBrowserItem is not null)
             {
                 existingBrowserItem.Update(installedBrowserInfo);
+                continue;
             }
-            else
-            {
-                var newBrowserItem = new ViewModelBrowserItem(
-                    installedBrowserInfo,
-                    _downloadBrowserUseCase,
-                    _EVRestarterConfigRepository,
-                    _dialogService,
-                    _localizationService);
-                Browsers.Add(newBrowserItem);
-            }
+
+            var newBrowserItem = new ViewModelBrowserItem(
+                installedBrowserInfo,
+                _downloadBrowserUseCase,
+                _evRestarterConfigRepository,
+                _dialogService,
+                _localizationService);
+
+            Browsers.Add(newBrowserItem);
         }
     }
 
@@ -117,18 +129,3 @@ public sealed partial class ViewModelInstalledBrowsers : ObservableObject, IDisp
         LoadBrowsersSmartAsync().Forget();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

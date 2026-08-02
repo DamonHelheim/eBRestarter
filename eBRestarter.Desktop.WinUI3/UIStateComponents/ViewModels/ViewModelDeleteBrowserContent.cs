@@ -1,5 +1,12 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using eBRestarter.Core.Application.Common.TypedError;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
@@ -8,11 +15,6 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Domain.ValueObjects;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -24,66 +26,43 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// </summary>
 public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
     private const int AutoCloseAfterSuccessDelayMilliseconds = 1000;
-
     private const int AutoSequenceStartupDelayMilliseconds = 500;
-
+    private const int DefaultProgressMaximumValue = 100;
     private const string InitialProgressTextDisplay = "0 %";
+    private const string KeyCleanupCanceledByUser = "Cleanup_CanceledByUser";
+    private const string KeyCleanupCanceling = "Cleanup_Canceling";
+    private const string KeyCleanupConfigError = "Cleanup_ConfigError";
+    private const string KeyCleanupLoading = "Cleanup_Loading";
+    private const string KeyCleanupReady = "Cleanup_Ready";
+    private const string KeyGeneralErrorPrefix = "General_ErrorPrefix";
+    private const string KeyGeneralLoadErrorPrefix = "General_LoadErrorPrefix";
 
-    private bool _isAutoMode;
-
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
+    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortBrowserFactory _browserFactory;
-
     private readonly IUseCaseDeleteBrowserContent _deleteBrowserContentUseCase;
-
-    private readonly IOutboundPortEVisitorConfigRepository _EVRestarterConfigRepository;
-
+    private readonly IOutboundPortEVisitorConfigRepository _evRestarterConfigRepository;
     private readonly IInboundPortLocalizationProvider _localizationService;
 
+    // ── Block 2: Primitive / Primitive-Wrapper (alphabetisch A–Z) ──
+    private bool _isAutoMode;
+
+    // ── Block 3: Enums (alphabetisch A–Z) ──
     private BrowserType _selectedBrowserType;
 
+    // ── Block 4: Komplexe Typen / Repositories / Objects (alphabetisch A–Z) ──
     private CancellationTokenSource? _deleteBrowserContentCancellationTokenSource;
 
 
-    [ObservableProperty]
-    public partial string BrowserIconPath { get; set; }
-
-    [ObservableProperty]
-    public partial string BrowserName { get; set; }
-
-    [ObservableProperty]
-    public partial string ProgressText { get; set; }
-
-    [ObservableProperty]
-    public partial string StatusText { get; set; }
-
-
-    [ObservableProperty]
-    public partial double ProgressMaximum { get; set; }
-
-    [ObservableProperty]
-    public partial double ProgressValue { get; set; }
-
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-    [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
-    public partial bool IsBusy { get; set; }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-    public partial bool IsDeleteCookiesChecked { get; set; }
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
-    public partial bool IsDeleteInternetCacheChecked { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsProcessConflict { get; set; }
-
-    /// <summary>Raised when the dialog should close (e.g. after successful auto-run cleanup). Subscribers typically close the window.</summary>
-    public event Action? RequestCloseDialog;
-
+    // ═══════════════════════════════════════════════════════
+    //  3. Constructors
+    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Initializes the VM with factory and services, loads the selected browser from config,
     /// and calls <see cref="Initialize"/> with the parsed browser type so paths and display name are ready.
@@ -91,31 +70,31 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     /// </summary>
     public ViewModelDeleteBrowserContent(
         IUseCaseDeleteBrowserContent deleteBrowserContentUseCase,
-        IOutboundPortBrowserFactory BrowserFactory,
-        IOutboundPortEVisitorConfigRepository EVRestarterConfigRepository,
-        IInboundPortLocalizationProvider LocalizationProvider)
+        IOutboundPortBrowserFactory browserFactory,
+        IOutboundPortEVisitorConfigRepository evRestarterConfigRepository,
+        IInboundPortLocalizationProvider localizationService)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);
-        ArgumentNullException.ThrowIfNull(BrowserFactory);
-        ArgumentNullException.ThrowIfNull(EVRestarterConfigRepository);
-        ArgumentNullException.ThrowIfNull(LocalizationProvider);
+        ArgumentNullException.ThrowIfNull(browserFactory);
+        ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
+        ArgumentNullException.ThrowIfNull(localizationService);
 
         _deleteBrowserContentUseCase = deleteBrowserContentUseCase;
-        _browserFactory = BrowserFactory;
-        _EVRestarterConfigRepository = EVRestarterConfigRepository;
-        _localizationService = LocalizationProvider;
+        _browserFactory = browserFactory;
+        _evRestarterConfigRepository = evRestarterConfigRepository;
+        _localizationService = localizationService;
 
         BrowserIconPath = string.Empty;
-        BrowserName = _localizationService.RetrieveString("Cleanup_Loading");
+        BrowserName = _localizationService.RetrieveString(KeyCleanupLoading);
         ProgressText = InitialProgressTextDisplay;
-        StatusText = _localizationService.RetrieveString("Cleanup_Ready");
-        ProgressMaximum = 100;
+        StatusText = _localizationService.RetrieveString(KeyCleanupReady);
+        ProgressMaximum = DefaultProgressMaximumValue;
         ProgressValue = 0;
         IsDeleteCookiesChecked = true;
         IsDeleteInternetCacheChecked = true;
 
-        AppConfig appConfig = _EVRestarterConfigRepository.LoadConfig();
-        string selectedBrowserString = appConfig.Browser.Selected;
+        AppConfig appConfig = _evRestarterConfigRepository.LoadConfig();
+        string selectedBrowserString = appConfig?.Browser?.Selected ?? string.Empty;
 
         if (Enum.TryParse<BrowserType>(selectedBrowserString, ignoreCase: true, out BrowserType parsedBrowserType))
         {
@@ -123,17 +102,76 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         }
         else
         {
-            string errorFormat = _localizationService.RetrieveString("Cleanup_ConfigError");
+            string errorFormat = _localizationService.RetrieveString(KeyCleanupConfigError);
             StatusText = string.Format(errorFormat, selectedBrowserString);
         }
     }
 
+
+    // ═══════════════════════════════════════════════════════
+    //  5. Events
+    // ═══════════════════════════════════════════════════════
+    /// <summary>Raised when the dialog should close (e.g. after successful auto-run cleanup). Subscribers typically close the window.</summary>
+    public event Action? RequestCloseDialog;
+
+
+    // ═══════════════════════════════════════════════════════
+    //  6. Properties
+    // ═══════════════════════════════════════════════════════
+    /// <summary>Gets or sets the browser icon asset file path.</summary>
+    [ObservableProperty]
+    public partial string BrowserIconPath { get; set; }
+
+    /// <summary>Gets or sets the browser display name.</summary>
+    [ObservableProperty]
+    public partial string BrowserName { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether a cleanup operation is currently active.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CancelCleaningCommand))]
+    public partial bool IsBusy { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether cookies should be deleted.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
+    public partial bool IsDeleteCookiesChecked { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether internet cache should be deleted.</summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StartCleaningCommand))]
+    public partial bool IsDeleteInternetCacheChecked { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether a running browser process blocks cleanup.</summary>
+    [ObservableProperty]
+    public partial bool IsProcessConflict { get; set; }
+
+    /// <summary>Gets or sets the maximum value for the cleanup progress bar.</summary>
+    [ObservableProperty]
+    public partial double ProgressMaximum { get; set; }
+
+    /// <summary>Gets or sets the progress percentage display text.</summary>
+    [ObservableProperty]
+    public partial string ProgressText { get; set; }
+
+    /// <summary>Gets or sets the current value for the cleanup progress bar.</summary>
+    [ObservableProperty]
+    public partial double ProgressValue { get; set; }
+
+    /// <summary>Gets or sets the status feedback text.</summary>
+    [ObservableProperty]
+    public partial string StatusText { get; set; }
+
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
     /// <summary>Cancels the current cleanup run and sets status to "Canceling".</summary>
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void CancelCleaning()
     {
         _deleteBrowserContentCancellationTokenSource?.Cancel();
-        StatusText = _localizationService.RetrieveString("Cleanup_Canceling");
+        StatusText = _localizationService.RetrieveString(KeyCleanupCanceling);
     }
 
     /// <summary>Dismisses the process-conflict state and sets status to user-canceled.</summary>
@@ -141,69 +179,7 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     private void CancelConflict()
     {
         IsProcessConflict = false;
-        StatusText = _localizationService.RetrieveString("Cleanup_CanceledByUser");
-    }
-
-    /// <summary>Force-closes the browser process, waits briefly, then runs cleanup if the process is gone.</summary>
-    [RelayCommand]
-    private async Task ForceCloseAndContinue()
-    {
-        IsProcessConflict = false;
-        await ExecuteCleaningLogic(true);
-    }
-
-    /// <summary>
-    /// Starts cleanup if not busy and browser paths are loaded. If the browser process is still running,
-    /// sets <see cref="IsProcessConflict"/> and asks the user to close it or force-close; otherwise runs deletion.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanClean))]
-    private async Task StartCleaning()
-    {
-        if (IsBusy) return;
-        await ExecuteCleaningLogic(false);
-    }
-
-    /// <summary>
-    /// Loads browser instance and paths for the given type, and sets display name and icon.
-    /// On failure (e.g. browser not found), sets a localized error message in StatusText.
-    /// </summary>
-    /// <param name="selectedBrowserType">Which browser to clean (Chrome, Firefox, Edge, Brave).</param>
-    public void Initialize(BrowserType selectedBrowserType)
-    {
-        try
-        {
-            _selectedBrowserType = selectedBrowserType;
-            var currentBrowser = _browserFactory.Create(selectedBrowserType);
-            BrowserName = currentBrowser.DisplayName;
-            BrowserIconPath = currentBrowser.IconPath;
-        }
-        catch (NotSupportedException ex)
-        {
-            string errorFormat = _localizationService.RetrieveString("General_LoadErrorPrefix");
-            StatusText = string.Format(errorFormat, ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            string errorFormat = _localizationService.RetrieveString("General_LoadErrorPrefix");
-            StatusText = string.Format(errorFormat, ex.Message);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-            string errorFormat = _localizationService.RetrieveString("General_LoadErrorPrefix");
-            StatusText = string.Format(errorFormat, ex.Message);
-        }
-    }
-
-    /// <summary>
-    /// Used when the dialog is opened in auto mode (e.g. from the restart task). Sets internal flag
-    /// so that on successful cleanup the dialog can request to close itself.
-    /// </summary>
-    public async Task RunAutoSequenceAsync()
-    {
-        _isAutoMode = true;
-        await Task.Delay(AutoSequenceStartupDelayMilliseconds);
-        await StartCleaning();
+        StatusText = _localizationService.RetrieveString(KeyCleanupCanceledByUser);
     }
 
     private bool CanCancel() => IsBusy;
@@ -215,7 +191,7 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     /// and runs the use case with progress.
     /// In auto mode, invokes RequestCloseDialog after a short delay on success.
     /// </summary>
-    private async Task ExecuteCleaningLogic(bool forceClose)
+    private async Task ExecuteCleaningLogicAsync(bool forceClose)
     {
         IsBusy = true;
         _deleteBrowserContentCancellationTokenSource?.Dispose();
@@ -236,7 +212,9 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
                 ProgressMaximum = cleanupProgress.TotalFiles > 0 ? cleanupProgress.TotalFiles : 1;
                 ProgressValue = cleanupProgress.CurrentFile;
                 if (cleanupProgress.TotalFiles > 0)
+                {
                     ProgressText = $"{cleanupProgress.CurrentFile * 100 / cleanupProgress.TotalFiles} %";
+                }
             });
 
             var result = await _deleteBrowserContentUseCase.ExecuteAsync(
@@ -260,17 +238,17 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         }
         catch (OperationCanceledException)
         {
-            StatusText = _localizationService.RetrieveString("Cleanup_CanceledByUser");
+            StatusText = _localizationService.RetrieveString(KeyCleanupCanceledByUser);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            string errorFormat = _localizationService.RetrieveString("General_ErrorPrefix");
+            string errorFormat = _localizationService.RetrieveString(KeyGeneralErrorPrefix);
             StatusText = string.Format(errorFormat, ex.Message);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            string errorFormat = _localizationService.RetrieveString("General_ErrorPrefix");
+            string errorFormat = _localizationService.RetrieveString(KeyGeneralErrorPrefix);
             StatusText = string.Format(errorFormat, ex.Message);
         }
         finally
@@ -280,14 +258,60 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
             _deleteBrowserContentCancellationTokenSource = null;
         }
     }
+
+    /// <summary>Force-closes the browser process, waits briefly, then runs cleanup if the process is gone.</summary>
+    [RelayCommand]
+    private async Task ForceCloseAndContinueAsync()
+    {
+        IsProcessConflict = false;
+        await ExecuteCleaningLogicAsync(true);
+    }
+
+    /// <summary>
+    /// Loads browser instance and paths for the given type, and sets display name and icon.
+    /// On failure (e.g. browser not found), sets a localized error message in StatusText.
+    /// </summary>
+    /// <param name="selectedBrowserType">Which browser to clean (Chrome, Firefox, Edge, Brave).</param>
+    public void Initialize(BrowserType selectedBrowserType)
+    {
+        try
+        {
+            _selectedBrowserType = selectedBrowserType;
+            var currentBrowser = _browserFactory.Create(selectedBrowserType);
+            BrowserName = currentBrowser.DisplayName;
+            BrowserIconPath = currentBrowser.IconPath;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            string errorFormat = _localizationService.RetrieveString(KeyGeneralLoadErrorPrefix);
+            StatusText = string.Format(errorFormat, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Used when the dialog is opened in auto mode (e.g. from the restart task). Sets internal flag
+    /// so that on successful cleanup the dialog can request to close itself.
+    /// </summary>
+    public async Task RunAutoSequenceAsync()
+    {
+        _isAutoMode = true;
+        await Task.Delay(AutoSequenceStartupDelayMilliseconds);
+        await StartCleaningAsync();
+    }
+
+    /// <summary>
+    /// Starts cleanup if not busy and browser paths are loaded. If the browser process is still running,
+    /// sets <see cref="IsProcessConflict"/> and asks the user to close it or force-close; otherwise runs deletion.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanClean))]
+    private async Task StartCleaningAsync()
+    {
+        if (IsBusy)
+        {
+            return;
+        }
+
+        await ExecuteCleaningLogicAsync(false);
+    }
 }
-
-
-
-
-
-
-
-
-
-

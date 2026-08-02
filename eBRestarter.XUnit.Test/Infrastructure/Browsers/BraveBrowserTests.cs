@@ -6,7 +6,7 @@ using Moq;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.Browsers;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
@@ -29,7 +29,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             var mockProcess = new Mock<IOutboundPortOsProcessControl>();
             var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
             var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterBraveBrowser>>();
+            var mockLogger = new Mock<ILogger<AdapterBraveBrowserWrapper>>();
             
 
             mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
@@ -39,7 +39,7 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
             string expectedDefaultProfilePath = @"C:\Local\BraveSoftware\Brave-Browser\User Data\Default";
             mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
 
-            var BraveBrowser = new AdapterBraveBrowser(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var BraveBrowser = new AdapterBraveBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
 
             // ACT
             var paths = BraveBrowser.ResolvePaths();

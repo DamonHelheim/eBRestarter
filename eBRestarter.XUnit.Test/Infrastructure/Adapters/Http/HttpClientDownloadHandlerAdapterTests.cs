@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
-using eBRestarter.Infrastructure.Adapters.Outbound.Http;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Handler.Http;
 
 namespace eBRestarter.Tests.Infrastructure.Handlers
 {

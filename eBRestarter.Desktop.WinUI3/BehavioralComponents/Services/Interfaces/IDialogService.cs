@@ -1,6 +1,7 @@
+using System.Threading.Tasks;
+
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Enums;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Models.FormModels;
-using System.Threading.Tasks;
 
 namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 
@@ -14,6 +15,6 @@ public interface IDialogService
     Task ShowInstallAddOnDialogAsync();
     Task ShowInstallAddOnInfoDialogAsync();
     Task ShowActivateApiDialogAsync();
-    Task ShowDeleteBrowserContentDialogAsync(bool autoStart = false);
+    Task ShowDeleteBrowserContentDialogAsync(bool shouldAutoStart = false);
     Task ShowTurnOffEdgeStartupBoostDialogAsync();
 }

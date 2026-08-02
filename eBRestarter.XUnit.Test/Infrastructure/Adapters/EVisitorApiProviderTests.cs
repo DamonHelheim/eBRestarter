@@ -16,9 +16,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.Adapters.Outbound.API;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Infrastructure.ObjectArchetypes.Model;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.API;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters
 {

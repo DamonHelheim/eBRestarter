@@ -1,12 +1,14 @@
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
+
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Domain.ValueObjects;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace eBRestarter.Infrastructure.Repositories.Config;
+namespace eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
 
 /// <summary>
 /// Implements the base configuration service based on JSON files within the file system.
@@ -15,22 +17,31 @@ namespace eBRestarter.Infrastructure.Repositories.Config;
 public sealed class EVRestarterConfigRepository(
     IInboundPortOsAppPathProvider pathProvider,
     IOutboundPortFileSystem fileSystem,
-    ILogger<EVRestarterConfigRepository> logger) : IOutboundPortEVisitorConfigRepository
+    ILogger<EVRestarterConfigRepository> logger)
+    : IOutboundPortEVisitorConfigRepository
 {
-    private readonly IInboundPortOsAppPathProvider _pathProvider = pathProvider;
-    private readonly IOutboundPortFileSystem _fileSystem = fileSystem;
-    private readonly ILogger<EVRestarterConfigRepository> _logger = logger;
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
 
-    private readonly JsonSerializerOptions _jsonOptions = new()
+    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    private readonly IOutboundPortFileSystem _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+    private readonly ILogger<EVRestarterConfigRepository> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IInboundPortOsAppPathProvider _pathProvider = pathProvider ?? throw new ArgumentNullException(nameof(pathProvider));
+
+    // ── Block 4: Komplexe Typen & Kollektionen (alphabetisch) ──
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         TypeInfoResolver = AppConfigJsonContext.Default
     };
 
-    /// <summary>
-    /// Loads the raw configuration from the JSON file via the FileSystem repository adapter.
-    /// </summary>
+
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods
+    // ═══════════════════════════════════════════════════════
+
     public AppConfig LoadConfig()
     {
         var filePath = _pathProvider.RetrieveConfigFilePath();
@@ -47,27 +58,33 @@ public sealed class EVRestarterConfigRepository(
             var jsonString = _fileSystem.ReadAllText(filePath);
             return JsonSerializer.Deserialize<AppConfig>(jsonString, _jsonOptions) ?? new AppConfig();
         }
-        catch (JsonException ex)
+        catch (JsonException exception)
         {
-            _logger.LogError(ex, "Configuration file is not valid JSON.");
+            _logger.LogError(exception, "Configuration file at {Path} is not valid JSON.", filePath);
             return new AppConfig();
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            _logger.LogError(ex, "Critical error occurred while loading the configuration.");
+            _logger.LogError(exception, "Critical error occurred while loading configuration from {Path}.", filePath);
             return new AppConfig();
         }
     }
 
-    /// <summary>
-    /// Saves the configuration using the FileSystem repository adapter.
-    /// </summary>
+    public void ResetConfig()
+    {
+        _logger.LogWarning("Configuration is being reset to default values.");
+        var defaultConfig = new AppConfig();
+        SaveConfig(defaultConfig);
+    }
+
     public void SaveConfig(AppConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config);
+
+        var filePath = _pathProvider.RetrieveConfigFilePath();
+
         try
         {
-            var filePath = _pathProvider.RetrieveConfigFilePath();
-
             var directory = _fileSystem.GetDirectoryName(filePath);
 
             if (!string.IsNullOrEmpty(directory) && !_fileSystem.DirectoryExists(directory))
@@ -79,28 +96,20 @@ public sealed class EVRestarterConfigRepository(
 
             _fileSystem.WriteAllText(filePath, jsonString);
 
-            _logger.LogInformation("Configuration saved successfully.");
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Configuration saved successfully to {Path}.", filePath);
+            }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            _logger.LogError(ex, "Error while saving the configuration.");
+            _logger.LogError(exception, "Error while saving configuration to {Path}.", filePath);
         }
     }
 
-    /// <summary>
-    /// Resets the configuration back to its default values.
-    /// </summary>
-    public void ResetConfig()
-    {
-        _logger.LogWarning("Configuration is being reset to default values.");
-        var defaultConfig = new AppConfig();
-        SaveConfig(defaultConfig);
-    }
+
 }
 
 // SOURCE GENERATOR CONTEXT (For Release/Trim compatibility scenarios)
 [JsonSerializable(typeof(AppConfig))]
 internal partial class AppConfigJsonContext : JsonSerializerContext;
-
-
-

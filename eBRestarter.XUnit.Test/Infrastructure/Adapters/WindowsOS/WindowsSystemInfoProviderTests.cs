@@ -6,7 +6,7 @@ using Shouldly;
 using System;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
 {

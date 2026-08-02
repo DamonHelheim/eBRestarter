@@ -12,6 +12,7 @@ public static class ThemeServiceExtension
     public static IServiceCollection AddThemeHandler(this IServiceCollection services)
     {
         services.AddSingleton<IThemeHandler, ThemeHandler>();
+        
         return services;
     }
 }

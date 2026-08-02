@@ -1,8 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using eBRestarter.Core.Application.BehavioralComponents.Extensions;
-using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
-using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
-using eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
 using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
@@ -11,6 +7,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+
+using eBRestarter.Core.Application.BehavioralComponents.Extensions;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
+using eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -22,44 +23,54 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// </summary>
 public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposable
 {
+    // ═══════════════════════════════════════════════════════
+    //  1. Constants
+    // ═══════════════════════════════════════════════════════
     private const string NetworkCardDefaultForegroundHex = "#FFFFFF";
-
     private const string NetworkCardIconPath = "/Resources/Visuals/Icons/LightTheme/network-interface-card_light_theme.png";
-
+    private const string NetworkCardPrefixResourceKey = "Network_CardPrefix";
+    private const string NetworkNotAvailableResourceKey = "Network_NotAvailable";
     private const string NetworkOfflineForegroundHex = "#FF0000";
-
+    private const string NetworkReceivedResourceKey = "Network_Received";
+    private const string NetworkSentResourceKey = "Network_Sent";
     private const double NetworkStatsPollIntervalMilliseconds = 1000;
-
+    private const string OfflineDataPlaceholder = "-";
     private const string ReceivedDataIconPath = "/Resources/Visuals/Icons/LightTheme/download_light_theme.png";
-
     private const string SentDataIconPath = "/Resources/Visuals/Icons/LightTheme/send-data-light_theme.png";
 
+    // ═══════════════════════════════════════════════════════
+    //  2. Fields
+    // ═══════════════════════════════════════════════════════
     private readonly IInboundPortLocalizationProvider _localizationService;
-
     private readonly IInboundPortNetworkInfoProvider _networkService;
 
     private readonly DispatcherQueue _dispatcherQueue;
-
     private readonly Timer _timer;
 
+
+    // ═══════════════════════════════════════════════════════
+    //  4. Properties
+    // ═══════════════════════════════════════════════════════
     /// <summary>Collection of network adapters with localized names and sent/received data (human-readable size).</summary>
     public ObservableCollection<NetworkCardDisplayModel> NetworkCards { get; } = [];
 
-
+    // ═══════════════════════════════════════════════════════
+    //  6. Constructors
+    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Initializes the VM with network and localization services, captures the current
     /// dispatcher queue for UI updates, and starts a timer that polls network stats
     /// and applies results on the UI thread. Runs the first update immediately on a background thread.
     /// </summary>
     public ViewModelNetworkTraffic(
-        IInboundPortNetworkInfoProvider networkService,
-        IInboundPortLocalizationProvider LocalizationProvider)
+        IInboundPortLocalizationProvider localizationService,
+        IInboundPortNetworkInfoProvider networkService)
     {
+        ArgumentNullException.ThrowIfNull(localizationService);
         ArgumentNullException.ThrowIfNull(networkService);
-        ArgumentNullException.ThrowIfNull(LocalizationProvider);
 
+        _localizationService = localizationService;
         _networkService = networkService;
-        _localizationService = LocalizationProvider;
 
         _dispatcherQueue =
             DispatcherQueue.GetForCurrentThread()
@@ -74,6 +85,9 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
         Task.Run(PerformUpdate);
     }
 
+    // ═══════════════════════════════════════════════════════
+    //  8. Methods (public → private)
+    // ═══════════════════════════════════════════════════════
     /// <summary>Stops and disposes the timer so the page can unload without further background updates.</summary>
     public void Dispose()
     {
@@ -91,22 +105,25 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     /// </summary>
     private void ApplyDataToUi(bool isNetworkAvailable, IEnumerable<NetworkStats>? stats)
     {
-        if (!isNetworkAvailable || stats == null)
+        if (!isNetworkAvailable || stats is null)
         {
             ShowOfflineState();
             return;
         }
 
-        string adapterNamePrefix = _localizationService.RetrieveString("Network_CardPrefix");
-        string receivedPrefix = _localizationService.RetrieveString("Network_Received");
-        string sentPrefix = _localizationService.RetrieveString("Network_Sent");
+        string adapterNamePrefix = _localizationService.RetrieveString(NetworkCardPrefixResourceKey);
+        string receivedPrefix = _localizationService.RetrieveString(NetworkReceivedResourceKey);
+        string sentPrefix = _localizationService.RetrieveString(NetworkSentResourceKey);
 
-        var activeIds = stats.Select(networkStat => $"{adapterNamePrefix}: {networkStat.Name}").ToList();
+        // ✅ .NET 10: Use HashSet for O(1) adapter lookup instead of O(N) List.Contains
+        var activeIds = stats.Select(networkStat => $"{adapterNamePrefix}: {networkStat.Name}").ToHashSet();
 
         var cardsToRemove = NetworkCards.Where(card => !activeIds.Contains(card.AdapterName)).ToList();
 
         foreach (var cardToRemove in cardsToRemove)
+        {
             NetworkCards.Remove(cardToRemove);
+        }
 
         foreach (var stat in stats)
         {
@@ -116,25 +133,24 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
             string received = $"{receivedPrefix}: {stat.BytesReceived.ToSizeSuffix()}";
             string sent = $"{sentPrefix}: {stat.BytesSent.ToSizeSuffix()}";
 
-            if (existingCard != null)
+            if (existingCard is not null)
             {
                 existingCard.ReceivedData = received;
                 existingCard.SentData = sent;
                 existingCard.ForegroundColor = NetworkCardDefaultForegroundHex;
+                continue;
             }
-            else
+
+            NetworkCards.Add(new NetworkCardDisplayModel
             {
-                NetworkCards.Add(new NetworkCardDisplayModel
-                {
-                    AdapterName = name,
-                    ReceivedData = received,
-                    SentData = sent,
-                    ImagePathNetworkCard = NetworkCardIconPath,
-                    ImagePathReceivedData = ReceivedDataIconPath,
-                    ImagePathSendData = SentDataIconPath,
-                    ForegroundColor = NetworkCardDefaultForegroundHex
-                });
-            }
+                AdapterName = name,
+                ReceivedData = received,
+                SentData = sent,
+                ImagePathNetworkCard = NetworkCardIconPath,
+                ImagePathReceivedData = ReceivedDataIconPath,
+                ImagePathSendData = SentDataIconPath,
+                ForegroundColor = NetworkCardDefaultForegroundHex
+            });
         }
     }
 
@@ -154,11 +170,13 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
             isAvailable = _networkService.IsNetworkAvailable();
 
             if (isAvailable)
+            {
                 currentStats = [.. _networkService.RetrieveActiveInterfaces()];
+            }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            Debug.WriteLine(ex);
+            Debug.WriteLine(exception);
             isAvailable = false;
         }
 
@@ -168,23 +186,25 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     /// <summary>Replaces the list with a single entry indicating network is not available, using error color, unless that state is already shown to avoid flicker.</summary>
     private void ShowOfflineState()
     {
-        string adapterNamePrefix = _localizationService.RetrieveString("Network_CardPrefix");
-        string notAvailableLabel = _localizationService.RetrieveString("Network_NotAvailable");
-        string receivedPrefix = _localizationService.RetrieveString("Network_Received");
-        string sentPrefix = _localizationService.RetrieveString("Network_Sent");
+        string adapterNamePrefix = _localizationService.RetrieveString(NetworkCardPrefixResourceKey);
+        string notAvailableLabel = _localizationService.RetrieveString(NetworkNotAvailableResourceKey);
+        string receivedPrefix = _localizationService.RetrieveString(NetworkReceivedResourceKey);
+        string sentPrefix = _localizationService.RetrieveString(NetworkSentResourceKey);
 
         string fullName = $"{adapterNamePrefix}: {notAvailableLabel}";
 
         if (NetworkCards.Count == 1 && NetworkCards[0].AdapterName == fullName)
+        {
             return;
+        }
 
         NetworkCards.Clear();
 
         NetworkCards.Add(new NetworkCardDisplayModel
         {
             AdapterName = fullName,
-            ReceivedData = $"{receivedPrefix}: -",
-            SentData = $"{sentPrefix}: -",
+            ReceivedData = $"{receivedPrefix}: {OfflineDataPlaceholder}",
+            SentData = $"{sentPrefix}: {OfflineDataPlaceholder}",
             ForegroundColor = NetworkOfflineForegroundHex,
             ImagePathNetworkCard = NetworkCardIconPath,
             ImagePathReceivedData = ReceivedDataIconPath,
@@ -192,12 +212,3 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
         });
     }
 }
-
-
-
-
-
-
-
-
-

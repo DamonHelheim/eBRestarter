@@ -6,8 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
-using eBRestarter.Infrastructure.Adapters.Outbound.WindowsOS.Providers;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
 
 namespace eBRestarter.Tests.Infrastructure.Adapters.WindowsOS
 {

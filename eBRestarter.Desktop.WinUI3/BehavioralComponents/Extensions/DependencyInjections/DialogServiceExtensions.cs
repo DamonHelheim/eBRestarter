@@ -12,6 +12,7 @@ public static class DialogServiceExtensions
     public static IServiceCollection AddDialogServiceExtensions(this IServiceCollection services)
     {
         services.AddSingleton<IDialogService, DialogService>();
+        
         return services;
     }
 }
