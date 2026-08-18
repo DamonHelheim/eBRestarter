@@ -10,8 +10,12 @@ public sealed partial class UC_OptionsApi : UserControl
 
     public UC_OptionsApi()
     {
-        InitializeComponent();
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss deshalb VOR
+        // InitializeComponent() gesetzt sein.
         ViewModel = App.AppHost!.Services.GetRequiredService<ViewModelOptionsApi>();
+
+        InitializeComponent();
+
         this.DataContext = ViewModel;
     }
 }

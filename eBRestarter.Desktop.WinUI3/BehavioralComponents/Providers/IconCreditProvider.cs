@@ -4,6 +4,9 @@ using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.PresentationDTO;
 
 namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers;
 
+/// <summary>
+/// Implementation of <see cref="IIconCreditProvider"/> providing cached icon attribution metadata.
+/// </summary>
 public sealed class IconCreditProvider : IIconCreditProvider
 {
     private const string IntersectionPath = "/Resources/Visuals/Icons/Intersection/";
@@ -11,9 +14,9 @@ public sealed class IconCreditProvider : IIconCreditProvider
     private const string FlaticonUrl = "https://www.flaticon.com/free-icon/";
     private const string Icons8Url = "https://icons8.com/icon/";
 
-    // ✅ .NET 10: Static caching reduces GC allocations to 0 bytes on repeated queries
     private static readonly List<IconCredit> StaticIconCredits = BuildIconCredits();
 
+    /// <inheritdoc />
     public List<IconCredit> GetIconCredits() => StaticIconCredits;
 
     private static List<IconCredit> BuildIconCredits()

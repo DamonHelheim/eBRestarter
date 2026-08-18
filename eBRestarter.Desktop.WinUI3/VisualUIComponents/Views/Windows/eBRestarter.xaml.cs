@@ -24,7 +24,7 @@ public sealed partial class EBRestarter : Window
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string ApplicationIconFileName = "eB Restarter.ico";
     private const string AssetsFolderName = "Assets";
     private const string CommonOverviewPageTag = "CommonOverview";
@@ -33,13 +33,13 @@ public sealed partial class EBRestarter : Window
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IAppWindowHelper _appWindowHelper;
     private readonly IOutboundPortAppVersionInfoProvider? _appVersionInfoService;
     private readonly IMainWindowProvider _mainWindowProvider;
     private readonly INavigationService _navigationService;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     /// <summary>
     /// The default animation for page transitions (here: "DrillIn" effect).
     /// </summary>
@@ -51,6 +51,10 @@ public sealed partial class EBRestarter : Window
     /// <summary>
     /// Initializes a new instance of the main window.
     /// </summary>
+    /// <param name="appWindowHelper">Helper for window title bar styling and bounds configuration.</param>
+    /// <param name="appVersionInfoService">Provider for application version metadata.</param>
+    /// <param name="mainWindowProvider">Service for storing global main window reference.</param>
+    /// <param name="navigationService">Service for navigating between application pages.</param>
     public EBRestarter(
         IAppWindowHelper appWindowHelper,
         IOutboundPortAppVersionInfoProvider appVersionInfoService,
@@ -104,6 +108,8 @@ public sealed partial class EBRestarter : Window
     /// <summary>
     /// Event handler for the "Back" button in the custom title bar.
     /// </summary>
+    /// <param name="sender">The title bar instance.</param>
+    /// <param name="eventArgs">Event arguments.</param>
     private void AppTitleBar_BackRequested(TitleBar sender, object eventArgs)
     {
         if (!NavigationFrame.CanGoBack)
@@ -117,6 +123,8 @@ public sealed partial class EBRestarter : Window
     /// <summary>
     /// Event handler for the "Hamburger" button (menu toggle) in the title bar.
     /// </summary>
+    /// <param name="sender">The title bar instance.</param>
+    /// <param name="eventArgs">Event arguments.</param>
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object eventArgs)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
@@ -126,6 +134,8 @@ public sealed partial class EBRestarter : Window
     /// Central handler for clicks on menu items within the NavigationView.
     /// Unifies the logic for SelectionChanged and ItemInvoked.
     /// </summary>
+    /// <param name="sender">The navigation view instance.</param>
+    /// <param name="eventArgs">Arguments describing the invoked item and container.</param>
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs eventArgs)
     {
         ArgumentNullException.ThrowIfNull(sender);

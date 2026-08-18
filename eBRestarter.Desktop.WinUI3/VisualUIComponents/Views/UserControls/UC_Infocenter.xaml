@@ -74,9 +74,9 @@
                         HeaderImage="{ThemeResource WorkstationIcon}"
                         ImageHeight="40"
                         ImageWidth="40"
-                        InformationRow1="{Binding ProcessorText, Mode=OneWay}"
-                        InformationRow2="{Binding GraphicsText, Mode=OneWay}"
-                        InformationRow3="{Binding RamText, Mode=OneWay}"
+                        InformationRow1="{x:Bind ViewModelInfocenter.ProcessorText, Mode=OneWay}"
+                        InformationRow2="{x:Bind ViewModelInfocenter.GraphicsText, Mode=OneWay}"
+                        InformationRow3="{x:Bind ViewModelInfocenter.RamText, Mode=OneWay}"
                         InformationRowForeground="{ThemeResource FontColor_1}"
                         TitleForeground="{ThemeResource FontColor_1}" />
 
@@ -87,9 +87,9 @@
                         HeaderImage="{ThemeResource WindowsIcon}"
                         ImageHeight="25"
                         ImageWidth="25"
-                        InformationRow1="{Binding OsEditionText, Mode=OneWay}"
-                        InformationRow2="{Binding OsVersionText, Mode=OneWay}"
-                        InformationRow3="{Binding OsBuildText, Mode=OneWay}"
+                        InformationRow1="{x:Bind ViewModelInfocenter.OsEditionText, Mode=OneWay}"
+                        InformationRow2="{x:Bind ViewModelInfocenter.OsVersionText, Mode=OneWay}"
+                        InformationRow3="{x:Bind ViewModelInfocenter.OsBuildText, Mode=OneWay}"
                         InformationRowForeground="{ThemeResource FontColor_1}"
                         TitleForeground="{ThemeResource FontColor_1}" />
 
@@ -112,7 +112,7 @@
                         Width="968"
                         Height="63"
                         Margin="0"
-                        Command="{Binding ShowAboutInfoCommand}"
+                        Command="{x:Bind ViewModelInfocenter.ShowAboutInfoCommand}"
                         Style="{ThemeResource AccentButtonStyle}">
 
                         <StackPanel

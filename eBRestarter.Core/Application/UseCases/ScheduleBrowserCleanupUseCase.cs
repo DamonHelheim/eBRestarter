@@ -9,35 +9,22 @@ namespace eBRestarter.Core.Application.UseCases;
 /// <summary>
 /// Use case implementation for configuring and scheduling automated browser cache cleanup intervals.
 /// </summary>
+/// <param name="configService">Outbound repository for accessing application configuration settings.</param>
+/// <param name="timeProvider">Time provider for evaluating current date and calculating schedules.</param>
 public sealed class ScheduleBrowserCleanupUseCase(
     IOutboundPortEVisitorConfigRepository configService,
     TimeProvider timeProvider) : IUseCaseScheduleBrowserCleanup
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
     private const int DisabledIntervalDays = 0;
     private const int IntervalBiWeeklyDays = 14;
     private const int IntervalDailyDays = 1;
     private const int IntervalThreeDays = 3;
     private const int IntervalWeeklyDays = 7;
 
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortEVisitorConfigRepository _configService = configService ?? throw new ArgumentNullException(nameof(configService));
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Updates the browser cleanup interval schedule and recalculates the next execution date.
-    /// </summary>
-    /// <param name="request">Request specifying the desired interval in days.</param>
-    /// <returns>A <see cref="ScheduleBrowserCleanupResponse"/> detailing schedule activity status and next date.</returns>
+    /// <inheritdoc />
     public ScheduleBrowserCleanupResponse UpdateSchedule(ScheduleBrowserCleanupRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

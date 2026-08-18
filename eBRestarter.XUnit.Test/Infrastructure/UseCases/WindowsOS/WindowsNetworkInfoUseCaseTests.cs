@@ -1,10 +1,4 @@
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Models.Records;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -15,135 +9,95 @@ using eBRestarter.Infrastructure.BehavioralComponents.Providers;
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den NetworkInfoProvider.
-    /// Durch den Mock des INetworkProviders können wir verschiedene Netzwerkzustände
-    /// (Offline, Loopback, ohne Traffic) simulieren, ohne die echte Hardware zu verändern.
+    /// Unit tests for <see cref="NetworkInfoProvider"/> verifying network availability and interface filtering.
     /// </summary>
     public class WindowsNetworkInfoUseCaseTests
     {
-        private readonly Mock<IOutboundPortNetworkProvider> _mockProvider;
+        private readonly IOutboundPortNetworkProvider _mockProvider;
         private readonly NetworkInfoProvider _sut;
 
         public WindowsNetworkInfoUseCaseTests()
         {
-            _mockProvider = new Mock<IOutboundPortNetworkProvider>();
-            _sut = new NetworkInfoProvider(_mockProvider.Object);
+            _mockProvider = Substitute.For<IOutboundPortNetworkProvider>();
+            _sut = new NetworkInfoProvider(_mockProvider);
         }
 
-        // 1. AVAILABILITY TESTS
-
-        /// <summary>
-        /// Stellt sicher, dass das Ergebnis des Providers direkt und ohne
-        /// Modifikation weitergegeben wird.
-        /// </summary>
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public void IsNetworkAvailable_ShouldReturnResultFromProvider(bool isAvailable)
         {
-            // ARRANGE
-            _mockProvider.Setup(p => p.CheckIsNetworkAvailable()).Returns(isAvailable);
+            // [R]IGHT: Returns network availability status directly from underlying provider
+            // Arrange
+            _mockProvider.CheckIsNetworkAvailable().Returns(isAvailable);
 
-            // ACT
+            // Act
             var result = _sut.IsNetworkAvailable();
 
-            // ASSERT
+            // Assert
             result.ShouldBe(isAvailable);
         }
 
-        // 2. INTERFACE FILTERING TESTS
-
-        /// <summary>
-        /// Das ist das Herzstück deiner Klasse. Hier prüfen wir alle Filter-Bedingungen
-        /// gleichzeitig. Die Methode darf nur Netzwerkkarten durchlassen, die:
-        /// - Status = UP haben
-        /// - NICHT vom Typ Loopback sind
-        /// - Traffic (BytesSent oder BytesReceived > 0) aufweisen.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir erzeugen eine Liste aus 5 künstlichen Netzwerkkarten. Nur 2 davon
-        /// erfüllen deine Kriterien. Wir erwarten, dass genau diese 2 gemappt und zurückgegeben werden.
-        /// </summary>
         [Fact]
         public void GetActiveInterfaces_ShouldFilterOutInvalidInterfaces_AndMapCorrectly()
         {
-            // ARRANGE
+            // [B]OUNDARY: Filters out inactive, loopback, and zero-traffic interfaces, returning only active NICs
+            // Arrange
             var loopbackMock = CreateNicMock("Loopback", OperationalStatus.Up, NetworkInterfaceType.Loopback, sent: 100, received: 100);
             var downMock = CreateNicMock("OfflineCard", OperationalStatus.Down, NetworkInterfaceType.Ethernet, sent: 100, received: 100);
             var noTrafficMock = CreateNicMock("GhostCard", OperationalStatus.Up, NetworkInterfaceType.Ethernet, sent: 0, received: 0);
 
-            // Diese beiden müssen durchkommen
             var validEthMock = CreateNicMock("Valid Ethernet", OperationalStatus.Up, NetworkInterfaceType.Ethernet, sent: 500, received: 1000);
-            var validWifiMock = CreateNicMock("Valid WiFi", OperationalStatus.Up, NetworkInterfaceType.Wireless80211, sent: 0, received: 50); // Nur Downloads
+            var validWifiMock = CreateNicMock("Valid WiFi", OperationalStatus.Up, NetworkInterfaceType.Wireless80211, sent: 0, received: 50);
 
-            _mockProvider.Setup(p => p.RetrieveAllNetworkInterfaces()).Returns(new[]
+            _mockProvider.RetrieveAllNetworkInterfaces().Returns(new[]
             {
-                loopbackMock.Object,
-                downMock.Object,
-                noTrafficMock.Object,
-                validEthMock.Object,
-                validWifiMock.Object
+                loopbackMock,
+                downMock,
+                noTrafficMock,
+                validEthMock,
+                validWifiMock
             });
 
-            // ACT
-            // Da 'RetrieveActiveInterfaces' ein IEnumerable mit 'yield return' nutzt,
-            // holen wir uns mit .ToList() die tatsächliche Auswertung.
+            // Act
             var result = _sut.RetrieveActiveInterfaces().ToList();
 
-            // ASSERT
-            // 1. Es dürfen exakt nur die 2 gültigen Karten übrig bleiben
+            // Assert
             result.Count.ShouldBe(2);
 
-            // 2. Mapping-Check Karte 1 (Ethernet)
             var ethStats = result.First(r => r.Name == "Valid Ethernet");
             ethStats.BytesSent.ShouldBe(500);
             ethStats.BytesReceived.ShouldBe(1000);
             ethStats.IsActive.ShouldBeTrue();
 
-            // 3. Mapping-Check Karte 2 (WiFi)
             var wifiStats = result.First(r => r.Name == "Valid WiFi");
             wifiStats.BytesSent.ShouldBe(0);
             wifiStats.BytesReceived.ShouldBe(50);
             wifiStats.IsActive.ShouldBeTrue();
         }
 
-        // HELPER METHODEN
-
         /// <summary>
-        /// Erzeugt künstliche NetworkInterface-Objekte mit spezifischen Werten.
-        /// (Moq kann abstrakte .NET Klassen wie NetworkInterface fälschen).
+        /// Creates a mock network interface configured with operational status, interface type, and IPv4 statistics.
         /// </summary>
-        private Mock<NetworkInterface> CreateNicMock(
+        private static NetworkInterface CreateNicMock(
             string name,
             OperationalStatus status,
             NetworkInterfaceType type,
             long sent,
             long received)
         {
-            var mockNic = new Mock<NetworkInterface>();
-            mockNic.Setup(n => n.Name).Returns(name);
-            mockNic.Setup(n => n.OperationalStatus).Returns(status);
-            mockNic.Setup(n => n.NetworkInterfaceType).Returns(type);
+            var mockNic = Substitute.For<NetworkInterface>();
+            mockNic.Name.Returns(name);
+            mockNic.OperationalStatus.Returns(status);
+            mockNic.NetworkInterfaceType.Returns(type);
 
-            // Die Statistiken sind nochmal in einem eigenen Objekt gekapselt
-            var mockStats = new Mock<IPv4InterfaceStatistics>();
-            mockStats.Setup(s => s.BytesSent).Returns(sent);
-            mockStats.Setup(s => s.BytesReceived).Returns(received);
+            var mockStats = Substitute.For<IPv4InterfaceStatistics>();
+            mockStats.BytesSent.Returns(sent);
+            mockStats.BytesReceived.Returns(received);
 
-            // Dem NetworkInterface beibringen, die künstlichen Stats zurückzugeben
-            mockNic.Setup(n => n.GetIPv4Statistics()).Returns(mockStats.Object);
+            mockNic.GetIPv4Statistics().Returns(mockStats);
 
             return mockNic;
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -1,9 +1,11 @@
 using System;
 
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 
 namespace eBRestarter.Core.Application.UseCases;
@@ -11,38 +13,26 @@ namespace eBRestarter.Core.Application.UseCases;
 /// <summary>
 /// Use case implementation for querying Microsoft Edge installation state and toggling Edge Startup Boost.
 /// </summary>
+/// <param name="browserFactory">Factory for instantiating browser wrappers.</param>
+/// <param name="logger">Application logger instance.</param>
+/// <param name="startupService">Outbound repository for browser startup boost settings.</param>
 public sealed class ToggleEdgeStartupBoostUseCase(
     IOutboundPortBrowserFactory browserFactory,
-    IOutboundPortBrowserConfigRepository startupService) : IUseCaseToggleEdgeStartupBoost
+    IOutboundPortApplicationLogger<ToggleEdgeStartupBoostUseCase> logger,
+    IOutboundPortBrowserConfigRepository startupService)
+    : IUseCaseToggleEdgeStartupBoost
 {
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortBrowserFactory _browserFactory = browserFactory ?? throw new ArgumentNullException(nameof(browserFactory));
+    private readonly IOutboundPortApplicationLogger<ToggleEdgeStartupBoostUseCase> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly IOutboundPortBrowserConfigRepository _startupService = startupService ?? throw new ArgumentNullException(nameof(startupService));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Checks whether Microsoft Edge Startup Boost is currently enabled in system settings.
-    /// </summary>
-    /// <returns><c>true</c> if startup boost is enabled; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc />
     public bool IsEnabled() => _startupService.IsBrowserStartupBoostEnabled();
 
-    /// <summary>
-    /// Checks whether Microsoft Edge is installed on the current host system.
-    /// </summary>
-    /// <returns><c>true</c> if Edge is installed; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc />
     public bool IsEdgeInstalled() => _browserFactory.Create(BrowserType.Edge).IsInstalled;
 
-    /// <summary>
-    /// Toggles Microsoft Edge Startup Boost setting on or off.
-    /// </summary>
-    /// <param name="shouldEnable"><c>true</c> to enable startup boost; <c>false</c> to disable startup boost.</param>
-    /// <returns>A <see cref="ToggleEdgeStartupBoostResponse"/> indicating success status and effective state.</returns>
+    /// <inheritdoc />
     public ToggleEdgeStartupBoostResponse Toggle(bool shouldEnable)
     {
         try
@@ -52,6 +42,12 @@ public sealed class ToggleEdgeStartupBoostUseCase(
         }
         catch (Exception ex)
         {
+            _logger.LogError(
+                LogEventIds.OperatingSystem.EdgeStartupBoostChanged,
+                ex,
+                "Toggling Edge startup boost to {ShouldEnable} failed.",
+                shouldEnable);
+
             return new ToggleEdgeStartupBoostResponse(false, !shouldEnable, ex.Message);
         }
     }

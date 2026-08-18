@@ -57,7 +57,7 @@
                     Height="35"
                     Margin="20,5,0,0"
                     HorizontalAlignment="Left"
-                    Command="{Binding RegisterToEVisitorCommand}"
+                    Command="{x:Bind ViewModelRestarterProperties.RegisterToEVisitorCommand}"
                     FontSize="16" />
 
                 <TextBlock
@@ -78,7 +78,7 @@
                     BorderBrush="{ThemeResource TextBoxBottumBorderBrushBackgroundColor}"
                     FontSize="18"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    Text="{x:Bind ViewModelRestarterProperties.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                     <interactivity:Interaction.Behaviors>
                         <behaviors:KeyDownTriggerBehavior Key="Enter">
@@ -97,7 +97,7 @@
                     Margin="21,10,0,0"
                     HorizontalAlignment="Left"
                     BorderBrush="Transparent"
-                    Command="{Binding AddEVisitorUsernameCommand}"
+                    Command="{x:Bind ViewModelRestarterProperties.AddEVisitorUsernameCommand}"
                     FontSize="16"
                     Style="{ThemeResource ButtonCustomStyle_1}" />
 

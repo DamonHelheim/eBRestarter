@@ -10,13 +10,9 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralUIComponents.Helpers;
 /// </summary>
 public sealed class AppWindowHelper : IAppWindowHelper
 {
-    /// <summary>
-    /// Configures title bar colors and extends content into the title bar for the given window.
-    /// </summary>
-    /// <param name="window">The WinUI window to configure.</param>
+    /// <inheritdoc />
     public void ConfigureTitleBarColors(Window window)
     {
-        // ✅ .NET 10 Guard Clause
         ArgumentNullException.ThrowIfNull(window);
 
         var titleBar = window.AppWindow.TitleBar;
@@ -27,12 +23,9 @@ public sealed class AppWindowHelper : IAppWindowHelper
         window.SetTitleBar(null);
     }
 
-    /// <summary>
-    /// Updates the title bar button colors based on the requested theme.
-    /// </summary>
+    /// <inheritdoc />
     public void UpdateTitleBarTheme(Window window, ElementTheme theme)
     {
-        // ✅ .NET 10 Guard Clause
         ArgumentNullException.ThrowIfNull(window);
 
         var titleBar = window.AppWindow.TitleBar;

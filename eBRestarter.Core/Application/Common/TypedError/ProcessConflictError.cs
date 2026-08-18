@@ -17,6 +17,10 @@ namespace eBRestarter.Core.Application.Common.TypedError;
 /// </summary>
 public sealed class ProcessConflictError : Error
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcessConflictError"/> class with the specified error message.
+    /// </summary>
+    /// <param name="message">The descriptive error message explaining the process conflict.</param>
     public ProcessConflictError(string message) : base(message)
     {
     }

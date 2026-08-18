@@ -13,10 +13,9 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for verifying user credentials against the eBesucher API.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Dienstleister im äußeren Ring (Infrastructure Layer) die externe Authentifizierungsprüfung via HTTP-REST.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortApiAuthenticationProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um technologische API-Loginprüfungen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles external API authentication checks via HTTP REST in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortApiAuthenticationProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterEVisitorApiAuthenticationProvider : IOutboundPortApiAuthenticationProvider
@@ -24,7 +23,7 @@ public sealed class AdapterEVisitorApiAuthenticationProvider : IOutboundPortApiA
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string ConnectionSuccessfulMessage = "Connection successful!";
     private const string ErrorPrefix = "Error: ";
     private const string InvalidCredentialsErrorMessage = "Invalid username or API key.";
@@ -33,13 +32,17 @@ public sealed class AdapterEVisitorApiAuthenticationProvider : IOutboundPortApiA
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IRestClient _restClientPort;
 
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterEVisitorApiAuthenticationProvider"/>.
+    /// </summary>
+    /// <param name="restClientPort">REST client port for executing API requests.</param>
     public AdapterEVisitorApiAuthenticationProvider(IRestClient restClientPort)
     {
         ArgumentNullException.ThrowIfNull(restClientPort);
@@ -51,15 +54,25 @@ public sealed class AdapterEVisitorApiAuthenticationProvider : IOutboundPortApiA
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Verifies user credentials against the eBesucher API.
+    /// </summary>
+    /// <param name="username">eBesucher username.</param>
+    /// <param name="apiKey">eBesucher API key.</param>
     public Task<VerificationResult> VerifyCredentialsAsync(string username, string apiKey)
     {
-        //Immediate Guard-Clause Exception Timing (Guide Abs. 9.1)
+        // Guard clauses for parameter validation
         ArgumentNullException.ThrowIfNull(username);
         ArgumentNullException.ThrowIfNull(apiKey);
 
         return VerifyCredentialsCoreAsync(username, apiKey);
     }
 
+    /// <summary>
+    /// Executes the credential verification request via the REST client.
+    /// </summary>
+    /// <param name="username">eBesucher username.</param>
+    /// <param name="apiKey">eBesucher API key.</param>
     private async Task<VerificationResult> VerifyCredentialsCoreAsync(string username, string apiKey)
     {
         var request = new ApiRequest

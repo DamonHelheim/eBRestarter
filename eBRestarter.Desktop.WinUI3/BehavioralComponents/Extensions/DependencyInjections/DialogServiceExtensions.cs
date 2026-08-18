@@ -9,6 +9,11 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Extensions.DependencyI
 /// </summary>
 public static class DialogServiceExtensions
 {
+    /// <summary>
+    /// Registers dialog service implementations into the service collection.
+    /// </summary>
+    /// <param name="services">The service collection to populate.</param>
+    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddDialogServiceExtensions(this IServiceCollection services)
     {
         services.AddSingleton<IDialogService, DialogService>();

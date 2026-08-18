@@ -10,10 +10,9 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repo
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Repository/Adapter) managing persistence of user settings in Windows Registry.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Lese- und Schreibzugriffe auf die Windows Registry (<see cref="Registry.CurrentUser"/>).<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortSystemConfigurationRepository"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um Einstellungen zu persistieren.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Reads and writes configuration settings in the Windows Registry (<see cref="Registry.CurrentUser"/> and <see cref="Registry.LocalMachine"/>) in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortSystemConfigurationRepository"/>.<br/>
 /// </para>
 /// </summary>
 [SupportedOSPlatform("windows")]
@@ -22,7 +21,7 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string FailedToCreateOrOpenSubKeyExceptionMessage = "Failed to create or open registry subkey '{0}'.";
     private const string FailedToCreateOrOpenSystemSubKeyExceptionMessage = "Failed to create or open system registry subkey '{0}'.";
     private const string InsufficientPermissionsSystemSubKeyExceptionMessage = "Insufficient permissions to write to system registry subkey '{0}'. The application must be run as Administrator.";
@@ -31,6 +30,11 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Deletes a value entry under HKEY_CURRENT_USER for the specified subkey.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="name">Value entry name to delete.</param>
     public void DeleteUserValue(string subKey, string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);
@@ -40,6 +44,11 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
         key?.DeleteValue(name, throwOnMissingValue: false);
     }
 
+    /// <summary>
+    /// Reads a value entry under HKEY_LOCAL_MACHINE for the specified subkey.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="valueName">Value entry name.</param>
     public object? GetSystemValue(string subKey, string valueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);
@@ -49,6 +58,11 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
         return key?.GetValue(valueName);
     }
 
+    /// <summary>
+    /// Reads a value entry under HKEY_CURRENT_USER for the specified subkey.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="valueName">Value entry name.</param>
     public object? GetUserValue(string subKey, string valueName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);
@@ -58,6 +72,10 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
         return key?.GetValue(valueName);
     }
 
+    /// <summary>
+    /// Reads all value entries under HKEY_CURRENT_USER for the specified subkey into a dictionary.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
     public Dictionary<string, object> GetUserValues(string subKey)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);
@@ -80,6 +98,12 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
         return result;
     }
 
+    /// <summary>
+    /// Writes a value entry under HKEY_LOCAL_MACHINE for the specified subkey.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="name">Value entry name.</param>
+    /// <param name="value">Object value to set.</param>
     public void SetSystemValue(string subKey, string name, object value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);
@@ -100,6 +124,12 @@ public sealed class AdapterWindowsRegistryRepository : IOutboundPortSystemConfig
         }
     }
 
+    /// <summary>
+    /// Writes a value entry under HKEY_CURRENT_USER for the specified subkey.
+    /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="name">Value entry name.</param>
+    /// <param name="value">Object value to set.</param>
     public void SetUserValue(string subKey, string name, object value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(subKey);

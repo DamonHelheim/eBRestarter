@@ -8,10 +8,9 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrap
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) encapsulating Windows file system I/O operations.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Kapselung von <see cref="File"/>, <see cref="Directory"/> und <see cref="Path"/>.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortFileSystem"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um Dateisystemzugriffe auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates Windows file system operations (<see cref="File"/>, <see cref="Directory"/>, <see cref="Path"/>) in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortFileSystem"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsFileSystem : IOutboundPortFileSystem
@@ -20,7 +19,7 @@ public sealed class AdapterWindowsFileSystem : IOutboundPortFileSystem
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string AppDataEnvironmentVariableName = "appdata";
     private const string LocalAppDataEnvironmentVariableName = "localappdata";
     private const string ProgramFilesEnvironmentVariableName = "programfiles";
@@ -31,14 +30,17 @@ public sealed class AdapterWindowsFileSystem : IOutboundPortFileSystem
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
+    /// <inheritdoc />
     public string CombinePaths(params string[] paths) => Path.Combine(paths);
 
+    /// <inheritdoc />
     public void CreateDirectory(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         Directory.CreateDirectory(path);
     }
 
+    /// <inheritdoc />
     public void DeleteFile(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
@@ -49,36 +51,44 @@ public sealed class AdapterWindowsFileSystem : IOutboundPortFileSystem
         }
     }
 
+    /// <inheritdoc />
     public bool DirectoryExists(string path) => Directory.Exists(path);
 
+    /// <inheritdoc />
     public bool FileExists(string path) => File.Exists(path);
 
+    /// <inheritdoc />
     public string[] GetDirectories(string path, string searchPattern)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         return Directory.GetDirectories(path, searchPattern);
     }
 
+    /// <inheritdoc />
     public string? GetDirectoryName(string path) => Path.GetDirectoryName(path);
 
+    /// <inheritdoc />
     public Stream OpenRead(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         return File.OpenRead(path);
     }
 
+    /// <inheritdoc />
     public string[] ReadAllLines(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         return File.ReadAllLines(path);
     }
 
+    /// <inheritdoc />
     public string ReadAllText(string path)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         return File.ReadAllText(path);
     }
 
+    /// <inheritdoc />
     public string ResolveEnvironmentPath(string variable)
     {
         var path = Environment.GetEnvironmentVariable(variable);
@@ -88,16 +98,31 @@ public sealed class AdapterWindowsFileSystem : IOutboundPortFileSystem
             return path;
         }
 
-        return variable.ToLowerInvariant() switch
+        // OrdinalIgnoreCase avoids heap allocations and provides culture-agnostic string comparison.
+        if (string.Equals(variable, AppDataEnvironmentVariableName, StringComparison.OrdinalIgnoreCase))
         {
-            AppDataEnvironmentVariableName => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            LocalAppDataEnvironmentVariableName => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            ProgramFilesEnvironmentVariableName => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-            ProgramFilesX86EnvironmentVariableName => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            _ => string.Empty
-        };
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        }
+
+        if (string.Equals(variable, LocalAppDataEnvironmentVariableName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+
+        if (string.Equals(variable, ProgramFilesEnvironmentVariableName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        }
+
+        if (string.Equals(variable, ProgramFilesX86EnvironmentVariableName, StringComparison.OrdinalIgnoreCase))
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+        }
+
+        return string.Empty;
     }
 
+    /// <inheritdoc />
     public void WriteAllText(string path, string content)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);

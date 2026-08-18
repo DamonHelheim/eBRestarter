@@ -58,7 +58,7 @@
                         HorizontalAlignment="Left"
                         Background="#FF00CAD4"
                         BorderBrush="{x:Null}"
-                        Command="{Binding ConfigureAutoLogonCommand}"
+                        Command="{x:Bind ViewModel.ConfigureAutoLogonCommand}"
                         FontSize="16"
                         Foreground="#DDFFFFFF" />
 
@@ -76,7 +76,7 @@
                         HorizontalAlignment="Left"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
-                        IsOn="{Binding StartWithWindows, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        IsOn="{x:Bind ViewModel.StartWithWindows, Mode=TwoWay, }" />
 
                     <TextBlock
                         x:Name="lbl_Computer_Restartoptionen"
@@ -92,14 +92,14 @@
                         Margin="10,0,10,12"
                         DisplayMemberPath="DisplayText"
                         FontSize="16"
-                        ItemsSource="{Binding ComputerRestartList}"
-                        SelectedItem="{Binding SelectedComputerRestartOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        ItemsSource="{x:Bind ViewModel.ComputerRestartList, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedComputerRestartOption, Mode=TwoWay, }" />
 
                     <StackPanel
                         Width="300"
                         Margin="10,5,10,10"
                         HorizontalAlignment="Left"
-                        Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
 
                         <TextBlock
                             x:Uid="Set_the_time"
@@ -113,12 +113,12 @@
                             x:Name="SliderRestartComputer"
                             HorizontalAlignment="Stretch"
                             Foreground="#FF167DA4"
-                            Maximum="{Binding ComputerRestartClockTimeMax, Mode=OneTime}"
-                            Minimum="{Binding ComputerRestartClockTimeMin, Mode=OneTime}"
+                            Maximum="{x:Bind ViewModel.ComputerRestartClockTimeMax, Mode=OneTime}"
+                            Minimum="{x:Bind ViewModel.ComputerRestartClockTimeMin, Mode=OneTime}"
                             SnapsTo="StepValues"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
-                            Value="{Binding ComputerRestartClockTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Value="{x:Bind ViewModel.ComputerRestartClockTime, Mode=TwoWay, }" />
 
                         <Grid Margin="0,-5,0,0">
 
@@ -132,13 +132,13 @@
                                 Grid.Column="0"
                                 FontSize="12"
                                 Foreground="Gray"
-                                Text="{Binding ComputerRestartClockTimeMin, Mode=OneTime}" />
+                                Text="{x:Bind ViewModel.ComputerRestartClockTimeMin, Mode=OneTime}" />
 
                             <TextBlock
                                 Grid.Column="2"
                                 FontSize="12"
                                 Foreground="Gray"
-                                Text="{Binding ComputerRestartClockTimeMax, Mode=OneTime}" />
+                                Text="{x:Bind ViewModel.ComputerRestartClockTimeMax, Mode=OneTime}" />
                         </Grid>
 
                     </StackPanel>
@@ -148,7 +148,7 @@
                         Margin="10,0,0,4"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
-                        Text="{Binding RestartStatusText, Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.RestartStatusText, Mode=OneWay}" />
 
                     <TextBlock
                         x:Name="tbl_restart_information"
@@ -160,7 +160,7 @@
                         FontSize="12"
                         Foreground="#de1043"
                         TextWrapping="Wrap"
-                        Visibility="{Binding IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
 
                 </StackPanel>
 
@@ -191,7 +191,7 @@
                                 VerticalAlignment="Stretch"
                                 Background="#FF4DC89E"
                                 BorderBrush="{x:Null}"
-                                Command="{Binding CheckForUpdatesCommand}"
+                                Command="{x:Bind ViewModel.CheckForUpdatesCommand}"
                                 Foreground="#DDFFFFFF" />
 
                             <ProgressRing
@@ -199,15 +199,15 @@
                                 Width="24"
                                 Height="24"
                                 Margin="12,0,0,0"
-                                IsActive="{Binding IsCheckingForUpdates}"
-                                Visibility="{Binding IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                                IsActive="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
                         </Grid>
 
                         <TextBlock
                             Foreground="{ThemeResource FontColor_1}"
-                            Text="{Binding UpdateMessage, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.UpdateMessage, Mode=OneWay}"
                             TextWrapping="Wrap"
-                            Visibility="{Binding IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
                     </StackPanel>
 
                     <Border Height="1" Background="#33000000" />
@@ -222,7 +222,7 @@
                             VerticalAlignment="Stretch"
                             Background="#FF149DAE"
                             BorderBrush="{x:Null}"
-                            Command="{Binding OpenSettingsDataFolderCommand}"
+                            Command="{x:Bind ViewModel.OpenSettingsDataFolderCommand}"
                             Foreground="#DDFFFFFF" />
                     </StackPanel>
 
@@ -238,7 +238,7 @@
                             VerticalAlignment="Stretch"
                             Background="#FFD5D5D5"
                             BorderBrush="{x:Null}"
-                            Command="{Binding SetLightThemeCommand}"
+                            Command="{x:Bind ViewModel.SetLightThemeCommand}"
                             Foreground="Black" />
 
                         <Button
@@ -249,7 +249,7 @@
                             VerticalAlignment="Stretch"
                             Background="#FF414D4F"
                             BorderBrush="{x:Null}"
-                            Command="{Binding SetDarkThemeCommand}"
+                            Command="{x:Bind ViewModel.SetDarkThemeCommand}"
                             Foreground="White" />
                     </StackPanel>
 
@@ -267,8 +267,8 @@
                             Margin="0,0,10,12"
                             DisplayMemberPath="DisplayText"
                             FontSize="16"
-                            ItemsSource="{Binding LanguageList}"
-                            SelectedItem="{Binding SelectedLanguageOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            ItemsSource="{x:Bind ViewModel.LanguageList, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.SelectedLanguageOption, Mode=TwoWay, }" />
                     </StackPanel>
                 </StackPanel>
             </Border>

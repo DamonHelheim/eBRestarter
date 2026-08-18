@@ -66,7 +66,7 @@
                 Foreground="#FFC70E3F"
                 Text="Keine Browser installiert!"
                 TextWrapping="Wrap"
-                Visibility="{Binding NoBrowserInstalledSectionVisibility}" />
+                Visibility="{x:Bind ViewModelRestarterProperties.NoBrowserInstalledSectionVisibility, Mode=OneWay}" />
 
 
             <Button
@@ -76,9 +76,9 @@
                 Height="40"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{Binding ShowBrowserDeleteContentCommand}"
+                Command="{x:Bind ViewModelRestarterProperties.ShowBrowserDeleteContentCommand}"
                 FontSize="16"
-                IsEnabled="{Binding DeleteBrowserContentCommandIsEnabled}" />
+                IsEnabled="{x:Bind ViewModelRestarterProperties.DeleteBrowserContentCommandIsEnabled, Mode=OneWay}" />
 
             <Button
                 x:Name="BtnInstalleBesucherAddOn"
@@ -87,9 +87,9 @@
                 Height="40"
                 Margin="0,8,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{Binding ShowInstallAddOnDialogCommand}"
+                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnDialogCommand}"
                 FontSize="16"
-                IsEnabled="{Binding InstallEVisitorAddOnCommandIsEnabled}" />
+                IsEnabled="{x:Bind ViewModelRestarterProperties.InstallEVisitorAddOnCommandIsEnabled, Mode=OneWay}" />
 
             <Button
                 x:Name="BtnInfoeVisitorAddOn"
@@ -98,9 +98,9 @@
                 Height="30"
                 Margin="0,8,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{Binding ShowInstallAddOnInfoDialogCommand}"
+                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnInfoDialogCommand}"
                 FontSize="12"
-                IsEnabled="{Binding InstallEVisitorAddOnCommandIsEnabled}" />
+                IsEnabled="{x:Bind ViewModelRestarterProperties.InstallEVisitorAddOnCommandIsEnabled, Mode=OneWay}" />
 
         </Grid>
 

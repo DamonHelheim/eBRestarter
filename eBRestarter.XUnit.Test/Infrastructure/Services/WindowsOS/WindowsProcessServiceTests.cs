@@ -1,7 +1,5 @@
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Adapters.WindowsOS;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System;
 using System.Diagnostics;
@@ -9,259 +7,231 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.WindowsOS;
 using eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
+using NSubstitute.ExceptionExtensions;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsProcessControlAdapter.
-    /// Dank des IProcessWrappers können wir alle Prozess-Starts, Kills und Checks simulieren,
-    /// ohne das eigentliche Betriebssystem zu beeinflussen.
+    /// Unit tests for <see cref="AdapterWindowsProcessControlWrapper"/> verifying process execution, installer execution, browser/directory opening, process termination, and asynchronous lifecycle management.
     /// </summary>
     public class WindowsProcessServiceTests
     {
-        private readonly Mock<ILogger<AdapterWindowsProcessControlWrapper>> _mockLogger;
-        private readonly Mock<IProcessWrapper> _mockProcessWrapper;
+        private readonly FakeLogger<AdapterWindowsProcessControlWrapper> _mockLogger;
+        private readonly IProcessWrapper _mockProcessWrapper;
         private readonly AdapterWindowsProcessControlWrapper _sut;
 
         public WindowsProcessServiceTests()
         {
-            _mockLogger = new Mock<ILogger<AdapterWindowsProcessControlWrapper>>();
-            _mockProcessWrapper = new Mock<IProcessWrapper>();
+            _mockLogger = new FakeLogger<AdapterWindowsProcessControlWrapper>();
+            _mockProcessWrapper = Substitute.For<IProcessWrapper>();
 
-            _sut = new AdapterWindowsProcessControlWrapper(_mockLogger.Object, _mockProcessWrapper.Object);
+            _sut = new AdapterWindowsProcessControlWrapper(_mockLogger, _mockProcessWrapper);
         }
-        // 1. START EXECUTABLE TESTS
 
-        /// <summary>
-        /// Stellt sicher, dass das ProcessStartInfo-Objekt korrekt konfiguriert wird
-        /// (korrekter Pfad und UseShellExecute = true).
-        /// </summary>
         [Fact]
         public void StartExecutable_ShouldCallWrapper_WithCorrectStartInfo()
         {
-            // ARRANGE
+            // [R]IGHT: Configures ProcessStartInfo with specified file path and shell execution enabled
+            // Arrange
             string exePath = @"C:\TestApp\app.exe";
 
-            // ACT
+            // Act
             _sut.StartExecutable(exePath);
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
+            // Assert
+            _mockProcessWrapper.Received(1).Start(Arg.Is<ProcessStartInfo>(info =>
                 info.FileName == exePath &&
                 info.UseShellExecute == true
-            )), Times.Once);
+            ));
         }
-        // 2. MSI INSTALLER TESTS
 
-        /// <summary>
-        /// Der MSI-Start ist komplex: Er muss den absoluten Pfad zur msiexec.exe nutzen (Security),
-        /// Argumente setzen, Output umleiten und auf das Ende warten.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren einen startenden Prozess mit gefälschten Konsolen-Outputs (Streams)
-        /// und prüfen, ob alle Eigenschaften korrekt gesetzt wurden und WaitForExit aufgerufen wird.
-        /// </summary>
         [Fact]
         public void RunInstaller_ShouldConfigureMsiExec_AndReadStreams()
         {
-            // ARRANGE
+            // [R]IGHT / [B]OUNDARY: Configures msiexec with absolute system path, redirects output streams, and awaits exit
+            // Arrange
             string msiPath = @"C:\Install\setup.msi";
             string expectedSystemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
             string expectedMsiExecPath = Path.Combine(expectedSystemFolder, "msiexec.exe");
-            var mockProcess = new Mock<IProcess>();
+            var mockProcess = Substitute.For<IProcess>();
 
-            // Dummy-Streams für Output und Error
             var outStream = new MemoryStream(Encoding.UTF8.GetBytes("Installation OK"));
             var errStream = new MemoryStream(Encoding.UTF8.GetBytes(""));
-            mockProcess.Setup(p => p.StandardOutput).Returns(new StreamReader(outStream));
-            mockProcess.Setup(p => p.StandardError).Returns(new StreamReader(errStream));
+            mockProcess.StandardOutput.Returns(new StreamReader(outStream));
+            mockProcess.StandardError.Returns(new StreamReader(errStream));
 
-            _mockProcessWrapper.Setup(w => w.Start(It.IsAny<ProcessStartInfo>())).Returns(mockProcess.Object);
+            _mockProcessWrapper.Start(Arg.Any<ProcessStartInfo>()).Returns(mockProcess);
 
-            // ACT
+            // Act
             _sut.RunInstaller(msiPath);
 
-            // ASSERT
-            // 1. Prüfen, ob der Wrapper mit den korrekten Parametern aufgerufen wurde
-            _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
+            // Assert
+            _mockProcessWrapper.Received(1).Start(Arg.Is<ProcessStartInfo>(info =>
                 info.FileName == expectedMsiExecPath &&
                 info.Arguments == $"/i \"{msiPath}\"" &&
                 info.UseShellExecute == false &&
                 info.RedirectStandardOutput == true &&
                 info.CreateNoWindow == true
-            )), Times.Once);
+            ));
 
-            // 2. Prüfen, ob auf das Beenden gewartet wurde
-            mockProcess.Verify(p => p.WaitForExit(), Times.Once);
+            mockProcess.Received(1).WaitForExit();
         }
-        // 3. EXPLORER / BROWSER / SHUTDOWN TESTS
 
         [Fact]
         public void OpenUrlInBrowser_ShouldPassUrlAsArgument()
         {
-            // ARRANGE
+            // [R]IGHT: Launches browser executable with target URL as command-line argument
+            // Arrange
             string browserPath = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
             string url = "https://www.google.com";
 
-            // ACT
+            // Act
             _sut.OpenUrlInBrowser(browserPath, url);
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
+            // Assert
+            _mockProcessWrapper.Received(1).Start(Arg.Is<ProcessStartInfo>(info =>
                 info.FileName == browserPath &&
                 info.Arguments == url &&
                 info.UseShellExecute == true
-            )), Times.Once);
+            ));
         }
 
         [Fact]
         public void ShutdownComputer_ShouldCallShutdownExe_WithForceParams()
         {
-            // ARRANGE
+            // [R]IGHT: Executes system shutdown with reboot and force parameters
+            // Arrange
             string expectedSystemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
             string expectedShutdownPath = Path.Combine(expectedSystemFolder, "shutdown.exe");
 
-            // ACT
+            // Act
             _sut.ShutdownComputer();
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
+            // Assert
+            _mockProcessWrapper.Received(1).Start(Arg.Is<ProcessStartInfo>(info =>
                 info.FileName == expectedShutdownPath &&
                 info.Arguments == "/r /f /t 0"
-            )), Times.Once);
+            ));
         }
 
         [Fact]
         public void OpenDirectoryInFileBrowser_ShouldCallExplorerExe_WithQuotedPath()
         {
-            // ARRANGE
+            // [R]IGHT: Launches Windows Explorer with quoted folder directory argument
+            // Arrange
             string targetFolder = @"C:\My Folder With Spaces";
             string expectedWindowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
             string expectedExplorerPath = Path.Combine(expectedWindowsFolder, "explorer.exe");
 
-            // ACT
+            // Act
             _sut.OpenDirectoryInFileBrowser(targetFolder);
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.Start(It.Is<ProcessStartInfo>(info =>
+            // Assert
+            _mockProcessWrapper.Received(1).Start(Arg.Is<ProcessStartInfo>(info =>
                 info.FileName == expectedExplorerPath &&
                 info.Arguments == $"\"{targetFolder}\""
-            )), Times.Once);
+            ));
         }
-        // 4. PROCESS MANAGEMENT TESTS (Kill, Check, Close)
 
         [Fact]
         public void CloseApplication_ShouldCallKill_WhenProcessIsRunning()
         {
-            // ARRANGE
+            // [R]IGHT: Terminates process when matching running process is found
+            // Arrange
             string processName = "notepad";
-            _mockProcessWrapper.Setup(w => w.IsProcessRunning(processName)).Returns(true);
+            _mockProcessWrapper.IsProcessRunning(processName).Returns(true);
 
-            // ACT
+            // Act
             _sut.CloseApplication(processName);
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.KillProcess(processName), Times.Once);
+            // Assert
+            _mockProcessWrapper.Received(1).KillProcess(processName);
         }
 
         [Fact]
         public void CloseApplication_ShouldDoNothing_WhenProcessIsNotRunning()
         {
-            // ARRANGE
+            // [B]OUNDARY: Takes no action when target process is not currently running
+            // Arrange
             string processName = "notepad";
-            _mockProcessWrapper.Setup(w => w.IsProcessRunning(processName)).Returns(false);
+            _mockProcessWrapper.IsProcessRunning(processName).Returns(false);
 
-            // ACT
+            // Act
             _sut.CloseApplication(processName);
 
-            // ASSERT
-            _mockProcessWrapper.Verify(w => w.KillProcess(It.IsAny<string>()), Times.Never);
+            // Assert
+            _mockProcessWrapper.DidNotReceive().KillProcess(Arg.Any<string>());
         }
 
-        /// <summary>
-        /// Die "CloseAllOpenPrograms" Methode darf kritische Prozesse wie "System" oder "Idle"
-        /// nicht anrühren und soll Prozesse ohne GUI (MainWindowHandle == 0) ignorieren.
-        /// </summary>
         [Fact]
         public async Task CloseAllOpenProgramsAsync_ShouldIgnoreSystemAndHeadlessProcesses()
         {
-            // ARRANGE
-            var systemMock = new Mock<IProcess>();
-            systemMock.Setup(p => p.ProcessName).Returns("System");
+            // [R]IGHT / [B]OUNDARY: Ignores protected system processes and headless services while closing windowed applications
+            // Arrange
+            var systemMock = Substitute.For<IProcess>();
+            systemMock.ProcessName.Returns("System");
 
-            var headlessMock = new Mock<IProcess>();
-            headlessMock.Setup(p => p.ProcessName).Returns("BackgroundService");
-            headlessMock.Setup(p => p.MainWindowHandle).Returns(IntPtr.Zero); // Keine GUI
+            var headlessMock = Substitute.For<IProcess>();
+            headlessMock.ProcessName.Returns("BackgroundService");
+            headlessMock.MainWindowHandle.Returns(IntPtr.Zero);
 
-            var validAppMock = new Mock<IProcess>();
-            validAppMock.Setup(p => p.ProcessName).Returns("Notepad");
-            validAppMock.Setup(p => p.MainWindowHandle).Returns(new IntPtr(1234)); // Hat eine GUI
-            validAppMock.Setup(p => p.WaitForExitAsync()).Returns(Task.CompletedTask);
-            _mockProcessWrapper.Setup(w => w.GetProcesses()).Returns(new IProcess[]
+            var validAppMock = Substitute.For<IProcess>();
+            validAppMock.ProcessName.Returns("Notepad");
+            validAppMock.MainWindowHandle.Returns(new IntPtr(1234));
+            validAppMock.WaitForExitAsync().Returns(Task.CompletedTask);
+            _mockProcessWrapper.GetProcesses().Returns(new IProcess[]
             {
-                systemMock.Object,
-                headlessMock.Object,
-                validAppMock.Object
+                systemMock,
+                headlessMock,
+                validAppMock
             });
 
-            // ACT
+            // Act
             await _sut.CloseAllOpenProgramsAsync(5000);
 
-            // ASSERT
-            // Darf bei System nicht aufgerufen werden
-            systemMock.Verify(p => p.WaitForExitAsync(), Times.Never);
-
-            // Darf bei Headless nicht aufgerufen werden
-            headlessMock.Verify(p => p.WaitForExitAsync(), Times.Never);
-
-            // Bei der Valid App muss WaitForExitAsync getriggert worden sein
-            validAppMock.Verify(p => p.WaitForExitAsync(), Times.Once);
-
-            // Da wir 'using (process)' implementiert haben, muss Dispose aufgerufen worden sein
-            validAppMock.Verify(p => p.Dispose(), Times.Once);
+            // Assert
+            await systemMock.DidNotReceive().WaitForExitAsync();
+            await headlessMock.DidNotReceive().WaitForExitAsync();
+            await validAppMock.Received(1).WaitForExitAsync();
+            validAppMock.Received(1).Dispose();
         }
-        // 5. ASYNC PROCESS TESTS
 
-        /// <summary>
-        /// Prüft, ob der Task korrekt gewartet (await) wird.
-        /// </summary>
         [Fact]
         public async Task StartExecutableAsync_ShouldAwaitProcessExit()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IProcess>();
-            mockProcess.Setup(p => p.WaitForExitAsync()).Returns(Task.CompletedTask);
+            // [R]IGHT: Starts asynchronous process and awaits completion
+            // Arrange
+            var mockProcess = Substitute.For<IProcess>();
+            mockProcess.WaitForExitAsync().Returns(Task.CompletedTask);
 
-            _mockProcessWrapper.Setup(w => w.Start(It.IsAny<ProcessStartInfo>())).Returns(mockProcess.Object);
+            _mockProcessWrapper.Start(Arg.Any<ProcessStartInfo>()).Returns(mockProcess);
 
-            // ACT
+            // Act
             await _sut.StartExecutableAsync("test.exe");
 
-            // ASSERT
-            mockProcess.Verify(p => p.WaitForExitAsync(), Times.Once);
+            // Assert
+            await mockProcess.Received(1).WaitForExitAsync();
         }
 
-        /// <summary>
-        /// Laut deinem Code wird die Exception in der Async-Methode geloggt UND per 'throw' weitergeworfen.
-        /// Wir prüfen, ob diese Exception tatsächlich oben ankommt.
-        /// </summary>
         [Fact]
         public async Task StartExecutableAsync_ShouldRethrowException()
         {
-            // ARRANGE
+            // [E]RROR: Rethrows exceptions encountered during asynchronous process startup
+            // Arrange
             _mockProcessWrapper
-                .Setup(w => w.Start(It.IsAny<ProcessStartInfo>()))
+                .Start(Arg.Any<ProcessStartInfo>())
                 .Throws(new InvalidOperationException("Access Denied"));
 
-            // ACT
+            // Act
             Func<Task> act = async () => await _sut.StartExecutableAsync("test.exe");
 
-            // ASSERT
+            // Assert
             await act.ShouldThrowAsync<InvalidOperationException>();
         }
     }
 }
-
-
-

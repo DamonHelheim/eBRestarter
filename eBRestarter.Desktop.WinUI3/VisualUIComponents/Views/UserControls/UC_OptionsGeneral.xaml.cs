@@ -10,8 +10,11 @@ public sealed partial class UC_OptionsGeneral : UserControl
 
     public UC_OptionsGeneral()
     {
-        InitializeComponent();
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
         ViewModel = App.AppHost!.Services.GetRequiredService<ViewModelOptionsGeneral>();
+
+        InitializeComponent();
         this.DataContext = ViewModel;
     }
 }

@@ -5,34 +5,35 @@ namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 /// <summary>
 /// Port: Driven Port (Outbound) for securely persisting, loading, and removing API credentials (username/key) to/from storage.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND PORT (Driven Port / Steckdose für Credential-Speicher)</strong><br/>
-/// - <strong>Aufrufer (Consumer):</strong> Liegt im Application Core (z. B. bei der Verwaltung oder dem Löschen von API-Zugangsdaten).<br/>
-/// - <strong>Implementierung (Implementer):</strong> Liegt AUßERHALB des Application Cores (<see cref="eBRestarter.Infrastructure.Repositories.Authentication.JsonCredentialStoreRepository"/> im Infrastructure Layer via Dateisystem/JSON).<br/>
-/// - <strong>Begründung:</strong> Kapselt den physischen Datenzugriff auf den Zugangsdaten-Speicher für den Anwendungskern und ist daher nach Abschnitt 1 des Leitfadens ein klassischer <strong>Outbound Port</strong>.<br/>
-/// - <em>Architektur-Hinweis:</em> Die Namensgebung mit Suffix <c>RepositoryOutboundPort</c> ist vorbildlich.
+/// <strong>Architectural Classification: OUTBOUND PORT (Driven Port / Credential Storage Repository)</strong><br/>
+/// - <strong>Consumer:</strong> Located inside the Application Core (e.g., managing or clearing API authentication credentials).<br/>
+/// - <strong>Implementer:</strong> Located in the Infrastructure Layer (<see cref="eBRestarter.Infrastructure.BehavioralComponents.Repositories.Authentication.JsonCredentialStoreRepository"/> via file system/JSON).<br/>
+/// - <strong>Rationale:</strong> Encapsulates physical data access to encrypted credential persistence for the application core.
 /// </para>
 /// </summary>
 public interface IOutboundPortCredentialStoreRepository
 {
     /// <summary>
-    /// Securely saves the username and key.
+    /// Securely persists API credentials to storage.
     /// </summary>
+    /// <param name="credentials">The credentials containing username and API key to persist.</param>
     void SaveCredentials(ApiCredentials credentials);
 
     /// <summary>
-    /// Loads the stored data (if available).
+    /// Loads stored API credentials from storage, decrypting the sensitive key.
     /// </summary>
+    /// <returns>The decrypted <see cref="ApiCredentials"/> if stored; otherwise, <see langword="null"/>.</returns>
     ApiCredentials? LoadCredentials();
 
     /// <summary>
-    /// Deletes the data (reset).
+    /// Deletes stored credentials from storage.
     /// </summary>
     void ClearCredentials();
 
     /// <summary>
-    /// Imports credentials from a legacy file (used for migration).
+    /// Imports credentials from a legacy binary file for migration.
     /// </summary>
+    /// <param name="filePath">The file path to the legacy binary credentials file.</param>
+    /// <returns>The imported <see cref="ApiCredentials"/> if valid; otherwise, <see langword="null"/>.</returns>
     ApiCredentials? ImportFromLegacyFile(string filePath);
 }
-
-

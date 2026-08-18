@@ -8,10 +8,9 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Provider) for deploying and locating browser extensions in Windows AppData.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Kopie und Bereitstellung von Browser-Erweiterungen im lokalen Dateisystem.<br/>
-/// - <strong>Implementierte Ports:</strong> <see cref="IOutboundPortBrowserExtensionDeployment"/> und <see cref="IOutboundPortBrowserExtensionPathProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, Outbound Ports implementiert und vom Core angetrieben wird, um Datei-Installationsschritte auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Deploys and copies browser extension files to local AppData in the Infrastructure layer.<br/>
+/// - <strong>Implemented Ports:</strong> <see cref="IOutboundPortBrowserExtensionDeployment"/> and <see cref="IOutboundPortBrowserExtensionPathProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsBrowserExtensionDeploymentProvider : IOutboundPortBrowserExtensionDeployment, IOutboundPortBrowserExtensionPathProvider
@@ -19,7 +18,7 @@ public sealed class AdapterWindowsBrowserExtensionDeploymentProvider : IOutbound
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
 #if !DEBUG
     private const string AllDirectoriesSearchPattern = "*";
     private const string AllFilesSearchPattern = "*.*";
@@ -32,6 +31,9 @@ public sealed class AdapterWindowsBrowserExtensionDeploymentProvider : IOutbound
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Ensures the TabRestarter extension directory is deployed to user AppData in Release mode.
+    /// </summary>
     public void EnsureExtensionIsDeployed()
     {
 #if !DEBUG
@@ -50,6 +52,9 @@ public sealed class AdapterWindowsBrowserExtensionDeploymentProvider : IOutbound
 #endif
     }
 
+    /// <summary>
+    /// Retrieves the absolute local filesystem path to the browser extension folder.
+    /// </summary>
     public string RetrieveExtensionFolderPath()
     {
 #if DEBUG
@@ -64,6 +69,11 @@ public sealed class AdapterWindowsBrowserExtensionDeploymentProvider : IOutbound
     }
 
 #if !DEBUG
+    /// <summary>
+    /// Recursively copies all directories and files from source to target path.
+    /// </summary>
+    /// <param name="sourceDir">Source directory path.</param>
+    /// <param name="targetDir">Target directory path.</param>
     private static void CopyDirectoryContents(string sourceDir, string targetDir)
     {
         foreach (var dirPath in Directory.GetDirectories(sourceDir, AllDirectoriesSearchPattern, SearchOption.AllDirectories))

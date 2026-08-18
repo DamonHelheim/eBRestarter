@@ -4,16 +4,16 @@ using System.Runtime.Versioning;
 using System.Security.Principal;
 
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for querying Windows OS system information and default browser settings.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Ermittlung des Standard-Browsers, der Bildschirmauflösung und der Systemzeit.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortSystemInfoProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um technologische OS-Metadaten abzufragen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Queries OS default browser settings, display resolution, and system time in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortSystemInfoProvider"/>.<br/>
 /// </para>
 /// </summary>
 [SupportedOSPlatform("windows")]
@@ -22,7 +22,7 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string BrowserNameBrave = "Brave";
     private const string BrowserNameChrome = "Chrome";
     private const string BrowserNameEdge = "Edge";
@@ -50,7 +50,7 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly ILogger<AdapterWindowsSystemInfoProvider> _logger;
     private readonly IOutboundPortSystemConfigurationRepository _registry;
 
@@ -58,6 +58,11 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterWindowsSystemInfoProvider"/>.
+    /// </summary>
+    /// <param name="logger">Logger instance.</param>
+    /// <param name="registry">System configuration repository port.</param>
     public AdapterWindowsSystemInfoProvider(
         ILogger<AdapterWindowsSystemInfoProvider> logger,
         IOutboundPortSystemConfigurationRepository registry)
@@ -73,6 +78,9 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Determines whether the current user is running with Administrator privileges.
+    /// </summary>
     public bool IsUserAdministrator()
     {
         using var identity = WindowsIdentity.GetCurrent();
@@ -80,6 +88,9 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
         return principal.IsInRole(WindowsBuiltInRole.Administrator);
     }
 
+    /// <summary>
+    /// Retrieves the Windows OS build version string from the Registry.
+    /// </summary>
     public string RetrieveCurrentOsBuildVersion()
     {
         try
@@ -92,12 +103,15 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ErrorReadingOsBuildVersionLogMessage);
+            _logger.LogError(LogEventIds.OperatingSystem.OsVersionReadFailed, ex, ErrorReadingOsBuildVersionLogMessage);
 
             return ErrorVersionFallback;
         }
     }
 
+    /// <summary>
+    /// Retrieves the Windows OS display version string (e.g., 22H2, 23H2) from the Registry.
+    /// </summary>
     public string RetrieveCurrentOsDisplayVersion()
     {
         try
@@ -110,12 +124,15 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ErrorReadingOsDisplayVersionLogMessage);
+            _logger.LogError(LogEventIds.OperatingSystem.OsVersionReadFailed, ex, ErrorReadingOsDisplayVersionLogMessage);
 
             return ErrorVersionFallback;
         }
     }
 
+    /// <summary>
+    /// Queries the Registry to determine the current system default browser name.
+    /// </summary>
     public string RetrieveCurrentStandardBrowserName()
     {
         string? progIdHttp = GetRegistryValueAsString(RegistryPathUserChoiceHttp, ProgIdValueName);
@@ -128,16 +145,19 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
 
         if (!string.Equals(progIdHttp, progIdHttps, StringComparison.OrdinalIgnoreCase) && _logger.IsEnabled(LogLevel.Information))
         {
-            _logger.LogInformation(DifferentBrowsersDetectedLogMessage, progIdHttp, progIdHttps);
+            // Diagnostic logging for default browser mismatch.
+            _logger.LogDebug(LogEventIds.OperatingSystem.DefaultBrowserMismatch, DifferentBrowsersDetectedLogMessage, progIdHttp, progIdHttps);
         }
 
-        // 2. Mapping
+        // Identify browser by ProgId.
         return IdentifyBrowserByProgId(progIdHttp);
     }
 
     /// <summary>
     /// Helper method that utilizes the wrapper and casts directly into a string, including error handling.
     /// </summary>
+    /// <param name="subKey">Registry subkey path.</param>
+    /// <param name="valueName">Registry value name.</param>
     private string? GetRegistryValueAsString(string subKey, string valueName)
     {
         try
@@ -146,7 +166,7 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, UnableToReadRegistryPathLogMessage, subKey);
+            _logger.LogWarning(LogEventIds.OperatingSystem.RegistryReadFailed, ex, UnableToReadRegistryPathLogMessage, subKey);
             return null;
         }
     }
@@ -154,6 +174,7 @@ public sealed class AdapterWindowsSystemInfoProvider : IOutboundPortSystemInfoPr
     /// <summary>
     /// Pure logic method (Static, making it easily testable or used internally here).
     /// </summary>
+    /// <param name="progId">ProgId string retrieved from Registry UserChoice.</param>
     private static string IdentifyBrowserByProgId(string progId)
     {
         return progId switch

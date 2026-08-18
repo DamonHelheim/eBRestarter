@@ -56,9 +56,12 @@
             <TextBox x:Name="TxtDomain" 
                      x:Uid="AutoLogon_InputDomain" />
 
+            <!-- 🔒 Security-Guideline Kap. 3.x: PasswordRevealMode="Hidden" statt "Peek".
+                 Hier wird ein Windows-/Domänen-Kennwort eingegeben; die Peek-Schaltfläche machte es
+                 im Klartext sichtbar und damit per Shoulder-Surfing oder Screenshare abgreifbar. -->
             <PasswordBox x:Name="PbPassword"
                          x:Uid="AutoLogon_InputPassword"
-                         PasswordRevealMode="Peek"/>
+                         PasswordRevealMode="Hidden"/>
         </StackPanel>
 
     </Grid>

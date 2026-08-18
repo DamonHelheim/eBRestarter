@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -29,6 +32,7 @@ public sealed partial class ViewModelActivateApi : ObservableObject
     private const string KeyActivateApiFileNotFound = "ActivateApi_FileNotFound";
     private const string KeyActivateApiImportError = "ActivateApi_ImportError";
     private const string KeyActivateApiImportSuccess = "ActivateApi_ImportSuccess";
+    private const string KeyActivateApiSaveError = "ActivateApi_SaveError";
     private const string KeyActivateApiSuccess = "ActivateApi_Success";
     private const string SystemColorSuccessBrush = "{ThemeResource SystemFillColorSuccessBrush}";
     private const string TransparentColor = "Transparent";
@@ -36,8 +40,9 @@ public sealed partial class ViewModelActivateApi : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    // ── Block 1: Injected dependencies (alphabetical A–Z) ──
     private readonly IOutboundPortApiAuthenticationProvider _apiAuthenticationService;
+    private readonly ILogger<ViewModelActivateApi> _logger;
     private readonly IOutboundPortEVisitorConfigRepository _configService;
     private readonly IInboundPortLocalizationProvider _localizationService;
 
@@ -52,15 +57,18 @@ public sealed partial class ViewModelActivateApi : ObservableObject
     public ViewModelActivateApi(
         IOutboundPortApiAuthenticationProvider apiAuthenticationService,
         IOutboundPortEVisitorConfigRepository configService,
-        IInboundPortLocalizationProvider localizationService)
+        IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelActivateApi> logger)
     {
         ArgumentNullException.ThrowIfNull(apiAuthenticationService);
         ArgumentNullException.ThrowIfNull(configService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
 
         _apiAuthenticationService = apiAuthenticationService;
         _configService = configService;
         _localizationService = localizationService;
+        _logger = logger;
 
         var config = _configService.LoadConfig();
         Username = config?.Settings?.ApiUsername ?? string.Empty;
@@ -76,7 +84,7 @@ public sealed partial class ViewModelActivateApi : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
     public partial string ApiKey { get; set; } = string.Empty;
 
-    /// <summary>Submit is allowed only when both username and API key are non-empty and the VM is not busy.</summary>
+    /// <summary>Gets a value indicating whether form submission is allowed (both username and API key are non-empty, and the view model is not busy).</summary>
     private bool CanSubmit => !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(ApiKey) && !IsBusy;
 
     /// <summary>Gets or sets a value indicating whether an async operation is currently executing.</summary>
@@ -128,6 +136,12 @@ public sealed partial class ViewModelActivateApi : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ObjectDisposedException)
         {
+            // Logging guideline: Exception is bound and logged to ensure legacy import failure visibility.
+            _logger.LogWarning(
+                LogEventIds.Configuration.CredentialStoreLegacyImportFailed,
+                ex,
+                "Importing credentials from the legacy file failed.");
+
             StatusMessage = _localizationService.RetrieveString(KeyActivateApiImportError);
             StatusColor = HexColorError;
             Username = string.Empty;
@@ -171,6 +185,18 @@ public sealed partial class ViewModelActivateApi : ObservableObject
             StatusColor = HexColorSuccess;
 
             WeakReferenceMessenger.Default.Send(new ApiCredentialsUpdatedMessage());
+        }
+        catch (InvalidOperationException exception)
+        {
+            // 🔒 Security guideline: SaveConfig throws when API key encryption fails rather
+            // than silently saving an empty key. The failure must be surfaced to the user.
+            _logger.LogError(
+                LogEventIds.Configuration.ApiKeyEncryptionFailed,
+                exception,
+                "Saving the API credentials failed; the configuration was not written.");
+
+            StatusMessage = _localizationService.RetrieveString(KeyActivateApiSaveError);
+            StatusColor = HexColorError;
         }
         finally
         {

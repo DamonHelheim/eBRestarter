@@ -8,12 +8,12 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// </summary>
 public sealed partial class TimerStateToTextConverter : IValueConverter
 {
-
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         return (bool)value ? "Stop" : "Start";
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
-
 }

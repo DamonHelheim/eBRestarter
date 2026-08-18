@@ -1,106 +1,108 @@
+using Microsoft.Extensions.Logging;
+using NSubstitute;
+using Shouldly;
+using System;
+using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Shouldly;
-using System;
-using Xunit;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Repositories.Config
 {
     /// <summary>
-    /// Testet den EncryptedEVisitorConfigRepositoryDecorator auf korrekte Ver- und Entschl�sselung.
+    /// Unit tests for <see cref="EncryptedEVisitorConfigRepositoryDecorator"/> verifying transparent API key encryption, decryption, and error handling.
     /// </summary>
     public class EncryptedEVisitorConfigRepositoryDecoratorTests
     {
-        private readonly Mock<IOutboundPortEVisitorConfigRepository> _mockInnerService;
-        private readonly Mock<IOutboundPortEncryption> _mockEncryptionUseCase;
-        private readonly Mock<ILogger<EncryptedEVisitorConfigRepositoryDecorator>> _mockLogger;
+        private readonly IOutboundPortEVisitorConfigRepository _mockInnerService;
+        private readonly IOutboundPortEncryption _mockEncryptionUseCase;
+        private readonly FakeLogger<EncryptedEVisitorConfigRepositoryDecorator> _mockLogger;
         private readonly EncryptedEVisitorConfigRepositoryDecorator _decorator;
 
         public EncryptedEVisitorConfigRepositoryDecoratorTests()
         {
-            _mockInnerService = new Mock<IOutboundPortEVisitorConfigRepository>();
-            _mockEncryptionUseCase = new Mock<IOutboundPortEncryption>();
-            _mockLogger = new Mock<ILogger<EncryptedEVisitorConfigRepositoryDecorator>>();
+            _mockInnerService = Substitute.For<IOutboundPortEVisitorConfigRepository>();
+            _mockEncryptionUseCase = Substitute.For<IOutboundPortEncryption>();
+            _mockLogger = new FakeLogger<EncryptedEVisitorConfigRepositoryDecorator>();
 
             _decorator = new EncryptedEVisitorConfigRepositoryDecorator(
-                _mockInnerService.Object,
-                _mockEncryptionUseCase.Object,
-                _mockLogger.Object
+                _mockInnerService,
+                _mockEncryptionUseCase,
+                _mockLogger
             );
         }
 
         [Fact]
         public void LoadConfig_ShouldDecryptApiKey_WhenPresent()
         {
-            // ARRANGE
+            // [R]IGHT: Loads configuration and transparently decrypts the stored API key
+            // Arrange
             var rawConfig = new AppConfig();
             rawConfig.Settings.ApiKey = "EncryptedApiKey";
 
-            _mockInnerService.Setup(s => s.LoadConfig()).Returns(rawConfig);
-            _mockEncryptionUseCase.Setup(e => e.Decrypt("EncryptedApiKey")).Returns("PlaintextApiKey");
+            _mockInnerService.LoadConfig().Returns(rawConfig);
+            _mockEncryptionUseCase.Decrypt("EncryptedApiKey").Returns("PlaintextApiKey");
 
-            // ACT
+            // Act
             var result = _decorator.LoadConfig();
 
-            // ASSERT
+            // Assert
             result.Settings.ApiKey.ShouldBe("PlaintextApiKey");
         }
 
         [Fact]
         public void LoadConfig_ShouldHandleDecryptionFailure_Gracefully()
         {
-            // ARRANGE
+            // [B]OUNDARY / [E]RROR: Handles corrupt ciphertext gracefully by setting the API key to empty
+            // Arrange
             var rawConfig = new AppConfig();
             rawConfig.Settings.ApiKey = "CorruptApiKey";
 
-            _mockInnerService.Setup(s => s.LoadConfig()).Returns(rawConfig);
-            _mockEncryptionUseCase.Setup(e => e.Decrypt("CorruptApiKey")).Returns(string.Empty);
+            _mockInnerService.LoadConfig().Returns(rawConfig);
+            _mockEncryptionUseCase.Decrypt("CorruptApiKey").Returns(string.Empty);
 
-            // ACT
+            // Act
             var result = _decorator.LoadConfig();
 
-            // ASSERT
+            // Assert
             result.Settings.ApiKey.ShouldBeEmpty();
         }
 
         [Fact]
         public void SaveConfig_ShouldEncryptApiKey_AndForwardToInner()
         {
-            // ARRANGE
+            // [R]IGHT: Encrypts plaintext API key before forwarding configuration to inner repository
+            // Arrange
             var configToSave = new AppConfig();
             configToSave.Settings.ApiKey = "PlaintextApiKey";
 
-            _mockEncryptionUseCase.Setup(e => e.Encrypt("PlaintextApiKey")).Returns("EncryptedApiKey");
+            _mockEncryptionUseCase.Encrypt("PlaintextApiKey").Returns("EncryptedApiKey");
 
             string capturedKey = null!;
-            _mockInnerService
-                .Setup(s => s.SaveConfig(It.IsAny<AppConfig>()))
-                .Callback<AppConfig>(c => capturedKey = c.Settings.ApiKey);
+            _mockInnerService.When(s => s.SaveConfig(Arg.Any<AppConfig>()))
+                .Do(ci => capturedKey = ci.Arg<AppConfig>().Settings.ApiKey);
 
-            // ACT
+            // Act
             _decorator.SaveConfig(configToSave);
 
-            // ASSERT
-            _mockInnerService.Verify(s => s.SaveConfig(It.IsAny<AppConfig>()), Times.Once);
+            // Assert
+            _mockInnerService.Received(1).SaveConfig(Arg.Any<AppConfig>());
             capturedKey.ShouldBe("EncryptedApiKey");
-            // Der Klartext-Key muss im Speicher-Objekt erhalten bleiben!
+            // Plaintext key must be preserved in the in-memory object
             configToSave.Settings.ApiKey.ShouldBe("PlaintextApiKey");
         }
 
         [Fact]
         public void ResetConfig_ShouldForwardToInner()
         {
-            // ACT
+            // [R]IGHT: Forwards reset configuration request directly to inner repository
+            // Act
             _decorator.ResetConfig();
 
-            // ASSERT
-            _mockInnerService.Verify(s => s.ResetConfig(), Times.Once);
+            // Assert
+            _mockInnerService.Received(1).ResetConfig();
         }
     }
 }
-
-

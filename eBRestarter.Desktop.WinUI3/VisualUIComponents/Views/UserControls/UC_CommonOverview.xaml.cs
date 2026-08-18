@@ -14,9 +14,12 @@ public sealed partial class UC_CommonOverview : UserControl
     
     public UC_CommonOverview()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelGeneralOverView = App.AppHost!.Services.GetRequiredService<ViewModelGeneralOverview>();
+
         InitializeComponent();
 
-        ViewModelGeneralOverView = App.AppHost!.Services.GetRequiredService<ViewModelGeneralOverview>();
 
         this.DataContext = ViewModelGeneralOverView;
     }

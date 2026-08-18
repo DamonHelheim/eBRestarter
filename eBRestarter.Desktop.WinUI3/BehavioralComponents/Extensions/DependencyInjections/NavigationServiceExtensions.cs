@@ -10,7 +10,11 @@ namespace eBRestarter.Desktop.WinUI3.Extensions.DependencyInjections;
 /// </summary>
 public static class NavigationServiceExtensions
 {
-
+    /// <summary>
+    /// Registers the navigation service singleton and configures application page routes.
+    /// </summary>
+    /// <param name="services">The service collection to populate.</param>
+    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddNavigationService(this IServiceCollection services)
     {
         services.AddSingleton<INavigationService>(_ =>

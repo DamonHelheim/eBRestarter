@@ -609,6 +609,9 @@
   <data name="ActivateApi_Success" xml:space="preserve">
     <value>Erfolgreich aktiviert &amp; verschlüsselt gespeichert!</value>
   </data>
+  <data name="ActivateApi_SaveError" xml:space="preserve">
+    <value>Der API-Schlüssel konnte nicht verschlüsselt werden und wurde deshalb nicht gespeichert. Bitte erneut versuchen.</value>
+  </data>
   <data name="ActivateApi_FileNotFound" xml:space="preserve">
     <value>Datei nicht gefunden.</value>
   </data>

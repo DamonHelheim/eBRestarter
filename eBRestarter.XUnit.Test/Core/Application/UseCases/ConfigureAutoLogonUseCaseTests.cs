@@ -1,14 +1,11 @@
-//using eBRestarter.Core.Application.Validators;
-using eBRestarter.Core.Application.Ports.Outbound.Authentication;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Authentication;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-//using eBRestarter.Core.Application.Providers.OperatingSystem.WindowsOS;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
-//using Moq;
+﻿using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Infrastructure.BehavioralComponents.Validators;
+using NSubstitute.ExceptionExtensions;
+
+//using NSubstitute;
 //using Shouldly;
 //using System;
 //using Xunit;
@@ -17,19 +14,19 @@ using eBRestarter.Core.Application.Models.Records;
 //{
 //    public class ConfigureAutoLogonUseCaseTests
 //    {
-//        private readonly Mock<IWindowsAutoLogonRepository> _mockAutoLogonService;
-//        private readonly Mock<ICredentialValidationPort> _mockCredentialUseCase;
+//        private readonly IWindowsAutoLogonRepository _mockAutoLogonService;
+//        private readonly ICredentialValidationPort _mockCredentialUseCase;
 //        private readonly ConfigureAutoLogonUseCase _sut;
 //
 //        public ConfigureAutoLogonUseCaseTests()
 //        {
-//            _mockAutoLogonService = new Mock<IWindowsAutoLogonRepository>();
-//            _mockCredentialUseCase = new Mock<ICredentialValidationPort>();
+//            _mockAutoLogonService = Substitute.For<IWindowsAutoLogonRepository>();
+//            _mockCredentialUseCase = Substitute.For<ICredentialValidationPort>();
 //            
 //            _sut = new ConfigureAutoLogonUseCase(
-//                _mockAutoLogonService.Object,
+//                _mockAutoLogonService,
 //                null, // mock WindowsSystemInfoProvider
-//                _mockCredentialUseCase.Object,
+//                _mockCredentialUseCase,
 //                new ConfigureAutoLogonValidator());
 //        }
 //
@@ -42,14 +39,14 @@ using eBRestarter.Core.Application.Models.Records;
 //
 //            result.IsSuccess.ShouldBeTrue();
 //            result.Value.ShouldBe(AutoLogonResultStatus.Deactivated);
-//            _mockAutoLogonService.Verify(s => s.DisableAutoLogon(), Times.Once);
+//            _mockAutoLogonService.Received(1).DisableAutoLogon();
 //        }
 //
 //        [Fact]
 //        public void Execute_ShouldReturnHelloBlock_WhenWindowsHelloIsActive()
 //        {
 //            var request = new ConfigureAutoLogonRequest(IsDeactivateAction: false, false, false, "user", "dom", "pass");
-//            _mockAutoLogonService.Setup(s => s.IsPasswordlessAuthEnabled()).Returns(true);
+//            _mockAutoLogonService.IsPasswordlessAuthEnabled().Returns(true);
 //
 //            var result = _sut.Execute(request);
 //
@@ -57,7 +54,7 @@ using eBRestarter.Core.Application.Models.Records;
 //            result.Errors[0].Metadata["Status"].ShouldBe(AutoLogonResultStatus.WindowsHelloBlockActive);
 //            result.Errors[0].Message.ShouldContain("Windows Hello");
 //
-//            _mockCredentialUseCase.Verify(s => s.ValidateCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+//            _mockCredentialUseCase.DidNotReceive().ValidateCredentials(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
 //        }
 //
 //        [Fact]
@@ -65,29 +62,29 @@ using eBRestarter.Core.Application.Models.Records;
 //        {
 //            var request = new ConfigureAutoLogonRequest(false, false, false, "Admin", "Workgroup", "TopSecret");
 //
-//            _mockAutoLogonService.Setup(s => s.IsPasswordlessAuthEnabled()).Returns(false);
+//            _mockAutoLogonService.IsPasswordlessAuthEnabled().Returns(false);
 //            _mockCredentialUseCase
-//                .Setup(s => s.ValidateCredentials("Admin", "Workgroup", "TopSecret"))
+//                .ValidateCredentials("Admin", "Workgroup", "TopSecret")
 //                .Returns(true);
 //
 //            var result = _sut.Execute(request);
 //
 //            result.IsSuccess.ShouldBeTrue();
 //            result.Value.ShouldBe(AutoLogonResultStatus.Activated);
-//            _mockAutoLogonService.Verify(s => s.EnableAutoLogon("Admin", "Workgroup", "TopSecret"), Times.Once);
+//            _mockAutoLogonService.Received(1).EnableAutoLogon("Admin", "Workgroup", "TopSecret");
 //        }
 //
 //        [Fact]
 //        public void Execute_ShouldReturnValidationError_WhenCredentialsAreInvalid()
 //        {
 //            var request = new ConfigureAutoLogonRequest(false, false, false, "User", "", "WrongPass");
-//            _mockCredentialUseCase.Setup(s => s.ValidateCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(false);
+//            _mockCredentialUseCase.ValidateCredentials(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 //
 //            var result = _sut.Execute(request);
 //
 //            result.IsSuccess.ShouldBeFalse();
 //            result.Errors[0].Metadata["Status"].ShouldBe(AutoLogonResultStatus.ValidationError);
-//            _mockAutoLogonService.Verify(s => s.EnableAutoLogon(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+//            _mockAutoLogonService.DidNotReceive().EnableAutoLogon(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
 //        }
 //
 //        [Theory]
@@ -107,8 +104,8 @@ using eBRestarter.Core.Application.Models.Records;
 //        public void Execute_ShouldReturnDomainError_OnInvalidOperationException()
 //        {
 //            var request = new ConfigureAutoLogonRequest(false, false, false, "u", "d", "p");
-//            _mockCredentialUseCase.Setup(s => s.ValidateCredentials(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
-//            _mockAutoLogonService.Setup(s => s.EnableAutoLogon(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+//            _mockCredentialUseCase.ValidateCredentials(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+//            _mockAutoLogonService.EnableAutoLogon(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 //                                 .Throws(new InvalidOperationException());
 //
 //            var result = _sut.Execute(request);
@@ -121,7 +118,7 @@ using eBRestarter.Core.Application.Models.Records;
 //        public void Execute_ShouldReturnUnexpectedError_OnGeneralException()
 //        {
 //            var request = new ConfigureAutoLogonRequest(IsDeactivateAction: true);
-//            _mockAutoLogonService.Setup(s => s.DisableAutoLogon()).Throws(new Exception("Kritischer Systemfehler"));
+//            _mockAutoLogonService.DisableAutoLogon().Throws(new Exception("Kritischer Systemfehler"));
 //
 //            var result = _sut.Execute(request);
 //

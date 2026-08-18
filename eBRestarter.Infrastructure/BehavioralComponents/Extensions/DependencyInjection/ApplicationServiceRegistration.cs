@@ -13,8 +13,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace eBRestarter.Infrastructure.BehavioralComponents.Extensions.DependencyInjection;
 
+/// <summary>
+/// Extension methods for registering Application core services and handlers into the dependency injection container.
+/// </summary>
 public static class ApplicationServiceRegistration
 {
+    /// <summary>
+    /// Registers application domain handlers, use cases, providers, and validators with the DI container.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <returns>The same service collection for method chaining.</returns>
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddSingleton<IDelayPhaseHandler, DelayPhaseHandler>();

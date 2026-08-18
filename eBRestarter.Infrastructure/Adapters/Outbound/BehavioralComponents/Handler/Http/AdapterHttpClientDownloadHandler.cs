@@ -14,10 +14,9 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Hand
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) for executing HTTP file downloads and network I/O.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Kapselung von <see cref="HttpClient"/> und Netzwerk-Streams für Datei-Downloads.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortHttpDownload"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um Netzwerk-I/O auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates <see cref="HttpClient"/> and network streams for file downloads in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortHttpDownload"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
@@ -25,7 +24,7 @@ public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const int BufferSizeBytes = 8192;
     private const string DefaultUserAgentHeaderValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36";
     private const double PercentageMultiplier = 100.0;
@@ -33,16 +32,30 @@ public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
     private const long UnknownContentLength = -1L;
     private const string UserAgentHeaderName = "User-Agent";
 
+    // 🔒 Security: HTTPS scheme verification and resource exhaustion protection.
+    private const string InsecureSchemeExceptionMessage = "Only HTTPS downloads are permitted. Rejected URL scheme: ";
+
+    /// <summary>
+    /// Upper bound for a single download (512 MB maximum size to prevent resource exhaustion).
+    /// </summary>
+    private const long MaximumDownloadSizeBytes = 512L * 1024 * 1024;
+
+    private const string SizeLimitExceededExceptionMessage = "The download exceeds the permitted maximum size of 512 MB and was aborted.";
+
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly HttpClient _httpClient;
 
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterHttpClientDownloadHandler"/>.
+    /// </summary>
+    /// <param name="httpClient">Optional HTTP client instance for dependency injection.</param>
     public AdapterHttpClientDownloadHandler(HttpClient? httpClient = null)
     {
         _httpClient = httpClient ?? new HttpClient();
@@ -55,21 +68,42 @@ public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
 
 
     // ═══════════════════════════════════════════════════════
-    //  8. Methods (public → private)
+    //  8. Methods
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Asynchronously downloads a file from the specified URL to a local destination path with progress reporting.
+    /// </summary>
+    /// <param name="url">The HTTPS URL of the file to download.</param>
+    /// <param name="destinationPath">The local file path where the download will be saved.</param>
+    /// <param name="progress">Progress reporter for tracking download completion.</param>
+    /// <param name="cancel">Cancellation token for aborting the operation.</param>
     public Task DownloadFileAsync(
         string url,
         string destinationPath,
         IProgress<DownloadProgressStatus> progress,
         CancellationToken cancel)
     {
-        // ⚡ Immediate Guard-Clause Exception Timing (Guide Abs. 9.1)
+        // ⚡ Guard clauses for parameter validation
         ArgumentNullException.ThrowIfNull(url);
         ArgumentNullException.ThrowIfNull(destinationPath);
+
+        // 🔒 Security: Require HTTPS scheme prior to executing request to prevent HTTP downgrade attacks.
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? requestUri)
+            || !string.Equals(requestUri.Scheme, Uri.UriSchemeHttps, StringComparison.Ordinal))
+        {
+            throw new ArgumentException($"{InsecureSchemeExceptionMessage}{url}", nameof(url));
+        }
 
         return DownloadFileCoreAsync(url, destinationPath, progress, cancel);
     }
 
+    /// <summary>
+    /// Executes the core streaming download loop, enforcing size limits and updating progress.
+    /// </summary>
+    /// <param name="url">The HTTPS URL to download.</param>
+    /// <param name="destinationPath">Target local file path.</param>
+    /// <param name="progress">Progress reporter.</param>
+    /// <param name="cancel">Cancellation token.</param>
     private async Task DownloadFileCoreAsync(
         string url,
         string destinationPath,
@@ -82,6 +116,12 @@ public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
 
         var totalBytes = response.Content.Headers.ContentLength ?? UnknownContentLength;
         var canReportProgress = totalBytes != UnknownContentLength;
+
+        // 🔒 Security: Validate Content-Length header against maximum download size limit.
+        if (totalBytes > MaximumDownloadSizeBytes)
+        {
+            throw new InvalidOperationException(SizeLimitExceededExceptionMessage);
+        }
 
         // 2. Open underlying I/O streams
         var contentStream = await response.Content.ReadAsStreamAsync(cancel).ConfigureAwait(false);
@@ -103,9 +143,15 @@ public sealed class AdapterHttpClientDownloadHandler : IOutboundPortHttpDownload
 
                     while ((bytesRead = await contentStream.ReadAsync(buffer.AsMemory(0, BufferSizeBytes), cancel).ConfigureAwait(false)) > 0)
                     {
-                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancel).ConfigureAwait(false);
-
                         totalRead += bytesRead;
+
+                        // 🔒 Security: Enforce size limit during streaming read.
+                        if (totalRead > MaximumDownloadSizeBytes)
+                        {
+                            throw new InvalidOperationException(SizeLimitExceededExceptionMessage);
+                        }
+
+                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancel).ConfigureAwait(false);
 
                         if (canReportProgress && progress is not null)
                         {

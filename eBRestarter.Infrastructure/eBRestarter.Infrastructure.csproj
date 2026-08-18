@@ -11,6 +11,12 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<Platforms>AnyCPU;x64</Platforms>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<!--
+		  🔒 Security-Guideline Kap. 7.3 (Reproduzierbarkeit): packages.lock.json fixiert die
+		  exakten transitiven Versionen, damit derselbe Commit nicht zu unterschiedlichen
+		  Zeitpunkten unterschiedliche Pakete zieht.
+		-->
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -38,10 +44,16 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
+    <!-- Guide Kap. 16.1: IHttpClientFactory statt HttpClient/RestClient pro Request. -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
+    <!--
+      Logging-Guideline Kap. 8: Die Provider-Wahl gehört in den Composition Root der Anwendung,
+      nicht in eine Klassenbibliothek. Die Provider-Pakete (Serilog, Debug-Sink) sind deshalb
+      ins Desktop-Projekt gewandert; hier bleibt ausschließlich die Abstraktion.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
     <PackageReference Include="RestSharp" Version="114.0.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.28.0.143324">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

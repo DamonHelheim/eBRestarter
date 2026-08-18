@@ -1,57 +1,43 @@
-﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using Xunit;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
-    // BRAVE BROWSER TESTS
+    /// <summary>
+    /// Unit tests for <see cref="AdapterBraveBrowserWrapper"/> verifying profile and cache directory path resolution.
+    /// </summary>
     public class BraveBrowserTests
     {
-        /// <summary>
-        /// Auch wenn Brave fast identisch zu Chrome ist, hat es einen etwas exotischeren
-        /// Root-Pfad: AppData\Local\BraveSoftware\Brave-Browser\User Data.
-        /// Ein simpler Vertipper im Code w�rde dazu f�hren, dass der Cache nie gel�scht wird.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir pr�fen, ob die Wurzel f�r die Cache- und Cookie-Verzeichnisse exakt den
-        /// speziellen Brave-Ordnerbaum nutzt.
-        /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectDirectories_ForBrave()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterBraveBrowserWrapper>>();
-            
+            // [R]IGHT: Generates expected cache and cookie directory paths for default Brave profile
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockLogger = new FakeLogger<AdapterBraveBrowserWrapper>();
 
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
-            mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));
+            mockFileSystem.ResolveEnvironmentPath("LocalAppData").Returns(@"C:\Local");
+            mockFileSystem.CombinePaths(Arg.Any<string[]>()).Returns(ci => string.Join(@"\", ci.Arg<string[]>()));
 
-            // Dies ist der entscheidende Pfad f�r Brave!
             string expectedDefaultProfilePath = @"C:\Local\BraveSoftware\Brave-Browser\User Data\Default";
-            mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
+            mockFileSystem.DirectoryExists(expectedDefaultProfilePath).Returns(true);
 
-            var BraveBrowser = new AdapterBraveBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var braveBrowser = new AdapterBraveBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
 
-            // ACT
-            var paths = BraveBrowser.ResolvePaths();
+            // Act
+            var paths = braveBrowser.ResolvePaths();
 
-            // ASSERT
+            // Assert
             paths.CacheDirs.ShouldContain($@"{expectedDefaultProfilePath}\Cache\Cache_Data");
             paths.CookiesDirs.ShouldContain($@"{expectedDefaultProfilePath}\Local Storage");
         }
     }
 }
-
-
-
-
-

@@ -5,15 +5,23 @@ namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 /// <summary>
 /// Port: Exposes active network statistics and availability status to the presentation layer.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): INBOUND PORT / USE CASE INTERFACE</strong><br/>
-/// - <strong>Aufrufer (Consumer):</strong> Liegt AUßERHALB des Application Cores (<see cref="eBRestarter.Desktop.WinUI3.ViewModels.ViewModelNetworkTraffic"/> im Presentation Layer via MVVM).<br/>
-/// - <strong>Implementierung (Implementer):</strong> Liegt derzeit in der Infrastruktur (<see cref="eBRestarter.Infrastructure.Providers.NetworkInfoProvider"/>).<br/>
-/// - <strong>Begründung:</strong> Dient der Benutzeroberfläche als Inbound Port zum Abruf und zur Anzeige der Netzwerk-Verkehrsdaten.<br/>
-/// - <em>Architektur-Hinweis:</em> Dass die Implementierung direkt in <c>Infrastructure</c> statt im <c>Application Core</c> liegt, stellt laut Leitfaden Abschnitt 1 einen Verstoß gegen die saubere Schichtentrennung dar (Inbound Ports sollten im Core implementiert werden).
+/// <strong>Architectural Classification: INBOUND PORT / USE CASE INTERFACE</strong><br/>
+/// - <strong>Consumer:</strong> Located outside the Application Core (<see cref="eBRestarter.Desktop.WinUI3.ViewModels.ViewModelNetworkTraffic"/> in the Presentation Layer via MVVM).<br/>
+/// - <strong>Implementer:</strong> Located in the Infrastructure Layer (<see cref="eBRestarter.Infrastructure.Providers.NetworkInfoProvider"/>).<br/>
+/// - <strong>Rationale:</strong> Serves the user interface as an inbound port to query and display network traffic metrics.
 /// </para>
 /// </summary>
 public interface IInboundPortNetworkInfoProvider
 {
+    /// <summary>
+    /// Checks whether network connectivity is currently available.
+    /// </summary>
+    /// <returns><see langword="true"/> if network connectivity exists; otherwise, <see langword="false"/>.</returns>
     bool IsNetworkAvailable();
+
+    /// <summary>
+    /// Retrieves active, non-loopback network interfaces with recorded traffic statistics.
+    /// </summary>
+    /// <returns>An enumerable collection of active <see cref="NetworkStats"/>.</returns>
     IEnumerable<NetworkStats> RetrieveActiveInterfaces();
 }

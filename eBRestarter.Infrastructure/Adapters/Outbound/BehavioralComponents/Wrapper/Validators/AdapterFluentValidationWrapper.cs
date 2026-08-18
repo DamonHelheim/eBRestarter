@@ -9,12 +9,12 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrap
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) wrapping FluentValidation to validate domain models and commands.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Validierung via FluentValidation-Bibliothek.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IInboundPortApplicationValidator{T}"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt und einen Port implementiert, um externes Validierungs-Framework-Verhalten für den Core bereitzustellen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Wraps FluentValidation for domain model and command validation in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IInboundPortApplicationValidator{T}"/>.<br/>
 /// </para>
 /// </summary>
+/// <param name="validator">FluentValidation validator instance.</param>
 public sealed class AdapterFluentValidationWrapper<T>(
     IValidator<T> validator)
     : IInboundPortApplicationValidator<T>
@@ -23,7 +23,7 @@ public sealed class AdapterFluentValidationWrapper<T>(
     //  2. Fields
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IValidator<T> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
 
 
@@ -31,6 +31,7 @@ public sealed class AdapterFluentValidationWrapper<T>(
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
+    /// <inheritdoc />
     public ValidationResult Validate(T request)
     {
         ArgumentNullException.ThrowIfNull(request);

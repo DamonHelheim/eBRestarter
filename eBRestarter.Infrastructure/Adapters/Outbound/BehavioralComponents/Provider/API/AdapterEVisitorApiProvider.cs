@@ -11,16 +11,16 @@ using eBRestarter.Infrastructure.Api;
 using eBRestarter.Infrastructure.Api.Interfaces;
 using eBRestarter.Infrastructure.BehavioralComponents.Utilities;
 using eBRestarter.Infrastructure.ObjectArchetypes.Model;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.API;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for retrieving and managing eBesucher API account data and earnings.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Dienstleister im äußeren Ring (Infrastructure Layer) die externe API-Kommunikation mit dem eBesucher-Dienst via HTTP-REST.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortEVisitorApiProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um technologische Netzwerk-Seiteneffekte und externe API-Abfragen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles external API communication with eBesucher services via HTTP REST in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortEVisitorApiProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvider
@@ -28,7 +28,7 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string ErrorParsingDailyEarningsLogMessage = "Error parsing daily earnings.";
     private const string ErrorParsingHourlyEarningsLogMessage = "Error parsing hourly earnings.";
     private const string ErrorParsingIpDataLogMessage = "Error parsing IP data.";
@@ -40,7 +40,7 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IOutboundPortEVisitorConfigRepository _configPort;
     private readonly ILogger<AdapterEVisitorApiProvider> _logger;
     private readonly IRestClient _restClientPort;
@@ -49,6 +49,12 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterEVisitorApiProvider"/>.
+    /// </summary>
+    /// <param name="configPort">Config repository port.</param>
+    /// <param name="logger">Logger instance.</param>
+    /// <param name="restClientPort">REST client port.</param>
     public AdapterEVisitorApiProvider(
         IOutboundPortEVisitorConfigRepository configPort,
         ILogger<AdapterEVisitorApiProvider> logger,
@@ -67,6 +73,9 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Retrieves combined hourly, daily, and monthly earnings data for the configured account.
+    /// </summary>
     public async Task<EarningsData?> RetrieveEarningsAsync()
     {
         var config = _configPort.LoadConfig();
@@ -110,11 +119,14 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorRetrievingEarningsLogMessage);
+            _logger.LogError(LogEventIds.Api.EarningsRetrievalFailed, exception, ErrorRetrievingEarningsLogMessage);
             return null;
         }
     }
 
+    /// <summary>
+    /// Retrieves IP info and surfbar status from the eBesucher API.
+    /// </summary>
     public async Task<IpInfoData?> RetrieveIpInfoAsync()
     {
         var request = new ApiRequest
@@ -132,15 +144,22 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
 
         try
         {
-            return EVisitorApiResponseUtility.ParseIpInfo(response.Content);
+            return EVisitorApiResponseUtility.ParseIpInfo(response.Content, _logger);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorParsingIpDataLogMessage);
+            _logger.LogError(LogEventIds.Api.ApiResponseParsingFailed, exception, ErrorParsingIpDataLogMessage);
             return null;
         }
     }
 
+    /// <summary>
+    /// Fetches raw daily earnings array for the specified date range.
+    /// </summary>
+    /// <param name="username">Account username.</param>
+    /// <param name="apiKey">API key.</param>
+    /// <param name="start">Start date.</param>
+    /// <param name="end">End date.</param>
     private async Task<double[]> RetrieveDailyEarningsRawAsync(
         string username,
         string apiKey,
@@ -171,15 +190,20 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
 
         try
         {
-            return EVisitorApiResponseUtility.ParseDailyEarnings(response.Content, daysInMonth);
+            return EVisitorApiResponseUtility.ParseDailyEarnings(response.Content, daysInMonth, _logger);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorParsingDailyEarningsLogMessage);
+            _logger.LogError(LogEventIds.Api.ApiResponseParsingFailed, exception, ErrorParsingDailyEarningsLogMessage);
             return new double[daysInMonth];
         }
     }
 
+    /// <summary>
+    /// Fetches raw hourly earnings array for the current day.
+    /// </summary>
+    /// <param name="username">Account username.</param>
+    /// <param name="apiKey">API key.</param>
     private async Task<double[]> RetrieveHourlyEarningsRawAsync(string username, string apiKey)
     {
         var request = new ApiRequest
@@ -199,15 +223,22 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
 
         try
         {
-            return EVisitorApiResponseUtility.ParseHourlyEarnings(response.Content);
+            return EVisitorApiResponseUtility.ParseHourlyEarnings(response.Content, _logger);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorParsingHourlyEarningsLogMessage);
+            _logger.LogError(LogEventIds.Api.ApiResponseParsingFailed, exception, ErrorParsingHourlyEarningsLogMessage);
             return new double[HoursInDayCount];
         }
     }
 
+    /// <summary>
+    /// Fetches raw monthly earnings array for the specified date range.
+    /// </summary>
+    /// <param name="username">Account username.</param>
+    /// <param name="apiKey">API key.</param>
+    /// <param name="start">Start date.</param>
+    /// <param name="end">End date.</param>
     private async Task<double[]> RetrieveMonthlyEarningsRawAsync(
         string username,
         string apiKey,
@@ -236,11 +267,11 @@ public sealed class AdapterEVisitorApiProvider : IOutboundPortEVisitorApiProvide
 
         try
         {
-            return EVisitorApiResponseUtility.ParseMonthlyEarnings(response.Content);
+            return EVisitorApiResponseUtility.ParseMonthlyEarnings(response.Content, _logger);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorParsingMonthlyEarningsLogMessage);
+            _logger.LogError(LogEventIds.Api.ApiResponseParsingFailed, exception, ErrorParsingMonthlyEarningsLogMessage);
             return new double[MonthsInYearCount];
         }
     }

@@ -5,17 +5,18 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
+using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Repository) managing automatic Windows user logon settings and LSA secrets.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Konfiguration der automatischen Anmeldung via Winlogon Registry und LSA (Local Security Authority).<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortOsAutoLogonRepository"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um sensible OS-Zugangsdaten zu verwalten.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Configures Windows automatic logon via Winlogon Registry and LSA (Local Security Authority) secrets in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortOsAutoLogonRepository"/>.<br/>
 /// </para>
 /// </summary>
 [SupportedOSPlatform("windows")]
@@ -24,7 +25,7 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string ActiveStateText = "Active";
     private const string AutoAdminLogonDisabledValue = "0";
     private const string AutoAdminLogonEnabledValue = "1";
@@ -53,13 +54,17 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly ILogger<AdapterWindowsAutoLogonRepository> _logger;
 
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterWindowsAutoLogonRepository"/>.
+    /// </summary>
+    /// <param name="logger">Logger instance.</param>
     public AdapterWindowsAutoLogonRepository(ILogger<AdapterWindowsAutoLogonRepository> logger)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -71,6 +76,9 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Disables Windows automatic logon and purges credentials from LSA Secrets.
+    /// </summary>
     public void DisableAutoLogon()
     {
         try
@@ -83,15 +91,21 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
             // Purge the password from LSA Secrets
             SetLsaSecret(DefaultPasswordKey, null);
 
-            _logger.LogInformation(AutoLogonDisabledLogMessage);
+            _logger.LogInformation(LogEventIds.Security.AutoLogonDisabled, AutoLogonDisabledLogMessage);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, DisableAutoLogonFailedExceptionMessage);
+            // Exception handling: Wrap and rethrow exception without logging locally to prevent duplicate log entries.
             throw new InvalidOperationException(DisableAutoLogonFailedExceptionMessage, ex);
         }
     }
 
+    /// <summary>
+    /// Enables Windows automatic logon for the specified user and stores credentials securely in LSA Secrets.
+    /// </summary>
+    /// <param name="username">Windows username.</param>
+    /// <param name="domain">Domain name or machine name.</param>
+    /// <param name="password">User password.</param>
     public void EnableAutoLogon(string username, string domain, string password)
     {
         ArgumentNullException.ThrowIfNull(username);
@@ -123,7 +137,8 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
 
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                _logger.LogInformation(AutoLogonEnabledLogMessage, username);
+                // Mask account identifier in logs to protect PII while confirming activation.
+                _logger.LogInformation(LogEventIds.Security.AutoLogonEnabled, AutoLogonEnabledLogMessage, LogRedaction.MaskIdentifier(username));
             }
         }
         catch (Exception ex) when (ex is not InvalidOperationException)
@@ -132,6 +147,9 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
         }
     }
 
+    /// <summary>
+    /// Determines whether Windows automatic logon is currently enabled in the Registry.
+    /// </summary>
     public bool IsAutoLogonEnabled()
     {
         using var key = Registry.LocalMachine.OpenSubKey(WinLogonPath, false);
@@ -141,6 +159,9 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
         return val == AutoAdminLogonEnabledValue;
     }
 
+    /// <summary>
+    /// Determines whether Windows Hello Passwordless Mode is currently active.
+    /// </summary>
     public bool IsPasswordlessAuthEnabled()
     {
         try
@@ -155,12 +176,16 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ErrorReadingPasswordLessRegistryKeyLogMessage);
+            _logger.LogError(LogEventIds.Security.PasswordlessReadFailed, ex, ErrorReadingPasswordLessRegistryKeyLogMessage);
         }
 
         return false;
     }
 
+    /// <summary>
+    /// Configures the Windows Hello Passwordless Mode toggle in the Registry.
+    /// </summary>
+    /// <param name="enable">True to activate passwordless mode; false to deactivate.</param>
     public void SetPasswordlessAuth(bool enable)
     {
         try
@@ -169,7 +194,7 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
 
             if (key is null)
             {
-                _logger.LogWarning(PasswordLessKeyNotFoundWarningLogMessage);
+                _logger.LogWarning(LogEventIds.Security.PasswordlessRegistryKeyMissing, PasswordLessKeyNotFoundWarningLogMessage);
             }
             else
             {
@@ -178,7 +203,7 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
 
                 if (_logger.IsEnabled(LogLevel.Information))
                 {
-                    _logger.LogInformation(PasswordLessModeChangedLogMessage, enable ? ActiveStateText : InactiveStateText, valueToSet);
+                    _logger.LogInformation(LogEventIds.Security.PasswordlessModeChanged, PasswordLessModeChangedLogMessage, enable ? ActiveStateText : InactiveStateText, valueToSet);
                 }
             }
         }
@@ -192,6 +217,10 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
         }
     }
 
+    /// <summary>
+    /// Frees native memory buffer allocated for an LSA Unicode string.
+    /// </summary>
+    /// <param name="lus">The LSA Unicode string struct.</param>
     private static void FreeLsaString(LsaUnicodeString lus)
     {
         if (lus.Buffer != IntPtr.Zero)
@@ -200,6 +229,10 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
         }
     }
 
+    /// <summary>
+    /// Converts a managed string into a native LSA Unicode string struct.
+    /// </summary>
+    /// <param name="s">The managed string to convert.</param>
     private static LsaUnicodeString InitLsaString(string s)
     {
         // Safe marshaling native memory layout conversion approach
@@ -227,6 +260,11 @@ public sealed partial class AdapterWindowsAutoLogonRepository : IOutboundPortOsA
     [LibraryImport("advapi32.dll", EntryPoint = "LsaStorePrivateData")]
     private static partial uint LsaStorePrivateData(IntPtr PolicyHandle, ref LsaUnicodeString KeyName, IntPtr PrivateData);
 
+    /// <summary>
+    /// Stores or deletes a secret value in the Windows LSA (Local Security Authority) private data store.
+    /// </summary>
+    /// <param name="keyName">Secret key name.</param>
+    /// <param name="value">Secret string value, or null to delete.</param>
     private static void SetLsaSecret(string keyName, string? value)
     {
         LsaUnicodeString secretKey = default;

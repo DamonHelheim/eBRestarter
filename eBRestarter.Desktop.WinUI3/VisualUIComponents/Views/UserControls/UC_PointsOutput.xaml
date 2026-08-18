@@ -30,7 +30,7 @@
 
             </Grid.ColumnDefinitions>
 
-            <Pivot Grid.Column="1" SelectedIndex="{Binding SelectedPivotIndex, Mode=TwoWay}">
+            <Pivot Grid.Column="1" SelectedIndex="{x:Bind ViewModelGeneralOverview.SelectedPivotIndex, Mode=TwoWay}">
 
                 <PivotItem>
 
@@ -118,10 +118,10 @@
                 Margin="12"
                 CornerRadius="5"
                 RequestedTheme="{ThemeResource GeneralRequestedTheme}"
-                Series="{Binding Series, Mode=OneWay}"
+                Series="{x:Bind ViewModelGeneralOverview.Series, Mode=OneWay}"
                 TooltipPosition="Top"
-                XAxes="{Binding XAxes, Mode=OneWay}"
-                YAxes="{Binding YAxes, Mode=OneWay}" />
+                XAxes="{x:Bind ViewModelGeneralOverview.XAxes, Mode=OneWay}"
+                YAxes="{x:Bind ViewModelGeneralOverview.YAxes, Mode=OneWay}" />
 
         </Border>
 
@@ -161,13 +161,13 @@
 
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="{Binding ChartTitle, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModelGeneralOverview.ChartTitle, Mode=OneWay}"
                        Style="{StaticResource SubtitleTextBlockStyle}"
                        VerticalAlignment="Center"/>
 
             <Pivot Grid.Column="1"
                    RequestedTheme="Light"
-                   SelectedIndex="{Binding SelectedPivotIndex, Mode=TwoWay}">
+                   SelectedIndex="{x:Bind ViewModelGeneralOverview.SelectedPivotIndex, Mode=TwoWay}">
 
                 <Pivot.Resources>
                     <SolidColorBrush x:Key="PivotHeaderItemSelectedForeground" Color="Black" />
@@ -199,9 +199,9 @@
         <lvc:CartesianChart Grid.Row="1"
                             Margin="12"
                             MinHeight="250"
-                            Series="{Binding Series, Mode=OneWay}"
-                            XAxes="{Binding XAxes, Mode=OneWay}"
-                            YAxes="{Binding YAxes, Mode=OneWay}"
+                            Series="{x:Bind ViewModelGeneralOverview.Series, Mode=OneWay}"
+                            XAxes="{x:Bind ViewModelGeneralOverview.XAxes, Mode=OneWay}"
+                            YAxes="{x:Bind ViewModelGeneralOverview.YAxes, Mode=OneWay}"
                             TooltipPosition="Top">
 
         </lvc:CartesianChart>
@@ -214,21 +214,21 @@
 
             <StackPanel>
                 <TextBlock Text="Heute" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
-                <TextBlock Text="{Binding EarningsThisDaySum, Mode=OneWay}" FontWeight="SemiBold"/>
+                <TextBlock Text="{x:Bind ViewModelGeneralOverview.EarningsThisDaySum, Mode=OneWay}" FontWeight="SemiBold"/>
             </StackPanel>
 
             <Border Width="1" Height="20" Background="Gray" Opacity="0.3"/>
 
             <StackPanel>
                 <TextBlock Text="Diesen Monat" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
-                <TextBlock Text="{Binding EarningsThisMonthSum, Mode=OneWay}" FontWeight="SemiBold"/>
+                <TextBlock Text="{x:Bind ViewModelGeneralOverview.EarningsThisMonthSum, Mode=OneWay}" FontWeight="SemiBold"/>
             </StackPanel>
 
             <Border Width="1" Height="20" Background="Gray" Opacity="0.3"/>
 
             <StackPanel>
                 <TextBlock Text="Dieses Jahr" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6"/>
-                <TextBlock Text="{Binding EarningsThisYearSum, Mode=OneWay}" FontWeight="SemiBold"/>
+                <TextBlock Text="{x:Bind ViewModelGeneralOverview.EarningsThisYearSum, Mode=OneWay}" FontWeight="SemiBold"/>
             </StackPanel>
         </StackPanel>
 

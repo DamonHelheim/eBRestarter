@@ -6,16 +6,18 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for reading Windows executable assembly version and build metadata.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Ermittlung von Versionsinformationen aus Dateisystem und Assembly.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortAppVersionInfoProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um technologische Metadaten-Abfragen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Reads assembly version and metadata from the entry executable in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortAppVersionInfoProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsAppVersionInfoProvider : IOutboundPortAppVersionInfoProvider
 {
     private static readonly string FallbackVersion = new Version(1, 0, 0, 0).ToString();
 
+    /// <summary>
+    /// Retrieves the entry assembly version string, or fallback version if unavailable.
+    /// </summary>
     public string RetrieveAppVersion() =>
         Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? FallbackVersion;
 }

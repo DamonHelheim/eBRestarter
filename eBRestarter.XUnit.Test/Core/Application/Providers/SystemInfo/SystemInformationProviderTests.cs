@@ -1,15 +1,13 @@
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using Moq;
+﻿using NSubstitute;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Core.Application.BehavioralComponents.Providers;
+using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using NSubstitute.ExceptionExtensions;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
 {
@@ -20,21 +18,21 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
     /// </summary>
     public class SystemInformationProviderTests
     {
-        private readonly Mock<IOutboundPortHardwareInfoProvider> _mockHardwareService;
-        private readonly Mock<IOutboundPortOsEditionProvider> _mockOsEditionService;
-        private readonly Mock<IOutboundPortSystemInfoProvider> _mockSystemInfoService;
+        private readonly IOutboundPortHardwareInfoProvider _mockHardwareService;
+        private readonly IOutboundPortOsEditionProvider _mockOsEditionService;
+        private readonly IOutboundPortSystemInfoProvider _mockSystemInfoService;
         private readonly SystemInformationProvider _sut;
 
         public SystemInformationProviderTests()
         {
-            _mockHardwareService = new Mock<IOutboundPortHardwareInfoProvider>();
-            _mockOsEditionService = new Mock<IOutboundPortOsEditionProvider>();
-            _mockSystemInfoService = new Mock<IOutboundPortSystemInfoProvider>();
+            _mockHardwareService = Substitute.For<IOutboundPortHardwareInfoProvider>();
+            _mockOsEditionService = Substitute.For<IOutboundPortOsEditionProvider>();
+            _mockSystemInfoService = Substitute.For<IOutboundPortSystemInfoProvider>();
 
             _sut = new SystemInformationProvider(
-                _mockHardwareService.Object,
-                _mockOsEditionService.Object,
-                _mockSystemInfoService.Object);
+                _mockHardwareService,
+                _mockOsEditionService,
+                _mockSystemInfoService);
         }
         // 1. HAPPY PATH (ERFOLGREICHES MAPPING)
 
@@ -63,15 +61,15 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
                 InstalledRam = "32 GB"
             };
 
-            _mockHardwareService.Setup(s => s.RetrieveHardwareInfoAsync()).ReturnsAsync(fakeHardware);
+            _mockHardwareService.RetrieveHardwareInfoAsync().Returns(fakeHardware);
 
             // 2. OS Edition Mock
-            _mockOsEditionService.Setup(s => s.RetrieveOsEditionAsync()).ReturnsAsync("Windows 11 Pro");
+            _mockOsEditionService.RetrieveOsEditionAsync().Returns("Windows 11 Pro");
 
             // 3. System Info Mock (Sync-Aufrufe)
-            _mockSystemInfoService.Setup(s => s.RetrieveCurrentOsDisplayVersion()).Returns("23H2");
-            _mockSystemInfoService.Setup(s => s.RetrieveCurrentOsBuildVersion()).Returns("22631.3296");
-            _mockSystemInfoService.Setup(s => s.RetrieveCurrentStandardBrowserName()).Returns("Firefox");
+            _mockSystemInfoService.RetrieveCurrentOsDisplayVersion().Returns("23H2");
+            _mockSystemInfoService.RetrieveCurrentOsBuildVersion().Returns("22631.3296");
+            _mockSystemInfoService.RetrieveCurrentStandardBrowserName().Returns("Firefox");
 
             // ACT
             var result = await _sut.RetrieveAsync();
@@ -90,11 +88,11 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
             result.StandardBrowserName.ShouldBe("Firefox");
 
             // Überprüfen, dass die Services auch wirklich aufgerufen wurden
-            _mockHardwareService.Verify(s => s.RetrieveHardwareInfoAsync(), Times.Once);
-            _mockOsEditionService.Verify(s => s.RetrieveOsEditionAsync(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.RetrieveCurrentOsDisplayVersion(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.RetrieveCurrentOsBuildVersion(), Times.Once);
-            _mockSystemInfoService.Verify(s => s.RetrieveCurrentStandardBrowserName(), Times.Once);
+            await _mockHardwareService.Received(1).RetrieveHardwareInfoAsync();
+            await _mockOsEditionService.Received(1).RetrieveOsEditionAsync();
+            _mockSystemInfoService.Received(1).RetrieveCurrentOsDisplayVersion();
+            _mockSystemInfoService.Received(1).RetrieveCurrentOsBuildVersion();
+            _mockSystemInfoService.Received(1).RetrieveCurrentStandardBrowserName();
         }
         // 2. EXCEPTION BUBBLING (FEHLER WEITERREICHEN)
 
@@ -109,8 +107,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.GetSystemInformation
             // ARRANGE
             // Wir simulieren, dass der Hardware-Service einen Fehler wirft
             _mockHardwareService
-                .Setup(s => s.RetrieveHardwareInfoAsync())
-                .ThrowsAsync(new UnauthorizedAccessException("WMI Access Denied"));
+                .RetrieveHardwareInfoAsync()
+                .Throws(new UnauthorizedAccessException("WMI Access Denied"));
 
             // ACT & ASSERT
             var exception = await Should.ThrowAsync<UnauthorizedAccessException>(() => _sut.RetrieveAsync());

@@ -1,0 +1,61 @@
+# 🔒 Security-Guideline Kap. 7.1 (Vulnerable Components erkennen):
+# "Er sollte fester Bestandteil der CI-Pipeline sein (Build schlägt fehl oder markiert eine
+#  Warnung bei kritischen CVEs), nicht nur eine manuelle Stichprobe."
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Wöchentlich, damit ein neu veröffentlichtes Advisory auch ohne Commit auffällt.
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  vulnerable-packages:
+    name: NuGet vulnerability scan
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore eBRestarter.Desktop.WinUI3/eBRestarter.Desktop.WinUI3.csproj
+
+      - name: Fail on vulnerable packages (direct and transitive)
+        shell: pwsh
+        run: |
+          $report = dotnet list eBRestarter.Desktop.WinUI3/eBRestarter.Desktop.WinUI3.csproj package --vulnerable --include-transitive
+          $report
+
+          # "dotnet list package" endet auch bei Funden mit Exit-Code 0 - das Ergebnis muss
+          # deshalb aus der Ausgabe gelesen werden, sonst laeuft das Gate wirkungslos mit.
+          if ($report -match 'has the following vulnerable packages' -or $report -match 'weist die folgenden anfälligen Pakete auf') {
+            Write-Error "Vulnerable NuGet packages detected - see the report above."
+            exit 1
+          }
+
+          Write-Host "No vulnerable packages found."
+
+  secret-scan:
+    name: Secret scan (incl. history)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 🔒 Kap. 2.6: Ein Secret bleibt in der History bestehen, auch wenn es aus der
+          # aktuellen Datei entfernt wurde - der Scan braucht deshalb die volle History.
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

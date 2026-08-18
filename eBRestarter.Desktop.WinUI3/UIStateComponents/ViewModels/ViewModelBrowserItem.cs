@@ -21,6 +21,8 @@ using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -54,13 +56,14 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    // ── Block 1: Injected dependencies (alphabetical A–Z) ──
     private readonly IDialogService _dialogService;
+    private readonly ILogger<ViewModelBrowserItem> _logger;
     private readonly IUseCaseDownloadBrowser _downloadBrowserUseCase;
     private readonly IOutboundPortEVisitorConfigRepository _evRestarterConfigRepository;
     private readonly IInboundPortLocalizationProvider _localizationService;
 
-    // ── Block 4: Komplexe Typen / Repositories / Models / Objects (alphabetisch A–Z) ──
+    // ── Block 4: Complex types / Repositories / Models / Objects (alphabetical A–Z) ──
     private BrowserInfo _browserInfo;
     private CancellationTokenSource? _downloadCancellationTokenSource;
     private static readonly SolidColorBrush InstalledBrush = new(CommunityToolkit.WinUI.Helpers.ColorHelper.ToColor(InstalledIndicatorForegroundColorHex));
@@ -79,13 +82,17 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         IUseCaseDownloadBrowser downloadBrowserUseCase,
         IOutboundPortEVisitorConfigRepository evRestarterConfigRepository,
         IDialogService dialogService,
-        IInboundPortLocalizationProvider localizationService)
+        IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelBrowserItem> logger)
     {
         ArgumentNullException.ThrowIfNull(browserInfo);
         ArgumentNullException.ThrowIfNull(downloadBrowserUseCase);
         ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
+
+        _logger = logger;
 
         _browserInfo = browserInfo;
         _downloadBrowserUseCase = downloadBrowserUseCase;
@@ -200,6 +207,9 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Cancels the active download operation and resets UI progress state.
+    /// </summary>
     private void CancelDownload()
     {
         _downloadCancellationTokenSource?.Cancel();
@@ -224,6 +234,11 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         WeakReferenceMessenger.Default.Send(new BrowserChangedMessage(selectedBrowserName));
     }
 
+    /// <summary>
+    /// Converts a raw byte count into megabytes (MB).
+    /// </summary>
+    /// <param name="byteCount">The size in bytes.</param>
+    /// <returns>The size in megabytes.</returns>
     private static double FormatMegabytesFromBytes(long byteCount) =>
         byteCount / (1024d * 1024d);
 
@@ -257,6 +272,9 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Resets download progress properties and releases cancellation token resources.
+    /// </summary>
     private void ResetDownloadState()
     {
         IsDownloadActive = false;
@@ -274,7 +292,10 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
 
         if (string.IsNullOrWhiteSpace(_browserInfo.DownloadUrl))
         {
-            Debug.WriteLine($"{nameof(ViewModelBrowserItem)}: {nameof(BrowserInfo.DownloadUrl)} is missing; download was not started.");
+            _logger.LogWarning(
+                LogEventIds.Update.UpdateDownloadUrlMissing,
+                "No download URL is configured for {BrowserName}; the download was not started.",
+                _browserInfo.Name);
 
             _downloadCancellationTokenSource.Dispose();
             _downloadCancellationTokenSource = null;
@@ -303,11 +324,20 @@ public sealed partial class ViewModelBrowserItem : ObservableObject
         }
         catch (OperationCanceledException)
         {
+            _logger.LogDebug(
+                LogEventIds.Update.BrowserInstallerCleanupFailed,
+                "Download of {BrowserName} was cancelled by the user; cleaning up the partial file.",
+                _browserInfo.Name);
+
             _downloadBrowserUseCase.CleanupPartialDownload(_browserInfo.Name);
         }
         catch (Exception ex) when (ex is HttpRequestException or IOException or UnauthorizedAccessException)
         {
-            Debug.WriteLine(ex);
+            _logger.LogError(
+                LogEventIds.Update.BrowserInstallerCleanupFailed,
+                ex,
+                "Downloading or installing {BrowserName} failed.",
+                _browserInfo.Name);
             _downloadBrowserUseCase.CleanupPartialDownload(_browserInfo.Name);
         }
         finally

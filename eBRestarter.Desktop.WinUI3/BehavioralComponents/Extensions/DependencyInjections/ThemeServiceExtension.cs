@@ -9,6 +9,11 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Extensions.DependencyI
 /// </summary>
 public static class ThemeServiceExtension
 {
+    /// <summary>
+    /// Registers the theme handler service into the service collection.
+    /// </summary>
+    /// <param name="services">The service collection to populate.</param>
+    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddThemeHandler(this IServiceCollection services)
     {
         services.AddSingleton<IThemeHandler, ThemeHandler>();

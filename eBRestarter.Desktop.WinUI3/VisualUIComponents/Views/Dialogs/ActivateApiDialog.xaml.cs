@@ -10,9 +10,12 @@ public sealed partial class ActivateApiDialog : ContentDialog
 
     public ActivateApiDialog()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelActivateApi = App.AppHost!.Services.GetRequiredService<ViewModelActivateApi>();
+
         InitializeComponent();
 
-        ViewModelActivateApi = App.AppHost!.Services.GetRequiredService<ViewModelActivateApi>();
 
         this.DataContext = ViewModelActivateApi;
     }

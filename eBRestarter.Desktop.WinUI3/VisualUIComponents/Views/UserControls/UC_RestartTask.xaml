@@ -106,7 +106,7 @@
                                 HorizontalAlignment="Right"
                                 FontSize="20"
                                 Foreground="{ThemeResource FontColor_1}"
-                                Text="{Binding SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}" />
+                                Text="{x:Bind ViewModelRestartTask.SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}" />
 
                         </StackPanel>
 
@@ -114,7 +114,7 @@
                             x:Name="tbl_CurrentStatusIcon"
                             Width="32"
                             Height="32"
-                            Source="{Binding IsActive, Converter={StaticResource BoolToImageConverter}}" />
+                            Source="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource BoolToImageConverter}, Mode=OneWay}" />
 
                     </StackPanel>
 
@@ -152,7 +152,7 @@
                         VerticalAlignment="Center"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
-                        Text="{Binding ChosenBrowser}" />
+                        Text="{x:Bind ViewModelRestartTask.ChosenBrowser, Mode=OneWay}" />
 
                 </StackPanel>
 
@@ -189,7 +189,7 @@
                             Margin="10,0,0,0"
                             FontSize="16"
                             Foreground="{ThemeResource FontColor_1}"
-                            Text="{Binding Username}"
+                            Text="{x:Bind ViewModelRestartTask.Username, Mode=OneWay}"
                             TextAlignment="Center"
                             TextWrapping="WrapWholeWords" />
 
@@ -230,7 +230,7 @@
                         VerticalAlignment="Center"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
-                        Text="{Binding StatusInfoText, Mode=OneWay}" />
+                        Text="{x:Bind ViewModelRestartTask.StatusInfoText, Mode=OneWay}" />
 
                 </StackPanel>
 
@@ -244,12 +244,12 @@
                 Height="128"
                 VerticalAlignment="Center"
                 Background="#FF0DB290"
-                Command="{Binding ExecuteStartTimerSchedulerCommand}"
-                CommandParameter="{Binding ElementName=tbtn_StartTimerSchudeler, Path=IsChecked}"
-                Content="{Binding IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
+                Command="{x:Bind ViewModelRestartTask.ExecuteStartTimerSchedulerCommand}"
+                CommandParameter="{x:Bind tbtn_StartTimerSchudeler.IsChecked, Mode=OneWay}"
+                Content="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
                 Foreground="White"
-                IsChecked="{Binding IsActive, Mode=TwoWay}"
-                IsEnabled="{Binding HasInstalledBrowsers}">
+                IsChecked="{x:Bind ViewModelRestartTask.IsActive, Mode=TwoWay}"
+                IsEnabled="{x:Bind ViewModelRestartTask.HasInstalledBrowsers, Mode=OneWay}">
 
                 <ToggleButton.Resources>
 

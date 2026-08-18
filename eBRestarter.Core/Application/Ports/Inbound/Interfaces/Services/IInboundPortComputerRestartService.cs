@@ -1,22 +1,33 @@
+using System;
+using System.Threading.Tasks;
+
 namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Services;
 
 /// <summary>
 /// Port: Manages the background computer restart schedule and timeline notifications for the presentation layer.
-/// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): INBOUND PORT (System-Trigger / Application Service Port)</strong><br/>
-/// - <strong>Aufrufer (Consumer):</strong> Liegt AUßERHALB des Application Cores (ViewModels im Presentation Layer).<br/>
-/// - <strong>Implementierung (Implementer):</strong> Liegt INNERHALB des Application Cores (<see cref="Application.BehavioralComponents.Services.ComputerRestartService"/>).<br/>
-/// - <strong>Begründung:</strong> Dient als Eingangstür in den Anwendungskern für die UI und den Lifecycle-Host, um den zyklischen Neustart-Scheduler zu starten, zu stoppen und auf Terminänderungen zu lauschen.<br/>
-/// </para>
 /// </summary>
+/// <remarks>
+/// <b>Architectural Classification: INBOUND PORT (System-Trigger / Application Service Port)</b>
+/// <list type="bullet">
+/// <item><b>Consumer:</b> Presentation layer view models.</item>
+/// <item><b>Implementer:</b> Application Core (<see cref="Application.BehavioralComponents.Services.ComputerRestartService"/>).</item>
+/// <item><b>Rationale:</b> Entry point into the core application to start/stop the computer restart scheduler and listen for date changes.</item>
+/// </list>
+/// </remarks>
 public interface IInboundPortComputerRestartService
 {
-    // Event triggered when the scheduler postpones or reschedules the computer restart timeline
+    /// <summary>
+    /// Occurs when the scheduled next restart date is updated or recalculated.
+    /// </summary>
     event EventHandler<DateTime?>? NextRestartDateChanged;
 
-    // Starts the background monitoring loop process
+    /// <summary>
+    /// Starts the background restart scheduler timer loop.
+    /// </summary>
     void StartScheduler();
 
-    // Stops the background monitoring process
+    /// <summary>
+    /// Stops the background restart scheduler gracefully.
+    /// </summary>
     Task StopSchedulerAsync();
 }

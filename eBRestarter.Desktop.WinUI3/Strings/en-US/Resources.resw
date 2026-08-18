@@ -609,6 +609,9 @@
   <data name="ActivateApi_Success" xml:space="preserve">
     <value>Successfully activated &amp; saved encrypted!</value>
   </data>
+  <data name="ActivateApi_SaveError" xml:space="preserve">
+    <value>The API key could not be encrypted and was therefore not saved. Please try again.</value>
+  </data>
   <data name="ActivateApi_FileNotFound" xml:space="preserve">
     <value>File not found.</value>
   </data>

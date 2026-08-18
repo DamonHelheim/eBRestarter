@@ -58,24 +58,24 @@
                 <ToggleSwitch
                     x:Uid="StartupBoostDialog_SwitchStatus"
                     HorizontalAlignment="Stretch"
-                    IsEnabled="{Binding IsAdministrator}"
-                    IsOn="{Binding IsStartupBoostEnabled, Mode=TwoWay}" />
+                    IsEnabled="{x:Bind ViewModel.IsAdministrator, Mode=OneWay}"
+                    IsOn="{x:Bind ViewModel.IsStartupBoostEnabled, Mode=TwoWay}" />
 
                 <!--  Warnhinweis, wenn nicht als Admin gestartet  -->
                 <InfoBar
                     x:Uid="StartupBoostDialog_AdminWarning"
                     Margin="0,10,0,0"
                     IsClosable="False"
-                    IsOpen="{Binding IsNotAdministrator, Mode=OneWay}"
+                    IsOpen="{x:Bind ViewModel.IsNotAdministrator, Mode=OneWay}"
                     Severity="Warning" />
 
                 <InfoBar
-                    Title="{Binding InfoBarTitle}"
+                    Title="{x:Bind ViewModel.InfoBarTitle, Mode=OneWay}"
                     Margin="0,10,0,0"
                     IsClosable="True"
-                    IsOpen="{Binding IsInfoBarOpen, Mode=TwoWay}"
-                    Message="{Binding InfoBarMessage}"
-                    Severity="{Binding InfoBarSeverity}" />
+                    IsOpen="{x:Bind ViewModel.IsInfoBarOpen, Mode=TwoWay}"
+                    Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                    Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
 
             </StackPanel>
 
@@ -103,7 +103,7 @@
                 <Button
                     x:Uid="StartupBoostDialog_BtnCopy"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding CopyAndOpenEdgeCommand}" />
+                    Command="{x:Bind ViewModel.CopyAndOpenEdgeCommand}" />
 
             </StackPanel>
 

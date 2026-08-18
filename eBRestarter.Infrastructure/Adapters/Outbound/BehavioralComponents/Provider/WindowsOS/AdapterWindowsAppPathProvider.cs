@@ -5,22 +5,26 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for resolving application-specific Windows file system paths.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Bereitstellung von OS-spezifischen Verzeichnispfaden.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortAppPathProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt und einen Outbound Port implementiert, um Systempfade bereitzustellen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Resolves OS-specific directory paths in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortAppPathProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsAppPathProvider : IOutboundPortAppPathProvider
 {
+    /// <summary>Retrieves the roaming application data directory path (AppData\Roaming).</summary>
     public string RetrieveAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
+    /// <summary>Retrieves the local application data directory path (AppData\Local).</summary>
     public string RetrieveLocalAppDataDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
+    /// <summary>Retrieves the user profile directory path.</summary>
     public string RetrieveUserProfileDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
+    /// <summary>Retrieves the 64-bit Program Files directory path.</summary>
     public string RetrieveProgramFilesDirectory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
+    /// <summary>Retrieves the 32-bit Program Files (x86) directory path.</summary>
     public string RetrieveProgramFilesX86Directory() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 }
 

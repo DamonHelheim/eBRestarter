@@ -9,19 +9,10 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// </summary>
 public sealed class SecondsToTimeFormatConverter : IValueConverter
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
     private const string DefaultTimeFormat = "00:00:00";
     private const string TimeSpanFormatPattern = @"hh\:mm\:ss";
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Converts a total second count (int) or <see cref="TimeSpan"/> into a formatted time string representation.
-    /// </summary>
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is int seconds)
@@ -43,14 +34,17 @@ public sealed class SecondsToTimeFormatConverter : IValueConverter
         return DefaultTimeFormat;
     }
 
-    /// <summary>
-    /// Reverse conversion is not supported.
-    /// </summary>
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Formats a <see cref="TimeSpan"/> instance into standard hh:mm:ss string representation.
+    /// </summary>
+    /// <param name="time">The time span to format.</param>
+    /// <returns>A formatted string.</returns>
     private static string FormatTimeSpan(TimeSpan time)
     {
         return time.ToString(TimeSpanFormatPattern);

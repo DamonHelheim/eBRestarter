@@ -1,90 +1,67 @@
-﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
-    // VIVALDI BROWSER TESTS
+    /// <summary>
+    /// Unit tests for <see cref="AdapterVivaldiBrowserWrapper"/> verifying registry uninstall display version resolution and path mapping.
+    /// </summary>
     public class VivaldiBrowserTests
     {
-        /// <summary>
-        /// Vivaldi ist speziell: Es �berschreibt die 'BrowserVersion' Property und sucht
-        /// stattdessen in der Windows-Registry unter den Uninstall-Keys nach 'DisplayVersion'.
-        /// Wir m�ssen sicherstellen, dass diese Kaskade (erst HKCU, dann HKLM, dann WOW64) funktioniert.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren, dass der Uninstall-Key im CurrentUser (HKCU) leer ist,
-        /// aber im LocalMachine (HKLM) die Version "5.3.2679.55 (Stable channel)" steht.
-        /// Der Test pr�ft, ob Vivaldi das findet und via CleanVersionString() korrekt bereinigt!
-        /// </summary>
         [Fact]
         public void BrowserVersion_ShouldReturnVersionFromUninstallKey_AndCleanIt()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterVivaldiBrowserWrapper>>();
-            
+            // [R]IGHT / [B]OUNDARY: Resolves version from HKLM uninstall key when HKCU is missing and sanitizes version string
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockLogger = new FakeLogger<AdapterVivaldiBrowserWrapper>();
 
-            // 1. Simulation: In CurrentUser steht nichts (R�ckgabe null)
-            mockSettings.Setup(reg => reg.GetUserValue(It.IsAny<string>(), "DisplayVersion"))
+            mockSettings.GetUserValue(Arg.Any<string>(), "DisplayVersion")
                 .Returns(null);
 
-            // 2. Simulation: In LocalMachine finden wir den String!
-            mockSettings.Setup(reg => reg.GetSystemValue(It.IsAny<string>(), "DisplayVersion"))
-                .Returns("5.3.2679.55 (Stable channel)"); // Typischer dreckiger Versionsstring
+            mockSettings.GetSystemValue(Arg.Any<string>(), "DisplayVersion")
+                .Returns("5.3.2679.55 (Stable channel)");
 
-            var VivaldiBrowser = new AdapterVivaldiBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var vivaldiBrowser = new AdapterVivaldiBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
 
-            // ACT
-            string version = VivaldiBrowser.BrowserVersion;
+            // Act
+            string version = vivaldiBrowser.BrowserVersion;
 
-            // ASSERT
-            // Sollte gefunden und durch die Regex aus der Basisklasse bereinigt worden sein!
+            // Assert
             version.ShouldBe("5.3.2679.55");
         }
 
-        /// <summary>
-        /// Wir pr�fen das korrekte Pfad-Mapping f�r Vivaldi. Vivaldi speichert seine
-        /// Daten unter AppData\Local\Vivaldi\User Data.
-        /// </summary>
         [Fact]
         public void GetPaths_ShouldGenerateCorrectDirectories_ForVivaldi()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            
-            var mockLogger = new Mock<ILogger<AdapterVivaldiBrowserWrapper>>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
+            // [R]IGHT: Generates expected cache and cookie directory paths for default Vivaldi profile
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockLogger = new FakeLogger<AdapterVivaldiBrowserWrapper>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
 
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
-            mockFileSystem.Setup(fs => fs.CombinePaths(It.IsAny<string[]>())).Returns<string[]>(paths => string.Join(@"\", paths));
+            mockFileSystem.ResolveEnvironmentPath("LocalAppData").Returns(@"C:\Local");
+            mockFileSystem.CombinePaths(Arg.Any<string[]>()).Returns(ci => string.Join(@"\", ci.Arg<string[]>()));
 
             string expectedDefaultProfilePath = @"C:\Local\Vivaldi\User Data\Default";
-            mockFileSystem.Setup(fs => fs.DirectoryExists(expectedDefaultProfilePath)).Returns(true);
+            mockFileSystem.DirectoryExists(expectedDefaultProfilePath).Returns(true);
 
-            var VivaldiBrowser = new AdapterVivaldiBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
+            var vivaldiBrowser = new AdapterVivaldiBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
 
-            // ACT
-            var paths = VivaldiBrowser.ResolvePaths();
+            // Act
+            var paths = vivaldiBrowser.ResolvePaths();
 
-            // ASSERT
+            // Assert
             paths.CacheDirs.ShouldContain($@"{expectedDefaultProfilePath}\Service Worker");
             paths.CookiesDirs.ShouldContain($@"{expectedDefaultProfilePath}\IndexedDB");
         }
     }
 }
-
-
-
-
-
-

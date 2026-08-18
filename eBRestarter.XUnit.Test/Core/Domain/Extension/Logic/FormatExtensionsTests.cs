@@ -1,7 +1,7 @@
-using eBRestarter.Core.Application.BehavioralComponents.Extensions;
-using Shouldly;
+﻿using Shouldly;
 using System.Globalization;
 using Xunit;
+using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 
 namespace eBRestarter.XUnit.Test.Core.Domain.Extension.Logic
 {

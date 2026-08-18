@@ -7,14 +7,20 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) wrapping Windows Active Directory / PrincipalContext credential validation.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Dienstleister im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core (Kapselung der nativen Windows-AD- und PrincipalContext-APIs).<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortActiveDirectoryProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um native OS-Seiteneffekte und Domain-Prüfungen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates native Windows Active Directory and PrincipalContext APIs in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortActiveDirectoryProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsActiveDirectoryProvider : IOutboundPortActiveDirectoryProvider
 {
+    /// <summary>
+    /// Validates Windows credentials against Active Directory or local machine security context.
+    /// </summary>
+    /// <param name="contextScope">The target security context scope (Domain, Machine, ApplicationDirectory).</param>
+    /// <param name="domain">The target domain name or machine name.</param>
+    /// <param name="username">The username to authenticate.</param>
+    /// <param name="password">The password to validate.</param>
     public bool ValidateCredentials(DirectoryContextScope contextScope, string domain, string username, string password)
     {
         ArgumentNullException.ThrowIfNull(username);

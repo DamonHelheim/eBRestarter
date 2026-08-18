@@ -9,16 +9,16 @@ using eBRestarter.Core.Domain.ValueObjects;
 namespace eBRestarter.Core.Application.BehavioralComponents.Handlers;
 
 /// <summary>
-/// Erzeugt den initialen <see cref="RestartTaskDisplayState"/> aus der Anwendungskonfiguration und den Lokalisierungsressourcen.
+/// Builds the initial <see cref="RestartTaskDisplayState"/> from application configuration and localization resources.
 /// </summary>
+/// <param name="intervalValidator">The validator used to check cache deletion interval bounds.</param>
+/// <param name="localizationService">The provider for localized display string resources.</param>
+/// <param name="timeProvider">The time provider for local time calculation.</param>
 public sealed class RestartTaskDisplayStateHandler(
     ICacheDeletionIntervalValidator intervalValidator,
     IInboundPortLocalizationProvider localizationService,
     TimeProvider timeProvider) : IInboundPortRestartTaskDisplayStateHandler
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
     private const int DefaultPauseSeconds = 20;
     private const int DefaultRuntimeSeconds = 3600;
     private const int SecondsPerHour = 3600;
@@ -30,22 +30,11 @@ public sealed class RestartTaskDisplayStateHandler(
     private const string LocalizationKeyNextDeletionProcess = "NextDeletionProcess";
     private const string LocalizationKeyTaskDefaultBrowser = "Task_DefaultBrowser";
 
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
     private readonly ICacheDeletionIntervalValidator _intervalValidator = intervalValidator ?? throw new ArgumentNullException(nameof(intervalValidator));
     private readonly IInboundPortLocalizationProvider _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
-
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Ermittelt und erzeugt den Anzeigezustand basierend auf der übergebenen Konfiguration.
-    /// </summary>
-    /// <param name="config">Die aktuelle Anwendungskonfiguration.</param>
-    /// <returns>Ein immutable <see cref="RestartTaskDisplayState"/> mit aufbereiteten Anzeigewerten.</returns>
+    
+    /// <inheritdoc />
     public RestartTaskDisplayState RetrieveInitialState(AppConfig config)
     {
         if (config is null)

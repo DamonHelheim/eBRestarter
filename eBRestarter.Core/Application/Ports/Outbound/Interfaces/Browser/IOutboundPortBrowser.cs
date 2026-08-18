@@ -25,7 +25,24 @@ public interface IOutboundPortBrowser
     bool IsInstalled { get; }
     string ExtensionInstallUrl { get; }
 
-    void Start(string url, string arguments = "");
+    /// <summary>
+    /// Launches the browser with the given URL.
+    /// </summary>
+    /// <param name="url">Absolute URL to open. Must not be <see langword="null"/> or whitespace.</param>
+    /// <param name="arguments">Optional additional command-line arguments.</param>
+    /// <returns>
+    /// <see langword="true"/> if the browser process was started; <see langword="false"/> if it
+    /// could not be started — most commonly because the browser is not installed.
+    /// </returns>
+    /// <remarks>
+    /// ⚠️ Exception-Guideline Kap. 2: Der Rückgabewert existiert, weil "Browser nicht installiert"
+    /// in dieser Anwendung ein <b>erwarteter</b> Zustand ist, kein Ausnahmefall — die gesamte
+    /// Browser-Auswahl der Oberfläche dreht sich darum. Vorher gab die Methode <c>void</c> zurück
+    /// und verschluckte jeden Fehler intern: der Aufrufer konnte einen fehlgeschlagenen Start
+    /// nicht von einem erfolgreichen unterscheiden und lief mit einer falschen Annahme weiter.
+    /// </remarks>
+    bool Start(string url, string arguments = "");
+
     void Close();
 
     /// <summary>

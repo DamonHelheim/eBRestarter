@@ -13,9 +13,12 @@ public sealed partial class UC_Infocenter : UserControl
 
     public UC_Infocenter()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelInfocenter = App.AppHost!.Services.GetRequiredService<ViewModelInfocenter>();
+
         InitializeComponent();
 
-        ViewModelInfocenter = App.AppHost!.Services.GetRequiredService<ViewModelInfocenter>();
 
         this.DataContext = ViewModelInfocenter;
     }

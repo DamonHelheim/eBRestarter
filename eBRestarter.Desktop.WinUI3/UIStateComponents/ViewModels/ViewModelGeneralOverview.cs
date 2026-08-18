@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Microsoft.UI.Dispatching;
@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 
@@ -25,6 +26,8 @@ using eBRestarter.Core.Application.Ports.Outbound.Interfaces;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -34,13 +37,17 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// can pivot by hour, day, or month. Refreshes data on a timer (e.g. at minute 5) and keeps
 /// chart and labels in sync on the UI thread via <see cref="DispatcherQueue"/>.
 /// </summary>
-public sealed partial class ViewModelGeneralOverview : ObservableObject
+public sealed partial class ViewModelGeneralOverview : ObservableObject,
+                                                      IDisposable,
+                                                      IRecipient<ApiCredentialsUpdatedMessage>,
+                                                      IRecipient<ApiCredentialsRemovedMessage>
 {
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
     private const double ChartValueChangeEpsilon = 0.0001;
     private const int ColumnSeriesCornerRadius = 5;
+    private const int DaysPerMonthLabelCount = 31;
     private const int EarningsRefreshTriggerMinute = 5;
     private const int EarningsRefreshTriggerSecond = 0;
     private const int InitialHourlyChartSlotCount = 24;
@@ -74,21 +81,27 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    // ── Block 1: Injected dependencies (alphabetical A–Z) ──
     private readonly IOutboundPortEVisitorConfigRepository _configService;
+    private readonly ILogger<ViewModelGeneralOverview> _logger;
     private readonly IOutboundPortEVisitorApiProvider _eVisitorApiService;
     private readonly IInboundPortLocalizationProvider _localizationService;
     private readonly INavigationService _navigationService;
 
-    // ── Block 2: Primitive / Primitive-Wrapper (alphabetisch A–Z) ──
+    // ── Block 2: Primitives / Primitive wrappers (alphabetical A–Z) ──
+    private volatile bool _disposed;
     private bool _isApiConfigured;
 
-    // ── Block 4: Komplexe Typen / Repositories / Objects (alphabetisch A–Z) ──
+    // ── Block 4: Complex types / Repositories / Objects (alphabetical A–Z) ──
     private EarningsData? _cachedEarnings;
     private readonly ObservableCollection<ObservableValue> _chartValues;
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly ColumnSeries<ObservableValue> _mainColumnSeries;
     private readonly DispatcherTimer _timer;
+
+    // ⚡ Performance optimization: X-axes configurations for each pivot index are prebuilt once
+    // in the constructor to eliminate per-binding-read array and LINQ closure allocations.
+    private readonly ICartesianAxis[][] _xAxesByPivotIndex;
 
 
     // ═══════════════════════════════════════════════════════
@@ -103,12 +116,16 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         INavigationService navigationService,
         IOutboundPortEVisitorApiProvider eVisitorApiService,
         IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelGeneralOverview> logger,
         IOutboundPortEVisitorConfigRepository configService)
     {
         ArgumentNullException.ThrowIfNull(navigationService);
         ArgumentNullException.ThrowIfNull(eVisitorApiService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(configService);
+
+        _logger = logger;
 
         _navigationService = navigationService;
         _eVisitorApiService = eVisitorApiService;
@@ -154,34 +171,17 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
 
         Series = [_mainColumnSeries];
 
+        _xAxesByPivotIndex = BuildXAxesForAllPivots();
+
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(TimerTickIntervalSeconds) };
         _timer.Tick += OnTimerTick;
         _timer.Start();
 
         Task.Run(LoadDataAsync);
 
-        WeakReferenceMessenger.Default.Register<ApiCredentialsUpdatedMessage>(this, (_, __) =>
-        {
-            _isApiConfigured = true;
-            _dispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(ChartTitle)));
-            Task.Run(LoadDataAsync);
-        });
-
-        WeakReferenceMessenger.Default.Register<ApiCredentialsRemovedMessage>(this, (_, __) =>
-        {
-            _isApiConfigured = false;
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                ResetChart();
-                _cachedEarnings = null;
-                UpdateChartData();
-                EarningsThisDaySum = DefaultPlaceholderDash;
-                EarningsThisMonthSum = DefaultPlaceholderDash;
-                EarningsThisYearSum = DefaultPlaceholderDash;
-                ClockNextEarningsRefresh = DefaultPlaceholderDash;
-                OnPropertyChanged(nameof(ChartTitle));
-            });
-        });
+        // Messenger subscription: RegisterAll with IRecipient<T> prevents closure memory leaks,
+        // allowing handlers to be cleanly unregistered in Dispose().
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
 
@@ -272,16 +272,80 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
     /// <summary>Set this to true to automatically generate fake values (chart and BTP totals) for screenshots.</summary>
     public bool UseScreenshotFakeData { get; set; } = false;
 
-    /// <summary>X-axis depends on pivot: hour, day, or month labels.</summary>
-    public Axis[] XAxes => GetXAxesForCurrentPivot();
+    /// <summary>X-axis depends on pivot: hour, day, or month labels. Served from a prebuilt, allocation-free cache.</summary>
+    /// <remarks>
+    /// Typed as <see cref="ICartesianAxis"/> because that is what LiveCharts' CartesianChart.XAxes
+    /// expects; <c>{x:Bind}</c> verifies binding types at compile time (Guide Kap. 23.1) and does
+    /// not accept the previous <c>Axis[]</c> declaration.
+    /// </remarks>
+    public IEnumerable<ICartesianAxis> XAxes => _xAxesByPivotIndex[Math.Clamp(SelectedPivotIndex, 0, _xAxesByPivotIndex.Length - 1)];
 
     /// <summary>Y-axis configuration for the chart (e.g. points label and separators).</summary>
-    public Axis[] YAxes { get; set; } = null!;
+    public IEnumerable<ICartesianAxis> YAxes { get; set; } = null!;
 
 
     // ═══════════════════════════════════════════════════════
     //  8. Methods
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Stops the refresh timer, unsubscribes its handler and detaches all messenger registrations
+    /// so no callback can keep this view model alive after teardown (Guide Kap. 22.6 / 22.10).
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        _timer.Stop();
+        _timer.Tick -= OnTimerTick;
+
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
+    /// <summary>Handles activation of API credentials: enables API mode and reloads earnings.</summary>
+    public void Receive(ApiCredentialsUpdatedMessage message)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _isApiConfigured = true;
+        _dispatcherQueue.TryEnqueue(() => OnPropertyChanged(nameof(ChartTitle)));
+        Task.Run(LoadDataAsync);
+    }
+
+    /// <summary>Handles removal of API credentials: clears chart, sums and refresh clock.</summary>
+    public void Receive(ApiCredentialsRemovedMessage message)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _isApiConfigured = false;
+
+        _dispatcherQueue.TryEnqueue(() =>
+        {
+            ResetChart();
+            _cachedEarnings = null;
+            UpdateChartData();
+            EarningsThisDaySum = DefaultPlaceholderDash;
+            EarningsThisMonthSum = DefaultPlaceholderDash;
+            EarningsThisYearSum = DefaultPlaceholderDash;
+            ClockNextEarningsRefresh = DefaultPlaceholderDash;
+            OnPropertyChanged(nameof(ChartTitle));
+        });
+    }
+
+    /// <summary>
+    /// Generates synthetic earnings data array for screenshot demonstration mode.
+    /// </summary>
+    /// <returns>Array of generated fake earnings values matching the selected pivot.</returns>
     private double[] GenerateFakeEarningsData()
     {
         var rnd = new Random(SelectedPivotIndex);
@@ -307,6 +371,10 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         return earningsValuesForPivot;
     }
 
+    /// <summary>
+    /// Retrieves cached earnings data array matching the currently selected pivot index.
+    /// </summary>
+    /// <returns>Array of real earnings values for the active pivot.</returns>
     private double[] GetRealEarningsData()
     {
         return SelectedPivotIndex switch
@@ -318,32 +386,50 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         };
     }
 
-    /// <summary>Returns X-axis configuration and labels for the selected pivot (time of day, day of month, or month names).</summary>
-    private Axis[] GetXAxesForCurrentPivot()
+    /// <summary>
+    /// Builds the X-axis configuration for every pivot exactly once (hour, day of month, month names).
+    /// Labels and localized names are constant for the lifetime of the view model, so caching them
+    /// removes all per-binding-read allocations (Guide Kap. 12 / Kap. 21).
+    /// </summary>
+    private ICartesianAxis[][] BuildXAxesForAllPivots()
     {
-        var xAxis = new Axis { TextSize = 12, LabelsRotation = 0 };
+        // Pivot 1: Days 1–31 – generated once without LINQ chains or closures.
+        var dayOfMonthLabels = new string[DaysPerMonthLabelCount];
 
-        switch (SelectedPivotIndex)
+        for (int day = 1; day <= DaysPerMonthLabelCount; day++)
         {
-            case 0:
-                xAxis.Name = _localizationService.RetrieveString(KeyChartXAxisTime);
-                break;
-
-            case 1:
-                xAxis.Name = _localizationService.RetrieveString(KeyChartXAxisDay);
-                xAxis.Labels = [.. Enumerable.Range(1, 31).Select(index => index.ToString())];
-                break;
-
-            case 2:
-                xAxis.Name = _localizationService.RetrieveString(KeyChartXAxisMonth);
-                string monthsString = _localizationService.RetrieveString(KeyChartMonthsShort);
-                xAxis.Labels = !string.IsNullOrEmpty(monthsString)
-                    ? monthsString.Split(',')
-                    : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-                break;
+            dayOfMonthLabels[day - 1] = day.ToString(CultureInfo.InvariantCulture);
         }
 
-        return [xAxis];
+        string monthsString = _localizationService.RetrieveString(KeyChartMonthsShort);
+
+        string[] monthLabels = !string.IsNullOrEmpty(monthsString)
+            ? monthsString.Split(',')
+            : ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+
+        return
+        [
+            [new Axis
+            {
+                TextSize = 12,
+                LabelsRotation = 0,
+                Name = _localizationService.RetrieveString(KeyChartXAxisTime)
+            }],
+            [new Axis
+            {
+                TextSize = 12,
+                LabelsRotation = 0,
+                Name = _localizationService.RetrieveString(KeyChartXAxisDay),
+                Labels = dayOfMonthLabels
+            }],
+            [new Axis
+            {
+                TextSize = 12,
+                LabelsRotation = 0,
+                Name = _localizationService.RetrieveString(KeyChartXAxisMonth),
+                Labels = monthLabels
+            }]
+        ];
     }
 
     /// <summary>Navigates the user to the Options / API settings page.</summary>
@@ -411,10 +497,17 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.LogError(
+                LogEventIds.Api.EarningsRetrievalFailed,
+                ex,
+                "Refreshing the earnings overview failed.");
         }
     }
 
+    /// <summary>
+    /// Handles changes to <see cref="SelectedPivotIndex"/> by updating chart series data.
+    /// </summary>
+    /// <param name="value">The new selected pivot index.</param>
     partial void OnSelectedPivotIndexChanged(int value)
     {
         UpdateChartData();
@@ -423,6 +516,12 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
     /// <summary>At minute 5 and second 0, refreshes data; at 00:05 also resets chart values for the new day.</summary>
     private void OnTimerTick(object? sender, object eventArgs)
     {
+        // Guard against timer callbacks firing after disposal.
+        if (_disposed)
+        {
+            return;
+        }
+
         var now = DateTime.Now;
         if (now.Minute == EarningsRefreshTriggerMinute && now.Second == EarningsRefreshTriggerSecond)
         {
@@ -434,6 +533,9 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Resets all values in the chart collection to zero.
+    /// </summary>
     private void ResetChart()
     {
         foreach (var chartValue in _chartValues)
@@ -442,6 +544,10 @@ public sealed partial class ViewModelGeneralOverview : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Synchronizes the observable chart value collection with the target earnings array, updating only changed values.
+    /// </summary>
+    /// <param name="earningsValuesForPivot">The target values for the current pivot.</param>
     private void SyncChartValues(double[] earningsValuesForPivot)
     {
         while (_chartValues.Count < earningsValuesForPivot.Length)

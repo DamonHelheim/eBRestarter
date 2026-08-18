@@ -54,7 +54,7 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
 
-            <ItemsControl ItemsSource="{Binding Browsers}">
+            <ItemsControl ItemsSource="{x:Bind ViewModelInstalledBrowsers.Browsers, Mode=OneWay}">
 
                 <ItemsControl.ItemTemplate>
 

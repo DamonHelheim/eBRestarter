@@ -12,10 +12,13 @@ public sealed partial class P_RestarterProperties : Page
     // IMPORTANT: The constructor must be EMPTY (parameterless)
     public P_RestarterProperties()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelRestarterProperties = App.AppHost!.Services.GetRequiredService<ViewModelRestarterProperties>();
+
         this.InitializeComponent();
 
         // Manually resolve the ViewModel from the container here
-        ViewModelRestarterProperties = App.AppHost!.Services.GetRequiredService<ViewModelRestarterProperties>();
 
         // Set the DataContext
         this.DataContext = ViewModelRestarterProperties;

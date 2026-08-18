@@ -40,11 +40,11 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,25">
-            <Image Source="{Binding BrowserIconPath, Mode=OneWay}"
+            <Image Source="{x:Bind ViewModelDeleteBrowserContent.BrowserIconPath, Mode=OneWay}"
                    Width="32" Height="32"
                    VerticalAlignment="Center"/>
 
-            <TextBlock Text="{Binding BrowserName, Mode=OneWay}"
+            <TextBlock Text="{x:Bind ViewModelDeleteBrowserContent.BrowserName, Mode=OneWay}"
                        FontSize="20"
                        FontWeight="Bold"
                        VerticalAlignment="Center"
@@ -57,13 +57,13 @@
                        Style="{StaticResource HeaderTextStyle}"/>
 
             <CheckBox x:Uid="DeleteDialog_CheckCookies"
-                      IsChecked="{Binding IsDeleteCookiesChecked, Mode=TwoWay}"
-                      IsEnabled="{Binding IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
+                      IsChecked="{x:Bind ViewModelDeleteBrowserContent.IsDeleteCookiesChecked, Mode=TwoWay}"
+                      IsEnabled="{x:Bind ViewModelDeleteBrowserContent.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"
                       Margin="0,0,0,10"/>
 
             <CheckBox x:Uid="DeleteDialog_CheckCache"
-                      IsChecked="{Binding IsDeleteInternetCacheChecked, Mode=TwoWay}"
-                      IsEnabled="{Binding IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
+                      IsChecked="{x:Bind ViewModelDeleteBrowserContent.IsDeleteInternetCacheChecked, Mode=TwoWay}"
+                      IsEnabled="{x:Bind ViewModelDeleteBrowserContent.IsBusy, Converter={StaticResource BoolNegationConverter}, Mode=OneWay}"/>
 
         </StackPanel>
 
@@ -74,10 +74,10 @@
 
             <Grid Margin="0,0,0,5">
 
-                <ProgressBar Value="{Binding ProgressValue, Mode=OneWay}"
-                             Maximum="{Binding ProgressMaximum, Mode=OneWay}"
+                <ProgressBar Value="{x:Bind ViewModelDeleteBrowserContent.ProgressValue, Mode=OneWay}"
+                             Maximum="{x:Bind ViewModelDeleteBrowserContent.ProgressMaximum, Mode=OneWay}"
                              Height="10"
-                             IsEnabled="{Binding IsBusy, Mode=OneWay}"/>
+                             IsEnabled="{x:Bind ViewModelDeleteBrowserContent.IsBusy, Mode=OneWay}"/>
             </Grid>
 
             <Grid>
@@ -89,16 +89,16 @@
 
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="{Binding StatusText, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModelDeleteBrowserContent.StatusText, Mode=OneWay}"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                            FontSize="12"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
-                           ToolTipService.ToolTip="{Binding StatusText, Mode=OneWay}"
+                           ToolTipService.ToolTip="{x:Bind ViewModelDeleteBrowserContent.StatusText, Mode=OneWay}"
                            VerticalAlignment="Center"/>
 
                 <TextBlock Grid.Column="1"
-                           Text="{Binding ProgressText, Mode=OneWay}"
+                           Text="{x:Bind ViewModelDeleteBrowserContent.ProgressText, Mode=OneWay}"
                            FontWeight="Bold"
                            Margin="10,0,0,0"
                            VerticalAlignment="Center"/>
@@ -108,15 +108,15 @@
         <Grid Grid.Row="3" Margin="0,10,0,0">
 
             <Button x:Uid="DeleteDialog_BtnStart"
-                    Command="{Binding StartCleaningCommand}"
-                    Visibility="{Binding IsBusy, Converter={StaticResource InverseBoolToVisConverter}, Mode=OneWay}"
+                    Command="{x:Bind ViewModelDeleteBrowserContent.StartCleaningCommand}"
+                    Visibility="{x:Bind ViewModelDeleteBrowserContent.IsBusy, Converter={StaticResource InverseBoolToVisConverter}, Mode=OneWay}"
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource SystemFillColorSuccessBrush}"
                     Foreground="White"/>
 
             <Button x:Uid="DeleteDialog_BtnCancel"
-                    Command="{Binding CancelCleaningCommand}"
-                    Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"
+                    Command="{x:Bind ViewModelDeleteBrowserContent.CancelCleaningCommand}"
+                    Visibility="{x:Bind ViewModelDeleteBrowserContent.IsBusy, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}"
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource SystemFillColorCriticalBrush}"
                     Foreground="White"/>
@@ -126,7 +126,7 @@
               Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" 
               CornerRadius="8"
               Padding="20"
-              Visibility="{Binding IsProcessConflict, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}">
+              Visibility="{x:Bind ViewModelDeleteBrowserContent.IsProcessConflict, Converter={StaticResource BoolToVisConverter}, Mode=OneWay}">
 
             <StackPanel VerticalAlignment="Center" Spacing="15">
                 <FontIcon Glyph="&#xE7BA;" FontSize="40" Foreground="{ThemeResource SystemFillColorCriticalBrush}" HorizontalAlignment="Center"/>
@@ -145,13 +145,13 @@
 
                     <Button Grid.Column="0"
                             x:Uid="DeleteDialog_BtnForceClose"
-                            Command="{Binding ForceCloseAndContinueCommand}"
+                            Command="{x:Bind ViewModelDeleteBrowserContent.ForceCloseAndContinueCommand}"
                             HorizontalAlignment="Stretch"
                             Style="{StaticResource AccentButtonStyle}"/>
 
                     <Button Grid.Column="1" 
                             x:Uid="DeleteDialog_BtnAbort"
-                            Command="{Binding CancelConflictCommand}"
+                            Command="{x:Bind ViewModelDeleteBrowserContent.CancelConflictCommand}"
                             HorizontalAlignment="Stretch"/>
                 </Grid>
             </StackPanel>

@@ -1,14 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-	<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <!--
+      Vorher standen hier ZWEI TargetFramework-Zeilen untereinander (net10.0 und
+      net10.0-windows10.0.26100.0); die zweite gewann, die erste war toter Text.
+      Das windows-Moniker ist notwendig, weil die Infrastructure Windows-APIs nutzt.
+    -->
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>AnyCPU;x64</Platforms>
-	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- Testing-Guideline Kap. 7/8: Lockfile analog zu den drei Produktivprojekten. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,23 +34,69 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="10.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
-    <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.16.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
-    <PackageReference Include="Scriban.Signed" Version="7.2.5" />
-    <PackageReference Include="Shouldly" Version="4.3.0" />
-    <PackageReference Include="WireMock.Net" Version="2.11.0" />
-    <PackageReference Include="xunit" Version="2.9.3" />
+    <!--
+      Testing-Guideline Kap. 2: xUnit v3. Loest xunit 2.9.3 ab. Das Paket heisst
+      "xunit.v3" (nicht "xunit"); der eingebaute Runner macht das Testprojekt zu
+      einer ausfuehrbaren Assembly.
+    -->
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+
+    <!-- Kap. 7: Shouldly als bestaetigte, kostenfreie Assertion-Bibliothek. -->
+    <PackageReference Include="Shouldly" Version="4.3.0" />
+
+    <!-- Kap. 8: NSubstitute loest Moq 4.20.72 ab. -->
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+
+    <!--
+      Logging-Guideline Kap. 15: FakeLogger<T> statt Mock<ILogger<T>>. Die generische
+      Log<TState>-Signatur von ILogger macht klassisches Mocking unnoetig umstaendlich.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.8.0" />
+
+    <!-- Kap. 9: Testdaten-Generierung, immer mit UseSeed fuer Reproduzierbarkeit. -->
+    <PackageReference Include="Bogus" Version="35.6.5" />
+
+    <!-- Kap. 10: Branch Coverage messen (coverlet) und lesbar aufbereiten (ReportGenerator). -->
+    <PackageReference Include="coverlet.collector" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ReportGenerator" Version="5.5.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <!-- Kap. 15: Architektur-Tests, u. a. zur Absicherung der Hexagonal-Vorgabe. -->
+    <PackageReference Include="TngTech.ArchUnitNET" Version="0.13.3" />
+    <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" Version="0.13.3" />
+
+    <!-- Kap. 12: HTTP-Abhaengigkeiten gegen einen echten lokalen Server statt gegen Mocks. -->
+    <PackageReference Include="WireMock.Net" Version="2.11.0" />
+
+    <!--
+      Kein direkt genutztes Paket, sondern ein Transitive Pin: WireMock.Net zieht ueber
+      WireMock.Net.OpenApiParser Scriban.Signed 7.2.0 herein, und dazu gibt es zwei offene
+      Advisories (GHSA-6q7j-xr26-3h2c, GHSA-q6rr-fm2g-g5x8). Ein direkter Verweis hebt die
+      aufgeloeste Version auf die gepatchte 7.2.5 an. Entfernen, sobald WireMock.Net selbst
+      nachzieht - bis dahin faengt NU1902 im Build den Rueckfall ab.
+    -->
+    <PackageReference Include="Scriban.Signed" Version="7.2.5" />
+
+    <!-- Kap. 5 (Repeatable): FakeTimeProvider statt echter Systemzeit. -->
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.7.0" />
+
+    <!--
+      Entfernt, weil im Testcode nachweislich unbenutzt:
+        OpenTelemetry.Api / OpenTelemetry.Exporter.OpenTelemetryProtocol 1.16.0
+      Ersetzt:
+        Moq 4.20.72   -> NSubstitute
+        xunit 2.9.3   -> xunit.v3
+    -->
   </ItemGroup>
 
   <ItemGroup>

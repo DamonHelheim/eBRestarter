@@ -25,7 +25,7 @@ public sealed partial class ViewModelAbout : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    // ── Block 1: Injected dependencies (alphabetical A–Z) ──
     private readonly IOutboundPortAppVersionInfoProvider _appInfoProvider;
     private readonly IIconCreditProvider _iconCreditService;
     private readonly IInboundPortLocalizationProvider _localizationService;

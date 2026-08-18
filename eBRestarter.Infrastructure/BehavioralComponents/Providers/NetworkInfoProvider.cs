@@ -11,6 +11,7 @@ namespace eBRestarter.Infrastructure.BehavioralComponents.Providers;
 /// <summary>
 /// Provider Component: Infrastructure provider aggregating and filtering system network interfaces.
 /// </summary>
+/// <param name="networkProvider">The outbound port network provider retrieving low-level network interface statistics.</param>
 public sealed class NetworkInfoProvider(
     IOutboundPortNetworkProvider networkProvider)
     : IInboundPortNetworkInfoProvider
@@ -19,7 +20,7 @@ public sealed class NetworkInfoProvider(
     //  2. Fields
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    // ── Block 1: Injected Dependencies (alphabetical) ──
     private readonly IOutboundPortNetworkProvider _networkProvider = networkProvider ?? throw new ArgumentNullException(nameof(networkProvider));
 
 
@@ -27,8 +28,10 @@ public sealed class NetworkInfoProvider(
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
+    /// <inheritdoc />
     public bool IsNetworkAvailable() => _networkProvider.CheckIsNetworkAvailable();
 
+    /// <inheritdoc />
     public IEnumerable<NetworkStats> RetrieveActiveInterfaces()
     {
         var interfaces = _networkProvider.RetrieveAllNetworkInterfaces();

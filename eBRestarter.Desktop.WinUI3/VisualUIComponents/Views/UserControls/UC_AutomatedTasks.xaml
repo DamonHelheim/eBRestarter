@@ -56,20 +56,20 @@
                     Width="304"
                     Margin="10,0,0,0"
                     Foreground="{ThemeResource FontColor_1}"
-                    IsOn="{Binding StartBrowserWithProgramStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    IsOn="{x:Bind ViewModelRestarterProperties.StartBrowserWithProgramStart, Mode=TwoWay}" />
 
                 <ToggleSwitch
                     x:Name="TSCheckBrowserIsAlive"
                     x:Uid="TSCheckBrowserIsAlive"
                     Margin="10,0,0,0"
                     Foreground="{ThemeResource FontColor_1}"
-                    IsOn="{Binding CheckBrowserIsAliveIsOn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    IsOn="{x:Bind ViewModelRestarterProperties.CheckBrowserIsAliveIsOn, Mode=TwoWay}" />
 
                 <HyperlinkButton
                     Margin="10,0,0,0"
                     Padding="0"
                     HorizontalContentAlignment="Left"
-                    Command="{Binding OpenStartupBoostDialogCommand}">
+                    Command="{x:Bind ViewModelRestarterProperties.OpenStartupBoostDialogCommand}">
 
                     <TextBlock
                         x:Name="tbl_info_startup_boost_edge"
@@ -93,11 +93,11 @@
                 VerticalAlignment="Top"
                 DisplayMemberPath="DisplayText"
                 FontSize="14"
-                IsEnabled="{Binding DeleteBrowserContentCommandIsEnabled}"
-                ItemsSource="{Binding BrowserDeleteCacheOptionList}"
+                IsEnabled="{x:Bind ViewModelRestarterProperties.DeleteBrowserContentCommandIsEnabled, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModelRestarterProperties.BrowserDeleteCacheOptionList, Mode=OneWay}"
                 PlaceholderText="Browser delete cache options"
                 SelectedIndex="0"
-                SelectedItem="{Binding SelectedDeleteBrowserCacheOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                SelectedItem="{x:Bind ViewModelRestarterProperties.SelectedDeleteBrowserCacheOption, Mode=TwoWay}" />
 
         </Grid>
 

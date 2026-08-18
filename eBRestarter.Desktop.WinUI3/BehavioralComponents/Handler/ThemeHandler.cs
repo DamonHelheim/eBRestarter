@@ -15,34 +15,19 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Handler;
 /// <summary>
 /// Handler implementation for managing and applying application theme changes across UI elements and chart controls.
 /// </summary>
+/// <param name="appWindowHelper">Helper for updating application title bar theme.</param>
+/// <param name="mainWindowProvider">Provider supplying access to the active main window instance.</param>
 public sealed class ThemeHandler(
     IAppWindowHelper appWindowHelper,
     IMainWindowProvider mainWindowProvider) : IThemeHandler
 {
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IAppWindowHelper _appWindowHelper = appWindowHelper ?? throw new ArgumentNullException(nameof(appWindowHelper));
     private readonly IMainWindowProvider _mainWindowProvider = mainWindowProvider ?? throw new ArgumentNullException(nameof(mainWindowProvider));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  6. Properties
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Gets the name of the currently active UI theme enum.
-    /// </summary>
+    /// <inheritdoc />
     public AppTheme CurrentTheme { get; private set; } = AppTheme.Light;
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Applies the specified <see cref="AppTheme"/> enum to the main window root element, title bar, and chart controls.
-    /// </summary>
-    /// <param name="theme">The target <see cref="AppTheme"/> value.</param>
+    /// <inheritdoc />
     public void SetTheme(AppTheme theme)
     {
         bool isDark = theme == AppTheme.Dark;
@@ -73,10 +58,7 @@ public sealed class ThemeHandler(
         CurrentTheme = theme;
     }
 
-    /// <summary>
-    /// Applies the theme matching the specified theme name string.
-    /// </summary>
-    /// <param name="themeName">The target theme name string (e.g. "Dark" or "Light").</param>
+    /// <inheritdoc />
     public void SetTheme(string themeName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(themeName);

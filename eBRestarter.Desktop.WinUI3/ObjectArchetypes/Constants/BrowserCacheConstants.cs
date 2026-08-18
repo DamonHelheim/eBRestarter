@@ -3,9 +3,14 @@ using System.Collections.ObjectModel;
 
 namespace eBRestarter.Desktop.WinUI3.ObjectArchetypes.Constants;
 
+/// <summary>
+/// Provides preset configuration options for automated browser cache deletion schedules.
+/// </summary>
 public static class BrowserCacheConstants
 {
-    // Statische ReadOnly Liste für die Auswahl
+    /// <summary>
+    /// Gets the read-only collection of selectable browser cache deletion interval options.
+    /// </summary>
     public static readonly ReadOnlyCollection<BrowserCacheDeleteOption> Options = new(
     [
             new("Cache und Cookies nicht löschen", 0),

@@ -369,3 +369,12 @@ FodyWeavers.xsd
 
 # Text files
 *.txt
+# Security-Guideline Kap. 2.x: Die Laufzeit-Konfiguration der Browser-Erweiterung enthaelt die
+# personalisierte Surfbar-URL (eBesucher-Benutzername). Die eingecheckte Datei dient nur als
+# Vorlage ohne Benutzernamen; lokale Aenderungen daran gehoeren nicht ins Repository.
+eBRestarter.TabRestarterExtension/TabRestarterExtension/tab_restarter_config.local.json
+
+# AI Agent directories and configuration
+.agents/
+.claude/
+

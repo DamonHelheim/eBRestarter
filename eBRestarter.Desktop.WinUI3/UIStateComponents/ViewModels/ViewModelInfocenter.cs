@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -33,6 +35,7 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     //  2. Fields
     // ═══════════════════════════════════════════════════════
     private readonly IDialogService _dialogService;
+    private readonly ILogger<ViewModelInfocenter> _logger;
     private readonly IInboundPortLocalizationProvider _localizationService;
     private readonly IInboundPortSystemInformationProvider _systemInformationProvider;
 
@@ -57,12 +60,15 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     public ViewModelInfocenter(
         IDialogService dialogService,
         IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelInfocenter> logger,
         IInboundPortSystemInformationProvider systemInformationProvider)
     {
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(systemInformationProvider);
 
+        _logger = logger;
         _dialogService = dialogService;
         _localizationService = localizationService;
         _systemInformationProvider = systemInformationProvider;
@@ -87,21 +93,41 @@ public sealed partial class ViewModelInfocenter : ObservableObject
     /// Opens the given URL in the default browser via the shell. No-op if url is null or whitespace.
     /// </summary>
     /// <param name="url">Full URL to open (e.g. support or registration). If null or empty, nothing happens.</param>
+    /// <remarks>
+    /// 🔒 Security guideline (Defense in Depth): <c>UseShellExecute = true</c> can launch non-web protocol
+    /// handlers or local executables if an unchecked URL is passed. The scheme allowlist restricts execution strictly
+    /// to HTTP and HTTPS protocols. Blocked attempts are logged.
+    /// </remarks>
     [RelayCommand]
-    public static void OpenSupportWebsite(string? url)
+    public void OpenSupportWebsite(string? url)
     {
         if (string.IsNullOrWhiteSpace(url))
         {
             return;
         }
 
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? targetUri)
+            || (!string.Equals(targetUri.Scheme, Uri.UriSchemeHttps, StringComparison.Ordinal)
+                && !string.Equals(targetUri.Scheme, Uri.UriSchemeHttp, StringComparison.Ordinal)))
+        {
+            _logger.LogWarning(
+                LogEventIds.Security.UnsafeUrlLaunchBlocked,
+                "Blocked an attempt to shell-execute a non-web URL: {Url}",
+                url);
+
+            return;
+        }
+
         try
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(targetUri.AbsoluteUri) { UseShellExecute = true });
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.OperatingSystem.ProcessStartFailed,
+                exception,
+                "Opening the web URL in the default browser failed.");
         }
     }
 
@@ -129,7 +155,10 @@ public sealed partial class ViewModelInfocenter : ObservableObject
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.OperatingSystem.WmiQueryFailed,
+                exception,
+                "Loading hardware and operating system information failed.");
 
             string failureMessage = _localizationService.RetrieveString(InfocenterLoadFailedResourceKey);
 

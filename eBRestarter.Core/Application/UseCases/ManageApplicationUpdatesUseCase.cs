@@ -10,35 +10,21 @@ namespace eBRestarter.Core.Application.UseCases;
 /// <summary>
 /// Use case implementation for checking application update status and executing automatic updates.
 /// </summary>
+/// <param name="updateService">Outbound port for update checking and installation.</param>
 public sealed class ManageApplicationUpdatesUseCase(
     IOutboundPortUpdate updateService)
     : IUseCaseManageApplicationUpdates
 {
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortUpdate _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-
-    /// <summary>
-    /// Checks asynchronously whether an application update is available and retrieves the latest version information.
-    /// </summary>
-    /// <returns>A <see cref="CheckUpdateResponse"/> indicating update availability and the latest version tag.</returns>
+    /// <inheritdoc />
     public async Task<CheckUpdateResponse> CheckForUpdatesAsync()
     {
         var updateInfo = await _updateService.CheckForUpdateAsync().ConfigureAwait(false);
         return new CheckUpdateResponse(updateInfo.IsUpdateAvailable, updateInfo.LatestVersion);
     }
 
-    /// <summary>
-    /// Downloads and installs the latest application update asynchronously if an update is available.
-    /// </summary>
+    /// <inheritdoc />
     public async Task PerformUpdateAsync()
     {
         var updateInfo = await _updateService.CheckForUpdateAsync().ConfigureAwait(false);

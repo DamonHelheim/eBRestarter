@@ -1,67 +1,64 @@
-using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Domain.ValueObjects;
-using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Domain.ValueObjects;
+using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Config;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Repositories.Config
 {
     /// <summary>
-    /// Testet den EVRestarterConfigRepository unter Verwendung eines vollst�ndig gemockten FileSystems.
-    /// Keine echten Festplatten-Zugriffe mehr!
+    /// Unit tests for <see cref="EVRestarterConfigRepository"/> verifying configuration loading, serialization, fallback creation, and reset functionality using mocked file system operations.
     /// </summary>
     public class EVisitorConfigRepositoryTests
     {
-        private readonly Mock<IInboundPortOsAppPathProvider> _mockPathProvider;
-        private readonly Mock<IOutboundPortFileSystem> _mockFileSystem;
-        private readonly Mock<ILogger<EVRestarterConfigRepository>> _mockLogger;
+        private readonly IInboundPortOsAppPathProvider _mockPathProvider;
+        private readonly IOutboundPortFileSystem _mockFileSystem;
+        private readonly FakeLogger<EVRestarterConfigRepository> _mockLogger;
         private readonly EVRestarterConfigRepository _service;
         private const string FakeFilePath = @"C:\AppData\eBRestarter\config.json";
 
         public EVisitorConfigRepositoryTests()
         {
-            _mockPathProvider = new Mock<IInboundPortOsAppPathProvider>();
-            _mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            _mockLogger = new Mock<ILogger<EVRestarterConfigRepository>>();
+            _mockPathProvider = Substitute.For<IInboundPortOsAppPathProvider>();
+            _mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            _mockLogger = new FakeLogger<EVRestarterConfigRepository>();
 
-            _mockPathProvider.Setup(p => p.RetrieveConfigFilePath()).Returns(FakeFilePath);
+            _mockPathProvider.RetrieveConfigFilePath().Returns(FakeFilePath);
 
             _service = new EVRestarterConfigRepository(
-                _mockPathProvider.Object, 
-                _mockFileSystem.Object, 
-                _mockLogger.Object
+                _mockPathProvider, 
+                _mockFileSystem, 
+                _mockLogger
             );
         }
 
         [Fact]
         public void SaveConfig_ShouldWriteJsonToFileSystem()
         {
-            // ARRANGE
+            // [R]IGHT: Serializes configuration to JSON and writes payload to the specified file path
+            // Arrange
             var configToSave = new AppConfig();
             configToSave.Settings.ApiKey = "PlaintextKey123";
 
             string capturedJson = null!;
+            // Capture the serialized JSON written to disk via NSubstitute argument matchers
             _mockFileSystem
-                .Setup(f => f.WriteAllText(FakeFilePath, It.IsAny<string>()))
-                .Callback<string, string>((path, content) => capturedJson = content);
+                .When(fs => fs.WriteAllText(FakeFilePath, Arg.Any<string>()))
+                .Do(ci => capturedJson = ci.ArgAt<string>(1));
 
-            _mockFileSystem.Setup(f => f.GetDirectoryName(FakeFilePath)).Returns(@"C:\AppData\eBRestarter");
-            _mockFileSystem.Setup(f => f.DirectoryExists(@"C:\AppData\eBRestarter")).Returns(true);
+            _mockFileSystem.GetDirectoryName(FakeFilePath).Returns(@"C:\AppData\eBRestarter");
+            _mockFileSystem.DirectoryExists(@"C:\AppData\eBRestarter").Returns(true);
 
-            // ACT
+            // Act
             _service.SaveConfig(configToSave);
 
-            // ASSERT
-            _mockFileSystem.Verify(f => f.WriteAllText(FakeFilePath, It.IsAny<string>()), Times.Once);
+            // Assert
+            _mockFileSystem.Received(1).WriteAllText(FakeFilePath, Arg.Any<string>());
             capturedJson.ShouldNotBeNull();
             capturedJson.ShouldContain("PlaintextKey123");
         }
@@ -69,31 +66,33 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Repositories.Config
         [Fact]
         public void LoadConfig_ShouldCreateAndReturnDefault_WhenFileDoesNotExist()
         {
-            // ARRANGE
-            _mockFileSystem.Setup(f => f.FileExists(FakeFilePath)).Returns(false);
-            _mockFileSystem.Setup(f => f.GetDirectoryName(FakeFilePath)).Returns(@"C:\AppData\eBRestarter");
-            _mockFileSystem.Setup(f => f.DirectoryExists(@"C:\AppData\eBRestarter")).Returns(true);
+            // [B]OUNDARY: Automatically creates, persists, and returns default configuration when file is absent
+            // Arrange
+            _mockFileSystem.FileExists(FakeFilePath).Returns(false);
+            _mockFileSystem.GetDirectoryName(FakeFilePath).Returns(@"C:\AppData\eBRestarter");
+            _mockFileSystem.DirectoryExists(@"C:\AppData\eBRestarter").Returns(true);
 
-            // ACT
+            // Act
             var result = _service.LoadConfig();
 
-            // ASSERT
+            // Assert
             result.ShouldNotBeNull();
-            // Sollte versuchen standardm��ig eine neue Config zu speichern
-            _mockFileSystem.Verify(f => f.WriteAllText(FakeFilePath, It.IsAny<string>()), Times.Once);
+            // Verifies that a default configuration file is automatically created and written to disk
+            _mockFileSystem.Received(1).WriteAllText(FakeFilePath, Arg.Any<string>());
         }
 
         [Fact]
         public void LoadConfig_ShouldReturnDefault_WhenJsonIsBroken()
         {
-            // ARRANGE
-            _mockFileSystem.Setup(f => f.FileExists(FakeFilePath)).Returns(true);
-            _mockFileSystem.Setup(f => f.ReadAllText(FakeFilePath)).Returns("Das hier ist kein JSON!");
+            // [E]RROR / [B]OUNDARY: Handles malformed JSON gracefully by returning a clean default configuration
+            // Arrange
+            _mockFileSystem.FileExists(FakeFilePath).Returns(true);
+            _mockFileSystem.ReadAllText(FakeFilePath).Returns("Invalid JSON content {");
 
-            // ACT
+            // Act
             var result = _service.LoadConfig();
 
-            // ASSERT
+            // Assert
             result.ShouldNotBeNull();
             result.Settings.ApiKey.ShouldBeEmpty();
         }
@@ -101,22 +100,16 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Repositories.Config
         [Fact]
         public void ResetConfig_ShouldWriteDefaultConfigToFileSystem()
         {
-            // ARRANGE
-            _mockFileSystem.Setup(f => f.GetDirectoryName(FakeFilePath)).Returns(@"C:\AppData\eBRestarter");
-            _mockFileSystem.Setup(f => f.DirectoryExists(@"C:\AppData\eBRestarter")).Returns(true);
+            // [R]IGHT: Overwrites configuration on file system with newly initialized default values
+            // Arrange
+            _mockFileSystem.GetDirectoryName(FakeFilePath).Returns(@"C:\AppData\eBRestarter");
+            _mockFileSystem.DirectoryExists(@"C:\AppData\eBRestarter").Returns(true);
 
-            // ACT
+            // Act
             _service.ResetConfig();
 
-            // ASSERT
-            _mockFileSystem.Verify(f => f.WriteAllText(FakeFilePath, It.IsAny<string>()), Times.Once);
+            // Assert
+            _mockFileSystem.Received(1).WriteAllText(FakeFilePath, Arg.Any<string>());
         }
     }
 }
-
-
-
-
-
-
-

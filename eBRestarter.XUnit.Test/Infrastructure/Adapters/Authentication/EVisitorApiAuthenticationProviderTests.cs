@@ -1,157 +1,108 @@
-using eBRestarter.Infrastructure.Network;
-using eBRestarter.Infrastructure.Adapters.Authentication;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Infrastructure.Adapters.RestSharp;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Infrastructure.Repositories.Authentication;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
+using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.API.Authentication;
 using eBRestarter.Infrastructure.Api.Interfaces;
-using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Adapters.Authentication
 {
     /// <summary>
-    /// Testet die Logik zur Verifizierung der API-Zugangsdaten.
-    /// Prüft, ob die Antworten des Rest-Clients korrekt in boolesche Ergebnisse
-    /// und lesbare UI-Nachrichten übersetzt werden.
+    /// Unit tests for <see cref="AdapterEVisitorApiAuthenticationProvider"/> verifying API credential verification, response mapping, and error handling.
     /// </summary>
     public class EVisitorApiAuthenticationProviderTests
     {
-        /// <summary>
-        /// Das ist der "Happy Path". Wenn der RestClient einen Erfolg meldet,
-        /// muss die Methode 'true' und eine Erfolgsmeldung zurückgeben.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren eine erfolgreiche API-Antwort. Zusätzlich prüfen wir streng,
-        /// ob der Service den übergebenen Username und API-Key auch WIRKLICH in das
-        /// 'ApiRequest'-Objekt gemappt hat, bevor er es an den RestClient schickt.
-        /// </summary>
         [Fact]
         public async Task VerifyCredentialsAsync_ShouldReturnTrue_WhenApiCallIsSuccessful()
         {
-            // ARRANGE
-            var mockRestClient = new Mock<IRestClient>();
+            // [R]IGHT: Valid credentials return true and success message, verifying correct request parameter mapping
+            // Arrange
+            var mockRestClient = Substitute.For<IRestClient>();
 
             string testUsername = "TestUser";
             string testApiKey = "SecretKey123";
 
-            // Wir definieren die gefälschte "Erfolgs-Antwort"
             var fakeSuccessResponse = new ApiResponse
             {
                 IsSuccess = true,
-                StatusCode = ResponseCode.HttpRE200 // Angenommen, das ist dein 200 OK Enum
+                StatusCode = ResponseCode.HttpRE200
             };
 
-            // Setup: Wenn ExecuteGetAsync aufgerufen wird, gib den Erfolg zurück.
-            // Gleichzeitig fangen wir ab, mit welchem Request die Methode aufgerufen wurde.
             mockRestClient
-                .Setup(client => client.ExecuteGetAsync(It.IsAny<ApiRequest>()))
-                .ReturnsAsync(fakeSuccessResponse);
+                .ExecuteGetAsync(Arg.Any<ApiRequest>())
+                .Returns(fakeSuccessResponse);
 
-            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient.Object);
+            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient);
 
-            // ACT
+            // Act
             var (isValid, message) = await apiUseCase.VerifyCredentialsAsync(testUsername, testApiKey);
 
-            // ASSERT
+            // Assert
             isValid.ShouldBeTrue();
             message.ShouldBe("Connection successful!");
 
-            // SICHERHEITS-CHECK: Hat der Service die Parameter richtig ins Request-Objekt gesteckt?
-            // Wir prüfen, ob ExecuteGetAsync mit einem Objekt aufgerufen wurde, das genau
-            // unseren Username und das Passwort (ApiKey) enthält.
-            mockRestClient.Verify(client => client.ExecuteGetAsync(It.Is<ApiRequest>(req =>
-                req.Username == testUsername && req.Password == testApiKey)), Times.Once);
+            await mockRestClient.Received(1).ExecuteGetAsync(Arg.Is<ApiRequest>(req =>
+                req.Username == testUsername && req.Password == testApiKey));
         }
 
-        /// <summary>
-        /// Wenn der Nutzer sich vertippt, meldet die API einen 401 Unauthorized Fehler.
-        /// Diesen kryptischen Fehler wollen wir für den Nutzer in eine verständliche
-        /// deutsche Fehlermeldung übersetzen.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren eine API-Antwort mit IsSuccess = false und dem spezifischen
-        /// StatusCode = 401. Wir prüfen, ob exakt die geplante Fehlermeldung generiert wird.
-        /// </summary>
         [Fact]
         public async Task VerifyCredentialsAsync_ShouldReturnFalseAndSpecificMessage_WhenCredentialsAreInvalid()
         {
-            // ARRANGE
-            var mockRestClient = new Mock<IRestClient>();
+            // [E]RROR: HTTP 401 Unauthorized returns false with invalid credentials message
+            // Arrange
+            var mockRestClient = Substitute.For<IRestClient>();
 
             var fakeUnauthorizedResponse = new ApiResponse
             {
                 IsSuccess = false,
-                StatusCode = ResponseCode.HttpRE401 // Der spezifische Fehler aus deinem Code
+                StatusCode = ResponseCode.HttpRE401
             };
 
             mockRestClient
-                .Setup(client => client.ExecuteGetAsync(It.IsAny<ApiRequest>()))
-                .ReturnsAsync(fakeUnauthorizedResponse);
+                .ExecuteGetAsync(Arg.Any<ApiRequest>())
+                .Returns(fakeUnauthorizedResponse);
 
-            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient.Object);
+            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient);
 
-            // ACT
+            // Act
             var (isValid, message) = await apiUseCase.VerifyCredentialsAsync("WrongUser", "WrongKey");
 
-            // ASSERT
+            // Assert
             isValid.ShouldBeFalse();
             message.ShouldBe("Invalid username or API key.");
         }
 
-        /// <summary>
-        /// Was passiert bei einem Timeout, wenn das Internet des Nutzers weg ist oder
-        /// die eBesucher-API komplett down ist (500 Internal Server Error)?
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren einen beliebigen anderen Fehlercode inkl. einer 'ErrorMessage' vom RestClient.
-        /// Wir prüfen, ob die Methode gracefully mit 'false' abbricht und die System-Fehlermeldung
-        /// sauber in den Ausgabestring einbaut.
-        /// </summary>
         [Fact]
         public async Task VerifyCredentialsAsync_ShouldReturnFalseAndErrorMessage_OnGeneralApiError()
         {
-            // ARRANGE
-            var mockRestClient = new Mock<IRestClient>();
+            // [E]RROR: General API error or non-401 failure returns false with formatted system error message
+            // Arrange
+            var mockRestClient = Substitute.For<IRestClient>();
 
-            string systemErrorMessage = "Es konnte keine Verbindung zum Zielserver hergestellt werden (Timeout).";
+            string systemErrorMessage = "Connection timed out.";
 
             var fakeGeneralErrorResponse = new ApiResponse
             {
                 IsSuccess = false,
-                StatusCode = ResponseCode.HttpRE500, // Irgendein anderer Code als 401
+                StatusCode = ResponseCode.HttpRE500,
                 ErrorMessage = systemErrorMessage
             };
 
             mockRestClient
-                .Setup(client => client.ExecuteGetAsync(It.IsAny<ApiRequest>()))
-                .ReturnsAsync(fakeGeneralErrorResponse);
+                .ExecuteGetAsync(Arg.Any<ApiRequest>())
+                .Returns(fakeGeneralErrorResponse);
 
-            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient.Object);
+            var apiUseCase = new AdapterEVisitorApiAuthenticationProvider(mockRestClient);
 
-            // ACT
+            // Act
             var (isValid, message) = await apiUseCase.VerifyCredentialsAsync("User", "Key");
 
-            // ASSERT
+            // Assert
             isValid.ShouldBeFalse();
-            // Prüft, ob der String mit "Fehler: " beginnt und die original Message anhängt
             message.ShouldBe($"Error: {systemErrorMessage}");
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

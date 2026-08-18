@@ -8,9 +8,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-using eBRestarter.Core.Application.BehavioralComponents.Extensions;
+using eBRestarter.Desktop.WinUI3.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Models;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
@@ -18,12 +19,15 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Domain.Validators;
 using eBRestarter.Core.Domain.ValueObjects;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;
 using eBRestarter.Infrastructure.Common.Statics;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -33,12 +37,12 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// Persists via <see cref="IOutboundPortEVisitorConfigRepository"/> and broadcasts changes with
 /// <see cref="WeakReferenceMessenger"/> so the restart task and other pages stay in sync.
 /// </summary>
-public sealed partial class ViewModelRestarterProperties : ObservableObject
+public sealed partial class ViewModelRestarterProperties : ObservableObject, IDisposable
 {
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string ActivateResourceKey = "Activate";
     private const int BrowserInstallCheckIntervalSeconds = 5;
     private const string BrowserNextDeleteDateFormatResourceKey = "Browser_NextDeleteDate_Format";
@@ -48,8 +52,9 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
+    private readonly ILogger<ViewModelRestarterProperties> _logger;
     private readonly IDialogService _dialogService;
     private readonly IOutboundPortEVisitorConfigRepository _evRestarterConfigRepository;
     private readonly IInboundPortLocalizationProvider _localizationService;
@@ -57,7 +62,13 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     private readonly IUseCaseScheduleBrowserCleanup _scheduleBrowserCleanupUseCase;
     private readonly IUIOptionsProvider _uiOptionsService;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 2: Primitives & strings ──
+    private volatile bool _disposed;
+
+    // ⚡ Overlap prevention: Ensures background timer ticks do not stack. 0 = free, 1 = active.
+    private int _browserCheckInFlight;
+
+    // ── Block 4: Complex types, collections & UI elements ──
     private readonly DispatcherTimer _browserCheckTimer;
     private readonly AppConfig _currentConfig;
     private readonly DispatcherQueue _dispatcherQueue;
@@ -65,7 +76,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  3. Observable Properties (+ Partial Methods)
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     [ObservableProperty] public partial bool CheckBrowserIsAliveIsOn { get; set; }
 
     partial void OnCheckBrowserIsAliveIsOnChanged(bool value)
@@ -137,7 +148,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(AddEVisitorUsernameCommand))]
     public partial string Username { get; set; } = string.Empty;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     [ObservableProperty] public partial Visibility NoBrowserInstalledSectionVisibility { get; set; } = Visibility.Collapsed;
     [ObservableProperty] public partial BrowserCacheDeleteOption SelectedDeleteBrowserCacheOption { get; set; }
 
@@ -182,13 +193,13 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  4. Properties
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     public int BrowserRuntimeHoursMax { get; init; }
     public int BrowserRuntimeHoursMin { get; init; }
     public int RuntimePauseSecondsMax { get; init; }
     public int RuntimePauseSecondsMin { get; init; }
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     /// <summary>Read-only list of cache-delete interval options (e.g. daily, weekly) from localization.</summary>
     public ReadOnlyCollection<BrowserCacheDeleteOption> BrowserDeleteCacheOptionList { get; }
 
@@ -205,6 +216,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         IDialogService dialogService,
         IOutboundPortEVisitorConfigRepository evRestarterConfigRepository,
         IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelRestarterProperties> logger,
         IOutboundPortOsProcessControl osProcessControlPort,
         IUseCaseScheduleBrowserCleanup scheduleBrowserCleanupUseCase,
         IUIOptionsProvider uiOptionsService)
@@ -213,6 +225,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(osProcessControlPort);
         ArgumentNullException.ThrowIfNull(scheduleBrowserCleanupUseCase);
         ArgumentNullException.ThrowIfNull(uiOptionsService);
@@ -221,6 +234,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         _dialogService = dialogService;
         _evRestarterConfigRepository = evRestarterConfigRepository;
         _localizationService = localizationService;
+        _logger = logger;
         _osProcessControlPort = osProcessControlPort;
         _scheduleBrowserCleanupUseCase = scheduleBrowserCleanupUseCase;
         _uiOptionsService = uiOptionsService;
@@ -264,7 +278,7 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         _browserCheckTimer.Tick += OnBrowserCheckTimerTick;
         _browserCheckTimer.Start();
 
-        CheckInstalledBrowsersAsync().Forget();
+        CheckInstalledBrowsersAsync().Forget(_logger, nameof(CheckInstalledBrowsersAsync));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -314,7 +328,31 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
-    private bool CanAddUsername() => !string.IsNullOrWhiteSpace(Username);
+    /// <summary>
+    /// Stops the browser-check timer and unsubscribes its handler so the callback cannot keep this
+    /// view model alive after teardown (Guide Kap. 22.6 / 22.10).
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        _browserCheckTimer.Stop();
+        _browserCheckTimer.Tick -= OnBrowserCheckTimerTick;
+    }
+
+    /// <summary>
+    /// Enables the "add username" command only for names that satisfy the whitelist.
+    /// </summary>
+    /// <remarks>
+    /// 🔒 Security guideline: Restricts the username to the character set defined in <see cref="EVisitorUsernamePolicy"/>
+    /// to prevent injection into browser command lines. This check disables the UI button; enforcement is also handled by validators.
+    /// </remarks>
+    private bool CanAddUsername() => EVisitorUsernamePolicy.IsValid(Username);
 
     /// <summary>
     /// Checks in the background whether at least one supported browser is installed, then updates UI bindings on the dispatcher.
@@ -341,15 +379,39 @@ public sealed partial class ViewModelRestarterProperties : ObservableObject
         });
     }
 
+    /// <summary>
+    /// Triggers periodic installed-browser checks on timer tick.
+    /// </summary>
+    /// <param name="sender">The timer instance.</param>
+    /// <param name="eventArgs">Event arguments associated with the tick event.</param>
     private async void OnBrowserCheckTimerTick(object? sender, object eventArgs)
     {
+        // Guard against timer callbacks firing after disposal.
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Drop overlapping ticks to prevent concurrency buildup.
+        if (Interlocked.Exchange(ref _browserCheckInFlight, 1) == 1)
+        {
+            return;
+        }
+
         try
         {
-            await CheckInstalledBrowsersAsync();
+            await CheckInstalledBrowsersAsync().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.Browser.BrowserProfileDiscoveryFailed,
+                exception,
+                "Checking for installed browsers failed.");
+        }
+        finally
+        {
+            Volatile.Write(ref _browserCheckInFlight, 0);
         }
     }
 }

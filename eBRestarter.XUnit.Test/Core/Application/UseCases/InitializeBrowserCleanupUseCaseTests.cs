@@ -1,12 +1,12 @@
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Domain.ValueObjects;
-using Moq;
+﻿using NSubstitute;
 using Shouldly;
 using Xunit;
 using System;
 using System.Threading.Tasks;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Core.Domain.ValueObjects;
 
 namespace eBRestarter.XUnit.Test.Core.Application.UseCases;
 
@@ -23,14 +23,14 @@ public class InitializeBrowserCleanupUseCaseTests
             Browser = browser
         };
 
-        var mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
-        mockConfigService.Setup(s => s.LoadConfig()).Returns(config);
+        var mockConfigService = Substitute.For<IOutboundPortEVisitorConfigRepository>();
+        mockConfigService.LoadConfig().Returns(config);
 
-        var sut = new InitializeBrowserCleanupUseCase(mockConfigService.Object);
+        var sut = new InitializeBrowserCleanupUseCase(mockConfigService, TimeProvider.System);
 
         await sut.ExecuteAsync();
 
         browser.NextBrowserDeleteCacheDate.ShouldBe(DateTime.Today.AddDays(7));
-        mockConfigService.Verify(s => s.SaveConfig(It.Is<AppConfig>(c => c.Browser.NextBrowserDeleteCacheDate == DateTime.Today.AddDays(7))), Times.Once);
+        mockConfigService.Received(1).SaveConfig(Arg.Is<AppConfig>(c => c.Browser.NextBrowserDeleteCacheDate == DateTime.Today.AddDays(7)));
     }
 }

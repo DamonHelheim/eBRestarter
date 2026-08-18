@@ -2,18 +2,22 @@ using Microsoft.Extensions.Logging;
 
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 /// <summary>
 /// Adapter: Base Driven Adapter (Outbound) encapsulating common Chromium logic (extension deployment, registry paths, process discovery).
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Dient als technologische Zwischen-Basisklasse im äußeren Ring (Infrastructure Layer) für alle Chromium-basierten Browser.<br/>
-/// - <strong>Implementierte Basis / Port:</strong> Erbt von <see cref="AdapterBrowserBaseWrapper"/> (welcher <see cref="IBrowserOutboundPort"/> implementiert).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie in der Infrastrukturschicht liegt und technologische Operationen für Chromium-Browser ausführt.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Intermediate base adapter in the Infrastructure layer for Chromium-based browsers.<br/>
+/// - <strong>Implemented Base / Port:</strong> Inherits from <see cref="AdapterBrowserBaseWrapper"/> (which implements <see cref="IOutboundPortBrowser"/>).<br/>
 /// </para>
 /// </summary>
+/// <param name="processControlPort">OS process control port.</param>
+/// <param name="settingsPort">System configuration repository port.</param>
+/// <param name="fileSystemPort">File system operations port.</param>
+/// <param name="logger">Logger instance.</param>
 public abstract class AdapterChromiumBrowserBaseWrapper(
     IOutboundPortOsProcessControl processControlPort,
     IOutboundPortSystemConfigurationRepository settingsPort,
@@ -29,7 +33,7 @@ public abstract class AdapterChromiumBrowserBaseWrapper(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string AppPathsRegistryKeyPattern = @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\{0}";
     private const string CacheDataSubPath = "Cache_Data";
     private const string CacheSubPath = "Cache";
@@ -56,14 +60,14 @@ public abstract class AdapterChromiumBrowserBaseWrapper(
     //  4. Properties
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     protected abstract string BrowserRegistryName { get; }
     protected abstract string ExeFileName { get; }
     protected abstract string ExtensionId { get; }
     protected abstract string ProgramFilesSubPath { get; }
     protected abstract string UninstallSubKey { get; }
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     protected override List<string> ExecutablePaths
     {
         get
@@ -176,7 +180,7 @@ public abstract class AdapterChromiumBrowserBaseWrapper(
         {
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug(exception, "Could not retrieve additional profile folders for Chromium user data path {UserDataRoot}", userDataRoot);
+                _logger.LogDebug(LogEventIds.Browser.BrowserProfileDiscoveryFailed, exception, "Could not retrieve additional profile folders for Chromium user data path {UserDataRoot}", userDataRoot);
             }
         }
 

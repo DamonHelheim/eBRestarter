@@ -41,7 +41,7 @@
                     Width="35"
                     Height="35"
                     Margin="10,10,0,0"
-                    Source="{Binding ElementName=RootControl, Path=HeaderImageEarnings}" />
+                    Source="{x:Bind HeaderImageEarnings, Mode=OneWay}" />
 
                 <TextBlock
                     x:Name="tbl_sum_points_daily"
@@ -50,7 +50,7 @@
                     FontSize="22"
                     FontWeight="Normal"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding ElementName=RootControl, Path=HeaderTitleEarnings}"
+                    Text="{x:Bind HeaderTitleEarnings, Mode=OneWay}"
                     TextWrapping="Wrap" />
 
             </StackPanel>
@@ -63,7 +63,7 @@
                     FontSize="24"
                     FontWeight="Light"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding ElementName=RootControl, Path=EarningsAmount}" />
+                    Text="{x:Bind EarningsAmount, Mode=OneWay}" />
 
             </StackPanel>
 

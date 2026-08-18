@@ -13,9 +13,12 @@ public sealed partial class UC_RestartAgent : UserControl
 
     public UC_RestartAgent()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelRestartTask = App.AppHost!.Services.GetRequiredService<ViewModelRestartTask>();
+
         InitializeComponent();
 
-        ViewModelRestartTask = App.AppHost!.Services.GetRequiredService<ViewModelRestartTask>();
 
         this.DataContext = ViewModelRestartTask;
     }

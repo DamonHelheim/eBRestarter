@@ -21,6 +21,24 @@
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<!--
+	  Guide Kap. 25.2 (ReadyToRun): Kompiliert Startup-Pfade zur Build-Zeit vor, damit der JIT
+	  sie beim Start nicht mehr übersetzen muss. Der RID ist oben bereits fixiert (win-x64),
+	  die R2R-Voraussetzung ist also erfüllt. Die App startet mit dem System (Autostart),
+	  Kaltstart ist damit nutzerwahrnehmbar.
+	  ⚠️ Trade-off laut Guide: größere Deployment-Artefakte. Wirkt nur bei `dotnet publish`,
+	  nicht bei `dotnet build`. Vor der endgültigen Übernahme gemäß Kap. 20 messen — bei einer
+	  selfcontained WinUI-3-App ist der Netto-Effekt nicht vorhersagbar.
+	  Native AOT (Kap. 25.3) ist ausgeschlossen: COM-Interop, WMI und Assembly-Scanning
+	  (AddValidatorsFromAssemblyContaining) sind laut Kap.-25.3-Tabelle AOT-Blocker.
+	-->
+	<PublishReadyToRun>true</PublishReadyToRun>
+	<!--
+	  🔒 Security-Guideline Kap. 7.3 (Reproduzierbarkeit): packages.lock.json fixiert die exakten
+	  transitiven Versionen, damit derselbe Commit nicht zu unterschiedlichen Zeitpunkten
+	  unterschiedliche (und potenziell kompromittierte) Paketversionen zieht.
+	-->
+	<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Resources\Images\**" />
@@ -290,6 +308,18 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
+    <!--
+      Logging-Guideline Kap. 8: Provider-Wahl gehört in den Composition Root der Anwendung.
+      Serilog wurde gewählt, weil eine Desktop-App ohne Konsole und ohne Log-Backend einen
+      Datei-Sink braucht, damit Log-Einträge überhaupt irgendwo ankommen.
+      Bewusst OHNE Serilog.Settings.Configuration: dessen reflection-basierte Konfiguration ist
+      nicht trim-sicher, dieses Projekt publiziert aber mit PublishTrimmed=true. Die Konfiguration
+      erfolgt deshalb in Code, der Mindest-Log-Level wird als einfacher Wert aus appsettings.json
+      gelesen (siehe LoggingServiceExtensions).
+    -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	<PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.5" />
 	<PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
 	<PackageReference Include="System.DirectoryServices.AccountManagement" Version="10.0.9" />

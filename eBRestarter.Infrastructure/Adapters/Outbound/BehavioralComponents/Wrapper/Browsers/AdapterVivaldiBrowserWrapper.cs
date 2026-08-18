@@ -9,12 +9,15 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrap
 /// <summary>
 /// Adapter: Driven Adapter (Outbound) implementing Chromium-based control and discovery for Vivaldi Browser.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Prozess-, Datei- und Konfigurationssteuerung von Vivaldi.<br/>
-/// - <strong>Implementierte Basis / Port:</strong> Erbt von <see cref="AdapterChromiumBrowserBaseWrapper"/> (welcher <see cref="IOutboundPortBrowser"/> implementiert).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie in der Infrastrukturschicht liegt und die Steuerung einer spezifischen externen Browser-Anwendung für den Core übernimmt.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles process, file, and configuration control for Vivaldi Browser in the Infrastructure layer.<br/>
+/// - <strong>Implemented Base / Port:</strong> Inherits from <see cref="AdapterChromiumBrowserBaseWrapper"/> (which implements <see cref="IOutboundPortBrowser"/>).<br/>
 /// </para>
 /// </summary>
+/// <param name="processControlPort">OS process control port.</param>
+/// <param name="settingsPort">System configuration repository port.</param>
+/// <param name="fileSystemPort">File system operations port.</param>
+/// <param name="logger">Logger instance.</param>
 public sealed class AdapterVivaldiBrowserWrapper(
     IOutboundPortOsProcessControl processControlPort,
     IOutboundPortSystemConfigurationRepository settingsPort,
@@ -30,7 +33,7 @@ public sealed class AdapterVivaldiBrowserWrapper(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string DefaultBrowserRegistryName = "Vivaldi";
     private const string DefaultDisplayName = "Vivaldi";
     private const string DefaultExeFileName = "vivaldi.exe";
@@ -44,7 +47,7 @@ public sealed class AdapterVivaldiBrowserWrapper(
     private const string MachineUninstallRegistryKeyPattern = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{0}";
     private const string Wow64UninstallRegistryKeyPattern = @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{0}";
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     private static readonly string[] _userDataSubPath = ["Vivaldi", "User Data"];
 
 
@@ -52,7 +55,7 @@ public sealed class AdapterVivaldiBrowserWrapper(
     //  4. Properties
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     protected override string BrowserRegistryName => DefaultBrowserRegistryName;
 
     public override string BrowserVersion
@@ -86,9 +89,9 @@ public sealed class AdapterVivaldiBrowserWrapper(
     protected override string RegistryKeyVersion => DefaultRegistryKeyVersion;
     protected override string UninstallSubKey => DefaultUninstallSubKey;
 
-    // ── Block 3: Enums (alphabetisch) ──
+    // ── Block 3: Enums ──
     public override BrowserType Type => BrowserType.Vivaldi;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     protected override string[] UserDataSubPath => _userDataSubPath;
 }

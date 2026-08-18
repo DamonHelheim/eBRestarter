@@ -8,20 +8,23 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
+using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) implementing process control for the Windows operating system.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Prozesssteuerung (Starten, Stoppen, Fenster-Interaktionen via P/Invoke).<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortOsProcessControl"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um OS-Prozess-Seiteneffekte auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles process control operations (launch, termination, window interaction via P/Invoke) for Windows in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortOsProcessControl"/>.<br/>
 /// </para>
 /// </summary>
+/// <param name="logger">Logger instance.</param>
+/// <param name="processWrapper">Process wrapper instance.</param>
 [SupportedOSPlatform("windows")]
 public sealed partial class AdapterWindowsProcessControlWrapper(
     ILogger<AdapterWindowsProcessControlWrapper> logger,
@@ -32,7 +35,7 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string ExplorerExeFileName = "explorer.exe";
     private const string ExplorerProcessName = "explorer";
     private const string IdleProcessName = "Idle";
@@ -50,7 +53,7 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
     //  2. Fields
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    // ── Block 1: Injected dependencies ──
     private readonly ILogger<AdapterWindowsProcessControlWrapper> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly IProcessWrapper _processWrapper = processWrapper ?? throw new ArgumentNullException(nameof(processWrapper));
 
@@ -59,6 +62,7 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
+    /// <inheritdoc />
     public async Task CloseAllOpenProgramsAsync(int timeoutMilliseconds)
     {
         var processes = _processWrapper.GetProcesses();
@@ -66,7 +70,9 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         List<Task> pendingTasks = [];
         List<IProcess> processesToDispose = [];
 
-        string currentProcessName = Process.GetCurrentProcess().ProcessName;
+        // Process handles represent native resources - using declaration ensures proper cleanup.
+        using var currentProcess = Process.GetCurrentProcess();
+        string currentProcessName = currentProcess.ProcessName;
 
         foreach (var process in processes)
         {
@@ -85,6 +91,7 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         }
     }
 
+    /// <inheritdoc />
     public void CloseApplication(string processName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(processName);
@@ -98,16 +105,18 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error terminating {Name}", processName);
+            _logger.LogError(LogEventIds.OperatingSystem.ProcessTerminationFailed, exception, "Error terminating {Name}", processName);
         }
     }
 
+    /// <inheritdoc />
     public bool IsProcessAlive(string processName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(processName);
         return _processWrapper.IsProcessRunning(processName);
     }
 
+    /// <inheritdoc />
     public void OpenDirectoryInFileBrowser(string folderPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(folderPath);
@@ -126,17 +135,18 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
                 UseShellExecute = true
             });
 
-            if (_logger.IsEnabled(LogLevel.Information))
+            if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogInformation("Explorer opened in: {Path}", folderPath);
+                _logger.LogDebug(LogEventIds.OperatingSystem.ExplorerOpened, "Explorer opened in: {Path}", folderPath);
             }
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error opening Explorer: {Path}", folderPath);
+            _logger.LogError(LogEventIds.OperatingSystem.ExplorerOpenFailed, exception, "Error opening Explorer: {Path}", folderPath);
         }
     }
 
+    /// <inheritdoc />
     public void OpenUrlInBrowser(string exeFilePath, string arguments)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exeFilePath);
@@ -152,17 +162,23 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
 
             _processWrapper.Start(startInfo);
 
-            if (_logger.IsEnabled(LogLevel.Information))
+            if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogInformation("Executable started: {Path} with arguments: {Args}", exeFilePath, arguments);
+                // Mask URL user segment to redact sensitive user credentials in log entries.
+                _logger.LogDebug(
+                    LogEventIds.OperatingSystem.ProcessStarted,
+                    "Executable started: {Path} with arguments: {Args}",
+                    exeFilePath,
+                    LogRedaction.MaskUrlUserSegment(arguments));
             }
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error starting the EXE: {Path}", exeFilePath);
+            _logger.LogError(LogEventIds.OperatingSystem.ProcessStartFailed, exception, "Error starting the EXE: {Path}", exeFilePath);
         }
     }
 
+    /// <inheritdoc />
     public void RunInstaller(string installerPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(installerPath);
@@ -188,7 +204,7 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
             {
                 if (_logger.IsEnabled(LogLevel.Warning))
                 {
-                    _logger.LogWarning("MSI process could not be started (null): {Path}", installerPath);
+                    _logger.LogWarning(LogEventIds.OperatingSystem.InstallerNotStarted, "MSI process could not be started (null): {Path}", installerPath);
                 }
 
                 return;
@@ -201,25 +217,26 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
 
             if (!string.IsNullOrWhiteSpace(error) && _logger.IsEnabled(LogLevel.Warning))
             {
-                _logger.LogWarning("MSI Installer error output: {Error}", error);
+                _logger.LogWarning(LogEventIds.OperatingSystem.InstallerOutputReceived, "MSI Installer error output: {Error}", error);
             }
 
             if (!string.IsNullOrWhiteSpace(output) && _logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("MSI Installer output: {Output}", output);
+                _logger.LogDebug(LogEventIds.OperatingSystem.InstallerOutputReceived, "MSI Installer output: {Output}", output);
             }
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error starting the MSI installer: {Path}", installerPath);
+            _logger.LogError(LogEventIds.OperatingSystem.InstallerStartFailed, exception, "Error starting the MSI installer: {Path}", installerPath);
         }
     }
 
+    /// <inheritdoc />
     public void ShutdownComputer()
     {
         try
         {
-            _logger.LogInformation("Shutting down computer (Restart)...");
+            _logger.LogInformation(LogEventIds.OperatingSystem.ProcessShutdownRequested, "Shutting down computer (Restart)...");
 
             string systemFolder = Environment.GetFolderPath(Environment.SpecialFolder.System);
             string shutdownPath = Path.Combine(systemFolder, ShutdownExeFileName);
@@ -228,10 +245,11 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error attempting to shut down the computer.");
+            _logger.LogError(LogEventIds.OperatingSystem.ProcessShutdownFailed, exception, "Error attempting to shut down the computer.");
         }
     }
 
+    /// <inheritdoc />
     public void StartExecutable(string exeFilePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(exeFilePath);
@@ -244,25 +262,30 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
                 UseShellExecute = true
             });
 
-            if (_logger.IsEnabled(LogLevel.Information))
+            if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogInformation("Executable started: {Path}", exeFilePath);
+                _logger.LogDebug(LogEventIds.OperatingSystem.ProcessStarted, "Executable started: {Path}", exeFilePath);
             }
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error starting the EXE: {Path}", exeFilePath);
+            _logger.LogError(LogEventIds.OperatingSystem.ProcessStartFailed, exception, "Error starting the EXE: {Path}", exeFilePath);
         }
     }
 
+    /// <inheritdoc />
     public Task StartExecutableAsync(string exeFilePath)
     {
-        // ⚡ Immediate Guard-Clause Exception Timing (Guide Abs. 9.1)
+        // Immediate guard clause validation prior to async state machine instantiation.
         ArgumentException.ThrowIfNullOrWhiteSpace(exeFilePath);
 
         return StartExecutableCoreAsync(exeFilePath);
     }
 
+    /// <summary>
+    /// Asynchronously starts an executable and waits for process termination.
+    /// </summary>
+    /// <param name="exeFilePath">Target executable file path.</param>
     private async Task StartExecutableCoreAsync(string exeFilePath)
     {
         try
@@ -277,23 +300,23 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
 
             if (process is not null)
             {
-                if (_logger.IsEnabled(LogLevel.Information))
+                if (_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogInformation("Executable started and waiting for termination: {Path}", exeFilePath);
+                    _logger.LogDebug(LogEventIds.OperatingSystem.ProcessStarted, "Executable started and waiting for termination: {Path}", exeFilePath);
                 }
 
                 await process.WaitForExitAsync().ConfigureAwait(false);
 
-                if (_logger.IsEnabled(LogLevel.Information))
+                if (_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogInformation("Executable was terminated: {Path}", exeFilePath);
+                    _logger.LogDebug(LogEventIds.OperatingSystem.ProcessTerminated, "Executable was terminated: {Path}", exeFilePath);
                 }
             }
             else
             {
                 if (_logger.IsEnabled(LogLevel.Warning))
                 {
-                    _logger.LogWarning("Process could not be started (received null): {Path}", exeFilePath);
+                    _logger.LogWarning(LogEventIds.OperatingSystem.InstallerNotStarted, "Process could not be started (received null): {Path}", exeFilePath);
                 }
             }
         }
@@ -303,10 +326,18 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         }
     }
 
+    /// <summary>
+    /// Posts a Windows message to the message queue of the specified window.
+    /// </summary>
     [LibraryImport(User32DllName, EntryPoint = PostMessageWEntryPoint, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+    /// <summary>
+    /// Determines whether the specified process should be excluded from graceful closure.
+    /// </summary>
+    /// <param name="process">Process instance.</param>
+    /// <param name="currentProcessName">Name of the executing application process.</param>
     private static bool ShouldIgnoreProcess(IProcess process, string currentProcessName)
     {
         return process.ProcessName == SystemProcessName
@@ -315,6 +346,12 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
                || process.ProcessName.Equals(currentProcessName, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Attempts to send WM_CLOSE to a process window or disposes handle if windowless.
+    /// </summary>
+    /// <param name="process">Process instance.</param>
+    /// <param name="pendingTasks">List of pending termination tasks.</param>
+    /// <param name="processesToDispose">List of processes to dispose post-completion.</param>
     private void TryCloseProcess(IProcess process, List<Task> pendingTasks, List<IProcess> processesToDispose)
     {
         try
@@ -332,32 +369,38 @@ public sealed partial class AdapterWindowsProcessControlWrapper(
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error sending WM_CLOSE to process {Name}", process.ProcessName);
+            _logger.LogError(LogEventIds.OperatingSystem.ProcessCloseRequestFailed, exception, "Error sending WM_CLOSE to process {Name}", process.ProcessName);
             process.Dispose();
         }
     }
 
+    /// <summary>
+    /// Waits for pending process close tasks to complete within specified timeout.
+    /// </summary>
+    /// <param name="pendingTasks">List of pending termination tasks.</param>
+    /// <param name="processesToDispose">List of processes to dispose post-completion.</param>
+    /// <param name="timeoutMilliseconds">Timeout in milliseconds.</param>
     private async Task WaitForProcessesToCloseAsync(List<Task> pendingTasks, List<IProcess> processesToDispose, int timeoutMilliseconds)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (_logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogInformation("Waiting for the closure of {Count} programs (Timeout: {Timeout}ms)...", pendingTasks.Count, timeoutMilliseconds);
+            _logger.LogDebug(LogEventIds.OperatingSystem.ProcessCloseRequestFailed, "Waiting for the closure of {Count} programs (Timeout: {Timeout}ms)...", pendingTasks.Count, timeoutMilliseconds);
         }
 
         try
         {
             await Task.WhenAll(pendingTasks).WaitAsync(TimeSpan.FromMilliseconds(timeoutMilliseconds)).ConfigureAwait(false);
 
-            if (_logger.IsEnabled(LogLevel.Information))
+            if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogInformation("All programs were successfully closed gracefully.");
+                _logger.LogDebug(LogEventIds.OperatingSystem.ProcessesClosedGracefully, "All programs were successfully closed gracefully.");
             }
         }
         catch (TimeoutException exception)
         {
             if (_logger.IsEnabled(LogLevel.Warning))
             {
-                _logger.LogWarning(exception, "Timeout reached while waiting for programs to terminate.");
+                _logger.LogWarning(LogEventIds.OperatingSystem.ProcessCloseTimeout, exception, "Timeout reached while waiting for programs to terminate.");
             }
         }
         finally

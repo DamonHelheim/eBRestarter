@@ -1,15 +1,16 @@
 using FluentValidation;
 
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
+using eBRestarter.Core.Domain.Validators;
 
 namespace eBRestarter.Infrastructure.BehavioralComponents.Validators;
 
 /// <summary>
-/// Validierungsregel für <see cref="ManageRestarterCycleRequest"/>.
+/// Validator for <see cref="ManageRestarterCycleRequest"/>.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): KEIN ADAPTER (Fall A - Infrastruktur-Hilfsklasse)</strong><br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 1.1 des Leitfadens ist diese Klasse <strong>kein Adapter</strong>, da sie kein Port-Interface aus dem Application Core implementiert. Sie erbt lediglich von <see cref="AbstractValidator{T}"/> und definiert interne Validierungsregeln für die FluentValidation-Bibliothek.<br/>
-/// - <strong>Aktion:</strong> Wurde aus <c>Infrastructure/Adapters/Validators</c> in den Ordner <c>Infrastructure/BehavioralComponents/Validators</c> verschoben.
+/// <strong>Architecture Classification: INFRASTRUCTURE HELPER / VALIDATOR</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates FluentValidation rules for restarter cycle execution requests.<br/>
+/// - <strong>Design Rationale:</strong> Implements <see cref="AbstractValidator{T}"/> for validation rules without implementing application port interfaces.<br/>
 /// </para>
 /// </summary>
 public sealed class ManageRestarterCycleValidator : AbstractValidator<ManageRestarterCycleRequest>
@@ -18,16 +19,20 @@ public sealed class ManageRestarterCycleValidator : AbstractValidator<ManageRest
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitive Types & Strings (alphabetical) ──
     private const string BrowserTypeRequiredErrorMessage = "A valid browser type must be selected.";
     private const string PauseTimeCannotBeNegativeErrorMessage = "Pause time cannot be negative.";
     private const string RuntimeGreaterThanZeroErrorMessage = "Runtime must be greater than 0 seconds.";
+    private const string UsernameRequiredErrorMessage = "A username is required to start the restarter.";
 
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="ManageRestarterCycleValidator"/> with validation rules.
+    /// </summary>
     public ManageRestarterCycleValidator()
     {
         RuleFor(request => request.BrowserType)
@@ -41,5 +46,15 @@ public sealed class ManageRestarterCycleValidator : AbstractValidator<ManageRest
         RuleFor(request => request.PauseSeconds)
             .GreaterThanOrEqualTo(0)
             .WithMessage(PauseTimeCannotBeNegativeErrorMessage);
+
+        // 🔒 Security Guidelines Section 5.1 (Whitelisting): Validates username formatting to prevent
+        // command line switch injection when the username is passed into browser launch arguments.
+        RuleFor(request => request.Username)
+            .NotEmpty()
+            .WithMessage(UsernameRequiredErrorMessage);
+
+        RuleFor(request => request.Username)
+            .Must(EVisitorUsernamePolicy.IsValid)
+            .WithMessage(EVisitorUsernamePolicy.RuleDescription);
     }
 }

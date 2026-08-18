@@ -6,19 +6,24 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Prov
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for checking Windows network connectivity via NetworkInterface.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Abfrage des OS-Netzwerkverbindungsstatus.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortNetworkProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, einen Outbound Port implementiert und vom Core angetrieben wird, um technologische System-Abfragen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Queries OS network interface status and connectivity in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortNetworkProvider"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsNetworkProvider : IOutboundPortNetworkProvider
 {
+    /// <summary>
+    /// Determines whether any network interface is available and connected to a network.
+    /// </summary>
     public bool CheckIsNetworkAvailable()
     {
         return NetworkInterface.GetIsNetworkAvailable();
     }
 
+    /// <summary>
+    /// Retrieves objects that describe all network interfaces on the local computer.
+    /// </summary>
     public NetworkInterface[] RetrieveAllNetworkInterfaces()
     {
         return NetworkInterface.GetAllNetworkInterfaces();

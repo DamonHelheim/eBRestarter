@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-using eBRestarter.Core.Application.BehavioralComponents.Extensions;
+using eBRestarter.Desktop.WinUI3.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Handlers;
@@ -23,15 +23,21 @@ using eBRestarter.Desktop.WinUI3.BehavioralComponents.Providers.Interfaces;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.UIOptionDTO;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Enums;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
-public sealed partial class ViewModelOptionsGeneral : ObservableObject
+/// <summary>
+/// View model for the general options page. Manages application startup, theme selection,
+/// language settings, scheduled computer restart intervals, auto-logon configuration, and updates.
+/// </summary>
+public sealed partial class ViewModelOptionsGeneral : ObservableObject, IDisposable
 {
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string AdminRequiredMessage = "Es sind Administratorrechte erforderlich, um diese Aktion auszuführen. Bitte starten Sie die Anwendung als Administrator.";
     private const string DarkThemeName = "Dark";
     private const string GeneralErrorKey = "General_Error";
@@ -66,8 +72,9 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IInboundPortOsAppPathProvider _appPathProvider;
+    private readonly ILogger<ViewModelOptionsGeneral> _logger;
     private readonly IInboundPortComputerRestartService _computerRestartScheduler;
     private readonly IUseCaseConfigureAutoLogon _configureAutoLogonUseCase;
     private readonly IDialogService _dialogService;
@@ -83,17 +90,18 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
     private readonly IUIOptionsProvider _uiOptionsService;
     private readonly IOutboundPortSystemInfoProvider _windowsSystemInfo;
 
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
+    private volatile bool _disposed;
     private bool _isInitializing;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     private readonly AppConfig _currentConfig;
     private readonly DispatcherQueue _dispatcherQueue;
 
     // ═══════════════════════════════════════════════════════
     //  3. Observable Properties (+ Partial Methods)
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     [ObservableProperty] public partial int ComputerRestartClockTime { get; set; }
 
     partial void OnComputerRestartClockTimeChanged(int value)
@@ -133,12 +141,12 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
             return;
         }
 
-        ToggleAutoStartAsync(value).Forget();
+        ToggleAutoStartAsync(value).Forget(_logger, nameof(ToggleAutoStartAsync));
     }
 
     [ObservableProperty] public partial string UpdateMessage { get; set; } = string.Empty;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     [ObservableProperty] public partial ComputerRestartOption SelectedComputerRestartOption { get; set; }
 
     partial void OnSelectedComputerRestartOptionChanged(ComputerRestartOption value)
@@ -198,17 +206,20 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  4. Properties
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     public int ComputerRestartClockTimeMax { get; init; }
     public int ComputerRestartClockTimeMin { get; init; }
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     public ReadOnlyCollection<ComputerRestartOption> ComputerRestartList { get; }
     public ReadOnlyCollection<LanguageOption> LanguageList { get; private set; }
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes the general options view model, populates options lists, and loads saved settings.
+    /// </summary>
     public ViewModelOptionsGeneral(
         IInboundPortOsAppPathProvider appPathProvider,
         IInboundPortComputerRestartService computerRestartScheduler,
@@ -217,6 +228,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         IOutboundPortEVisitorConfigRepository evRestarterConfigRepository,
         ILanguageHandler languageService,
         IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelOptionsGeneral> logger,
         IUseCaseManageApplicationUpdates manageApplicationUpdatesUseCase,
         IInboundPortNextRestartDateHandler nextRestartDateHandler,
         IOutboundPortOsAutoLogonRepository osAutoLogonPort,
@@ -233,6 +245,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
         ArgumentNullException.ThrowIfNull(languageService);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(manageApplicationUpdatesUseCase);
         ArgumentNullException.ThrowIfNull(nextRestartDateHandler);
         ArgumentNullException.ThrowIfNull(osAutoLogonPort);
@@ -251,6 +264,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         _evRestarterConfigRepository = evRestarterConfigRepository;
         _languageService = languageService;
         _localizationService = localizationService;
+        _logger = logger;
         _manageApplicationUpdatesUseCase = manageApplicationUpdatesUseCase;
         _nextRestartDateHandler = nextRestartDateHandler;
         _osAutoLogonPort = osAutoLogonPort;
@@ -300,7 +314,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
 
         _computerRestartScheduler.NextRestartDateChanged += OnNextRestartDateChanged;
 
-        InitializeAsync().Forget();
+        InitializeAsync().Forget(_logger, nameof(InitializeAsync));
     }
 
     // ═══════════════════════════════════════════════════════
@@ -348,7 +362,11 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.Update.UpdateCheckFailed,
+                exception,
+                "Checking for application updates failed.");
+
             string errorFormat = _localizationService.RetrieveString(OptionsUpdateCheckErrorMessageResourceKey);
             await _dialogService.ShowMessageAsync(
                 _localizationService.RetrieveString(OptionsUpdateErrorTitleResourceKey),
@@ -361,6 +379,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
     }
 
+    /// <summary>Displays the auto-logon setup dialog and executes the configuration use case.</summary>
     [RelayCommand]
     private async Task ConfigureAutoLogonAsync()
     {
@@ -442,15 +461,18 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
     }
 
+    /// <summary>Opens the application data directory in the system file browser.</summary>
     [RelayCommand]
     private void OpenSettingsDataFolder()
     {
         _osProcessControlPort.OpenDirectoryInFileBrowser(_appPathProvider.RetrieveAppDataPath());
     }
 
+    /// <summary>Triggers the application update installation process.</summary>
     [RelayCommand]
     private Task PerformUpdateAsync() => PerformUpdateCoreAsync();
 
+    /// <summary>Applies the dark UI theme and persists the choice to configuration.</summary>
     [RelayCommand]
     private void SetDarkTheme()
     {
@@ -458,6 +480,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         SaveThemeConfig(DarkThemeName);
     }
 
+    /// <summary>Applies the light UI theme and persists the choice to configuration.</summary>
     [RelayCommand]
     private void SetLightTheme()
     {
@@ -468,8 +491,10 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>Gets a value indicating whether update checking can be initiated.</summary>
     private bool CanCheckForUpdates() => !IsCheckingForUpdates;
 
+    /// <summary>Asynchronously initializes auto-start state from OS settings.</summary>
     private async Task InitializeAsync()
     {
         _isInitializing = true;
@@ -484,8 +509,30 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Unsubscribes from the restart scheduler so the long-lived scheduler cannot keep this view
+    /// model reachable through its event delegate list (Guide Kap. 22.2 / 22.10).
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        _computerRestartScheduler.NextRestartDateChanged -= OnNextRestartDateChanged;
+    }
+
+    /// <summary>Handles next restart date change events from the scheduler service.</summary>
     private void OnNextRestartDateChanged(object? sender, DateTime? newDate)
     {
+        if (_disposed)
+        {
+            return;
+        }
+
         _dispatcherQueue.TryEnqueue(() =>
         {
             _currentConfig.Computer.SetNextRestartDate(newDate);
@@ -493,6 +540,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         });
     }
 
+    /// <summary>Executes core application update installation and handles failure feedback.</summary>
     private async Task PerformUpdateCoreAsync()
     {
         IsCheckingForUpdates = true;
@@ -503,7 +551,10 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.Update.UpdateDownloaded,
+                exception,
+                "Performing the application update failed.");
 
             string errorFormat = _localizationService.RetrieveString(OptionsUpdateFailedMessageResourceKey);
 
@@ -518,6 +569,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         }
     }
 
+    /// <summary>Persists modified restart, language, and auto-start settings to config repository.</summary>
     private void SaveSettings()
     {
         var freshConfig = _evRestarterConfigRepository.LoadConfig();
@@ -530,6 +582,7 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         _evRestarterConfigRepository.SaveConfig(freshConfig);
     }
 
+    /// <summary>Saves the selected UI theme name to configuration.</summary>
     private void SaveThemeConfig(string theme)
     {
         var config = _evRestarterConfigRepository.LoadConfig();
@@ -537,12 +590,14 @@ public sealed partial class ViewModelOptionsGeneral : ObservableObject
         _evRestarterConfigRepository.SaveConfig(config);
     }
 
+    /// <summary>Toggles Windows auto-start setting via OS use case.</summary>
     private async Task ToggleAutoStartAsync(bool enable)
     {
         await _toggleAppAutoStartUseCase.ToggleAsync(enable);
         _currentConfig.Settings.StartWithWindows = enable;
     }
 
+    /// <summary>Updates UI properties for restart status text and slider visibility.</summary>
     private void UpdateRestartUiState()
     {
         int days = SelectedComputerRestartOption?.Days ?? 0;

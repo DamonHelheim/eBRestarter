@@ -1,8 +1,22 @@
 namespace eBRestarter.Core.Application.ObjectArchetypes.Enums;
 
+/// <summary>
+/// Represents the execution outcome of a browser cycle phase.
+/// </summary>
 public enum BrowserPhaseResult
 {
-    Completed,     // The runtime has completed normally
-    BrowserClosed, // The CheckBrowserAliveRoutine triggered (browser is dead)
-    CleanupDue     // 12:00 AM (midnight) was reached, clean up immediately!
+    /// <summary>
+    /// The browser runtime phase completed normally for its designated duration.
+    /// </summary>
+    Completed,
+
+    /// <summary>
+    /// The browser phase terminated early because the browser process was closed or died.
+    /// </summary>
+    BrowserClosed,
+
+    /// <summary>
+    /// The browser phase was interrupted because a scheduled midnight cleanup operation is due.
+    /// </summary>
+    CleanupDue
 }

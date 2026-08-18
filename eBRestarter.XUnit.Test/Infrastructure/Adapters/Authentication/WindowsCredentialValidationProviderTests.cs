@@ -1,161 +1,126 @@
-using eBRestarter.Infrastructure.Adapters.Authentication;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Infrastructure.Repositories.Authentication;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System;
 using System.DirectoryServices.AccountManagement;
 using Xunit;
-using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Authentication;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS.Authentication;
+using NSubstitute.ExceptionExtensions;
+using Microsoft.Extensions.Logging.Testing;
+using Microsoft.Extensions.Logging;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {
     /// <summary>
-    /// Testet die Logik zur Validierung von Windows-/Domain-Anmeldedaten.
-    /// Wir prüfen, ob je nach Domain der richtige Kontext gewählt wird und ob
-    /// die speziellen Active-Directory-Exceptions korrekt übersetzt werden.
+    /// Unit tests for <see cref="AdapterWindowsCredentialValidationProvider"/> verifying Windows and Active Directory credential validation.
     /// </summary>
     public class WindowsCredentialValidationProviderTests
     {
-        /// <summary>
-        /// Wenn der Nutzer sich lokal am PC anmeldet (Domain = Computername), muss das System
-        /// zwingend den DirectoryContextScope.Machine nutzen, da sonst die Anmeldung fehlschlägt.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir übergeben als Domain den Namen des aktuellen Computers (Environment.MachineName).
-        /// Wir prüfen mit Moq, ob der Wrapper exakt mit DirectoryContextScope.Machine aufgerufen wurde.
-        /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseMachineContext_WhenDomainIsLocalComputer()
         {
-            // ARRANGE
-            var mockAdService = new Mock<IOutboundPortActiveDirectoryProvider>();
+            // [R]IGHT: Local computer domain uses DirectoryContextScope.Machine
+            // Arrange
+            var mockAdService = Substitute.For<IOutboundPortActiveDirectoryProvider>();
 
-            // Wir sagen dem Mock: Wenn du aufgerufen wirst, antworte mit 'true'.
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ValidateCredentials(Arg.Any<DirectoryContextScope>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(true);
 
-            var useCase = new AdapterWindowsCredentialValidationProvider(mockAdService.Object);
+            var useCase = new AdapterWindowsCredentialValidationProvider(
+                mockAdService,
+                new FakeLogger<AdapterWindowsCredentialValidationProvider>());
 
             string localMachineName = Environment.MachineName;
 
-            // ACT
+            // Act
             var result = useCase.ValidateCredentials("TestUser", localMachineName, "Password123");
 
-            // ASSERT
+            // Assert
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde DirectoryContextScope.Machine an das System übergeben?
-            mockAdService.Verify(ad => ad.ValidateCredentials(
-                DirectoryContextScope.Machine, // <-- Darauf kommt es an!
+            mockAdService.Received(1).ValidateCredentials(
+                DirectoryContextScope.Machine,
                 localMachineName,
                 "TestUser",
-                "Password123"), Times.Once);
+                "Password123");
         }
 
-        /// <summary>
-        /// Wenn sich der Nutzer an einer echten Firmendomain anmeldet (z. B. "MEINEFIRMA"),
-        /// muss zwingend DirectoryContextScope.Domain genutzt werden.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir übergeben eine beliebige Domain, die nicht der Computername ist.
-        /// Wir prüfen mit Moq, ob der Wrapper mit DirectoryContextScope.Domain aufgerufen wurde.
-        /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldUseDomainContext_WhenDomainIsDifferentFromMachineName()
         {
-            // ARRANGE
-            var mockAdService = new Mock<IOutboundPortActiveDirectoryProvider>();
+            // [R]IGHT: Custom domain different from machine name uses DirectoryContextScope.Domain
+            // Arrange
+            var mockAdService = Substitute.For<IOutboundPortActiveDirectoryProvider>();
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ValidateCredentials(Arg.Any<DirectoryContextScope>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(true);
 
-            var useCase = new AdapterWindowsCredentialValidationProvider(mockAdService.Object);
+            var useCase = new AdapterWindowsCredentialValidationProvider(
+                mockAdService,
+                new FakeLogger<AdapterWindowsCredentialValidationProvider>());
 
             string someDomain = "FIRMEN_DOMAIN_ABC";
 
-            // ACT
+            // Act
             var result = useCase.ValidateCredentials("TestUser", someDomain, "Password123");
 
-            // ASSERT
+            // Assert
             result.ShouldBeTrue();
 
-            // WICHTIGSTER CHECK: Wurde DirectoryContextScope.Domain an das System übergeben?
-            mockAdService.Verify(ad => ad.ValidateCredentials(
-                DirectoryContextScope.Domain, // <-- Darauf kommt es an!
+            mockAdService.Received(1).ValidateCredentials(
+                DirectoryContextScope.Domain,
                 someDomain,
                 "TestUser",
-                "Password123"), Times.Once);
+                "Password123");
         }
 
-        /// <summary>
-        /// Wenn der Domain-Controller (Server) der Firma offline ist, wirft die Windows-API
-        /// eine 'PrincipalServerDownException'. Deine Klasse soll das fangen und in eine eigene
-        /// 'InvalidOperationException' mit the Text "PrincipalServerDown" übersetzen.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir zwingen den Mock dazu, genau diese spezifische Exception zu werfen.
-        /// Dann prüfen wir mit Shouldly, ob die übersetzte Exception nach außen dringt.
-        /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldThrowInvalidOperationException_WhenServerIsDown()
         {
-            // ARRANGE
-            var mockAdService = new Mock<IOutboundPortActiveDirectoryProvider>();
+            // [E]RROR: PrincipalServerDownException is caught and rethrown as InvalidOperationException
+            // Arrange
+            var mockAdService = Substitute.For<IOutboundPortActiveDirectoryProvider>();
 
-            // Wir simulieren einen Serverausfall
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ValidateCredentials(Arg.Any<DirectoryContextScope>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
                 .Throws(new PrincipalServerDownException());
 
-            var useCase = new AdapterWindowsCredentialValidationProvider(mockAdService.Object);
+            var useCase = new AdapterWindowsCredentialValidationProvider(
+                mockAdService,
+                new FakeLogger<AdapterWindowsCredentialValidationProvider>());
 
-            // ACT & ASSERT
-            // Wir fangen die Exception ab und prüfen ihren Typ und Inhalt
+            // Act
             var exception = Should.Throw<InvalidOperationException>(() =>
             {
                 useCase.ValidateCredentials("TestUser", "DOMAIN", "Password");
             });
 
+            // Assert
             exception.Message.ShouldBe("PrincipalServerDown");
         }
 
-        /// <summary>
-        /// Jede andere Art von Fehler (z.B. falsches Passwort, Account gesperrt, Netzwerkfehler)
-        /// soll gefangen werden und einfach als 'false' (Anmeldung fehlgeschlagen) zurückgegeben werden.
-        /// Die App darf nicht abstürzen!
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir lassen den Mock eine allgemeine Exception werfen und prüfen,
-        /// ob der Try-Catch-Block hält und 'false' zurückkommt.
-        /// </summary>
         [Fact]
         public void ValidateCredentials_ShouldReturnFalse_OnAnyOtherException()
         {
-            // ARRANGE
-            var mockAdService = new Mock<IOutboundPortActiveDirectoryProvider>();
+            // [E]RROR: Unexpected general exception is caught gracefully and returns false
+            // Arrange
+            var mockAdService = Substitute.For<IOutboundPortActiveDirectoryProvider>();
 
-            // Wir simulieren einen x-beliebigen unerwarteten Fehler
             mockAdService
-                .Setup(ad => ad.ValidateCredentials(It.IsAny<DirectoryContextScope>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Throws(new Exception("Irgendein unerwarteter Fehler im Windows-System"));
+                .ValidateCredentials(Arg.Any<DirectoryContextScope>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+                .Throws(new Exception("Unexpected error in Windows subsystem"));
 
-            var useCase = new AdapterWindowsCredentialValidationProvider(mockAdService.Object);
+            var useCase = new AdapterWindowsCredentialValidationProvider(
+                mockAdService,
+                new FakeLogger<AdapterWindowsCredentialValidationProvider>());
 
-            // ACT
+            // Act
             var result = useCase.ValidateCredentials("TestUser", "DOMAIN", "Password");
 
-            // ASSERT
-            // Die Exception wurde geschluckt und als Login-Fehlschlag interpretiert
+            // Assert
             result.ShouldBeFalse();
         }
     }
 }
-
-
-
-
-

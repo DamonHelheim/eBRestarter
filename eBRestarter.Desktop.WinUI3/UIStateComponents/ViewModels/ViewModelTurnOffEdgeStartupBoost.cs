@@ -23,7 +23,7 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string BrowserNotInstalledResourceKey = "Browser_NotInstalled";
     private const string EdgeStartupBoostSettingsClipboardText = "edge://settings/?search=Startup-Boost";
     private const string StartupBoostDialogCopyMessageResourceKey = "StartupBoostDialog_CopyMessage";
@@ -36,19 +36,19 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IDialogService _dialogService;
     private readonly IInboundPortLocalizationProvider _localizationService;
     private readonly IUseCaseToggleEdgeStartupBoost _toggleEdgeStartupBoostUseCase;
     private readonly IOutboundPortSystemInfoProvider _windowsSystemInfo;
 
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private bool _isRevertingState;
 
     // ═══════════════════════════════════════════════════════
     //  3. Observable Properties (+ Partial Methods)
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     [ObservableProperty] public partial string InfoBarMessage { get; set; } = string.Empty;
     [ObservableProperty] public partial string InfoBarTitle { get; set; } = string.Empty;
 
@@ -97,14 +97,15 @@ public sealed partial class ViewModelTurnOffEdgeStartupBoost : ObservableObject
         IsInfoBarOpen = true;
     }
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ── Block 4: Complex types, collections & UI elements ──
     [ObservableProperty] public partial InfoBarSeverity InfoBarSeverity { get; set; } = InfoBarSeverity.Informational;
 
 
     // ═══════════════════════════════════════════════════════
     //  4. Properties
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
+    /// <summary>Gets a value indicating whether the current user lacks administrator privileges.</summary>
     public bool IsNotAdministrator => !IsAdministrator;
 
     // ═══════════════════════════════════════════════════════

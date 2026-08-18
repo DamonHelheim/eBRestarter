@@ -5,6 +5,11 @@ namespace eBRestarter.Infrastructure.BehavioralComponents.Wrappers;
 
 /// <summary>
 /// Infrastructure Wrapper Component: Provides process creation, query, and termination operations wrapping system diagnostics.
+/// <para>
+/// <strong>Architecture Classification: INFRASTRUCTURE WRAPPER</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates <see cref="Process"/> static and instance operations behind the <see cref="IProcessWrapper"/> interface for testability.<br/>
+/// - <strong>Implemented Interface:</strong> <see cref="IProcessWrapper"/>.<br/>
+/// </para>
 /// </summary>
 public sealed class ProcessWrapper : IProcessWrapper
 {
@@ -12,82 +17,60 @@ public sealed class ProcessWrapper : IProcessWrapper
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
-    /// <summary>
-    /// Retrieves all running processes and wraps them into our testable adapters.
-    /// </summary>
+    /// <inheritdoc />
     public IProcess[] GetProcesses()
     {
         var processes = Process.GetProcesses();
 
-        // ✅ .NET 10 Hot-Path Performance: Array.ConvertAll anstelle von LINQ-Allokationen
+        // ✅ .NET 10 Hot-Path Performance: Array.ConvertAll avoids LINQ heap allocations
         return Array.ConvertAll(processes, static process => (IProcess)new ProcessAdapter(process));
     }
 
-    /// <summary>
-    /// Checks whether at least one instance of a process with the specified name is currently running.
-    /// </summary>
-    /// <param name="name">The friendly name of the process (without the .exe extension).</param>
-    /// <returns><c>true</c> if the process is running; otherwise, <c>false</c>.</returns>
+    /// <inheritdoc />
     public bool IsProcessRunning(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         var processes = Process.GetProcessesByName(name);
-        try
+
+        // ⚠️ Exception Guidelines Section 6: No try/finally required as nothing throws between
+        // GetProcessesByName and disposal, and Array.Length remains valid after disposing instances.
+        int runningCount = processes.Length;
+
+        foreach (var process in processes)
         {
-            return processes.Length > 0;
+            process.Dispose();
         }
-        finally
-        {
-            foreach (var process in processes)
-            {
-                process.Dispose();
-            }
-        }
+
+        return runningCount > 0;
     }
 
-    /// <summary>
-    /// Terminates all running instances of the specified process immediately (hard kill).
-    /// </summary>
-    /// <param name="name">The name of the process to be terminated.</param>
-    /// <remarks>
-    /// This method contains <b>no exception handling</b>. Errors (e.g., "Access Denied")
-    /// are passed through to the caller (the service) and must be handled there.
-    /// </remarks>
+    /// <inheritdoc />
     public void KillProcess(string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         var processes = Process.GetProcessesByName(name);
+
         foreach (var process in processes)
         {
-            try
+            // ⚠️ Exception Guidelines Section 6: Scoped using statement ensures deterministic disposal
+            // even when Process.Kill throws (e.g. Win32Exception / Access Denied).
+            using (process)
             {
                 process.Kill();
-            }
-            finally
-            {
-                process.Dispose();
             }
         }
     }
 
-    /// <summary>
-    /// Starts a process resource specified by the <see cref="ProcessStartInfo"/> parameter
-    /// and associates the resource with a new <see cref="Process"/> component.
-    /// </summary>
-    /// <param name="info">The <see cref="ProcessStartInfo"/> containing startup data (file name, arguments, etc.).</param>
-    /// <returns>
-    /// A new <see cref="Process"/> component associated with the process resource,
-    /// or <c>null</c> if no process resource was started.
-    /// </returns>
+    /// <inheritdoc />
     public IProcess? Start(ProcessStartInfo info)
     {
         ArgumentNullException.ThrowIfNull(info);
 
         var process = Process.Start(info);
 
-        // If the startup was successful, we wrap the real process into our adapter
+        // If the startup was successful, wrap the process instance into the adapter abstraction
         return process is not null ? new ProcessAdapter(process) : null;
     }
 }

@@ -9,29 +9,31 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Behaviors;
 /// </summary>
 public sealed class TextBoxNumericOnlyBehavior : Behavior<TextBox>
 {
+    /// <inheritdoc />
     protected override void OnAttached()
     {
         base.OnAttached();
         AssociatedObject.TextChanging += OnTextChanging;
     }
 
+    /// <inheritdoc />
     protected override void OnDetaching()
     {
         base.OnDetaching();
         AssociatedObject.TextChanging -= OnTextChanging;
     }
 
-    // ✅ .NET 10: Static handler prevents delegate instance state capturing.
     private static void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
         string currentText = sender.Text;
+
         if (string.IsNullOrEmpty(currentText))
         {
             return;
         }
 
-        // ✅ C# 14 / .NET 10: Allocation-free Span check (0 Bytes allocated on valid input).
         ReadOnlySpan<char> span = currentText.AsSpan();
+
         if (!HasNonDigits(span))
         {
             return;
@@ -39,7 +41,6 @@ public sealed class TextBoxNumericOnlyBehavior : Behavior<TextBox>
 
         int originalSelectionStart = sender.SelectionStart;
 
-        // ✅ .NET 10: Single-pass zero-intermediate-allocation string creation.
         string cleanText = RemoveNonDigits(span);
 
         sender.Text = cleanText;
@@ -49,6 +50,8 @@ public sealed class TextBoxNumericOnlyBehavior : Behavior<TextBox>
     /// <summary>
     /// Checks whether the span contains any non-digit characters without allocating memory.
     /// </summary>
+    /// <param name="span">The character span to inspect.</param>
+    /// <returns><c>true</c> if any non-digit character is found; otherwise, <c>false</c>.</returns>
     private static bool HasNonDigits(ReadOnlySpan<char> span)
     {
         foreach (char c in span)
@@ -65,6 +68,8 @@ public sealed class TextBoxNumericOnlyBehavior : Behavior<TextBox>
     /// <summary>
     /// Removes non-digit characters using allocation-efficient string.Create.
     /// </summary>
+    /// <param name="source">The source character span containing text input.</param>
+    /// <returns>A new string containing only ASCII digit characters.</returns>
     private static string RemoveNonDigits(ReadOnlySpan<char> source)
     {
         int digitCount = 0;

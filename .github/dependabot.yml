@@ -1,0 +1,36 @@
+# 🔒 Security-Guideline Kap. 7.2 (Automatisierte Überwachung):
+# "Enterprise-Projekte aktivieren mindestens Security-Updates automatisiert; reguläre
+#  Versions-Updates können gebündelt/geplant laufen."
+#
+# Sicherheits-Updates erzeugt Dependabot unabhängig vom hier gesetzten Intervall sofort,
+# sobald ein Advisory für eine verwendete Version erscheint. Der Wochenrhythmus unten
+# betrifft nur die regulären Versions-PRs, die bewusst gebündelt ankommen.
+version: 2
+
+updates:
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Reguläre Updates gebündelt, damit sie den Review-Betrieb nicht fluten.
+      # Security-Updates bleiben davon unberührt und kommen einzeln.
+      dotnet-runtime:
+        patterns:
+          - "Microsoft.Extensions.*"
+          - "System.*"
+      ui-stack:
+        patterns:
+          - "CommunityToolkit.*"
+          - "Microsoft.WindowsAppSDK"
+          - "Microsoft.Windows.SDK.BuildTools"
+          - "Microsoft.Xaml.Behaviors.*"
+          - "LiveChartsCore.*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday

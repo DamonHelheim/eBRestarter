@@ -1,17 +1,16 @@
-using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
 using Microsoft.Win32;
 using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Security;
 using Xunit;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsRegistryRepository.
-    /// Da diese Klasse tief in das System eingreift, arbeiten wir für Schreibtests
-    /// in einem sicheren, temporären Sandbox-Schlüssel unter HKEY_CURRENT_USER.
+    /// Integration tests for <see cref="AdapterWindowsRegistryRepository"/> verifying HKCU user values, HKLM system values, and sandbox key isolation.
     /// </summary>
     public class WindowsRegistryRepositoryTests : IDisposable
     {
@@ -21,169 +20,140 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         public WindowsRegistryRepositoryTests()
         {
             _sut = new AdapterWindowsRegistryRepository();
-
-            // Wir generieren für jeden Testdurchlauf einen einzigartigen, temporären Registry-Key.
-            // Das verhindert, dass sich parallele Tests stören oder das Entwickler-System zugemüllt wird.
             _tempTestKey = $@"Software\eBRestarter_TestSandbox_{Guid.NewGuid()}";
         }
-        // 1. CURRENT USER TESTS (HKCU) - Schreiben, Lesen, Löschen
 
-        /// <summary>
-        /// Stellt sicher, dass Werte korrekt in die CurrentUser-Registry geschrieben
-        /// und exakt so wieder ausgelesen werden können.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir schreiben einen String in unsere Sandbox und lesen ihn über die Get-Methode wieder aus.
-        /// </summary>
         [Fact]
         public void SetAndGetCurrentUserValue_ShouldWriteAndReadCorrectly()
         {
-            // ARRANGE
+            // [R]IGHT: Writes and reads string value under HKCU sandbox key
+            // Arrange
             string valueName = "TestString";
-            string expectedValue = "Hallo Registry!";
+            string expectedValue = "Hello Registry!";
 
-            // ACT
+            // Act
             _sut.SetUserValue(_tempTestKey, valueName, expectedValue);
             var actualValue = _sut.GetUserValue(_tempTestKey, valueName);
 
-            // ASSERT
+            // Assert
             actualValue.ShouldNotBeNull();
             actualValue.ToString().ShouldBe(expectedValue);
         }
 
-        /// <summary>
-        /// Wenn ein Wert gelöscht wird, darf er danach nicht mehr existieren. Die Methode
-        /// darf außerdem nicht abstürzen, wenn der Wert bereits fehlt (throwOnMissingValue: false).
-        /// </summary>
         [Fact]
         public void DeleteUserValue_ShouldRemoveValue_WithoutCrashing()
         {
-            // ARRANGE
+            // [R]IGHT / [B]OUNDARY: Deletes existing value and does not throw when deleting missing value
+            // Arrange
             string valueName = "DeleteMe";
-            _sut.SetUserValue(_tempTestKey, valueName, "Trash"); // Vorher anlegen
+            _sut.SetUserValue(_tempTestKey, valueName, "Trash");
 
-            // ACT
+            // Act
             _sut.DeleteUserValue(_tempTestKey, valueName);
             var resultAfterDelete = _sut.GetUserValue(_tempTestKey, valueName);
 
-            // ASSERT
+            // Assert
             resultAfterDelete.ShouldBeNull();
-
-            // Zweiter Aufruf darf KEINEN Fehler werfen (Test der Robustheit)
             Should.NotThrow(() => _sut.DeleteUserValue(_tempTestKey, valueName));
         }
 
-        /// <summary>
-        /// Stellt sicher, dass das Auslesen eines gesamten Registry-Schlüssels
-        /// alle darin enthaltenen Werte als Dictionary zurückgibt.
-        /// </summary>
         [Fact]
         public void GetCurrentUserValues_ShouldReturnAllValuesAsDictionary()
         {
-            // ARRANGE
+            // [R]IGHT: Returns all key values as strongly typed dictionary
+            // Arrange
             _sut.SetUserValue(_tempTestKey, "Wert1", "A");
-            _sut.SetUserValue(_tempTestKey, "Wert2", 42); // Int
+            _sut.SetUserValue(_tempTestKey, "Wert2", 42);
             _sut.SetUserValue(_tempTestKey, "Wert3", "C");
 
-            // ACT
+            // Act
             Dictionary<string, object> results = _sut.GetUserValues(_tempTestKey);
 
-            // ASSERT
+            // Assert
             results.ShouldNotBeNull();
             results.Count.ShouldBeGreaterThanOrEqualTo(3);
 
             results["Wert1"].ToString().ShouldBe("A");
-            results["Wert2"].ShouldBe(42); // Der Datentyp (Int) muss erhalten bleiben
+            results["Wert2"].ShouldBe(42);
         }
 
-        /// <summary>
-        /// Wenn ein Schlüssel nicht existiert, darf die App nicht abstürzen,
-        /// sondern muss ein leeres Dictionary zurückliefern.
-        /// </summary>
         [Fact]
         public void GetCurrentUserValues_ShouldReturnEmptyDictionary_WhenKeyDoesNotExist()
         {
-            // ACT
+            // [B]OUNDARY: Returns empty dictionary when registry key does not exist
+            // Act
             var results = _sut.GetUserValues($@"Software\GhostKey_{Guid.NewGuid()}");
 
-            // ASSERT
+            // Assert
             results.ShouldNotBeNull();
             results.ShouldBeEmpty();
         }
-        // 2. LOCAL MACHINE TESTS (HKLM)
 
-        /// <summary>
-        /// Das Lesen aus HKLM benötigt keine Adminrechte und muss immer funktionieren.
-        /// Wir prüfen das, indem wir einen Schlüssel lesen, der in jedem Windows-System existiert.
-        /// </summary>
         [Fact]
         public void GetLocalMachineValue_ShouldReadExistingWindowsKey()
         {
-            // ARRANGE
-            // Dieser Pfad existiert auf jedem Windows-Rechner
+            // [R]IGHT: Reads existing Windows product name string from HKLM CurrentVersion key
+            // Arrange
             string winNtPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
             string valueName = "ProductName";
 
-            // ACT
+            // Act
             var result = _sut.GetSystemValue(winNtPath, valueName);
 
-            // ASSERT
+            // Assert
             result.ShouldNotBeNull();
-            result.ToString().ShouldContain("Windows"); // z.B. "Windows 10 Pro" oder "Windows 11"
+            string? productName = result.ToString();
+            productName.ShouldNotBeNullOrWhiteSpace();
+            productName!.ShouldContain("Windows");
         }
 
-        /// <summary>
-        /// Das Schreiben in HKLM benötigt zwingend Administrator-Rechte.
-        /// Der Test prüft, ob entweder der Wert erfolgreich geschrieben wird (wenn als Admin ausgeführt),
-        /// oder ob die korrekte Sicherheitsausnahme geworfen wird (wenn als normaler User ausgeführt).
-        /// </summary>
         [Fact]
         public void SetSystemValue_ShouldWriteIfAdmin_OrThrowSecurityException()
         {
-            // ARRANGE
+            // [R]IGHT / [E]RROR: Writes system value when running with elevated privileges or throws security exception
+            // Arrange
             string hklmTestKey = $@"SOFTWARE\eBRestarter_HKLM_Test_{Guid.NewGuid()}";
 
             try
             {
-                // ACT
+                // Act
                 _sut.SetSystemValue(hklmTestKey, "AdminTest", "Success");
 
-                // ASSERT (Falls wir Admin-Rechte haben)
+                // Assert
                 var result = _sut.GetSystemValue(hklmTestKey, "AdminTest");
                 result.ShouldNotBeNull();
                 result.ToString().ShouldBe("Success");
 
-                // Cleanup für HKLM (nur möglich, wenn wir Admin sind)
                 Registry.LocalMachine.DeleteSubKeyTree(hklmTestKey, false);
             }
             catch (Exception ex)
             {
-                // ASSERT (Falls wir KEINE Admin-Rechte haben)
-                // Es muss entweder eine UnauthorizedAccessException oder SecurityException sein.
+                // Assert
                 (ex is UnauthorizedAccessException || ex is SecurityException)
-                    .ShouldBeTrue("Erwartete fehlende Berechtigung, da der Test-Runner nicht als Administrator läuft.");
+                    .ShouldBeTrue("Expected access restriction exception when running without elevated administrator privileges.");
             }
         }
-        // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
+
+        /// <summary>
+        /// Deletes the sandbox registry key hierarchy created under HKCU for test execution.
+        /// </summary>
         public void Dispose()
         {
-            // Wir löschen den kompletten Sandbox-Ordner aus der Registry des aktuellen Benutzers.
-            // So hinterlässt der Unit-Test absolut keine Spuren.
             try
             {
                 using var baseKey = Registry.CurrentUser.OpenSubKey("Software", true);
                 if (baseKey != null)
                 {
-                    // Den speziellen Ordner für diesen Testlauf löschen (nur diesen einen!)
                     string keyToDelete = _tempTestKey.Replace(@"Software\", "");
                     baseKey.DeleteSubKeyTree(keyToDelete, false);
                 }
             }
             catch
             {
-                // Fehler beim Aufräumen ignorieren, um den Test-Erfolg nicht zu verfälschen
+                // Ignore teardown errors to prevent test pollution
             }
+
+            GC.SuppressFinalize(this);
         }
     }
 }
-

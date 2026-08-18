@@ -10,8 +10,10 @@ public sealed partial class UC_OptionsExtension : UserControl
 
     public UC_OptionsExtension()
     {
-        InitializeComponent();
+        // x:Bind wertet gegen das Code-Behind aus – ViewModel muss VOR InitializeComponent stehen.
         ViewModel = App.AppHost!.Services.GetRequiredService<ViewModelOptionsExtension>();
+
+        InitializeComponent();
         this.DataContext = ViewModel;
     }
 }

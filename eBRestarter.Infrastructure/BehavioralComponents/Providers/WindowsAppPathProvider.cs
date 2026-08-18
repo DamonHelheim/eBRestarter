@@ -10,6 +10,7 @@ namespace eBRestarter.Infrastructure.BehavioralComponents.Providers;
 /// <summary>
 /// Provider Component: Infrastructure provider determining OS-specific application directory and file paths.
 /// </summary>
+/// <param name="pathProvider">The outbound port provider retrieving OS-level directory roots.</param>
 [SupportedOSPlatform("windows")]
 public sealed class WindowsAppPathProvider(
     IOutboundPortAppPathProvider pathProvider)
@@ -19,7 +20,7 @@ public sealed class WindowsAppPathProvider(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitive Types & Strings (alphabetical) ──
     private const string AppFolderName = "eBRestarter";
     private const string ConfigFileName = "eBRestarterConfig.json";
     private const string DownloadsFolderName = "Downloads";
@@ -31,7 +32,7 @@ public sealed class WindowsAppPathProvider(
     //  2. Fields
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch) ──
+    // ── Block 1: Injected Dependencies (alphabetical) ──
     private readonly IOutboundPortAppPathProvider _pathProvider = pathProvider ?? throw new ArgumentNullException(nameof(pathProvider));
 
 
@@ -39,15 +40,19 @@ public sealed class WindowsAppPathProvider(
     //  8. Methods
     // ═══════════════════════════════════════════════════════
 
+    /// <inheritdoc />
     public string RetrieveAppDataPath()
     {
         var localAppData = _pathProvider.RetrieveLocalAppDataDirectory();
         return Path.Combine(localAppData, SkylarFolderName, AppFolderName);
     }
 
+    /// <inheritdoc />
     public string RetrieveConfigFilePath() => Path.Combine(RetrieveAppDataPath(), ConfigFileName);
 
+    /// <inheritdoc />
     public string RetrieveDownloadsPath() => Path.Combine(_pathProvider.RetrieveUserProfileDirectory(), DownloadsFolderName);
 
+    /// <inheritdoc />
     public string RetrieveLogFilePath() => Path.Combine(RetrieveAppDataPath(), LogFileName);
 }

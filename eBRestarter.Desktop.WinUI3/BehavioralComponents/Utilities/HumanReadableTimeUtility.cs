@@ -7,16 +7,9 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Utilities;
 /// </summary>
 public static class HumanReadableTimeUtility
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
     private const int MinimumThreshold = 1;
     private const string ZeroSecondsText = "0s";
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Formats a time span given in total seconds into a human-readable string representation (e.g., "1h: 30m: 15s").
     /// </summary>

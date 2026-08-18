@@ -4,18 +4,22 @@ using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Common.Statics;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound) implementing Gecko/Firefox-specific control, profile management, and extension deployment.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Prozess-, Datei- und Profilsteuerung von Mozilla Firefox.<br/>
-/// - <strong>Implementierte Basis / Port:</strong> Erbt von <see cref="AdapterBrowserBaseWrapper"/> (welcher <see cref="IBrowserOutboundPort"/> implementiert).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie in der Infrastrukturschicht liegt und die Steuerung einer spezifischen externen Browser-Anwendung für den Core übernimmt.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles process, file, and profile control for Mozilla Firefox in the Infrastructure layer.<br/>
+/// - <strong>Implemented Base / Port:</strong> Inherits from <see cref="AdapterBrowserBaseWrapper"/> (which implements <see cref="IOutboundPortBrowser"/>).<br/>
 /// </para>
 /// </summary>
+/// <param name="processControlPort">OS process control port.</param>
+/// <param name="settingsPort">System configuration repository port.</param>
+/// <param name="fileSystemPort">File system operations port.</param>
+/// <param name="logger">Logger instance.</param>
 public sealed class AdapterFirefoxBrowserWrapper(
     IOutboundPortOsProcessControl processControlPort,
     IOutboundPortSystemConfigurationRepository settingsPort,
@@ -31,7 +35,7 @@ public sealed class AdapterFirefoxBrowserWrapper(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string AppDataEnvVar = "AppData";
     private const string Cache2EntriesSubPath = @"cache2\entries";
     private const string DefaultDisplayName = "Firefox";
@@ -63,7 +67,7 @@ public sealed class AdapterFirefoxBrowserWrapper(
     //  4. Properties
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     public override string DisplayName => DefaultDisplayName;
     public override string DownloadUrl => WebLinks.FirefoxDownloadLink;
     public override string ExtensionInstallUrl => WebLinks.FirefoxEVisitorAddOnLink;
@@ -71,10 +75,10 @@ public sealed class AdapterFirefoxBrowserWrapper(
     public override string ProcessName => DefaultProcessName;
     protected override string RegistryKeyVersion => DefaultRegistryKeyVersion;
 
-    // ── Block 3: Enums (alphabetisch) ──
+    // ── Block 3: Enums ──
     public override BrowserType Type => BrowserType.Firefox;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     protected override List<string> ExecutablePaths
     {
         get
@@ -192,6 +196,10 @@ public sealed class AdapterFirefoxBrowserWrapper(
         return new BrowserPaths(cacheDirs, cookiesDirs, extensionsDirs);
     }
 
+    /// <summary>
+    /// Retrieves Firefox executable path from Mozilla registry keys.
+    /// </summary>
+    /// <param name="isHklm"><see langword="true"/> to query HKLM; otherwise HKCU.</param>
     private string? RetrievePathFromMozillaRegistry(bool isHklm)
     {
         var currentVersionObj = isHklm
@@ -213,6 +221,10 @@ public sealed class AdapterFirefoxBrowserWrapper(
         return pathToExeObj?.ToString();
     }
 
+    /// <summary>
+    /// Parses Firefox profiles.ini to extract user profile paths.
+    /// </summary>
+    /// <param name="iniPath">Target profiles.ini path.</param>
     private List<ProfileInfo> RetrieveProfileFoldersFromIni(string iniPath)
     {
         List<ProfileInfo> profiles = [];
@@ -262,7 +274,7 @@ public sealed class AdapterFirefoxBrowserWrapper(
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error while parsing profiles.ini at {IniPath}", iniPath);
+            _logger.LogError(LogEventIds.Browser.BrowserProfileFileUnreadable, exception, "Error while parsing profiles.ini at {IniPath}", iniPath);
         }
 
         return profiles;

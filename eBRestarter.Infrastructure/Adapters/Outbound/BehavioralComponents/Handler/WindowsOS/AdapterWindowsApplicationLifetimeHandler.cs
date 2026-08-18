@@ -5,14 +5,17 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Hand
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Handler/Adapter) managing Windows application shutdown and restart lifecycle.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Beendigung oder zum Neustart des Anwendungsprozesses.<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortApplicationLifetime"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt und einen Port implementiert, um OS-Lebenszyklus-Seiteneffekte auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Encapsulates OS application termination and restart process calls in the Infrastructure layer.<br/>
+/// - <strong>Implemented Port:</strong> <see cref="IOutboundPortApplicationLifetime"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsApplicationLifetimeHandler : IOutboundPortApplicationLifetime
 {
+    /// <summary>
+    /// Terminates the application process with the specified exit code.
+    /// </summary>
+    /// <param name="exitCode">The exit code to return to the operating system.</param>
     public void ExitApplication(int exitCode)
     {
         Environment.Exit(exitCode);

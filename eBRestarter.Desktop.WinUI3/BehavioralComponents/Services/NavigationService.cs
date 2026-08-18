@@ -14,36 +14,18 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Services;
 /// </summary>
 public sealed class NavigationService : INavigationService
 {
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten / Schnittstellen ──
     private INavigationFrame? _frameAdapter;
 
-    // ── Block 4: Komplexe Typen / Dictionaries (alphabetisch A–Z) ──
     private readonly Dictionary<string, Type> _pages = [];
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Attaches the native WinUI3 frame container to the navigation service.
-    /// </summary>
-    /// <param name="frame">The native WinUI3 <see cref="Frame"/> instance.</param>
+    /// <inheritdoc />
     public void AttachFrame(Frame frame)
     {
         ArgumentNullException.ThrowIfNull(frame);
         _frameAdapter = new WinUIFrameNavigator(frame);
     }
 
-    /// <summary>
-    /// Navigates to the page registered under the specified route key.
-    /// </summary>
-    /// <param name="key">The unique route key identifier.</param>
-    /// <param name="parameter">Optional navigation parameter passed to the target page.</param>
-    /// <param name="transitionInfo">Optional transition animation information.</param>
-    /// <returns><c>true</c> if navigation succeeded; <c>false</c> if route is unregistered, frame is unattached, or page is already active.</returns>
+    /// <inheritdoc />
     public bool NavigateTo(
         string key,
         object parameter = null!,
@@ -69,11 +51,7 @@ public sealed class NavigationService : INavigationService
         return _frameAdapter.Navigate(pageType, parameter!, transitionInfo!);
     }
 
-    /// <summary>
-    /// Registers a route key and associates it with a page target type.
-    /// </summary>
-    /// <param name="key">The unique route key identifier.</param>
-    /// <param name="pageType">The target page type.</param>
+    /// <inheritdoc />
     public void RegisterRoute(string key, Type pageType)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);

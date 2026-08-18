@@ -13,10 +13,13 @@ namespace eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls
 
         public UC_InstalledBrowsers()
         {
-            InitializeComponent();
+            // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModelInstalledBrowsers = App.AppHost!.Services.GetRequiredService<ViewModelInstalledBrowsers>();
+
+        InitializeComponent();
 
             // Manually resolve the ViewModel from the container here
-            ViewModelInstalledBrowsers = App.AppHost!.Services.GetRequiredService<ViewModelInstalledBrowsers>();
 
             // Set the DataContext
             this.DataContext = ViewModelInstalledBrowsers;

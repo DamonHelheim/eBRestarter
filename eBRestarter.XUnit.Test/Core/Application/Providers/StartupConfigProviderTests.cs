@@ -1,12 +1,9 @@
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.OperatingSystem;
-using eBRestarter.Core.Application.Ports.Outbound.Application;
-using eBRestarter.Core.Domain.ValueObjects;
-using Moq;
+﻿using NSubstitute;
 using Shouldly;
 using Xunit;
+using eBRestarter.Core.Application.BehavioralComponents.Providers;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Core.Domain.ValueObjects;
 
 namespace eBRestarter.XUnit.Test.Core.Application.Providers;
 
@@ -20,16 +17,16 @@ public class StartupConfigProviderTests
             Settings = new SettingsConfig { Language = 0, Theme = "Dark" }
         };
 
-        var mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
-        mockConfigService.Setup(s => s.LoadConfig()).Returns(config);
+        var mockConfigService = Substitute.For<IOutboundPortEVisitorConfigRepository>();
+        mockConfigService.LoadConfig().Returns(config);
 
-        var sut = new StartupConfigProvider(mockConfigService.Object);
+        var sut = new StartupConfigProvider(mockConfigService);
 
         var prefs = sut.RetrieveStartupPreferences();
 
         prefs.LanguageCode.ShouldBe("de-DE");
         prefs.ThemeName.ShouldBe("Dark");
-        mockConfigService.Verify(s => s.SaveConfig(It.IsAny<AppConfig>()), Times.Never);
+        mockConfigService.DidNotReceive().SaveConfig(Arg.Any<AppConfig>());
     }
 }
 

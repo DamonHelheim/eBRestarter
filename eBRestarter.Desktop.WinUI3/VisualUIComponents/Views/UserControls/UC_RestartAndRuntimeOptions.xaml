@@ -62,9 +62,9 @@
                         Padding="2,0,0,0"
                         VerticalAlignment="Center"
                         Foreground="#FF00D4BC"
-                        Maximum="{Binding RuntimePauseSecondsMax, Mode=OneTime}"
-                        Minimum="{Binding RuntimePauseSecondsMin, Mode=OneTime}"
-                        Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Maximum="{x:Bind ViewModelRestarterProperties.RuntimePauseSecondsMax, Mode=OneTime}"
+                        Minimum="{x:Bind ViewModelRestarterProperties.RuntimePauseSecondsMin, Mode=OneTime}"
+                        Value="{x:Bind ViewModelRestarterProperties.RuntimePauseSeconds, Mode=TwoWay}" />
 
                     <NumberBox
                         Grid.Column="1"
@@ -75,7 +75,7 @@
                         Minimum="20"
                         SmallChange="1"
                         SpinButtonPlacementMode="Inline"
-                        Value="{Binding RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        Value="{x:Bind ViewModelRestarterProperties.RuntimePauseSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
                     <TextBlock
                         Grid.Column="2"
@@ -106,9 +106,9 @@
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         Foreground="#FF00D4BC"
-                        Maximum="{Binding BrowserRuntimeHoursMax, Mode=OneTime}"
-                        Minimum="{Binding BrowserRuntimeHoursMin, Mode=OneTime}"
-                        Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        Maximum="{x:Bind ViewModelRestarterProperties.BrowserRuntimeHoursMax, Mode=OneTime}"
+                        Minimum="{x:Bind ViewModelRestarterProperties.BrowserRuntimeHoursMin, Mode=OneTime}"
+                        Value="{x:Bind ViewModelRestarterProperties.RuntimeHours, Mode=TwoWay}" />
 
                     <NumberBox
                         Grid.Column="1"
@@ -119,7 +119,7 @@
                         Minimum="1"
                         SmallChange="1"
                         SpinButtonPlacementMode="Inline"
-                        Value="{Binding RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                        Value="{x:Bind ViewModelRestarterProperties.RuntimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
 
                     <TextBlock
                         Grid.Column="2"

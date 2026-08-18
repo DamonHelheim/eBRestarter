@@ -11,7 +11,7 @@ namespace eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 /// <param name="MonthlySum">The total sum for the current month.</param>
 /// <param name="TodaySum">The total sum for today.</param>
 public sealed record EarningsData(
-    double[] HourlyEarnings, // The 24 bars
+    double[] HourlyEarnings,
     double[] DailyEarnings,
     double[] MonthlyEarnings,
     double YearlySum,

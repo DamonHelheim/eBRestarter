@@ -1,190 +1,140 @@
-﻿using eBRestarter.Infrastructure.Adapters.WindowsOS;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
 using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrapper.Browsers;
+using Microsoft.Extensions.Logging.Testing;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Browsers
 {
     /// <summary>
-    /// Testet die hartkodierten Eigenheiten der FirefoxBrowser Klasse,
-    /// insbesondere das Parsen der profiles.ini und die .xpi Extension-Logik.
+    /// Unit tests for <see cref="AdapterFirefoxBrowserWrapper"/> verifying profiles.ini parsing, relative/absolute path resolution, and .xpi extension detection.
     /// </summary>
     public class FirefoxBrowserTests
     {
-        /// <summary>
-        /// Firefox verwaltet seine Profile in einer 'profiles.ini'. Diese kann sowohl
-        /// relative Pfade (Standard) als auch absolute Pfade (Benutzer hat das Profil auf eine andere Festplatte verschoben) enthalten.
-        /// Wenn unsere Parsing-Logik hier fehlschl�gt, leert eBesucher die falschen Ordner oder das Programm st�rzt ab.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir f�ttern die Methode 'ResolvePaths()' mit einer fiktiven INI-Datei, die genau diese
-        /// zwei F�lle (IsRelative=1 und IsRelative=0) enth�lt. Wir pr�fen, ob die Cache-,
-        /// Cookie- und Extension-Ordner f�r beide Profile korrekt zusammengebaut werden.
-        /// </summary>
         [Fact]
         public void GetPaths_ShouldParseProfilesIni_AndGeneratePathsForRelativeAndAbsoluteProfiles()
         {
-            // ARRANGE (Vorbereitung der Test-Umgebung)
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
-            
+            // [R]IGHT / [B]OUNDARY: Parses profiles.ini correctly for both relative and absolute profile locations
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockLogger = new FakeLogger<AdapterFirefoxBrowserWrapper>();
 
-            // 1. Windows-Umgebungsvariablen simulieren (Roaming f�r Cookies, Local f�r Cache)
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("AppData")).Returns(@"C:\Roaming");
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
+            mockFileSystem.ResolveEnvironmentPath("AppData").Returns(@"C:\Roaming");
+            mockFileSystem.ResolveEnvironmentPath("LocalAppData").Returns(@"C:\Local");
 
-            // 2. Universelles CombinePaths Mocking f�r 'params string[]'
-            // Dies nimmt ein Array von Strings (egal wie viele) und klebt sie mit "\" zusammen.
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns<string[]>(paths => string.Join(@"\", paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => string.Join(@"\", ci.Arg<string[]>()));
 
-            // 3. Dem System vorgaukeln, dass die profiles.ini Datei an dem erwarteten Ort existiert
             string fakeIniPath = @"C:\Roaming\Mozilla\Firefox\profiles.ini";
-            mockFileSystem.Setup(fs => fs.FileExists(fakeIniPath)).Returns(true);
+            mockFileSystem.FileExists(fakeIniPath).Returns(true);
 
-            // 4. Den Inhalt der profiles.ini f�lschen. Wir bauen absichtlich ein relatives und ein absolutes Profil ein.
             string[] fakeIniContent = new[]
             {
                 "[Profile0]",
                 "Name=default",
-                "IsRelative=1", // Standard-Profil (Relativ zu AppData)
+                "IsRelative=1",
                 "Path=Profiles/abc.default",
                 "",
                 "[Profile1]",
                 "Name=CustomProfile",
-                "IsRelative=0", // Verschobenes Profil (Absoluter Pfad auf D:\)
+                "IsRelative=0",
                 @"Path=D:\Custom\FirefoxProfile"
             };
 
-            // Wenn der FirefoxBrowser die Datei liest, geben wir ihm unser gef�lschtes Array zur�ck
-            mockFileSystem.Setup(fs => fs.ReadAllLines(fakeIniPath)).Returns(fakeIniContent);
+            mockFileSystem.ReadAllLines(fakeIniPath).Returns(fakeIniContent);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
-            // ACT (Ausf�hrung der Logik)
-            var paths = FirefoxBrowser.ResolvePaths();
-            // ASSERT (Pr�fung der Ergebnisse)
+            var firefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
 
-            // Pr�fung f�r Profile0 (Relativ):
-            // Wir erwarten, dass der Cache in LocalAppData liegt und Cookies/Extensions in Roaming (AppData)
+            // Act
+            var paths = firefoxBrowser.ResolvePaths();
+
+            // Assert
             paths.CacheDirs.ShouldContain(@"C:\Local\Mozilla\Firefox\Profiles\abc.default\cache2\entries");
             paths.CookiesDirs.ShouldContain(@"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\storage\default");
             paths.ExtensionsDirs.ShouldContain(@"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\extensions");
 
-            // Pr�fung f�r Profile1 (Absolut):
-            // Wir erwarten, dass Cache den Best-Guess (LocalRoot + Ordnername) nutzt und Cookies/Extensions direkt im absoluten Pfad liegen
             paths.CacheDirs.ShouldContain(@"C:\Local\Mozilla\Firefox\Profiles\FirefoxProfile\cache2\entries");
             paths.CookiesDirs.ShouldContain(@"D:\Custom\FirefoxProfile\storage\default");
             paths.ExtensionsDirs.ShouldContain(@"D:\Custom\FirefoxProfile\extensions");
         }
 
-        /// <summary>
-        /// Im Gegensatz zu Chrome nutzt Firefox f�r Extensions standardm��ig Dateien mit der Endung .xpi.
-        /// Wir m�ssen sicherstellen, dass die FirefoxBrowser-Klasse diese komprimierte Datei korrekt sucht.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren das Dateisystem so, dass die {ID}.xpi Datei im Extensions-Ordner existiert.
-        /// Die Methode 'IsExtensionInstalled' MUSS dann 'true' zur�ckgeben.
-        /// </summary>
         [Fact]
         public void IsExtensionInstalled_ShouldReturnTrue_WhenXpiFileExists()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
-            
+            // [R]IGHT: Returns true when packaged .xpi extension file exists in profile extensions directory
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockLogger = new FakeLogger<AdapterFirefoxBrowserWrapper>();
 
             string fakeRoamingExtensionsDir = @"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\extensions";
             string expectedExtensionId = "{fef425dc-a60f-4484-954d-71ecf2544846}.xpi";
             string fullXpiPath = $@"{fakeRoamingExtensionsDir}\{expectedExtensionId}";
 
-            // Grundlegende Pfade setzen, damit ResolvePaths() funktioniert
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("AppData")).Returns(@"C:\Roaming");
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
+            mockFileSystem.ResolveEnvironmentPath("AppData").Returns(@"C:\Roaming");
+            mockFileSystem.ResolveEnvironmentPath("LocalAppData").Returns(@"C:\Local");
 
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns<string[]>(paths => string.Join(@"\", paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => string.Join(@"\", ci.Arg<string[]>()));
 
-            // Ein Standard-Profil simulieren, damit ResolvePaths() �berhaupt Ordner ausgibt
-            mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-            mockFileSystem.Setup(fs => fs.ReadAllLines(It.IsAny<string>())).Returns(new[] { "[Profile0]", "Path=Profiles/abc.default" });
+            mockFileSystem.FileExists(Arg.Any<string>()).Returns(true);
+            mockFileSystem.ReadAllLines(Arg.Any<string>()).Returns(new[] { "[Profile0]", "Path=Profiles/abc.default" });
 
-            // Die kritischen Mocks f�r diesen Test:
-            // 1. Der generelle Extensions-Ordner existiert
-            mockFileSystem.Setup(fs => fs.DirectoryExists(fakeRoamingExtensionsDir)).Returns(true);
-            // 2. Die .xpi Datei existiert!
-            mockFileSystem.Setup(fs => fs.FileExists(fullXpiPath)).Returns(true);
+            mockFileSystem.DirectoryExists(fakeRoamingExtensionsDir).Returns(true);
+            mockFileSystem.FileExists(fullXpiPath).Returns(true);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
-            // ACT
-            bool isInstalled = FirefoxBrowser.IsExtensionInstalled();
-            // ASSERT
+            var firefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
+
+            // Act
+            bool isInstalled = firefoxBrowser.IsExtensionInstalled();
+
+            // Assert
             isInstalled.ShouldBeTrue();
         }
 
-        /// <summary>
-        /// Bei Entwickler-Profilen oder Sideloading kann eine Firefox-Extension als entpackter Ordner (ohne .xpi Endung) vorliegen.
-        /// Die Methode muss auch diesen "Fallback"-Fall abdecken.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren, dass die .xpi-Datei absichtlich NICHT existiert (Returns false).
-        /// Stattdessen existiert aber ein Ordner mit dem exakten Namen der ID (ohne das '.xpi').
-        /// Die Methode muss trotzdem erkennen, dass die Extension da ist und 'true' liefern.
-        /// </summary>
         [Fact]
         public void IsExtensionInstalled_ShouldReturnTrue_WhenExtractedFolderExists()
         {
-            // ARRANGE
-            var mockProcess = new Mock<IOutboundPortOsProcessControl>();
-            var mockSettings = new Mock<IOutboundPortSystemConfigurationRepository>();
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockLogger = new Mock<ILogger<AdapterFirefoxBrowserWrapper>>();
-            
+            // [B]OUNDARY: Returns true when extension exists as unpacked directory instead of .xpi package
+            // Arrange
+            var mockProcess = Substitute.For<IOutboundPortOsProcessControl>();
+            var mockSettings = Substitute.For<IOutboundPortSystemConfigurationRepository>();
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockLogger = new FakeLogger<AdapterFirefoxBrowserWrapper>();
 
             string fakeRoamingExtensionsDir = @"C:\Roaming\Mozilla\Firefox\Profiles\abc.default\extensions";
 
-            // Grundlegende Pfade setzen
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("AppData")).Returns(@"C:\Roaming");
-            mockFileSystem.Setup(fs => fs.ResolveEnvironmentPath("LocalAppData")).Returns(@"C:\Local");
+            mockFileSystem.ResolveEnvironmentPath("AppData").Returns(@"C:\Roaming");
+            mockFileSystem.ResolveEnvironmentPath("LocalAppData").Returns(@"C:\Local");
 
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns<string[]>(paths => string.Join(@"\", paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => string.Join(@"\", ci.Arg<string[]>()));
 
-            // Profil simulieren
-            mockFileSystem.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
-            mockFileSystem.Setup(fs => fs.ReadAllLines(It.IsAny<string>())).Returns(new[] { "[Profile0]", "Path=Profiles/abc.default" });
-            mockFileSystem.Setup(fs => fs.DirectoryExists(fakeRoamingExtensionsDir)).Returns(true);
+            mockFileSystem.FileExists(Arg.Any<string>()).Returns(true);
+            mockFileSystem.ReadAllLines(Arg.Any<string>()).Returns(new[] { "[Profile0]", "Path=Profiles/abc.default" });
+            mockFileSystem.DirectoryExists(fakeRoamingExtensionsDir).Returns(true);
 
-            // Die kritischen Mocks f�r diesen Test:
-            // 1. Die .xpi Datei existiert NICHT!
             string fullXpiPath = $@"{fakeRoamingExtensionsDir}\{{fef425dc-a60f-4484-954d-71ecf2544846}}.xpi";
-            mockFileSystem.Setup(fs => fs.FileExists(fullXpiPath)).Returns(false);
+            mockFileSystem.FileExists(fullXpiPath).Returns(false);
 
-            // 2. ABER der entpackte Ordner existiert! (Die Logik schneidet das .xpi beim Suchen ab)
             string extractedFolderPath = $@"{fakeRoamingExtensionsDir}\{{fef425dc-a60f-4484-954d-71ecf2544846}}";
-            mockFileSystem.Setup(fs => fs.DirectoryExists(extractedFolderPath)).Returns(true);
+            mockFileSystem.DirectoryExists(extractedFolderPath).Returns(true);
 
-            var FirefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess.Object, mockSettings.Object, mockFileSystem.Object, mockLogger.Object);
-            // ACT
-            bool isInstalled = FirefoxBrowser.IsExtensionInstalled();
-            // ASSERT
+            var firefoxBrowser = new AdapterFirefoxBrowserWrapper(mockProcess, mockSettings, mockFileSystem, mockLogger);
+
+            // Act
+            bool isInstalled = firefoxBrowser.IsExtensionInstalled();
+
+            // Assert
             isInstalled.ShouldBeTrue();
         }
     }
 }
-
-
-
-
-

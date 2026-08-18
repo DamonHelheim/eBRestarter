@@ -3,9 +3,14 @@ using System.Collections.ObjectModel;
 
 namespace eBRestarter.Desktop.WinUI3.ObjectArchetypes.Constants
 {
+    /// <summary>
+    /// Provides preset configuration options for scheduled system restart intervals.
+    /// </summary>
     public static class ComputerRestartConstants
     {
-        // Statische ReadOnly Liste für die Auswahl
+        /// <summary>
+        /// Gets the read-only collection of selectable computer restart interval options.
+        /// </summary>
         public static readonly ReadOnlyCollection<ComputerRestartOption> Options = new(
         [
             new("Computer nicht neustarten", 0),

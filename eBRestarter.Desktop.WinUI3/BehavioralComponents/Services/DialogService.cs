@@ -17,12 +17,10 @@ namespace eBRestarter.Desktop.WinUI3.BehavioralComponents.Services;
 /// <summary>
 /// Service implementation for presenting modal dialogs, message boxes, and specialized configuration dialogs in WinUI3.
 /// </summary>
+/// <param name="mainWindowProvider">Provider supplying access to the active main window instance.</param>
 public sealed class DialogService(
     IMainWindowProvider mainWindowProvider) : IDialogService
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
     private const string ButtonCloseText = "Schließen";
     private const string ButtonNoText = "Nein";
     private const string ButtonYesText = "Ja";
@@ -35,26 +33,12 @@ public sealed class DialogService(
     private const string GlyphSuccess = "\uE73E";
     private const string GlyphWarning = "\uE9CE";
 
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IMainWindowProvider _mainWindowProvider = mainWindowProvider ?? throw new ArgumentNullException(nameof(mainWindowProvider));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  6. Properties
-    // ═══════════════════════════════════════════════════════
     private XamlRoot XamlRoot => _mainWindowProvider.MainWindow.Content.XamlRoot;
     private ElementTheme CurrentTheme => (_mainWindowProvider.MainWindow.Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default;
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Displays a confirmation dialog asynchronously with customized action button labels.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<bool> ShowConfirmationAsync(
         string title,
         string message,
@@ -81,9 +65,7 @@ public sealed class DialogService(
         return false;
     }
 
-    /// <summary>
-    /// Displays an informational message dialog asynchronously with an optional status icon.
-    /// </summary>
+    /// <inheritdoc />
     public async Task ShowMessageAsync(
         string title,
         string message,
@@ -102,9 +84,7 @@ public sealed class DialogService(
         await dialog.ShowAsync();
     }
 
-    /// <summary>
-    /// Displays a Yes/No decision dialog asynchronously with an optional icon.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<bool> ShowYesNoDialogAsync(
         string title,
         string message,
@@ -125,34 +105,22 @@ public sealed class DialogService(
         return result == ContentDialogResult.Primary;
     }
 
-    /// <summary>
-    /// Displays the About information dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowAboutDialogAsync() => ShowDialogInternalAsync<AboutDialog>();
 
-    /// <summary>
-    /// Displays the browser add-on installation dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowInstallAddOnDialogAsync() => ShowDialogInternalAsync<InstallAddOnDialog>();
 
-    /// <summary>
-    /// Displays the browser add-on info dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowInstallAddOnInfoDialogAsync() => ShowDialogInternalAsync<InstallAddOnInfoDialog>();
 
-    /// <summary>
-    /// Displays the API key activation dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowActivateApiDialogAsync() => ShowDialogInternalAsync<ActivateApiDialog>();
 
-    /// <summary>
-    /// Displays the Edge Startup Boost disable prompt dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowTurnOffEdgeStartupBoostDialogAsync() => ShowDialogInternalAsync<TurnOffEdgeStartupBoostDialog>();
 
-    /// <summary>
-    /// Displays the browser cache content deletion dialog asynchronously, optionally triggering automatic deletion sequence.
-    /// </summary>
+    /// <inheritdoc />
     public Task ShowDeleteBrowserContentDialogAsync(bool shouldAutoStart = false)
     {
         return ShowDialogInternalAsync<DeleteBrowserContentDialog>(dialog =>
@@ -170,9 +138,7 @@ public sealed class DialogService(
         });
     }
 
-    /// <summary>
-    /// Displays the Windows auto-logon credentials configuration dialog asynchronously.
-    /// </summary>
+    /// <inheritdoc />
     public async Task<AutoLogonDialogResult?> ShowAutoLogonDialogAsync(
         string defaultUser = null!,
         string defaultDomain = null!,
@@ -200,6 +166,12 @@ public sealed class DialogService(
         return null;
     }
 
+    /// <summary>
+    /// Instantiates, configures, and displays a modal dialog asynchronously using current window XamlRoot and theme settings.
+    /// </summary>
+    /// <typeparam name="T">The type of <see cref="ContentDialog"/> to display.</typeparam>
+    /// <param name="configure">Optional configuration callback invoked prior to showing the dialog.</param>
+    /// <returns>The <see cref="ContentDialogResult"/> indicating which button was clicked.</returns>
     private async Task<ContentDialogResult> ShowDialogInternalAsync<T>(Action<T>? configure = null) where T : ContentDialog, new()
     {
         var dialog = new T
@@ -212,6 +184,12 @@ public sealed class DialogService(
         return await dialog.ShowAsync();
     }
 
+    /// <summary>
+    /// Creates styled title content containing an optional status icon and text block for dialog headers.
+    /// </summary>
+    /// <param name="title">The title header text.</param>
+    /// <param name="icon">The status icon to render.</param>
+    /// <returns>An object representing the title element (either string title or StackPanel with icon and text).</returns>
     private static object CreateTitleContent(string title, DialogIcon icon)
     {
         if (icon == DialogIcon.None)

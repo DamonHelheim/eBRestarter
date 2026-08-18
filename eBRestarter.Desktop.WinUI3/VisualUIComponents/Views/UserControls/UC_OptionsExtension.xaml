@@ -121,7 +121,7 @@
                         VerticalAlignment="Bottom"
                         Background="#FF1598C9"
                         BorderBrush="{x:Null}"
-                        Command="{Binding OpenExtensionFolderCommand}"
+                        Command="{x:Bind ViewModel.OpenExtensionFolderCommand}"
                         Foreground="White" />
                 </StackPanel>
             </Border>
@@ -149,7 +149,7 @@
                             Margin="0,0,0,4"
                             FontWeight="Bold"
                             Foreground="{ThemeResource FontColor_1}" />
-                        <TextBox x:Uid="BrowserExtension_TargetUrlBox" Text="{Binding ExtensionUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox x:Uid="BrowserExtension_TargetUrlBox" Text="{x:Bind ViewModel.ExtensionUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel>
@@ -161,7 +161,7 @@
                         <NumberBox
                             Minimum="1"
                             SpinButtonPlacementMode="Compact"
-                            Value="{Binding ExtensionWaitTimeMinutes, Mode=TwoWay}" />
+                            Value="{x:Bind ViewModel.ExtensionWaitTimeMinutes, Mode=TwoWay}" />
                     </StackPanel>
 
                     <StackPanel>
@@ -175,8 +175,8 @@
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             DisplayMemberPath="DisplayText"
-                            ItemsSource="{Binding ExtensionLanguages}"
-                            SelectedItem="{Binding SelectedExtensionLanguage, Mode=TwoWay}" />
+                            ItemsSource="{x:Bind ViewModel.ExtensionLanguages, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.SelectedExtensionLanguage, Mode=TwoWay}" />
 
                     </StackPanel>
 
@@ -192,7 +192,7 @@
                         VerticalAlignment="Bottom"
                         Background="#FF00CAD4"
                         BorderBrush="{x:Null}"
-                        Command="{Binding SaveExtensionConfigCommand}"
+                        Command="{x:Bind ViewModel.SaveExtensionConfigCommand}"
                         Foreground="White" />
 
                     <TextBlock
@@ -200,7 +200,7 @@
                         HorizontalAlignment="Center"
                         FontWeight="Bold"
                         Foreground="#FF4DC89E"
-                        Text="{Binding ExtensionSaveStatus}" />
+                        Text="{x:Bind ViewModel.ExtensionSaveStatus, Mode=OneWay}" />
                 </StackPanel>
             </Border>
         </Grid>

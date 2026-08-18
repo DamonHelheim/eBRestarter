@@ -10,9 +10,6 @@ namespace eBRestarter.Desktop.WinUI3.Converters;
 /// </summary>
 public sealed class BoolToImageConverter : IValueConverter
 {
-    // ═══════════════════════════════════════════════════════
-    //  6. Properties
-    // ═══════════════════════════════════════════════════════
     /// <summary>
     /// Gets or sets the image asset file path to display when the boolean value is false.
     /// </summary>
@@ -23,13 +20,7 @@ public sealed class BoolToImageConverter : IValueConverter
     /// </summary>
     public string? ImagePathWhenTrue { get; set; }
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-    /// <summary>
-    /// Converts a boolean value into a corresponding <see cref="BitmapImage"/> instance.
-    /// </summary>
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         bool isTrue = value is bool boolValue && boolValue;
@@ -43,9 +34,7 @@ public sealed class BoolToImageConverter : IValueConverter
         return new BitmapImage(new Uri(imagePath, UriKind.RelativeOrAbsolute));
     }
 
-    /// <summary>
-    /// Reverse conversion is not supported for image sources.
-    /// </summary>
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();

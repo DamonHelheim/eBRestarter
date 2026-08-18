@@ -14,8 +14,11 @@ namespace eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 /// </summary>
 public interface IOutboundPortBrowserFactory
 {
+    /// <summary>
+    /// Creates or retrieves the browser automation wrapper for the specified browser type.
+    /// </summary>
+    /// <param name="type">The targeted browser type.</param>
+    /// <returns>An <see cref="IOutboundPortBrowser"/> implementation for the requested browser.</returns>
+    /// <exception cref="NotSupportedException">Thrown when the requested <paramref name="type"/> is not supported.</exception>
     IOutboundPortBrowser Create(BrowserType type);
 }
-
-
-

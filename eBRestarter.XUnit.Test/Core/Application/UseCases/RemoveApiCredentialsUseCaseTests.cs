@@ -1,14 +1,11 @@
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Application.Enums;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Domain.ValueObjects;
-using Moq;
+﻿using NSubstitute;
 using Shouldly;
 using System;
 using Xunit;
-using eBRestarter.Core.Application.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
+using eBRestarter.Core.Application.UseCases;
+using eBRestarter.Core.Domain.ValueObjects;
+using NSubstitute.ExceptionExtensions;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
 {
@@ -19,13 +16,13 @@ namespace eBRestarter.Tests.Core.Application.UseCases.RemoveApiCredentials
     /// </summary>
     public class RemoveApiCredentialsUseCaseTests
     {
-        private readonly Mock<IOutboundPortEVisitorConfigRepository> _mockConfigService;
+        private readonly IOutboundPortEVisitorConfigRepository _mockConfigService;
         private readonly RemoveApiCredentialsUseCase _sut;
 
         public RemoveApiCredentialsUseCaseTests()
         {
-            _mockConfigService = new Mock<IOutboundPortEVisitorConfigRepository>();
-            _sut = new RemoveApiCredentialsUseCase(_mockConfigService.Object);
+            _mockConfigService = Substitute.For<IOutboundPortEVisitorConfigRepository>();
+            _sut = new RemoveApiCredentialsUseCase(_mockConfigService);
         }
         // 1. HAPPY PATH (KORREKTES L�SCHEN DER CREDENTIALS)
 
@@ -49,21 +46,20 @@ Language = 1    // Darf nicht ver�ndert werden!
                 }
             };
 
-            _mockConfigService.Setup(c => c.LoadConfig()).Returns(existingConfig);
+            _mockConfigService.LoadConfig().Returns(existingConfig);
 
             // Callback-Trick: Wir fangen das Objekt ab, das an SaveConfig �bergeben wird,
             // um es danach genau analysieren zu k�nnen.
             AppConfig? savedConfig = null;
-            _mockConfigService
-                .Setup(c => c.SaveConfig(It.IsAny<AppConfig>()))
-                .Callback<AppConfig>(config => savedConfig = config);
+            _mockConfigService.When(s => s.SaveConfig(Arg.Any<AppConfig>()))
+                .Do(ci => savedConfig = ci.Arg<AppConfig>());
 
             // ACT
             _sut.Execute();
 
             // ASSERT
-            _mockConfigService.Verify(c => c.LoadConfig(), Times.Once);
-            _mockConfigService.Verify(c => c.SaveConfig(It.IsAny<AppConfig>()), Times.Once);
+            _mockConfigService.Received(1).LoadConfig();
+            _mockConfigService.Received(1).SaveConfig(Arg.Any<AppConfig>());
 
             savedConfig.ShouldNotBeNull();
 
@@ -88,7 +84,7 @@ Language = 1    // Darf nicht ver�ndert werden!
         {
             // ARRANGE
             _mockConfigService
-                .Setup(c => c.LoadConfig())
+                .LoadConfig()
                 .Throws(new InvalidOperationException("Datei ist blockiert."));
 
             // ACT & ASSERT
@@ -96,17 +92,17 @@ Language = 1    // Darf nicht ver�ndert werden!
             exception.Message.ShouldBe("Datei ist blockiert.");
 
             // Da das Laden fehlschlug, darf SaveConfig niemals aufgerufen werden
-            _mockConfigService.Verify(c => c.SaveConfig(It.IsAny<AppConfig>()), Times.Never);
+            _mockConfigService.DidNotReceive().SaveConfig(Arg.Any<AppConfig>());
         }
 
         [Fact]
         public void Execute_ShouldBubbleUpException_WhenSaveConfigFails()
         {
             // ARRANGE
-            _mockConfigService.Setup(c => c.LoadConfig()).Returns(new AppConfig());
+            _mockConfigService.LoadConfig().Returns(new AppConfig());
             _mockConfigService
-                .Setup(c => c.SaveConfig(It.IsAny<AppConfig>()))
-                .Throws(new UnauthorizedAccessException("Keine Schreibrechte."));
+                .When(s => s.SaveConfig(Arg.Any<AppConfig>()))
+                .Do(_ => throw new UnauthorizedAccessException("Keine Schreibrechte."));
 
             // ACT & ASSERT
             var exception = Should.Throw<UnauthorizedAccessException>(() => _sut.Execute());

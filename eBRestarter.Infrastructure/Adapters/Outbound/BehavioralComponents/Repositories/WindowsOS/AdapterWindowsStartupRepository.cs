@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Repositories.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Repository) managing system startup configurations in Windows Registry.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Konfiguration von Windows Autostart, Edge Startup Boost und AutoLogon via Registry.<br/>
-/// - <strong>Implementierte Ports:</strong> <see cref="IOutboundPortAutoStartRepository"/> und <see cref="IOutboundPortBrowserConfigRepository"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong>, da sie im Infrastructure-Layer liegt, Outbound Ports implementiert und vom Core angetrieben wird, um Systemstart-Einstellungen zu steuern.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Repository)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Configures Windows Autostart, Edge Startup Boost, and AutoLogon via Registry in the Infrastructure layer.<br/>
+/// - <strong>Implemented Ports:</strong> <see cref="IOutboundPortAutoStartRepository"/> and <see cref="IOutboundPortBrowserConfigRepository"/>.<br/>
 /// </para>
 /// </summary>
 public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepository, IOutboundPortBrowserConfigRepository
@@ -21,7 +21,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const string AccessDeniedEdgePolicyExceptionMessage = "Access denied when changing registry settings. Please run as Administrator.";
     private const string AccessDeniedPasswordLessExceptionMessage = "Access denied when changing PasswordLess settings. Please run as Administrator.";
     private const int ActiveDwordValue = 1;
@@ -36,13 +36,11 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
     private const string EdgeStartupBoostEnabledValueName = "StartupBoostEnabled";
     private const string EdgeStartupBoostLogMessage = "Edge Startup Boost set to {State} (Value: {Value}).";
     private const string ErrorCheckingAutostartStatusLogMessage = "Error while checking autostart status.";
-    private const string ErrorConfiguringAutoLogonLogMessage = "Error configuring AutoLogon settings.";
     private const string ErrorRemovingAutostartLogMessage = "Error removing autostart from registry.";
     private const string ErrorRetrievingAutostartEntriesLogMessage = "Error retrieving autostart entries.";
     private const string ErrorSettingAutostartLogMessage = "Error setting autostart in registry.";
     private const string FailedEdgePolicyExceptionMessage = "Failed to set Edge Startup Boost policy.";
     private const string FailedPasswordLessExceptionMessage = "Failed to configure PasswordLess AutoLogon registry setting.";
-    private const string GeneralErrorEdgePolicyLogMessage = "General error setting Edge Startup Boost.";
     private const int InactiveDwordValue = 2;
     private const string InactiveStateText = "Inactive";
     private const string RegistryPathEdgePolicies = @"SOFTWARE\Policies\Microsoft\Edge";
@@ -52,7 +50,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly ILogger<AdapterWindowsStartupRepository> _logger;
     private readonly IOutboundPortProcessInfoProvider _processInfo;
     private readonly IOutboundPortSystemConfigurationRepository _registry;
@@ -61,6 +59,12 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterWindowsStartupRepository"/>.
+    /// </summary>
+    /// <param name="logger">Logger instance.</param>
+    /// <param name="processInfo">Process information provider port.</param>
+    /// <param name="registry">System configuration repository port.</param>
     public AdapterWindowsStartupRepository(
         ILogger<AdapterWindowsStartupRepository> logger,
         IOutboundPortProcessInfoProvider processInfo,
@@ -79,47 +83,65 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Removes the application autostart entry from the Windows Registry Run key.
+    /// </summary>
     public void DisableAutoStart()
     {
         try
         {
             _registry.DeleteUserValue(RegistryPathRun, ApplicationAutostartKey);
-            _logger.LogInformation(AutostartRemovedLogMessage);
+            _logger.LogInformation(LogEventIds.OperatingSystem.AutoStartDisabled, AutostartRemovedLogMessage);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorRemovingAutostartLogMessage);
+            // Exception handling: Wrap and rethrow exception without logging locally to prevent duplicate log entries.
             throw new InvalidOperationException(ErrorRemovingAutostartLogMessage, exception);
         }
     }
 
+    /// <summary>
+    /// Asynchronously removes the application autostart entry from the Windows Registry Run key.
+    /// </summary>
     public Task DisableAutoStartAsync()
     {
         DisableAutoStart();
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Creates or updates the application autostart entry in the Windows Registry Run key.
+    /// </summary>
+    /// <remarks>
+    /// Security: Encloses executable path in quotes to prevent unquoted path vulnerability hijacking when paths contain spaces.
+    /// </remarks>
     public void EnableAutoStart()
     {
         try
         {
             string exePath = _processInfo.GetCurrentExecutablePath();
-            _registry.SetUserValue(RegistryPathRun, ApplicationAutostartKey, exePath);
-            _logger.LogInformation(AutostartCreatedLogMessage);
+            _registry.SetUserValue(RegistryPathRun, ApplicationAutostartKey, $"\"{exePath}\"");
+            _logger.LogInformation(LogEventIds.OperatingSystem.AutoStartEnabled, AutostartCreatedLogMessage);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorSettingAutostartLogMessage);
+            // Exception handling: Wrap and rethrow exception without logging locally to prevent duplicate log entries.
             throw new InvalidOperationException(ErrorSettingAutostartLogMessage, exception);
         }
     }
 
+    /// <summary>
+    /// Asynchronously creates or updates the application autostart entry in the Windows Registry Run key.
+    /// </summary>
     public Task EnableAutoStartAsync()
     {
         EnableAutoStart();
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Asynchronously checks whether an autostart entry for this application exists in the Registry.
+    /// </summary>
     public Task<bool> IsAutoStartEnabledAsync()
     {
         try
@@ -130,7 +152,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorCheckingAutostartStatusLogMessage);
+            _logger.LogError(LogEventIds.OperatingSystem.AutoStartStatusReadFailed, exception, ErrorCheckingAutostartStatusLogMessage);
             return Task.FromResult(false);
         }
     }
@@ -157,12 +179,15 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
         }
         catch (Exception exception)
         {
-            _logger.LogWarning(exception, CouldNotReadEdgePolicyLogMessage);
+            _logger.LogWarning(LogEventIds.OperatingSystem.EdgeStartupBoostReadFailed, exception, CouldNotReadEdgePolicyLogMessage);
         }
 
         return true;
     }
 
+    /// <summary>
+    /// Retrieves all startup entries present in the Windows Registry Run key.
+    /// </summary>
     public Dictionary<string, object> RetrieveStartupEntries()
     {
         try
@@ -171,11 +196,15 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorRetrievingAutostartEntriesLogMessage);
+            _logger.LogError(LogEventIds.OperatingSystem.AutoStartStatusReadFailed, exception, ErrorRetrievingAutostartEntriesLogMessage);
             return [];
         }
     }
 
+    /// <summary>
+    /// Configures the AutoLogon passwordless registry toggle.
+    /// </summary>
+    /// <param name="enable">True to enable AutoLogon; false otherwise.</param>
     public void SetAutoLogon(bool enable)
     {
         try
@@ -186,7 +215,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
 
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                _logger.LogInformation(AutoLogonSettingLogMessage, enable ? ActiveStateText : InactiveStateText, dwordValue);
+                _logger.LogInformation(LogEventIds.Security.PasswordlessModeChanged, AutoLogonSettingLogMessage, enable ? ActiveStateText : InactiveStateText, dwordValue);
             }
         }
         catch (UnauthorizedAccessException exception)
@@ -195,7 +224,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorConfiguringAutoLogonLogMessage);
+            // Exception handling: Wrap and rethrow exception without logging locally to prevent duplicate log entries.
             throw new InvalidOperationException(FailedPasswordLessExceptionMessage, exception);
         }
     }
@@ -217,7 +246,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
 
             if (_logger.IsEnabled(LogLevel.Information))
             {
-                _logger.LogInformation(EdgeStartupBoostLogMessage, enable ? ActiveStateText : InactiveStateText, dwordValue);
+                _logger.LogInformation(LogEventIds.OperatingSystem.EdgeStartupBoostChanged, EdgeStartupBoostLogMessage, enable ? ActiveStateText : InactiveStateText, dwordValue);
             }
         }
         catch (UnauthorizedAccessException exception)
@@ -226,7 +255,7 @@ public sealed class AdapterWindowsStartupRepository : IOutboundPortAutoStartRepo
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, GeneralErrorEdgePolicyLogMessage);
+            // Exception handling: Wrap and rethrow exception without logging locally to prevent duplicate log entries.
             throw new InvalidOperationException(FailedEdgePolicyExceptionMessage, exception);
         }
     }

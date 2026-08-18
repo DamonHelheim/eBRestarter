@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
 	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!--
+      🔒 Security-Guideline Kap. 7.3 (Reproduzierbarkeit): "Lockfiles (packages.lock.json)
+      fixieren exakte transitive Versionen und verhindern, dass ein Build zu unterschiedlichen
+      Zeitpunkten unterschiedliche (und potenziell kompromittierte) Paketversionen zieht."
+    -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>

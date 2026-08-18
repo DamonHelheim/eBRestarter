@@ -10,10 +10,13 @@ public partial class TurnOffEdgeStartupBoostDialog : ContentDialog
 
     public TurnOffEdgeStartupBoostDialog()
     {
+        // x:Bind wertet gegen das Code-Behind aus – das ViewModel muss VOR
+        // InitializeComponent() gesetzt sein.
+        ViewModel = App.AppHost!.Services.GetRequiredService<ViewModelTurnOffEdgeStartupBoost>();
+
         this.InitializeComponent();
 
         // ViewModel aus dem DI-Container holen
-        ViewModel = App.AppHost!.Services.GetRequiredService<ViewModelTurnOffEdgeStartupBoost>();
 
         this.DataContext = ViewModel;
     }

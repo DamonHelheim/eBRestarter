@@ -3,17 +3,35 @@ namespace eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 /// <summary>
 /// Port: Provides OS-specific application directory and file paths to the application core and repositories.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND PORT (Driven Port / Steckdose)</strong><br/>
-/// - <strong>Aufrufer (Consumer):</strong> Liegt INNERHALB des Application Cores (<see cref="Application.UseCases.DownloadBrowserUseCase"/>) und im Infrastruktur-Layer.<br/>
-/// - <strong>Implementierung (Implementer):</strong> Liegt AUßERHALB des Application Cores (<see cref="eBRestarter.Infrastructure.Providers.WindowsAppPathProvider"/> in der Infrastruktur via OS-API).<br/>
-/// - <strong>Begründung:</strong> Da die Implementierung auf betriebssystemspezifische Pfade zugreift und im Infrastruktur-Layer liegt, handelt es sich nach Leitfaden Abschnitt 1 zwingend um einen <strong>Outbound Port</strong>.<br/>
-/// - <em>Architektur-Hinweis:</em> Befindet sich derzeit unter <c>Inbound/Providers</c>, gehört architektonisch jedoch in den Bereich <c>Outbound/OperatingSystem</c> (z. B. als <c>IOsAppPathProviderOutboundPort</c>).
+/// <strong>Architectural Classification: OUTBOUND PORT (Driven Port)</strong><br/>
+/// - <strong>Consumer:</strong> Located inside the Application Core (<see cref="Application.UseCases.DownloadBrowserUseCase"/>) and in the Infrastructure Layer.<br/>
+/// - <strong>Implementer:</strong> Located in the Infrastructure Layer (<see cref="eBRestarter.Infrastructure.Providers.WindowsAppPathProvider"/> via OS API).<br/>
+/// - <strong>Rationale:</strong> Accesses operating-system-specific directory locations and file system layouts.
 /// </para>
 /// </summary>
 public interface IInboundPortOsAppPathProvider
 {
+    /// <summary>
+    /// Retrieves the fully qualified path to the application data directory.
+    /// </summary>
+    /// <returns>The absolute path to the application data folder.</returns>
     string RetrieveAppDataPath();
+
+    /// <summary>
+    /// Retrieves the fully qualified path to the user's downloads folder.
+    /// </summary>
+    /// <returns>The absolute path to the downloads directory.</returns>
     string RetrieveDownloadsPath();
+
+    /// <summary>
+    /// Retrieves the fully qualified path to the application configuration file.
+    /// </summary>
+    /// <returns>The absolute path to the configuration JSON file.</returns>
     string RetrieveConfigFilePath();
+
+    /// <summary>
+    /// Retrieves the fully qualified path to the application log file.
+    /// </summary>
+    /// <returns>The absolute path to the log file.</returns>
     string RetrieveLogFilePath();
 }

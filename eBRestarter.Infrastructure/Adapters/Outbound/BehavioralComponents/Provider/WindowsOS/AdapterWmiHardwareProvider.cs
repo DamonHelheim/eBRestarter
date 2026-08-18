@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Management;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
@@ -8,16 +7,16 @@ using System.Threading.Tasks;
 using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
 
 /// <summary>
 /// Adapter: Driven Adapter (Outbound Provider) for querying system hardware and OS edition details via WMI.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Dienstleister im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core durch Auslesen von Windows WMI-Klassen (Win32_Processor, Win32_VideoController etc.).<br/>
-/// - <strong>Implementierter Port:</strong> <see cref="IOutboundPortHardwareInfoProvider"/> und <see cref="IOutboundPortOsEditionProvider"/> (aus dem Application Core).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein vorbildlicher <strong>Outbound Adapter</strong> (Taxonomie: Provider Adapter), da sie im Infrastructure-Layer liegt, Outbound Ports implementiert und vom Core angetrieben wird, um technologische WMI/Hardware-Abfragen auszuführen.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter / Provider)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Queries Windows WMI classes (Win32_Processor, Win32_VideoController, Win32_OperatingSystem) in the Infrastructure layer.<br/>
+/// - <strong>Implemented Ports:</strong> <see cref="IOutboundPortHardwareInfoProvider"/> and <see cref="IOutboundPortOsEditionProvider"/>.<br/>
 /// </para>
 /// </summary>
 [SupportedOSPlatform("windows")]
@@ -26,7 +25,7 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const long BytesPerKilobyte = 1024;
     private const string ErrorRetrievingWmiDataLogMessage = "Error retrieving WMI data: {Class}.{Property}";
     private const string NotAvailableFallbackText = "N/A";
@@ -41,13 +40,17 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly ILogger<AdapterWmiHardwareProvider> _logger;
 
 
     // ═══════════════════════════════════════════════════════
     //  6. Constructors
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Initializes a new instance of <see cref="AdapterWmiHardwareProvider"/>.
+    /// </summary>
+    /// <param name="logger">Logger instance.</param>
     public AdapterWmiHardwareProvider(ILogger<AdapterWmiHardwareProvider> logger)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -59,6 +62,9 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Asynchronously queries WMI for CPU, GPU, and installed RAM details.
+    /// </summary>
     public async Task<HardwareInfo> RetrieveHardwareInfoAsync()
     {
         return await Task.Run(() =>
@@ -71,7 +77,7 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
 
             if (long.TryParse(ramRaw, out long ramKb))
             {
-                // WMI liefert KB, FormatExtensions erwartet Bytes -> * 1024
+                // WMI reports KB; convert to bytes (* 1024) for size formatting.
                 ramFormatted = (ramKb * BytesPerKilobyte).ToSizeSuffix();
             }
 
@@ -84,6 +90,9 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
         }).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Asynchronously queries WMI for the Windows OS caption string.
+    /// </summary>
     public async Task<string> RetrieveOsEditionAsync()
     {
         return await Task.Run(() => RetrieveWmiValue(WmiClassOperatingSystem, WmiPropertyCaption) ?? UnknownOsEditionFallbackText).ConfigureAwait(false);
@@ -92,6 +101,8 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
     /// <summary>
     /// Helper method that utilizes WMI ManagementObjectSearcher to query properties from WMI classes.
     /// </summary>
+    /// <param name="wmiClass">WMI class name (e.g. Win32_Processor).</param>
+    /// <param name="property">Property name to query.</param>
     private string? RetrieveWmiValue(string wmiClass, string property)
     {
         try
@@ -99,12 +110,21 @@ public sealed class AdapterWmiHardwareProvider : IOutboundPortHardwareInfoProvid
             using var searcher = new ManagementObjectSearcher($"SELECT {property} FROM {wmiClass}");
             using var collection = searcher.Get();
 
-            var firstObj = collection.Cast<ManagementBaseObject>().FirstOrDefault();
-            return firstObj?[property]?.ToString();
+            // COM wrapper cleanup: Enumerator and ManagementBaseObject implement IDisposable and require explicit disposal.
+            using var enumerator = collection.GetEnumerator();
+
+            if (!enumerator.MoveNext())
+            {
+                return null;
+            }
+
+            using var managementObject = enumerator.Current;
+
+            return managementObject[property]?.ToString();
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, ErrorRetrievingWmiDataLogMessage, wmiClass, property);
+            _logger.LogError(LogEventIds.OperatingSystem.WmiQueryFailed, exception, ErrorRetrievingWmiDataLogMessage, wmiClass, property);
         }
 
         return null;

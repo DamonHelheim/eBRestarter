@@ -7,9 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-using eBRestarter.Core.Application.BehavioralComponents.Extensions;
+using eBRestarter.Desktop.WinUI3.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.ObjectArchetypes.Models;
@@ -22,6 +23,8 @@ using eBRestarter.Desktop.WinUI3.BehavioralComponents.Services.Interfaces;
 using eBRestarter.Desktop.WinUI3.BehavioralComponents.Utilities.Interfaces;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.DTOs.SignalDTO.Messages;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.Enums;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -32,6 +35,7 @@ namespace eBRestarter.Desktop.WinUI3.ViewModels;
 /// when the schedule demands it.
 /// </summary>
 public sealed partial class ViewModelRestartTask : ObservableObject,
+                                            IDisposable,
                                             IRecipient<UsernameChangedMessage>,
                                             IRecipient<BrowserChangedMessage>,
                                             IRecipient<DeleteBrowserContentActivateMessage>,
@@ -42,7 +46,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     // ═══════════════════════════════════════════════════════
     //  1. Constants
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private const int BrowserInstallCheckIntervalSeconds = 5;
     private const string DefaultBrowserNameFallback = "Edge";
     private const string DefaultDisableMessage = "Disable";
@@ -57,8 +61,9 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (Dependencies) ──
+    // ── Block 1: Injected dependencies ──
     private readonly IBrowserDisplayNameResolverUtility _browserDisplayNameResolver;
+    private readonly ILogger<ViewModelRestartTask> _logger;
     private readonly IOutboundPortBrowserDiscoveryProvider _browserService;
     private readonly IOutboundPortEVisitorConfigRepository _configService;
     private readonly IDialogService _dialogService;
@@ -66,19 +71,23 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     private readonly IInboundPortRestarterCycleService _restarterCycleService;
     private readonly IInboundPortRestartTaskDisplayStateHandler _restartTaskDisplayStateHandler;
 
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     private bool _checkBrowserAliveRoutine;
+    private volatile bool _disposed;
     private int _pauseSeconds = DefaultPauseSeconds;
     private int _runtimeSeconds = DefaultRuntimeSeconds;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
+    // ⚡ Overlap prevention: Ensures background timer ticks do not stack on the ThreadPool if a run exceeds 5 seconds. 0 = free, 1 = active.
+    private int _browserCheckInFlight;
+
+    // ── Block 4: Complex types, collections & UI elements ──
     private readonly DispatcherTimer _browserCheckTimer;
     private readonly DispatcherQueue _dispatcherQueue;
 
     // ═══════════════════════════════════════════════════════
     //  3. Observable Properties
     // ═══════════════════════════════════════════════════════
-    // ── Block 2: Primitive Typen & Strings ──
+    // ── Block 2: Primitives & strings ──
     [ObservableProperty] public partial string ChosenBrowser { get; set; }
     [ObservableProperty] public partial bool DeleteBrowserContentIsActive { get; set; }
     [ObservableProperty] public partial string DeleteIsActivatedMessage { get; set; } = DefaultDisableMessage;
@@ -104,6 +113,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         IOutboundPortEVisitorConfigRepository configService,
         IDialogService dialogService,
         IInboundPortLocalizationProvider localizationProvider,
+        ILogger<ViewModelRestartTask> logger,
         IInboundPortRestarterCycleService restarterCycleService,
         IInboundPortRestartTaskDisplayStateHandler restartTaskDisplayStateHandler)
     {
@@ -112,6 +122,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         ArgumentNullException.ThrowIfNull(configService);
         ArgumentNullException.ThrowIfNull(dialogService);
         ArgumentNullException.ThrowIfNull(localizationProvider);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(restarterCycleService);
         ArgumentNullException.ThrowIfNull(restartTaskDisplayStateHandler);
 
@@ -120,6 +131,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         _configService = configService;
         _dialogService = dialogService;
         _localizationService = localizationProvider;
+        _logger = logger;
         _restarterCycleService = restarterCycleService;
         _restartTaskDisplayStateHandler = restartTaskDisplayStateHandler;
 
@@ -152,12 +164,16 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         _browserCheckTimer.Tick += OnBrowserCheckTimerTick;
         _browserCheckTimer.Start();
 
-        CheckInstalledBrowsersAsync().Forget();
+        CheckInstalledBrowsersAsync().Forget(_logger, nameof(CheckInstalledBrowsersAsync));
     }
 
     // ═══════════════════════════════════════════════════════
     //  7. Commands
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Starts or stops the restarter loop based on toggle state and username validation.
+    /// </summary>
+    /// <param name="isChecked">State indicating whether the task loop should be active.</param>
     [RelayCommand]
     private async Task ExecuteStartTimerSchedulerAsync(bool? isChecked)
     {
@@ -192,20 +208,49 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
+    /// <summary>
+    /// Stops the browser-check timer, unsubscribes the cycle-progress handler and detaches all
+    /// messenger registrations so nothing can call back into this view model after teardown
+    /// (Guide Kap. 22.6 / 22.10).
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        _browserCheckTimer.Stop();
+        _browserCheckTimer.Tick -= OnBrowserCheckTimerTick;
+
+        _restarterCycleService.ProgressChanged -= OnCycleProgressChanged;
+
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
     // ── Public Interface Implementations (Receive) ──
+    /// <summary>Handles browser selection changes by updating the displayed browser name.</summary>
     public void Receive(BrowserChangedMessage message) => _dispatcherQueue.TryEnqueue(() => ChosenBrowser = message.BrowserName ?? DefaultFallbackPlaceholder);
 
+    /// <summary>Handles activation status changes for browser content deletion.</summary>
     public void Receive(DeleteBrowserContentActivateMessage message) => _dispatcherQueue.TryEnqueue(() => DeleteIsActivatedMessage = message.ActivateMessage ?? DefaultFallbackPlaceholder);
 
+    /// <summary>Handles active state changes for browser content deletion.</summary>
     public void Receive(DeleteBrowserContentIsActive message) => _dispatcherQueue.TryEnqueue(() => DeleteBrowserContentIsActive = message.IsActiveOrNot);
 
+    /// <summary>Handles status message updates for the next scheduled deletion process.</summary>
     public void Receive(NextDeletionProcessMessage message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessMessage = message.Message ?? DefaultFallbackPlaceholder);
 
+    /// <summary>Handles date updates for the next scheduled deletion process.</summary>
     public void Receive(NextDeletionProcessDate message) => _dispatcherQueue.TryEnqueue(() => NextDeletionProcessDateMessage = message.NextDeletionProcessDateMessage ?? DefaultFallbackPlaceholder);
 
+    /// <summary>Handles username change events by updating the displayed username.</summary>
     public void Receive(UsernameChangedMessage message) => _dispatcherQueue.TryEnqueue(() => Username = message.NewUsername ?? DefaultFallbackPlaceholder);
 
     // ── Private Helper Methods ──
+    /// <summary>Checks whether supported browsers are installed and updates UI state accordingly.</summary>
     private async Task CheckInstalledBrowsersAsync()
     {
         IEnumerable<BrowserInfo>? installedBrowsers = await Task.Run(() => _browserService.FindInstalledBrowsersAsync()).ConfigureAwait(false);
@@ -228,6 +273,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         });
     }
 
+    /// <summary>Loads initial task parameters and messages from configuration and state handler.</summary>
     private void LoadInitialConfigData()
     {
         var appConfig = _configService.LoadConfig();
@@ -244,18 +290,47 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         NextDeletionProcessDateMessage = currentConfigState.NextDeletionProcessDateMessage;
     }
 
+    /// <summary>
+    /// Triggers periodic installed-browser checks on timer tick.
+    /// </summary>
+    /// <param name="sender">The timer instance.</param>
+    /// <param name="eventArgs">Event arguments associated with the tick event.</param>
     private async void OnBrowserCheckTimerTick(object? sender, object eventArgs)
     {
+        // Guard against timer callbacks firing after disposal.
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Drop overlapping ticks to prevent concurrency buildup.
+        if (Interlocked.Exchange(ref _browserCheckInFlight, 1) == 1)
+        {
+            return;
+        }
+
         try
         {
-            await CheckInstalledBrowsersAsync();
+            await CheckInstalledBrowsersAsync().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            _logger.LogError(
+                LogEventIds.Browser.BrowserProfileDiscoveryFailed,
+                exception,
+                "Refreshing the list of installed browsers failed.");
+        }
+        finally
+        {
+            Volatile.Write(ref _browserCheckInFlight, 0);
         }
     }
 
+    /// <summary>
+    /// Handles cycle progress updates from the restarter cycle service.
+    /// </summary>
+    /// <param name="sender">Event sender.</param>
+    /// <param name="cycleProgress">Progress data containing remaining seconds and status.</param>
     private void OnCycleProgressChanged(object? sender, RestarterCycleProgress cycleProgress)
     {
         _dispatcherQueue.TryEnqueue(() =>
@@ -270,6 +345,7 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
         });
     }
 
+    /// <summary>Initiates the restarter cycle loop with current settings and auto-cleanup callbacks.</summary>
     private void StartLoop()
     {
         var manageRestarterCycleRequest = new ManageRestarterCycleRequest(
@@ -293,7 +369,10 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
                 }
                 catch (Exception exception)
                 {
-                    Debug.WriteLine(exception);
+                    _logger.LogError(
+                        LogEventIds.UserInterface.ViewModelOperationFailed,
+                        exception,
+                        "Showing the browser cleanup dialog failed.");
 
                     tcs.TrySetException(exception);
                 }
@@ -305,9 +384,10 @@ public sealed partial class ViewModelRestartTask : ObservableObject,
 
             await tcs.Task.ConfigureAwait(false);
 
-        }).Forget();
+        }).Forget(_logger, nameof(StartLoop));
     }
 
+    /// <summary>Stops the running restarter cycle loop.</summary>
     private void StopLoop()
     {
         _restarterCycleService.Stop();

@@ -1,51 +1,50 @@
-﻿using eBRestarter.Infrastructure.Network;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Core.Application.Enums;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using System.Net;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
-using eBRestarter.Infrastructure.Api;
+using eBRestarter.Core.Application.Common.Results;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
+using eBRestarter.Infrastructure.API;
 using eBRestarter.Infrastructure.ObjectArchetypes.Enums;
+using eBRestarter.Infrastructure.ObjectArchetypes.Model;
+using Microsoft.Extensions.Logging.Testing;
+using System.Net.Http;
+using System.Linq;
+using Shouldly;
+using System;
 
 namespace eBRestarter.Tests.Infrastructure.Services
 {
     /// <summary>
-    /// Testet den RestSharpClientAdapter. Da dieser echte HTTP-Aufrufe macht,
-    /// nutzen wir WireMock.Net, um einen lokalen, echten HTTP-Server hochzufahren,
-    /// der API-Antworten (Mock-Responses) simuliert, ohne externe Dienste aufzurufen.
+    /// Integration and unit tests for <see cref="RestSharpClient"/> using WireMock.Net to mock HTTP responses.
     /// </summary>
     public class RestSharpClientAdapterTests : IDisposable
     {
-        private readonly Mock<ILogger<RestSharpClient>> _loggerMock;
-        private readonly RestSharpClient _sut; // SUT = System Under Test
+        private readonly FakeLogger<RestSharpClient> _loggerMock;
+        private readonly RestSharpClient _sut;
         private readonly WireMockServer _server;
 
         public RestSharpClientAdapterTests()
         {
-            _loggerMock = new Mock<ILogger<RestSharpClient>>();
-            _sut = new RestSharpClient(_loggerMock.Object);
+            _loggerMock = new FakeLogger<RestSharpClient>();
+            // Uses a pooled HttpClient from IHttpClientFactory instead of instantiating per-request handlers.
+            var httpClientFactory = Substitute.For<IHttpClientFactory>();
+            httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_ => new HttpClient());
 
-            // Startet einen lokalen HTTP-Mock-Server für jeden Testdurchlauf.
-            // Der Server läuft auf einem zufälligen, freien Port (z.B. localhost:51234).
+            _sut = new RestSharpClient(_loggerMock, httpClientFactory);
+
+            // Starts a local WireMock server on a random available port for each test.
             _server = WireMockServer.Start();
         }
 
-        // 1. ASYNC TESTS (ExecuteGetAsync)
-
-        /// <summary>
-        /// Das ist der "Happy Path". Wenn die API sauber antwortet (HTTP 200),
-        /// muss der Service den Inhalt (Body) extrahieren und als erfolgreich markieren.
-        /// Wir simulieren eine API, die "Test Content" zurückgibt. Wir prüfen, ob IsSuccess auf true
-        /// steht, der Statuscode Success ist und der Content exakt übereinstimmt.
-        /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_Success_ReturnsSuccessAndContent()
         {
-            // ARRANGE
+            // [R]IGHT: Valid URL returns HTTP 200 with response body content
+            // Arrange
             _server.Given(Request.Create().WithPath("/test").UsingGet())
                    .RespondWith(Response.Create()
                        .WithStatusCode(200)
@@ -57,87 +56,66 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 TimeoutSeconds = 5
             };
 
-            // ACT
+            // Act
             var result = await _sut.ExecuteGetAsync(requestModel);
 
-            // ASSERT
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(ResponseCode.Success, result.StatusCode);
             Assert.Equal("Test Content", result.Content);
         }
 
-        /// <summary>
-        /// Viele APIs haben Rate Limits. Wenn wir zu viele Anfragen stellen, müssen wir rechtzeitig drosseln.
-        /// Deine eigene Logik prüft, ob "X-Ratelimit-Remaining" kleiner oder gleich 10 ist.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir senden absichtlich einen Header mit dem Wert "5". Der Test prüft, ob der Service das erkennt
-        /// und trotz eines HTTP 200 den internen Enum-Wert auf "eBRestarter.Infrastructure.Api.ResponseCode.RequestLimit" ändert.
-        /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_WithRateLimitWarning_ReturnsRequestLimitCode()
         {
-            // ARRANGE
+            // [B]OUNDARY: Remaining rate limit header <= 10 maps to RequestLimit status code
+            // Arrange
             _server.Given(Request.Create().WithPath("/ratelimit").UsingGet())
                    .RespondWith(Response.Create()
                        .WithStatusCode(200)
-                       .WithHeader("X-Ratelimit-Remaining", "5") // Wert <= 10
+                       .WithHeader("X-Ratelimit-Remaining", "5")
                        .WithBody("OK"));
 
             var requestModel = new ApiRequest { Url = $"{_server.Urls[0]}/ratelimit", TimeoutSeconds = 5 };
 
-            // ACT
+            // Act
             var result = await _sut.ExecuteGetAsync(requestModel);
 
-            // ASSERT
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(ResponseCode.RequestLimit, result.StatusCode);
         }
 
-        /// <summary>
-        /// Wenn die API einen Fehler wirft (z.B. fehlende Berechtigung), darf die App nicht abstürzen.
-        /// Der HTTP-Fehlercode muss in unseren eigenen eBRestarter.Infrastructure.Api.ResponseCode-Enum übersetzt und der Fehler geloggt werden.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir simulieren einen HTTP 401 (Unauthorized). Wir prüfen, ob das Mapping auf eBRestarter.Infrastructure.Api.ResponseCode.HttpRE401
-        /// funktioniert und ob der Logger aufgerufen wurde.
-        /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_Http401_ReturnsMappedErrorCode()
         {
-            // ARRANGE
+            // [E]RROR: HTTP 401 Unauthorized maps to HttpRE401 and logs warning
+            // Arrange
             _server.Given(Request.Create().WithPath("/unauthorized").UsingGet())
                    .RespondWith(Response.Create().WithStatusCode(401));
 
             var requestModel = new ApiRequest { Url = $"{_server.Urls[0]}/unauthorized", TimeoutSeconds = 5 };
 
-            // ACT
+            // Act
             var result = await _sut.ExecuteGetAsync(requestModel);
 
-            // ASSERT
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ResponseCode.HttpRE401, result.StatusCode);
 
             VerifyLoggerWarningWasCalled();
         }
 
-        /// <summary>
-        /// Wenn Benutzername und Passwort übergeben werden, muss der Client diese als
-        /// Base64-codierten Basic-Auth Header an die API senden.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Der Mock-Server antwortet NUR mit 200 OK, wenn exakt der Header "Basic dXNlcjpwYXNz" (user:pass) ankommt.
-        /// Wenn der Client den Header nicht baut, schlägt die Anfrage beim Mock-Server fehl.
-        /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_WithBasicAuth_SendsCredentials()
         {
-            // ARRANGE
+            // [R]IGHT: Basic authentication credentials are sent as Base64 Authorization header
+            // Arrange
             _server.Given(
                 Request.Create()
                     .WithPath("/auth")
                     .UsingGet()
-                    .WithHeader("Authorization", "Basic dXNlcjpwYXNz") // Base64 für "user:pass"
+                    .WithHeader("Authorization", "Basic dXNlcjpwYXNz")
             ).RespondWith(Response.Create().WithStatusCode(200));
 
             var requestModel = new ApiRequest
@@ -148,95 +126,72 @@ namespace eBRestarter.Tests.Infrastructure.Services
                 Password = "pass"
             };
 
-            // ACT
+            // Act
             var result = await _sut.ExecuteGetAsync(requestModel);
 
-            // ASSERT
-            Assert.True(result.IsSuccess, "Die Anfrage ist fehlgeschlagen. Das bedeutet, dass der Auth-Header nicht oder falsch gesendet wurde.");
+            // Assert
+            Assert.True(result.IsSuccess, "The request failed, indicating that the Authorization header was missing or improperly formatted.");
         }
 
-        /// <summary>
-        /// Netzwerkverbindungen können hängen bleiben. Der Client muss nach der konfigurierten Zeit (TimeoutSeconds)
-        /// abbrechen und darf den Thread nicht endlos blockieren.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Der Server braucht künstliche 6 Sekunden für die Antwort. Der Client darf aber nur 1 Sekunde warten.
-        /// Erwartet wird, dass der Client abbricht und einen entsprechenden Timeout/General Fehler zurückgibt.
-        /// </summary>
         [Fact]
         public async Task ExecuteGetAsync_Timeout_ReturnsMappedTimeoutCode()
         {
-            // ARRANGE
+            // [E]RROR: Request exceeding configured timeout returns HTTPTimeout status
+            // Arrange
             _server.Given(Request.Create().WithPath("/timeout").UsingGet())
                    .RespondWith(Response.Create()
                        .WithStatusCode(200)
-                       .WithDelay(TimeSpan.FromSeconds(6))); // Server trödelt 6 Sekunden
+                       .WithDelay(TimeSpan.FromSeconds(6)));
 
             var requestModel = new ApiRequest { Url = $"{_server.Urls[0]}/timeout", TimeoutSeconds = 1 };
 
-            // ACT
+            // Act
             var result = await _sut.ExecuteGetAsync(requestModel);
 
-            // ASSERT
+            // Assert
             Assert.False(result.IsSuccess);
             Assert.True(result.StatusCode == ResponseCode.HTTPTimeout || result.StatusCode == ResponseCode.GeneralExceptionError);
         }
 
-        // 2. SYNC TESTS (ExecuteGet)
-
-        /// <summary>
-        /// Wir stellen auch eine synchrone Methode zur Verfügung. Diese muss exakt dieselben
-        /// Ergebnisse liefern wie die asynchrone Variante.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Ein normaler HTTP 200 Aufruf über ExecuteGet(). Es wird auf korrekten Status und Body geprüft.
-        /// </summary>
         [Fact]
         public void ExecuteGet_SyncCall_Success_ReturnsSuccessAndContent()
         {
-            // ARRANGE
+            // [C]ROSS-CHECK: Synchronous invocation executes GET request and returns success with content
+            // Arrange
             _server.Given(Request.Create().WithPath("/sync-test").UsingGet())
                    .RespondWith(Response.Create().WithStatusCode(200).WithBody("Sync Content"));
 
             var requestModel = new ApiRequest { Url = $"{_server.Urls[0]}/sync-test", TimeoutSeconds = 5 };
 
-            // ACT
+            // Act
             var result = _sut.ExecuteGet(requestModel);
 
-            // ASSERT
+            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(ResponseCode.Success, result.StatusCode);
             Assert.Equal("Sync Content", result.Content);
         }
 
-        // 3. HELPER METHODEN
-
+        /// <summary>
+        /// Verifies that a warning-level log entry matching the expected API error format was recorded.
+        /// </summary>
         private void VerifyLoggerWarningWasCalled()
         {
-            _loggerMock.Verify(
-                x => x.Log(
-                    LogLevel.Warning,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("API Error")),
-                    It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
-                Times.Once);
+            var matchingWarnings = _loggerMock.Collector.GetSnapshot()
+                .Where(entry => entry.Level == LogLevel.Warning
+                                && entry.Message.Contains("api error", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            matchingWarnings.ShouldNotBeEmpty();
         }
 
-        // CLEANUP (wird nach JEDEM Test automatisch ausgeführt)
+        /// <summary>
+        /// Stops and disposes the WireMock server instance to release the allocated network port.
+        /// </summary>
         public void Dispose()
         {
-            // Server nach jedem Test ordnungsgemäß herunterfahren,
-            // um Port-Blockaden bei parallel laufenden Tests zu vermeiden.
             _server.Stop();
             _server.Dispose();
         }
     }
 }
-
-
-
-
-
-
-

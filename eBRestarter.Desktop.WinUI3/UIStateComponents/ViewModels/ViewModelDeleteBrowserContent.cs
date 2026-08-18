@@ -15,6 +15,8 @@ using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Config;
 using eBRestarter.Core.Domain.ValueObjects;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -44,19 +46,20 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
     // ═══════════════════════════════════════════════════════
     //  2. Fields
     // ═══════════════════════════════════════════════════════
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
+    // ── Block 1: Injected dependencies (alphabetical A–Z) ──
     private readonly IOutboundPortBrowserFactory _browserFactory;
+    private readonly ILogger<ViewModelDeleteBrowserContent> _logger;
     private readonly IUseCaseDeleteBrowserContent _deleteBrowserContentUseCase;
     private readonly IOutboundPortEVisitorConfigRepository _evRestarterConfigRepository;
     private readonly IInboundPortLocalizationProvider _localizationService;
 
-    // ── Block 2: Primitive / Primitive-Wrapper (alphabetisch A–Z) ──
+    // ── Block 2: Primitives / Primitive wrappers (alphabetical A–Z) ──
     private bool _isAutoMode;
 
-    // ── Block 3: Enums (alphabetisch A–Z) ──
+    // ── Block 3: Enums (alphabetical A–Z) ──
     private BrowserType _selectedBrowserType;
 
-    // ── Block 4: Komplexe Typen / Repositories / Objects (alphabetisch A–Z) ──
+    // ── Block 4: Complex types / Repositories / Objects (alphabetical A–Z) ──
     private CancellationTokenSource? _deleteBrowserContentCancellationTokenSource;
 
 
@@ -72,13 +75,16 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         IUseCaseDeleteBrowserContent deleteBrowserContentUseCase,
         IOutboundPortBrowserFactory browserFactory,
         IOutboundPortEVisitorConfigRepository evRestarterConfigRepository,
-        IInboundPortLocalizationProvider localizationService)
+        IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelDeleteBrowserContent> logger)
     {
         ArgumentNullException.ThrowIfNull(deleteBrowserContentUseCase);
         ArgumentNullException.ThrowIfNull(browserFactory);
         ArgumentNullException.ThrowIfNull(evRestarterConfigRepository);
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
 
+        _logger = logger;
         _deleteBrowserContentUseCase = deleteBrowserContentUseCase;
         _browserFactory = browserFactory;
         _evRestarterConfigRepository = evRestarterConfigRepository;
@@ -182,8 +188,16 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         StatusText = _localizationService.RetrieveString(KeyCleanupCanceledByUser);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the cleanup operation can be cancelled.
+    /// </summary>
+    /// <returns><see langword="true"/> if a cleanup operation is currently active; otherwise, <see langword="false"/>.</returns>
     private bool CanCancel() => IsBusy;
 
+    /// <summary>
+    /// Gets a value indicating whether browser cleanup can be initiated.
+    /// </summary>
+    /// <returns><see langword="true"/> if not busy and at least one deletion target is selected; otherwise, <see langword="false"/>.</returns>
     private bool CanClean() => !IsBusy && (IsDeleteCookiesChecked || IsDeleteInternetCacheChecked);
 
     /// <summary>
@@ -209,11 +223,15 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
             var progress = new Progress<DeleteBrowserContentProgress>(cleanupProgress =>
             {
                 StatusText = cleanupProgress.StatusMessage;
-                ProgressMaximum = cleanupProgress.TotalFiles > 0 ? cleanupProgress.TotalFiles : 1;
-                ProgressValue = cleanupProgress.CurrentFile;
-                if (cleanupProgress.TotalFiles > 0)
+
+                // Each progress step corresponds to a directory rather than an individual file,
+                // eliminating the initial cache tree traversal phase.
+                ProgressMaximum = cleanupProgress.TotalSteps > 0 ? cleanupProgress.TotalSteps : 1;
+                ProgressValue = cleanupProgress.CompletedSteps;
+
+                if (cleanupProgress.TotalSteps > 0)
                 {
-                    ProgressText = $"{cleanupProgress.CurrentFile * 100 / cleanupProgress.TotalFiles} %";
+                    ProgressText = $"{cleanupProgress.CompletedSteps * 100 / cleanupProgress.TotalSteps} %";
                 }
             });
 
@@ -242,12 +260,22 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
+            // Logging guideline: Exception type and stack trace are logged here to prevent silent failures.
+            _logger.LogError(
+                LogEventIds.Browser.BrowserCacheFileDeletionFailed,
+                ex,
+                "Browser cleanup failed with a file system error.");
+
             string errorFormat = _localizationService.RetrieveString(KeyGeneralErrorPrefix);
             StatusText = string.Format(errorFormat, ex.Message);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.LogError(
+                LogEventIds.Browser.BrowserCacheFileDeletionFailed,
+                ex,
+                "Browser cleanup failed unexpectedly.");
+
             string errorFormat = _localizationService.RetrieveString(KeyGeneralErrorPrefix);
             StatusText = string.Format(errorFormat, ex.Message);
         }
@@ -283,7 +311,11 @@ public sealed partial class ViewModelDeleteBrowserContent : ObservableObject
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            _logger.LogError(
+                LogEventIds.UserInterface.ViewModelOperationFailed,
+                ex,
+                "Loading the browser cleanup dialog state failed.");
+
             string errorFormat = _localizationService.RetrieveString(KeyGeneralLoadErrorPrefix);
             StatusText = string.Format(errorFormat, ex.Message);
         }

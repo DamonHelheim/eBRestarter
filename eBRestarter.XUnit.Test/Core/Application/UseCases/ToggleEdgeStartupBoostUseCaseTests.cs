@@ -1,15 +1,14 @@
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Inbound.UseCases;
-using eBRestarter.Core.Application.UseCases;
-using eBRestarter.Core.Application.Models.Records;
-using Moq;
+﻿using NSubstitute;
 using Shouldly;
 using System;
 using Xunit;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
+using eBRestarter.Core.Application.ObjectArchetypes.Enums;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Browser;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
-using eBRestarter.Core.Application.ObjectArchetypes.Enums;
+using eBRestarter.Core.Application.UseCases;
+using NSubstitute.ExceptionExtensions;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 
 namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
 {
@@ -21,25 +20,27 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
     /// </summary>
     public class ToggleEdgeStartupBoostUseCaseTests
     {
-        private readonly Mock<IOutboundPortBrowserConfigRepository> _mockStartupService;
-        private readonly Mock<IOutboundPortBrowserFactory> _mockBrowserFactory;
-        private readonly Mock<IOutboundPortBrowser> _mockEdgeBrowser;
+        private readonly IOutboundPortBrowserConfigRepository _mockStartupService;
+        private readonly IOutboundPortBrowserFactory _mockBrowserFactory;
+        private readonly IOutboundPortBrowser _mockEdgeBrowser;
         private readonly ToggleEdgeStartupBoostUseCase _sut;
 
         public ToggleEdgeStartupBoostUseCaseTests()
         {
-            _mockStartupService = new Mock<IOutboundPortBrowserConfigRepository>();
-            _mockBrowserFactory = new Mock<IOutboundPortBrowserFactory>();
-            _mockEdgeBrowser = new Mock<IOutboundPortBrowser>();
+            _mockStartupService = Substitute.For<IOutboundPortBrowserConfigRepository>();
+            _mockBrowserFactory = Substitute.For<IOutboundPortBrowserFactory>();
+            _mockEdgeBrowser = Substitute.For<IOutboundPortBrowser>();
 
             // Standard-Setup: Wenn die Factory nach Edge gefragt wird, liefern wir unseren Mock zur�ck
             _mockBrowserFactory
-                .Setup(f => f.Create(BrowserType.Edge))
-                .Returns(_mockEdgeBrowser.Object);
+                .Create(BrowserType.Edge)
+                .Returns(_mockEdgeBrowser);
 
-            _sut = new ToggleEdgeStartupBoostUseCase(
-                _mockStartupService.Object,
-                _mockBrowserFactory.Object);
+            _sut = // Signatur: (browserFactory, logger, startupService).
+            new ToggleEdgeStartupBoostUseCase(
+                _mockBrowserFactory,
+                Substitute.For<IOutboundPortApplicationLogger<ToggleEdgeStartupBoostUseCase>>(),
+                _mockStartupService);
         }
         // 1. IS ENABLED / IS INSTALLED - TESTS
 
@@ -53,14 +54,14 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         public void IsEnabled_ShouldReturnExactStateFromStartupService(bool expectedState)
         {
             // ARRANGE
-            _mockStartupService.Setup(s => s.IsBrowserStartupBoostEnabled()).Returns(expectedState);
+            _mockStartupService.IsBrowserStartupBoostEnabled().Returns(expectedState);
 
             // ACT
             var result = _sut.IsEnabled();
 
             // ASSERT
             result.ShouldBe(expectedState);
-            _mockStartupService.Verify(s => s.IsBrowserStartupBoostEnabled(), Times.Once);
+            _mockStartupService.Received(1).IsBrowserStartupBoostEnabled();
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
         public void IsEdgeInstalled_ShouldReturnStateFromEdgeBrowserInstance(bool isInstalled)
         {
             // ARRANGE
-            _mockEdgeBrowser.Setup(b => b.IsInstalled).Returns(isInstalled);
+            _mockEdgeBrowser.IsInstalled.Returns(isInstalled);
 
             // ACT
             var result = _sut.IsEdgeInstalled();
@@ -83,7 +84,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
             result.ShouldBe(isInstalled);
 
             // Verifizieren, dass explizit Edge angefordert wurde (nicht Chrome o.�.)
-            _mockBrowserFactory.Verify(f => f.Create(BrowserType.Edge), Times.Once);
+            _mockBrowserFactory.Received(1).Create(BrowserType.Edge);
         }
         // 2. TOGGLE (UMSCHALTEN) - TESTS
 
@@ -102,7 +103,7 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
 
             // ASSERT
             // 1. Wurde der korrekte Wert an das OS gesendet?
-            _mockStartupService.Verify(s => s.SetBrowserStartupBoost(targetState), Times.Once);
+            _mockStartupService.Received(1).SetBrowserStartupBoost(targetState);
 
             // 2. Stimmt das Response-Objekt?
             result.Success.ShouldBeTrue();
@@ -121,8 +122,8 @@ namespace eBRestarter.Tests.Core.Application.UseCases.ToggleEdgeStartupBoost
             // ARRANGE
             // Wir simulieren: Der User will es AKTIVIEREN (true), aber es knallt.
             _mockStartupService
-                .Setup(s => s.SetBrowserStartupBoost(It.IsAny<bool>()))
-                .Throws(new UnauthorizedAccessException("Zugriff auf Registry verweigert."));
+                .When(s => s.SetBrowserStartupBoost(Arg.Any<bool>()))
+                .Do(_ => throw new UnauthorizedAccessException("Zugriff auf Registry verweigert."));
 
             // ACT
             var result = _sut.Toggle(true);

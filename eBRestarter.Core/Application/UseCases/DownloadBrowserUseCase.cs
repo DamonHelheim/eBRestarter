@@ -1,54 +1,48 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.UseCases;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Logging;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Network;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 
 namespace eBRestarter.Core.Application.UseCases;
 
 /// <summary>
 /// Use case implementation for downloading browser installer executables, executing installations, and cleaning partial downloads.
 /// </summary>
+/// <param name="downloadService">Outbound service for HTTP file downloads.</param>
+/// <param name="fileSystemPort">Outbound port for file system operations.</param>
+/// <param name="logger">Application logger instance.</param>
+/// <param name="pathProvider">Inbound provider for operating system application paths.</param>
+/// <param name="processControlPort">Outbound port for launching OS processes.</param>
+/// <param name="signatureVerifier">Outbound verifier for executable Authenticode signatures.</param>
 public sealed class DownloadBrowserUseCase(
     IOutboundPortHttpDownload downloadService,
     IOutboundPortFileSystem fileSystemPort,
+    IOutboundPortApplicationLogger<DownloadBrowserUseCase> logger,
     IInboundPortOsAppPathProvider pathProvider,
-    IOutboundPortOsProcessControl processControlPort)
+    IOutboundPortOsProcessControl processControlPort,
+    IOutboundPortExecutableSignatureVerifier signatureVerifier)
     : IUseCaseDownloadBrowser
 {
-    // ═══════════════════════════════════════════════════════
-    //  1. Constants
-    // ═══════════════════════════════════════════════════════
-
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
     private const string InstallerFileNameSuffix = "_Installer.exe";
+    private const string UntrustedInstallerExceptionMessage = "The downloaded browser installer does not carry a valid, trusted code signature and was not executed.";
 
-
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortHttpDownload _downloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
     private readonly IOutboundPortFileSystem _fileSystemPort = fileSystemPort ?? throw new ArgumentNullException(nameof(fileSystemPort));
+    private readonly IOutboundPortApplicationLogger<DownloadBrowserUseCase> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly IInboundPortOsAppPathProvider _pathProvider = pathProvider ?? throw new ArgumentNullException(nameof(pathProvider));
     private readonly IOutboundPortOsProcessControl _processControlPort = processControlPort ?? throw new ArgumentNullException(nameof(processControlPort));
+    private readonly IOutboundPortExecutableSignatureVerifier _signatureVerifier = signatureVerifier ?? throw new ArgumentNullException(nameof(signatureVerifier));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-
-    /// <summary>
-    /// Deletes any existing partial download file for the specified browser.
-    /// </summary>
-    /// <param name="browserName">The display name of the browser whose installer file should be cleaned.</param>
+    /// <inheritdoc />
     public void CleanupPartialDownload(string browserName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(browserName);
@@ -64,25 +58,21 @@ public sealed class DownloadBrowserUseCase(
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ObjectDisposedException)
         {
-            Debug.WriteLine(exception);
+            _logger.LogWarning(
+                LogEventIds.Update.BrowserInstallerCleanupFailed,
+                exception,
+                "Partial installer download for {BrowserName} could not be removed.",
+                browserName);
         }
     }
 
-    /// <summary>
-    /// Downloads the browser installer file asynchronously to the local downloads folder.
-    /// </summary>
-    /// <param name="browserName">The display name of the target browser.</param>
-    /// <param name="downloadUrl">The remote URL of the installer binary.</param>
-    /// <param name="progress">Progress reporter for tracking download percentage.</param>
-    /// <param name="cancellationToken">Token to monitor for cancellation requests.</param>
-    /// <returns>The local file path of the downloaded installer executable.</returns>
+    /// <inheritdoc />
     public Task<string> DownloadInstallerAsync(
         string browserName,
         string downloadUrl,
         IProgress<DownloadProgressStatus> progress,
         CancellationToken cancellationToken)
     {
-        // ⚡ Immediate Guard-Clause Exception Timing (Guide Abs. 9.1)
         ArgumentException.ThrowIfNullOrWhiteSpace(browserName);
         ArgumentException.ThrowIfNullOrWhiteSpace(downloadUrl);
         ArgumentNullException.ThrowIfNull(progress);
@@ -90,18 +80,17 @@ public sealed class DownloadBrowserUseCase(
         return DownloadInstallerCoreAsync(browserName, downloadUrl, progress, cancellationToken);
     }
 
-    /// <summary>
-    /// Launches the browser installer executable asynchronously.
-    /// </summary>
-    /// <param name="installerPath">The absolute path to the local installer file.</param>
+    /// <inheritdoc />
     public Task StartInstallerAsync(string installerPath)
     {
-        // ⚡ Immediate Guard-Clause Exception Timing (Guide Abs. 9.1)
         ArgumentException.ThrowIfNullOrWhiteSpace(installerPath);
 
         return StartInstallerCoreAsync(installerPath);
     }
 
+    /// <summary>
+    /// Executes the underlying HTTP download operation for the browser installer binary.
+    /// </summary>
     private async Task<string> DownloadInstallerCoreAsync(
         string browserName,
         string downloadUrl,
@@ -119,6 +108,9 @@ public sealed class DownloadBrowserUseCase(
         return downloadPath;
     }
 
+    /// <summary>
+    /// Resolves the absolute local destination file path for a browser installer.
+    /// </summary>
     private string ResolveDownloadPath(string browserName)
     {
         var downloadsFolder = _pathProvider.RetrieveDownloadsPath();
@@ -127,8 +119,22 @@ public sealed class DownloadBrowserUseCase(
         return _fileSystemPort.CombinePaths(downloadsFolder, fileName);
     }
 
+    /// <summary>
+    /// Verifies the Authenticode signature of the installer binary before initiating execution.
+    /// </summary>
+    /// <remarks>
+    /// Verifies the Authenticode signature of downloaded browser installers to ensure authenticity before execution.
+    /// Prevents execution of unverified binaries from user-writable directories.
+    /// </remarks>
     private async Task StartInstallerCoreAsync(string installerPath)
     {
+        if (!_signatureVerifier.IsTrustedPublisher(installerPath))
+        {
+            _fileSystemPort.DeleteFile(installerPath);
+
+            throw new InvalidOperationException(UntrustedInstallerExceptionMessage);
+        }
+
         await _processControlPort.StartExecutableAsync(installerPath).ConfigureAwait(false);
     }
 }

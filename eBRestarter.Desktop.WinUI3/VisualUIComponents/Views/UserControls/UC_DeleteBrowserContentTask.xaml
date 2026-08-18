@@ -61,7 +61,7 @@
                 Height="25"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="{Binding DeleteBrowserContentIsActive, Converter={StaticResource BoolToImageConverter}}" />
+                Source="{x:Bind ViewModelRestartTask.DeleteBrowserContentIsActive, Converter={StaticResource BoolToImageConverter}, Mode=OneWay}" />
 
             <TextBlock
                 x:Name="tbl_DateOfNextCleaning"
@@ -71,7 +71,7 @@
                 VerticalAlignment="Top"
                 FontSize="16"
                 Foreground="{ThemeResource FontColor_1}"
-                Text="{Binding NextDeletionProcessMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{x:Bind ViewModelRestartTask.NextDeletionProcessMessage, Mode=OneWay}" />
 
             <TextBlock
                 x:Name="tbl_txtCleaningInfo"
@@ -81,7 +81,7 @@
                 VerticalAlignment="Center"
                 FontSize="16"
                 Foreground="{ThemeResource FontColor_1}"
-                Text="{Binding NextDeletionProcessDateMessage, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{x:Bind ViewModelRestartTask.NextDeletionProcessDateMessage, Mode=OneWay}" />
 
             <StackPanel
                 Canvas.Left="238"
@@ -97,7 +97,7 @@
                     HorizontalAlignment="Right"
                     FontSize="16"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="{Binding DeleteIsActivatedMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{x:Bind ViewModelRestartTask.DeleteIsActivatedMessage, Mode=OneWay}"
                     TextWrapping="Wrap" />
 
             </StackPanel>

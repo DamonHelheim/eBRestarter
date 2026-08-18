@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls;
 
@@ -16,10 +17,13 @@ public sealed partial class UC_EarningsAmount : UserControl
             typeof(UC_EarningsAmount),
             new PropertyMetadata(string.Empty));
 
+    // ✅ Guide Kap. 23.1: Der x:Bind-Compiler hat die vorher stillschweigend zur Laufzeit
+    // gecastete Zuweisung object -> ImageSource als Fehler gemeldet. Alle Zuweisungen sind
+    // BitmapImage (siehe Light-/DarkTheme.xaml), der Typ wird daher korrekt eingeengt.
     public static readonly DependencyProperty HeaderImageEarningsProperty =
         DependencyProperty.Register(
             nameof(HeaderImageEarnings),
-            typeof(object),
+            typeof(ImageSource),
             typeof(UC_EarningsAmount),
             new PropertyMetadata(null));
 
@@ -48,9 +52,9 @@ public sealed partial class UC_EarningsAmount : UserControl
     }
 
     // ── Block 4: Komplexe Typen, Collections & UI-Elemente ──
-    public object HeaderImageEarnings
+    public ImageSource HeaderImageEarnings
     {
-        get => (object)GetValue(HeaderImageEarningsProperty);
+        get => (ImageSource)GetValue(HeaderImageEarningsProperty);
         set => SetValue(HeaderImageEarningsProperty, value);
     }
 

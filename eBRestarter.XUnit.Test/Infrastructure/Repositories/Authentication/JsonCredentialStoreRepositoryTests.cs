@@ -1,21 +1,20 @@
-using eBRestarter.Core.Application.Ports.Inbound.Providers;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Ports.Outbound.Network;
-using eBRestarter.Core.Application.Models.Records;
-using eBRestarter.Infrastructure.Repositories.Authentication;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using System.IO;
 using System.Text.Json;
 using Xunit;
+using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Application;
 using eBRestarter.Core.Application.Ports.Outbound.Interfaces.OperatingSystem;
+using eBRestarter.Infrastructure.BehavioralComponents.Repositories.Authentication;
+using Microsoft.Extensions.Logging.Testing;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.Ports.Outbound.Interfaces.Security;
 
 namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
 {
     /// <summary>
-    /// Testet den JsonCredentialStoreRepository unter Verwendung von Mocking,
-    /// vollständig losgelöst von I/O-Kopplungen (Repository-Pattern).
+    /// Unit tests for <see cref="JsonCredentialStoreRepository"/> verifying credential persistence, encryption round-trip, and error handling.
     /// </summary>
     public class JsonCredentialStoreRepositoryTests
     {
@@ -24,50 +23,60 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         [Fact]
         public void SaveCredentials_ShouldSerializeToJson_AndWriteToFile()
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [R]IGHT: Serializes credentials to encrypted JSON format and writes to target storage path
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
 
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
             var credentials = new ApiCredentials("TestUser", "TestKey123");
 
             string expectedJson = JsonSerializer.Serialize(credentials);
 
-            // ACT
+            // Act
             store.SaveCredentials(credentials);
 
-            // ASSERT
-            mockFileSystem.Verify(fs => fs.WriteAllText(_expectedStoragePath, expectedJson), Times.Once);
+            // Assert
+            mockFileSystem.Received(1).WriteAllText(_expectedStoragePath, expectedJson);
         }
 
         [Fact]
         public void LoadCredentials_ShouldReturnCredentials_WhenFileExistsAndIsValidJson()
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [R]IGHT: Reads valid JSON from file and decrypts stored API key
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
 
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(true);
+            mockFileSystem.FileExists(_expectedStoragePath).Returns(true);
 
             string fakeJson = "{\"Username\":\"TestUser\",\"ApiKey\":\"TestKey123\"}";
-            mockFileSystem.Setup(fs => fs.ReadAllText(_expectedStoragePath)).Returns(fakeJson);
+            mockFileSystem.ReadAllText(_expectedStoragePath).Returns(fakeJson);
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
 
-            // ACT
+            // Act
             var result = store.LoadCredentials();
 
-            // ASSERT
+            // Assert
             result.ShouldNotBeNull();
             result.Username.ShouldBe("TestUser");
             result.ApiKey.ShouldBe("TestKey123");
@@ -78,67 +87,82 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         [InlineData(true, "Kein Gültiges JSON {")]
         public void LoadCredentials_ShouldReturnNull_WhenFileIsMissingOrBroken(bool fileExists, string? fileContent)
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [B]OUNDARY / [E]RROR: Returns null when credential file does not exist or contains corrupted JSON
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
 
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(fileExists);
+            mockFileSystem.FileExists(_expectedStoragePath).Returns(fileExists);
 
             if (fileContent != null)
             {
-                mockFileSystem.Setup(fs => fs.ReadAllText(_expectedStoragePath)).Returns(fileContent);
+                mockFileSystem.ReadAllText(_expectedStoragePath).Returns(fileContent);
             }
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
 
-            // ACT
+            // Act
             var result = store.LoadCredentials();
 
-            // ASSERT
+            // Assert
             result.ShouldBeNull();
         }
 
         [Fact]
         public void ClearCredentials_ShouldDeleteFile_WhenFileExists()
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [R]IGHT: Deletes credential storage file when file exists
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
 
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            mockFileSystem.Setup(fs => fs.FileExists(_expectedStoragePath)).Returns(true);
+            mockFileSystem.FileExists(_expectedStoragePath).Returns(true);
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
 
-            // ACT
+            // Act
             store.ClearCredentials();
 
-            // ASSERT
-            mockFileSystem.Verify(fs => fs.DeleteFile(_expectedStoragePath), Times.Once);
+            // Assert
+            mockFileSystem.Received(1).DeleteFile(_expectedStoragePath);
         }
 
         [Fact]
         public void ImportFromLegacyFile_ShouldReadBinaryFileCorrectly()
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [R]IGHT: Deserializes username and key from valid legacy binary credential file
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
             
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
 
             var ms = new MemoryStream();
             using (var writer = new BinaryWriter(ms, System.Text.Encoding.UTF8, leaveOpen: true))
@@ -148,13 +172,13 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
             }
             ms.Position = 0;
 
-            mockFileSystem.Setup(fs => fs.FileExists("legacyPath")).Returns(true);
-            mockFileSystem.Setup(fs => fs.OpenRead("legacyPath")).Returns(ms);
+            mockFileSystem.FileExists("legacyPath").Returns(true);
+            mockFileSystem.OpenRead("legacyPath").Returns(ms);
 
-            // ACT
+            // Act
             var result = store.ImportFromLegacyFile("legacyPath");
 
-            // ASSERT
+            // Assert
             result.ShouldNotBeNull();
             result.Username.ShouldBe("LegacyUser");
             result.ApiKey.ShouldBe("LegacyKey999");
@@ -163,31 +187,46 @@ namespace eBRestarter.XUnit.Test.Infrastructure.Services.Authentication
         [Fact]
         public void ImportFromLegacyFile_ShouldReturnNull_WhenFileDoesNotExist()
         {
-            // ARRANGE
-            var mockFileSystem = new Mock<IOutboundPortFileSystem>();
-            var mockPathProvider = new Mock<IOutboundPortAppPathProvider>();
+            // [E]RROR / [B]OUNDARY: Returns null when legacy credential file is not found on disk
+            // Arrange
+            var mockFileSystem = Substitute.For<IOutboundPortFileSystem>();
+            var mockPathProvider = Substitute.For<IOutboundPortAppPathProvider>();
 
-            mockPathProvider.Setup(p => p.RetrieveLocalAppDataDirectory()).Returns(@"C:\FakeAppData");
+            mockPathProvider.RetrieveLocalAppDataDirectory().Returns(@"C:\FakeAppData");
             mockFileSystem
-                .Setup(fs => fs.CombinePaths(It.IsAny<string[]>()))
-                .Returns((string[] paths) => Path.Combine(paths));
+                .CombinePaths(Arg.Any<string[]>())
+                .Returns(ci => Path.Combine(ci.Arg<string[]>()));
 
-            mockFileSystem.Setup(fs => fs.FileExists("nonExistentPath")).Returns(false);
+            mockFileSystem.FileExists("nonExistentPath").Returns(false);
 
-            var store = new JsonCredentialStoreRepository(mockFileSystem.Object, mockPathProvider.Object);
+            var store = new JsonCredentialStoreRepository(
+                CreateRoundTripEncryption(),
+                mockFileSystem,
+                new FakeLogger<JsonCredentialStoreRepository>(),
+                mockPathProvider);
 
-            // ACT
+            // Act
             var result = store.ImportFromLegacyFile("nonExistentPath");
 
-            // ASSERT
+            // Assert
             result.ShouldBeNull();
+        }
+    
+        /// <summary>
+        /// Creates an encryption test double that returns plaintext strings unmodified.
+        /// </summary>
+        /// <remarks>
+        /// A default substitute returns <see langword="null"/> for <c>Encrypt</c>, which triggers
+        /// an <see cref="InvalidOperationException"/> in <c>SaveCredentials</c> (fail-safe security behavior).
+        /// For persistence tests, a round-trip mock is the appropriate double.
+        /// </remarks>
+        private static IOutboundPortEncryption CreateRoundTripEncryption()
+        {
+            var encryption = Substitute.For<IOutboundPortEncryption>();
+            encryption.Encrypt(Arg.Any<string>()).Returns(ci => ci.Arg<string>());
+            encryption.Decrypt(Arg.Any<string>()).Returns(ci => ci.Arg<string>());
+
+            return encryption;
         }
     }
 }
-
-
-
-
-
-
-

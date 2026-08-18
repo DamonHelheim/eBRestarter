@@ -12,6 +12,8 @@ using eBRestarter.Core.Application.BehavioralComponents.Extensions;
 using eBRestarter.Core.Application.ObjectArchetypes.DTOs.Records;
 using eBRestarter.Core.Application.Ports.Inbound.Interfaces.Providers;
 using eBRestarter.Desktop.WinUI3.ObjectArchetypes.ObservableModel;
+using Microsoft.Extensions.Logging;
+using eBRestarter.Core.Application.ObjectArchetypes.Constants;
 
 namespace eBRestarter.Desktop.WinUI3.ViewModels;
 
@@ -42,10 +44,13 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     //  2. Fields
     // ═══════════════════════════════════════════════════════
     private readonly IInboundPortLocalizationProvider _localizationService;
+    private readonly ILogger<ViewModelNetworkTraffic> _logger;
     private readonly IInboundPortNetworkInfoProvider _networkService;
 
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly Timer _timer;
+
+    private volatile bool _disposed;
 
 
     // ═══════════════════════════════════════════════════════
@@ -64,12 +69,15 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     /// </summary>
     public ViewModelNetworkTraffic(
         IInboundPortLocalizationProvider localizationService,
+        ILogger<ViewModelNetworkTraffic> logger,
         IInboundPortNetworkInfoProvider networkService)
     {
         ArgumentNullException.ThrowIfNull(localizationService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(networkService);
 
         _localizationService = localizationService;
+        _logger = logger;
         _networkService = networkService;
 
         _dispatcherQueue =
@@ -88,14 +96,51 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
     // ═══════════════════════════════════════════════════════
     //  8. Methods (public → private)
     // ═══════════════════════════════════════════════════════
-    /// <summary>Stops and disposes the timer so the page can unload without further background updates.</summary>
+    /// <summary>Stops and disposes the timer so the view can be torn down without further background updates.</summary>
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
         _timer.Stop();
         _timer.Elapsed -= OnTimerElapsed;
         _timer.Dispose();
 
         GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Resumes polling after the hosting view became visible again.
+    /// </summary>
+    /// <remarks>
+    /// The hosting page uses <c>NavigationCacheMode="Required"</c>, so the view survives navigation.
+    /// Pausing instead of disposing on unload keeps the 1-second poll off the CPU while the page is
+    /// invisible, without leaving a dead view model behind when the user navigates back.
+    /// </remarks>
+    public void StartPolling()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _timer.Start();
+        Task.Run(PerformUpdate);
+    }
+
+    /// <summary>Pauses polling while the hosting view is not visible (Guide Kap. 22.6).</summary>
+    public void StopPolling()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _timer.Stop();
     }
 
     /// <summary>
@@ -154,8 +199,19 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
         }
     }
 
+    /// <summary>
+    /// Triggers network statistics update on timer tick.
+    /// </summary>
+    /// <param name="sender">The timer instance.</param>
+    /// <param name="elapsedEventArgs">Event arguments associated with the timer tick.</param>
     private void OnTimerElapsed(object? sender, ElapsedEventArgs elapsedEventArgs)
     {
+        // Guard against timer callbacks firing after disposal.
+        if (_disposed)
+        {
+            return;
+        }
+
         PerformUpdate();
     }
 
@@ -176,7 +232,12 @@ public sealed partial class ViewModelNetworkTraffic : ObservableObject, IDisposa
         }
         catch (Exception exception)
         {
-            Debug.WriteLine(exception);
+            // Logging guideline: Debug log level is used because this path can be hit every second; Warning would flood the log.
+            _logger.LogDebug(
+                LogEventIds.UserInterface.ViewModelOperationFailed,
+                "Reading network interface statistics failed: {Reason}",
+                exception.Message);
+
             isAvailable = false;
         }
 

@@ -9,12 +9,15 @@ namespace eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Wrap
 /// <summary>
 /// Adapter: Driven Adapter (Outbound) implementing Chromium-based control and discovery for Microsoft Edge.
 /// <para>
-/// <strong>Architektonische Klassifizierung (Leitfaden): OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
-/// - <strong>Rolle &amp; Verantwortung:</strong> Erfüllt als technologischer Baustein im äußeren Ring (Infrastructure Layer) Vorgaben aus dem Core zur Prozess-, Datei- und Konfigurationssteuerung von Microsoft Edge.<br/>
-/// - <strong>Implementierte Basis / Port:</strong> Erbt von <see cref="AdapterChromiumBrowserBaseWrapper"/> (welcher <see cref="IBrowserOutboundPort"/> implementiert).<br/>
-/// - <strong>Begründung:</strong> Gemäß Abschnitt 2.2 des Leitfadens ist diese Klasse ein <strong>Outbound Adapter</strong>, da sie in der Infrastrukturschicht liegt und die Steuerung einer spezifischen externen Browser-Anwendung für den Core übernimmt.
+/// <strong>Architecture Classification: OUTBOUND ADAPTER (Driven Adapter)</strong><br/>
+/// - <strong>Role &amp; Responsibility:</strong> Handles process, file, and configuration control for Microsoft Edge in the Infrastructure layer.<br/>
+/// - <strong>Implemented Base / Port:</strong> Inherits from <see cref="AdapterChromiumBrowserBaseWrapper"/> (which implements <see cref="IOutboundPortBrowser"/>).<br/>
 /// </para>
 /// </summary>
+/// <param name="processControlPort">OS process control port.</param>
+/// <param name="settingsPort">System configuration repository port.</param>
+/// <param name="fileSystemPort">File system operations port.</param>
+/// <param name="logger">Logger instance.</param>
 public sealed class AdapterEdgeBrowserWrapper(
     IOutboundPortOsProcessControl processControlPort,
     IOutboundPortSystemConfigurationRepository settingsPort,
@@ -30,7 +33,7 @@ public sealed class AdapterEdgeBrowserWrapper(
     //  1. Constants
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     private const string DefaultBrowserRegistryName = "Microsoft Edge";
     private const string DefaultDisplayName = "Edge";
     private const string DefaultExeFileName = "msedge.exe";
@@ -41,7 +44,7 @@ public sealed class AdapterEdgeBrowserWrapper(
     private const string DefaultRegistryKeyVersion = @"Software\Microsoft\Edge\BLBeacon";
     private const string DefaultUninstallSubKey = "Microsoft Edge";
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     private static readonly string[] _userDataSubPath = ["Microsoft", "Edge", "User Data"];
 
 
@@ -49,7 +52,7 @@ public sealed class AdapterEdgeBrowserWrapper(
     //  4. Properties
     // ═══════════════════════════════════════════════════════
 
-    // ── Block 2: Primitive Typen & Strings (alphabetisch) ──
+    // ── Block 2: Primitives & strings ──
     protected override string BrowserRegistryName => DefaultBrowserRegistryName;
     public override string DisplayName => DefaultDisplayName;
     public override string DownloadUrl => WebLinks.EdgeDownloadLinkDE;
@@ -62,9 +65,9 @@ public sealed class AdapterEdgeBrowserWrapper(
     protected override string RegistryKeyVersion => DefaultRegistryKeyVersion;
     protected override string UninstallSubKey => DefaultUninstallSubKey;
 
-    // ── Block 3: Enums (alphabetisch) ──
+    // ── Block 3: Enums ──
     public override BrowserType Type => BrowserType.Edge;
 
-    // ── Block 4: Komplexe Typen, Collections & UI-Elemente (alphabetisch) ──
+    // ── Block 4: Complex types & collections ──
     protected override string[] UserDataSubPath => _userDataSubPath;
 }

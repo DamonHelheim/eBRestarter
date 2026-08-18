@@ -49,7 +49,7 @@
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding OpenSupportWebsiteCommand}"
+                    Command="{x:Bind ViewModelInfocenter.OpenSupportWebsiteCommand}"
                     CommandParameter="https://brave.com/de/download/"
                     Content="Brave Download"
                     Foreground="{ThemeResource FontColor_1}" />
@@ -59,7 +59,7 @@
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding OpenSupportWebsiteCommand}"
+                    Command="{x:Bind ViewModelInfocenter.OpenSupportWebsiteCommand}"
                     CommandParameter="https://www.google.com/chrome/"
                     Content="Chrome Download"
                     Foreground="{ThemeResource FontColor_1}" />
@@ -69,7 +69,7 @@
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding OpenSupportWebsiteCommand}"
+                    Command="{x:Bind ViewModelInfocenter.OpenSupportWebsiteCommand}"
                     CommandParameter="https://www.microsoft.com/de-de/edge"
                     Content="Edge Download"
                     Foreground="{ThemeResource FontColor_1}" />
@@ -79,7 +79,7 @@
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding OpenSupportWebsiteCommand}"
+                    Command="{x:Bind ViewModelInfocenter.OpenSupportWebsiteCommand}"
                     CommandParameter="https://www.mozilla.org/de/firefox/new/"
                     Content="Firefox Download"
                     Foreground="{ThemeResource FontColor_1}" />
@@ -89,7 +89,7 @@
                     Padding="0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
-                    Command="{Binding OpenSupportWebsiteCommand}"
+                    Command="{x:Bind ViewModelInfocenter.OpenSupportWebsiteCommand}"
                     CommandParameter="https://vivaldi.com/download/"
                     Content="Vivaldi Download"
                     Foreground="{ThemeResource FontColor_1}" />

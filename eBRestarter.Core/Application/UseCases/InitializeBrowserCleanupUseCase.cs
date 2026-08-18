@@ -9,28 +9,17 @@ namespace eBRestarter.Core.Application.UseCases;
 /// <summary>
 /// Use case implementation for initializing scheduled browser cache cleanup timelines upon application startup.
 /// </summary>
+/// <param name="configService">Outbound repository for accessing application configuration settings.</param>
+/// <param name="timeProvider">Time provider for evaluating local date and time.</param>
 public sealed class InitializeBrowserCleanupUseCase(
     IOutboundPortEVisitorConfigRepository configService,
     TimeProvider timeProvider)
     : IUseCaseInitializeBrowserCleanup
 {
-    // ═══════════════════════════════════════════════════════
-    //  2. Fields
-    // ═══════════════════════════════════════════════════════
-
-    // ── Block 1: Injizierte Abhängigkeiten (alphabetisch A–Z) ──
     private readonly IOutboundPortEVisitorConfigRepository _configService = configService ?? throw new ArgumentNullException(nameof(configService));
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
 
-
-    // ═══════════════════════════════════════════════════════
-    //  8. Methods
-    // ═══════════════════════════════════════════════════════
-
-    /// <summary>
-    /// Evaluates existing cleanup schedules and recalculates future cleanup dates if necessary.
-    /// </summary>
-    /// <returns>A completed <see cref="Task"/>.</returns>
+    /// <inheritdoc />
     public Task ExecuteAsync()
     {
         var config = _configService.LoadConfig();

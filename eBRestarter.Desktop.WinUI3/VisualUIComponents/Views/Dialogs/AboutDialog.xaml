@@ -25,7 +25,7 @@
             <TextBlock
                 Margin="0,0,0,20"
                 HorizontalAlignment="Center"
-                Text="{Binding AppVersion}" />
+                Text="{x:Bind ViewModelAbout.AppVersion, Mode=OneWay}" />
 
             <TextBlock
                 x:Uid="AboutDialog_CreditsHeader"
@@ -55,7 +55,7 @@
                 FontSize="16"
                 FontWeight="Bold" />
 
-            <ItemsControl ItemsSource="{Binding IconCredits}">
+            <ItemsControl ItemsSource="{x:Bind ViewModelAbout.IconCredits, Mode=OneWay}">
 
                 <ItemsControl.ItemTemplate>
 

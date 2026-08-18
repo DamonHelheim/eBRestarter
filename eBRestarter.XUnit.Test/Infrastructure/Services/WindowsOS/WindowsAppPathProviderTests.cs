@@ -1,16 +1,14 @@
-using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
 using Shouldly;
 using System;
 using System.IO;
 using Xunit;
+using eBRestarter.Infrastructure.Adapters.Outbound.BehavioralComponents.Provider.WindowsOS;
+using eBRestarter.Infrastructure.BehavioralComponents.Providers;
 
 namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
 {
     /// <summary>
-    /// Testet den WindowsAppPathProvider.
-    /// Da diese Klasse ein reiner Wrapper um System.Environment ist, testen wir hier,
-    /// ob die Methoden intern auf die korrekten Windows-Umgebungsvariablen verweisen
-    /// und ob die zurückgegebenen Strings gültige, absolute Pfade sind.
+    /// Unit tests for <see cref="AdapterWindowsAppPathProvider"/> verifying environment folder path resolution.
     /// </summary>
     public class WindowsAppPathProviderTests
     {
@@ -20,103 +18,85 @@ namespace eBRestarter.Tests.Infrastructure.Services.WindowsOS
         {
             _sut = new AdapterWindowsAppPathProvider();
         }
-        // 1. APPDATA / LOCALAPPDATA TESTS
 
-        /// <summary>
-        /// Stellt sicher, dass RetrieveAppDataDirectory den korrekten Pfad zum Roaming-AppData Ordner liefert.
-        ///
-        /// WAS WIRD GETESTET?
-        /// Wir rufen das echte System via Environment.GetFolderPath auf und vergleichen es mit der
-        /// Ausgabe unseres Wrappers. Zudem prüfen wir, ob es sich um einen validen absoluten Pfad handelt.
-        /// </summary>
         [Fact]
         public void GetAppDataDirectory_ShouldReturnCorrectRoamingAppDataPath()
         {
-            // ARRANGE
+            // [R]IGHT: Resolves roaming AppData directory to valid rooted system path
+            // Arrange
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-            // ACT
+            // Act
             string actualPath = _sut.RetrieveAppDataDirectory();
 
-            // ASSERT
+            // Assert
             actualPath.ShouldBe(expectedPath);
             actualPath.ShouldNotBeNullOrWhiteSpace();
-            Path.IsPathRooted(actualPath).ShouldBeTrue("Der Pfad muss ein absoluter Systempfad (z.B. C:\\...) sein.");
+            Path.IsPathRooted(actualPath).ShouldBeTrue("The path must be an absolute system path.");
         }
 
-        /// <summary>
-        /// Stellt sicher, dass RetrieveLocalAppDataDirectory auf den lokalen AppData Ordner verweist.
-        /// </summary>
         [Fact]
         public void GetLocalAppDataDirectory_ShouldReturnCorrectLocalAppDataPath()
         {
-            // ARRANGE
+            // [R]IGHT: Resolves local AppData directory to valid rooted system path
+            // Arrange
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            // ACT
+            // Act
             string actualPath = _sut.RetrieveLocalAppDataDirectory();
 
-            // ASSERT
+            // Assert
             actualPath.ShouldBe(expectedPath);
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
-        // 2. USER PROFILE TEST
 
-        /// <summary>
-        /// Stellt sicher, dass der Wrapper den korrekten Hauptordner des aktuellen Benutzers findet.
-        /// </summary>
         [Fact]
         public void GetUserProfileDirectory_ShouldReturnCorrectUserProfilePath()
         {
-            // ARRANGE
+            // [R]IGHT: Resolves current user profile directory to valid rooted system path
+            // Arrange
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-            // ACT
+            // Act
             string actualPath = _sut.RetrieveUserProfileDirectory();
 
-            // ASSERT
+            // Assert
             actualPath.ShouldBe(expectedPath);
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
-        // 3. PROGRAM FILES TESTS
 
-        /// <summary>
-        /// Stellt sicher, dass der Pfad für 64-Bit (oder allgemeine) Programme korrekt gemappt wird.
-        /// </summary>
         [Fact]
         public void GetProgramFilesDirectory_ShouldReturnCorrectProgramFilesPath()
         {
-            // ARRANGE
+            // [R]IGHT: Resolves 64-bit Program Files directory to valid rooted system path
+            // Arrange
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
-            // ACT
+            // Act
             string actualPath = _sut.RetrieveProgramFilesDirectory();
 
-            // ASSERT
+            // Assert
             actualPath.ShouldBe(expectedPath);
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
 
-        /// <summary>
-        /// Stellt sicher, dass explizit der x86 (32-Bit) Programme-Ordner referenziert wird.
-        /// </summary>
         [Fact]
         public void GetProgramFilesX86Directory_ShouldReturnCorrectProgramFilesX86Path()
         {
-            // ARRANGE
+            // [R]IGHT: Resolves 32-bit Program Files (x86) directory to valid rooted system path
+            // Arrange
             string expectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
-            // ACT
+            // Act
             string actualPath = _sut.RetrieveProgramFilesX86Directory();
 
-            // ASSERT
+            // Assert
             actualPath.ShouldBe(expectedPath);
             actualPath.ShouldNotBeNullOrWhiteSpace();
             Path.IsPathRooted(actualPath).ShouldBeTrue();
         }
     }
 }
-
