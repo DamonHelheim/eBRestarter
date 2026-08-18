@@ -37,7 +37,7 @@ public static class LogRedaction
     /// </summary>
     /// <param name="identifier">The raw identifier. <see langword="null"/> and whitespace are tolerated.</param>
     /// <returns>The first character followed by <c>***</c>, or <c>(empty)</c> when nothing was supplied.</returns>
-    /// <example><c>MaskIdentifier("ExampleUser")</c> returns <c>"S***"</c>.</example>
+    /// <example><c>MaskIdentifier("ExampleUser")</c> returns <c>"E***"</c>.</example>
     public static string MaskIdentifier(string? identifier)
     {
         if (string.IsNullOrWhiteSpace(identifier))
