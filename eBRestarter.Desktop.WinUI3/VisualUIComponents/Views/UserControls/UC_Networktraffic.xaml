@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_Networktraffic"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -23,7 +24,7 @@
                     Margin="5,0,0,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Source="/Resources/Visuals/Icons/Intersection/globe-grid.png" />
+                    Source="ms-appx:///Resources/Visuals/Icons/Intersection/globe-grid.png" />
 
                 <TextBlock
                     x:Uid="NetworkTraffic"
@@ -39,7 +40,9 @@
                 Height="180"
                 HorizontalAlignment="Center">
 
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
 
                     <ItemsControl ItemsSource="{x:Bind ViewModelNetworkTraffic.NetworkCards, Mode=OneWay}">
 
@@ -50,11 +53,9 @@
                                 <Grid Margin="0,0,0,15">
 
                                     <Grid.RowDefinitions>
-
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
-
                                     </Grid.RowDefinitions>
 
                                     <StackPanel

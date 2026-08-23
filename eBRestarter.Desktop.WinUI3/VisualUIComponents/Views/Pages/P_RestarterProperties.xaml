@@ -5,14 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userControls="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     NavigationCacheMode="Required"
     mc:Ignorable="d">
 
     <Grid
-        x:Name="MainGrid"
         Background="{ThemeResource MenuBackgroundColor_2}"
         CornerRadius="8,0,0,0">
 
@@ -29,11 +27,12 @@
             Margin="5,5,5,0"
             Padding="10,0,0,0"
             VerticalAlignment="Center"
-            Background="{ThemeResource MenuBackgroundColor}"
-            CornerRadius="8"
             Orientation="Horizontal"
-            Spacing="10">
+            Spacing="10"
+            Background="{ThemeResource MenuBackgroundColor}"
+            CornerRadius="8">
 
+            <!--  Eigenschaften-Symbol (PageProperties / Equalizer)  -->
             <FontIcon
                 VerticalAlignment="Center"
                 FontFamily="Segoe MDL2 Assets"
@@ -42,27 +41,21 @@
                 Glyph="&#xECA5;" />
 
             <TextBlock
-                x:Name="tbl_MainWindowTitle"
                 x:Uid="Properties"
                 Margin="0,-3,0,0"
                 VerticalAlignment="Center"
                 FontSize="18"
                 FontWeight="Bold"
-                Foreground="{ThemeResource FontColor_1}"
-                Text="Einstellungen" />
+                Foreground="{ThemeResource FontColor_1}" />
 
         </StackPanel>
 
         <!--  INHALT  -->
-
-
         <Grid Grid.Row="1">
             <!--  links: flexibel, rechts: so breit wie nötig und immer am rechten Rand  -->
             <Grid.ColumnDefinitions>
-
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-
             </Grid.ColumnDefinitions>
 
             <!--  LINKE SPALTE: GridView mit Wrap  -->
@@ -73,23 +66,16 @@
                 SelectionMode="None">
 
                 <GridView.ItemsPanel>
-
                     <ItemsPanelTemplate>
-
                         <controls:ItemsWrapGrid Background="{ThemeResource MenuBackgroundColor_2}" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
-
                 </GridView.ItemsPanel>
 
                 <GridView.ItemContainerStyle>
-
                     <Style TargetType="GridViewItem">
-
                         <Setter Property="Padding" Value="5,0,0,0" />
                         <Setter Property="Margin" Value="0,20,0,0" />
-
                     </Style>
-
                 </GridView.ItemContainerStyle>
 
                 <userControls:UC_eVisitorUsername Width="320" Height="220" />

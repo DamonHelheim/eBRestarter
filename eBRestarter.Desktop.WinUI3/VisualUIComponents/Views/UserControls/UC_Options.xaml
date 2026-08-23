@@ -3,13 +3,12 @@
     x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_Options"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid
-        x:Name="RootGrid"
         Background="{ThemeResource MenuBackgroundColor_2}"
         CornerRadius="8,0,0,0">
 
@@ -24,11 +23,12 @@
             Margin="5"
             Padding="10,0,0,0"
             VerticalAlignment="Center"
-            Background="{ThemeResource MenuBackgroundColor}"
-            CornerRadius="8"
             Orientation="Horizontal"
-            Spacing="10">
+            Spacing="10"
+            Background="{ThemeResource MenuBackgroundColor}"
+            CornerRadius="8">
 
+            <!--  Optionen-Symbol  -->
             <FontIcon
                 Margin="0,0,0,3"
                 VerticalAlignment="Bottom"
@@ -37,7 +37,6 @@
                 Glyph="&#xF2C7;" />
 
             <TextBlock
-                x:Name="tbl_MainWindowTitle"
                 x:Uid="Options"
                 Margin="0,6,0,9"
                 VerticalAlignment="Center"
@@ -48,12 +47,12 @@
 
         <Pivot
             x:Name="OptionsPivot"
-            Grid.Row="1"
-            Margin="0,0,0,0">
+            Grid.Row="1">
 
-            <PivotItem Margin="0,0,0,0">
+            <PivotItem>
                 <PivotItem.Header>
                     <StackPanel Orientation="Horizontal" Spacing="4">
+                        <!--  Einstellungen-Symbol (Setting)  -->
                         <FontIcon
                             Width="20"
                             Foreground="{ThemeResource FontColor_1}"
@@ -71,6 +70,7 @@
             <PivotItem Margin="10,0,60,0">
                 <PivotItem.Header>
                     <StackPanel Orientation="Horizontal" Spacing="4">
+                        <!--  API-Symbol  -->
                         <FontIcon
                             Width="20"
                             Foreground="{ThemeResource FontColor_1}"
@@ -85,9 +85,10 @@
                 <local:UC_OptionsApi />
             </PivotItem>
 
-            <PivotItem Margin="0,0,0,0">
+            <PivotItem>
                 <PivotItem.Header>
                     <StackPanel Orientation="Horizontal" Spacing="4">
+                        <!--  Erweiterungs-Symbol  -->
                         <FontIcon
                             Width="20"
                             Foreground="{ThemeResource FontColor_1}"

@@ -5,13 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
     mc:Ignorable="d">
 
     <Border
-        x:Name="Border_Additional_Options"
         Padding="10"
         Background="{ThemeResource DashletBackgroundColor_1}"
         BorderThickness="1"
@@ -20,7 +18,6 @@
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <!--  Header: Icon + Titel  -->
                 <RowDefinition Height="Auto" />
                 <!--  Hinweis-Text  -->
@@ -30,8 +27,8 @@
                 <!--  Button 2  -->
                 <RowDefinition Height="Auto" />
                 <!--  Button 3  -->
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
 
             <StackPanel
                 Grid.Row="0"
@@ -39,67 +36,58 @@
                 Orientation="Horizontal">
 
                 <Image
-                    x:Name="image_additional_options"
                     Width="28"
                     Height="28"
                     Margin="0,0,8,0"
                     Source="{ThemeResource CirclePlusIcon}" />
 
                 <TextBlock
-                    x:Name="tbl_AdditionalOptions"
                     x:Uid="AdditionalOptions"
                     VerticalAlignment="Center"
                     FontSize="17"
                     FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="Zusatzoptionen"
                     TextWrapping="Wrap" />
 
             </StackPanel>
 
             <TextBlock
-                x:Name="tbl_NoBrowserInstalled"
                 x:Uid="No_Browsers_Installed"
                 Grid.Row="1"
                 Margin="0,0,0,8"
                 FontSize="16"
-                Foreground="#FFC70E3F"
-                Text="Keine Browser installiert!"
+                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                 TextWrapping="Wrap"
                 Visibility="{x:Bind ViewModelRestarterProperties.NoBrowserInstalledSectionVisibility, Mode=OneWay}" />
 
-
             <Button
-                x:Name="BtnDeleteBrowserContent"
                 x:Uid="Delete_browser_content"
                 Grid.Row="2"
                 Height="40"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModelRestarterProperties.ShowBrowserDeleteContentCommand}"
                 FontSize="16"
+                Command="{x:Bind ViewModelRestarterProperties.ShowBrowserDeleteContentCommand}"
                 IsEnabled="{x:Bind ViewModelRestarterProperties.DeleteBrowserContentCommandIsEnabled, Mode=OneWay}" />
 
             <Button
-                x:Name="BtnInstalleBesucherAddOn"
                 x:Uid="Install_eVisitor_add_on"
                 Grid.Row="3"
                 Height="40"
                 Margin="0,8,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnDialogCommand}"
                 FontSize="16"
+                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnDialogCommand}"
                 IsEnabled="{x:Bind ViewModelRestarterProperties.InstallEVisitorAddOnCommandIsEnabled, Mode=OneWay}" />
 
             <Button
-                x:Name="BtnInfoeVisitorAddOn"
                 x:Uid="Important_information_about_the_add_on"
                 Grid.Row="4"
                 Height="30"
                 Margin="0,8,0,0"
                 HorizontalAlignment="Stretch"
-                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnInfoDialogCommand}"
                 FontSize="12"
+                Command="{x:Bind ViewModelRestarterProperties.ShowInstallAddOnInfoDialogCommand}"
                 IsEnabled="{x:Bind ViewModelRestarterProperties.InstallEVisitorAddOnCommandIsEnabled, Mode=OneWay}" />
 
         </Grid>

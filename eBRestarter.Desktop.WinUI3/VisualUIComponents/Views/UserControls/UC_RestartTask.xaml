@@ -16,19 +16,17 @@
             ImagePathWhenFalse="ms-appx:///Resources/Visuals/Icons/Intersection/play.png"
             ImagePathWhenTrue="ms-appx:///Resources/Visuals/Icons/Intersection/tasks.png" />
 
-        <converters:TimerStateToTextConverter x:Key="TextConverter" />
+        <converters:TimerStateToTextConverter x:Key="TimerStateToTextConverter" />
 
-        <converters:TimerStateToColorConverter x:Key="ColorConverter" />
+        <converters:TimerStateToColorConverter x:Key="TimerStateToColorConverter" />
 
-        <converters:SecondsToTimeFormatConverter x:Key="TimeConverter" />
+        <converters:SecondsToTimeFormatConverter x:Key="SecondsToTimeFormatConverter" />
 
     </UserControl.Resources>
 
     <Border
-        x:Name="Border_Restarter_Agent"
         Width="585"
         Height="130"
-        Margin="0,0,0,0"
         Background="{ThemeResource DashletBackgroundColor_3}"
         BorderThickness="1"
         CornerRadius="5">
@@ -41,201 +39,6 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!--  RECHTE SEITE: Inhalt  -->
-            <Grid Grid.Column="1">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <!--  Row 0: statt DockPanel jetzt ein Grid mit 2 Spalten  -->
-                <Grid Grid.Row="0">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <!--  links: Icon + "Restarter Agent"  -->
-                    <StackPanel
-                        Grid.Column="0"
-                        Width="301"
-                        Margin="0,5,0,0"
-                        Orientation="Horizontal">
-
-                        <Image
-                            x:Name="image_restarter_agent"
-                            Width="30"
-                            Height="30"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Source="/Resources/Visuals/Icons/Intersection/timer.png" />
-
-                        <TextBlock
-                            x:Name="tbl_Restarter_Agent"
-                            x:Uid="RestarterAgent"
-                            Width="110"
-                            Height="23"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Foreground="{ThemeResource FontColor_1}"
-                            Text="Restarter Agent" />
-                    </StackPanel>
-
-                    <!--  rechts: Timer + Status-Icon  -->
-                    <StackPanel
-                        Grid.Column="1"
-                        Width="203"
-                        Margin="0,5,0,0"
-                        Orientation="Horizontal">
-
-                        <StackPanel
-                            Width="166"
-                            Height="26"
-                            VerticalAlignment="Center">
-
-                            <TextBlock
-                                x:Name="tbl_Timer"
-                                Width="Auto"
-                                Height="26"
-                                Margin="0,0,10,0"
-                                HorizontalAlignment="Right"
-                                FontSize="20"
-                                Foreground="{ThemeResource FontColor_1}"
-                                Text="{x:Bind ViewModelRestartTask.SecondsRemaining, Converter={StaticResource TimeConverter}, Mode=OneWay}" />
-
-                        </StackPanel>
-
-                        <Image
-                            x:Name="tbl_CurrentStatusIcon"
-                            Width="32"
-                            Height="32"
-                            Source="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource BoolToImageConverter}, Mode=OneWay}" />
-
-                    </StackPanel>
-
-                </Grid>
-
-                <!--  Row 1: Browser  -->
-                <StackPanel
-                    Grid.Row="1"
-                    Margin="0,5,0,0"
-                    Orientation="Horizontal">
-
-                    <Image
-                        x:Name="image_restarter_agent_Copy"
-                        Width="30"
-                        Height="25"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Source="{ThemeResource GlobeIcon2}" />
-
-                    <TextBlock
-                        x:Name="tbl_Browser"
-                        x:Uid="Browser"
-                        Width="62"
-                        Height="22"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="{ThemeResource FontColor_1}" />
-
-                    <TextBlock
-                        x:Name="tbl_SelectedBrowser"
-                        Width="Auto"
-                        Height="21"
-                        Margin="16,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="{ThemeResource FontColor_1}"
-                        Text="{x:Bind ViewModelRestartTask.ChosenBrowser, Mode=OneWay}" />
-
-                </StackPanel>
-
-                <!--  Row 2: Nutzer  -->
-                <StackPanel
-                    Grid.Row="2"
-                    Margin="0,5,0,0"
-                    Orientation="Horizontal">
-
-                    <Image
-                        x:Name="image_restarter_agent_Copy1"
-                        Width="25"
-                        Height="22"
-                        Margin="12,0,2,0"
-                        VerticalAlignment="Center"
-                        Source="{ThemeResource UserIcon2}" />
-
-                    <TextBlock
-                        x:Name="tbl_User"
-                        x:Uid="User"
-                        Width="69"
-                        Height="Auto"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="{ThemeResource FontColor_1}" />
-
-                    <StackPanel Width="387" Orientation="Horizontal">
-
-                        <TextBlock
-                            x:Name="tbl_Username"
-                            Width="Auto"
-                            Height="22"
-                            Margin="10,0,0,0"
-                            FontSize="16"
-                            Foreground="{ThemeResource FontColor_1}"
-                            Text="{x:Bind ViewModelRestartTask.Username, Mode=OneWay}"
-                            TextAlignment="Center"
-                            TextWrapping="WrapWholeWords" />
-
-                    </StackPanel>
-
-                </StackPanel>
-
-                <!--  Row 3: Status  -->
-                <StackPanel
-                    Grid.Row="3"
-                    Margin="0,5,0,0"
-                    Orientation="Horizontal">
-
-                    <Image
-                        x:Name="image_restarter_agent_Copy2"
-                        Width="22"
-                        Height="22"
-                        Margin="13,0,5,0"
-                        VerticalAlignment="Center"
-                        Source="{ThemeResource StatusIcon}" />
-
-
-                    <TextBlock
-                        x:Name="tbl_Status"
-                        x:Uid="Status"
-                        Width="65"
-                        Height="22"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="{ThemeResource FontColor_1}" />
-
-                    <TextBlock
-                        x:Name="tbl_CurrentStatusInfo"
-                        Width="Auto"
-                        Height="22"
-                        Margin="13,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="16"
-                        Foreground="{ThemeResource FontColor_1}"
-                        Text="{x:Bind ViewModelRestartTask.StatusInfoText, Mode=OneWay}" />
-
-                </StackPanel>
-
-            </Grid>
-
             <!--  LINKE SEITE: ToggleButton  -->
             <ToggleButton
                 x:Name="tbtn_StartTimerSchudeler"
@@ -244,12 +47,12 @@
                 Height="128"
                 VerticalAlignment="Center"
                 Background="#FF0DB290"
-                Command="{x:Bind ViewModelRestartTask.ExecuteStartTimerSchedulerCommand}"
-                CommandParameter="{x:Bind tbtn_StartTimerSchudeler.IsChecked, Mode=OneWay}"
-                Content="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource TextConverter}, Mode=OneWay}"
                 Foreground="White"
                 IsChecked="{x:Bind ViewModelRestartTask.IsActive, Mode=TwoWay}"
-                IsEnabled="{x:Bind ViewModelRestartTask.HasInstalledBrowsers, Mode=OneWay}">
+                IsEnabled="{x:Bind ViewModelRestartTask.HasInstalledBrowsers, Mode=OneWay}"
+                Command="{x:Bind ViewModelRestartTask.ExecuteStartTimerSchedulerCommand}"
+                CommandParameter="{x:Bind tbtn_StartTimerSchudeler.IsChecked, Mode=OneWay}"
+                Content="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource TimerStateToTextConverter}, Mode=OneWay}">
 
                 <ToggleButton.Resources>
 
@@ -270,6 +73,186 @@
                 </ToggleButton.Resources>
 
             </ToggleButton>
+
+            <!--  RECHTE SEITE: Inhalt  -->
+            <Grid Grid.Column="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  Row 0: Icon + Restarter Agent + Timer  -->
+                <Grid Grid.Row="0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  links: Icon + "Restarter Agent"  -->
+                    <StackPanel
+                        Grid.Column="0"
+                        Width="301"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Source="ms-appx:///Resources/Visuals/Icons/Intersection/timer.png" />
+
+                        <TextBlock
+                            x:Uid="RestarterAgent"
+                            Width="110"
+                            Height="23"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="{ThemeResource FontColor_1}" />
+                    </StackPanel>
+
+                    <!--  rechts: Timer + Status-Icon  -->
+                    <StackPanel
+                        Grid.Column="1"
+                        Width="203"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+
+                        <StackPanel
+                            Width="166"
+                            Height="26"
+                            VerticalAlignment="Center">
+
+                            <TextBlock
+                                Width="Auto"
+                                Height="26"
+                                Margin="0,0,10,0"
+                                HorizontalAlignment="Right"
+                                FontSize="20"
+                                Foreground="{ThemeResource FontColor_1}"
+                                Text="{x:Bind ViewModelRestartTask.SecondsRemaining, Converter={StaticResource SecondsToTimeFormatConverter}, Mode=OneWay}" />
+
+                        </StackPanel>
+
+                        <Image
+                            Width="32"
+                            Height="32"
+                            Source="{x:Bind ViewModelRestartTask.IsActive, Converter={StaticResource BoolToImageConverter}, Mode=OneWay}" />
+
+                    </StackPanel>
+
+                </Grid>
+
+                <!--  Row 1: Browser  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        Width="30"
+                        Height="25"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource GlobeIcon2}" />
+
+                    <TextBlock
+                        x:Uid="Browser"
+                        Width="62"
+                        Height="22"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <TextBlock
+                        Width="Auto"
+                        Height="21"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="{x:Bind ViewModelRestartTask.ChosenBrowser, Mode=OneWay}" />
+
+                </StackPanel>
+
+                <!--  Row 2: Nutzer  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        Width="25"
+                        Height="22"
+                        Margin="12,0,2,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource UserIcon2}" />
+
+                    <TextBlock
+                        x:Uid="User"
+                        Width="69"
+                        Height="Auto"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <StackPanel Width="387" Orientation="Horizontal">
+
+                        <TextBlock
+                            Width="Auto"
+                            Height="22"
+                            Margin="10,0,0,0"
+                            FontSize="16"
+                            Foreground="{ThemeResource FontColor_1}"
+                            Text="{x:Bind ViewModelRestartTask.Username, Mode=OneWay}"
+                            TextAlignment="Center"
+                            TextWrapping="WrapWholeWords" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!--  Row 3: Status  -->
+                <StackPanel
+                    Grid.Row="3"
+                    Margin="0,5,0,0"
+                    Orientation="Horizontal">
+
+                    <Image
+                        Width="22"
+                        Height="22"
+                        Margin="13,0,5,0"
+                        VerticalAlignment="Center"
+                        Source="{ThemeResource StatusIcon}" />
+
+                    <TextBlock
+                        x:Uid="Status"
+                        Width="65"
+                        Height="22"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}" />
+
+                    <TextBlock
+                        Width="Auto"
+                        Height="22"
+                        Margin="13,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="{ThemeResource FontColor_1}"
+                        Text="{x:Bind ViewModelRestartTask.StatusInfoText, Mode=OneWay}" />
+
+                </StackPanel>
+
+            </Grid>
 
         </Grid>
 

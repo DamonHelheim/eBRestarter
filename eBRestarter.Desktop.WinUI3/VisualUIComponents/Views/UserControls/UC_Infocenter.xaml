@@ -9,7 +9,6 @@
     mc:Ignorable="d">
 
     <Grid
-        x:Name="DP_MainWindows_Top"
         Background="{ThemeResource MenuBackgroundColor_2}"
         CornerRadius="8,0,0,0">
 
@@ -24,11 +23,12 @@
             Margin="5"
             Padding="10,0,0,0"
             VerticalAlignment="Center"
-            Background="{ThemeResource MenuBackgroundColor}"
-            CornerRadius="8"
             Orientation="Horizontal"
-            Spacing="10">
+            Spacing="10"
+            Background="{ThemeResource MenuBackgroundColor}"
+            CornerRadius="8">
 
+            <!--  Info-Symbol (InfoSolid)  -->
             <FontIcon
                 Margin="0,0,0,5"
                 VerticalAlignment="Bottom"
@@ -37,7 +37,6 @@
                 Glyph="&#xE946;" />
 
             <TextBlock
-                x:Name="tbl_MainWindowTitle"
                 x:Uid="Infocenter_Title"
                 Margin="0,7,0,9"
                 VerticalAlignment="Center"
@@ -74,11 +73,11 @@
                         HeaderImage="{ThemeResource WorkstationIcon}"
                         ImageHeight="40"
                         ImageWidth="40"
+                        InformationRowForeground="{ThemeResource FontColor_1}"
+                        TitleForeground="{ThemeResource FontColor_1}"
                         InformationRow1="{x:Bind ViewModelInfocenter.ProcessorText, Mode=OneWay}"
                         InformationRow2="{x:Bind ViewModelInfocenter.GraphicsText, Mode=OneWay}"
-                        InformationRow3="{x:Bind ViewModelInfocenter.RamText, Mode=OneWay}"
-                        InformationRowForeground="{ThemeResource FontColor_1}"
-                        TitleForeground="{ThemeResource FontColor_1}" />
+                        InformationRow3="{x:Bind ViewModelInfocenter.RamText, Mode=OneWay}" />
 
                     <local:UC_InformationsCard
                         x:Uid="Infocenter_CardWindows"
@@ -87,11 +86,11 @@
                         HeaderImage="{ThemeResource WindowsIcon}"
                         ImageHeight="25"
                         ImageWidth="25"
+                        InformationRowForeground="{ThemeResource FontColor_1}"
+                        TitleForeground="{ThemeResource FontColor_1}"
                         InformationRow1="{x:Bind ViewModelInfocenter.OsEditionText, Mode=OneWay}"
                         InformationRow2="{x:Bind ViewModelInfocenter.OsVersionText, Mode=OneWay}"
-                        InformationRow3="{x:Bind ViewModelInfocenter.OsBuildText, Mode=OneWay}"
-                        InformationRowForeground="{ThemeResource FontColor_1}"
-                        TitleForeground="{ThemeResource FontColor_1}" />
+                        InformationRow3="{x:Bind ViewModelInfocenter.OsBuildText, Mode=OneWay}" />
 
                 </StackPanel>
 
@@ -108,18 +107,18 @@
                     Orientation="Vertical">
 
                     <Button
-                        x:Name="Btn_about"
                         Width="968"
                         Height="63"
                         Margin="0"
-                        Command="{x:Bind ViewModelInfocenter.ShowAboutInfoCommand}"
-                        Style="{ThemeResource AccentButtonStyle}">
+                        Style="{ThemeResource AccentButtonStyle}"
+                        Command="{x:Bind ViewModelInfocenter.ShowAboutInfoCommand}">
 
                         <StackPanel
                             Margin="-5,0,0,0"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
 
+                            <!--  Info-Symbol (InfoSolid)  -->
                             <FontIcon
                                 Width="35"
                                 Height="30"

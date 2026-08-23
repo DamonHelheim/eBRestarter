@@ -3,7 +3,6 @@
     x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.Dialogs.TurnOffEdgeStartupBoostDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="StartupBoostDialog"
@@ -25,7 +24,6 @@
                     x:Uid="StartupBoostDialog_InfoText"
                     VerticalAlignment="Center"
                     Style="{StaticResource BodyTextBlockStyle}"
-                    Text="Wenn du den Startup-Boost deaktivieren willst..."
                     TextWrapping="Wrap" />
             </StackPanel>
 
@@ -41,11 +39,11 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="10">
+                    <!--  Automatisch/Häkchen-Symbol (CheckMark)  -->
                     <FontIcon Foreground="{ThemeResource SystemFillColorSuccessBrush}" Glyph="&#xE945;" />
                     <TextBlock
                         x:Uid="StartupBoostDialog_OptionAuto_Header"
-                        FontWeight="Bold"
-                        Text="1. Automatisch (Registry)" />
+                        FontWeight="Bold" />
                 </StackPanel>
 
                 <TextBlock
@@ -70,22 +68,22 @@
                     Severity="Warning" />
 
                 <InfoBar
-                    Title="{x:Bind ViewModel.InfoBarTitle, Mode=OneWay}"
                     Margin="0,10,0,0"
                     IsClosable="True"
                     IsOpen="{x:Bind ViewModel.IsInfoBarOpen, Mode=TwoWay}"
                     Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
-                    Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
+                    Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}"
+                    Title="{x:Bind ViewModel.InfoBarTitle, Mode=OneWay}" />
 
             </StackPanel>
 
             <StackPanel Padding="10" Spacing="10">
                 <StackPanel Orientation="Horizontal" Spacing="10">
+                    <!--  Manuell/Kopieren-Symbol (Copy)  -->
                     <FontIcon Glyph="&#xE8C8;" />
                     <TextBlock
                         x:Uid="StartupBoostDialog_OptionManual_Header"
-                        FontWeight="Bold"
-                        Text="2. Manuell" />
+                        FontWeight="Bold" />
                 </StackPanel>
 
                 <TextBlock

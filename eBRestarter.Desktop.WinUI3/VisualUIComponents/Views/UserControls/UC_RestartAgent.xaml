@@ -5,25 +5,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:usercontrol="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelRestartTask}"
     mc:Ignorable="d">
 
-    <Grid>
+    <StackPanel
+        HorizontalAlignment="Stretch"
+        Orientation="Horizontal"
+        Background="{ThemeResource MenuBackgroundColor}">
 
-        <StackPanel
-            HorizontalAlignment="Stretch"
-            Background="{ThemeResource MenuBackgroundColor}"
-            Orientation="Horizontal">
+        <usercontrol:UC_RestartTask Margin="5" />
 
-            <usercontrol:UC_RestartTask Margin="5" />
+        <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
 
-            <usercontrol:UC_DeleteBrowserContentTask Margin="5" />
-
-        </StackPanel>
-
-    </Grid>
+    </StackPanel>
 
 </UserControl>

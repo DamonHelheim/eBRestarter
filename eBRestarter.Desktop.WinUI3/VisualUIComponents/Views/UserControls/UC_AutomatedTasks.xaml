@@ -5,13 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelRestarterProperties}"
     mc:Ignorable="d">
 
     <Border
-        x:Name="Border_Automated_Task"
         Padding="0"
         Background="{ThemeResource DashletBackgroundColor_1}"
         BorderThickness="1"
@@ -20,24 +18,20 @@
         <Grid>
 
             <Grid.RowDefinitions>
-
                 <RowDefinition Height="50" />
                 <RowDefinition Height="120" />
                 <RowDefinition Height="80" />
-
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal">
 
                 <Image
-                    x:Name="image_automated_task"
                     Width="35"
                     Height="35"
                     Margin="10,10,0,0"
                     Source="{ThemeResource GearIcon}" />
 
                 <TextBlock
-                    x:Name="tbl_Automated_Task"
                     x:Uid="AutomatedTasks"
                     Width="212"
                     Margin="10,15,0,0"
@@ -47,11 +41,9 @@
                     TextWrapping="Wrap" />
             </StackPanel>
 
-
             <StackPanel Grid.Row="1" Spacing="0">
 
                 <ToggleSwitch
-                    x:Name="TSStartBrowserWithProgrammStart"
                     x:Uid="TSStartBrowserWithProgrammStart"
                     Width="304"
                     Margin="10,0,0,0"
@@ -59,7 +51,6 @@
                     IsOn="{x:Bind ViewModelRestarterProperties.StartBrowserWithProgramStart, Mode=TwoWay}" />
 
                 <ToggleSwitch
-                    x:Name="TSCheckBrowserIsAlive"
                     x:Uid="TSCheckBrowserIsAlive"
                     Margin="10,0,0,0"
                     Foreground="{ThemeResource FontColor_1}"
@@ -72,12 +63,11 @@
                     Command="{x:Bind ViewModelRestarterProperties.OpenStartupBoostDialogCommand}">
 
                     <TextBlock
-                        x:Name="tbl_info_startup_boost_edge"
                         x:Uid="StartupEdgeBoost_Info"
                         Width="286"
                         Height="40"
                         FontSize="10"
-                        Foreground="#FF008CD5"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                         TextWrapping="Wrap" />
 
                 </HyperlinkButton>
@@ -85,7 +75,6 @@
             </StackPanel>
 
             <ComboBox
-                x:Name="ComboboxDeleteBrowserCache"
                 Grid.Row="2"
                 Width="294"
                 Height="40"
@@ -93,10 +82,10 @@
                 VerticalAlignment="Top"
                 DisplayMemberPath="DisplayText"
                 FontSize="14"
-                IsEnabled="{x:Bind ViewModelRestarterProperties.DeleteBrowserContentCommandIsEnabled, Mode=OneWay}"
-                ItemsSource="{x:Bind ViewModelRestarterProperties.BrowserDeleteCacheOptionList, Mode=OneWay}"
                 PlaceholderText="Browser delete cache options"
                 SelectedIndex="0"
+                IsEnabled="{x:Bind ViewModelRestarterProperties.DeleteBrowserContentCommandIsEnabled, Mode=OneWay}"
+                ItemsSource="{x:Bind ViewModelRestarterProperties.BrowserDeleteCacheOptionList, Mode=OneWay}"
                 SelectedItem="{x:Bind ViewModelRestarterProperties.SelectedDeleteBrowserCacheOption, Mode=TwoWay}" />
 
         </Grid>

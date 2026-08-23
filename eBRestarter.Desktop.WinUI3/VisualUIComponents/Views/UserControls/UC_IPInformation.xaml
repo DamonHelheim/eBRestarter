@@ -5,13 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:VM="using:eBRestarter.Desktop.WinUI3.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelGeneralOverview}"
     mc:Ignorable="d">
 
     <Border
-        x:Name="Border_IP_Information"
         Padding="0"
         Background="{ThemeResource MenuBackgroundColor}"
         BorderThickness="1"
@@ -20,11 +18,8 @@
         <Grid>
 
             <Grid.RowDefinitions>
-
                 <RowDefinition Height="Auto" MinHeight="60" />
-
                 <RowDefinition Height="*" />
-
             </Grid.RowDefinitions>
 
             <!--  Header-Zeile (Icon + Titel)  -->
@@ -41,16 +36,14 @@
                     Source="{ThemeResource IPAddressIcon}" />
 
                 <TextBlock
-                    x:Name="tbl_IP_Information"
                     x:Uid="IPInformation"
                     Margin="12,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="18"
                     FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}"
-                    Text="IP Informationen"
                     TextWrapping="Wrap" />
-                
+
             </StackPanel>
 
             <!--  Inhalt (Expander)  -->
@@ -62,13 +55,11 @@
                 IsExpanded="False">
 
                 <Expander.Header>
-
                     <TextBlock
                         x:Uid="ShowIPDetails"
                         FontSize="14"
                         FontWeight="Normal"
                         Foreground="{ThemeResource FontColor_1}" />
-
                 </Expander.Header>
 
                 <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
@@ -80,23 +71,19 @@
                         RowSpacing="8">
 
                         <Grid.ColumnDefinitions>
-
                             <!--  Linke Spalte: Labels (Auto Breite oder feste Breite für exakte Bündigkeit)  -->
                             <ColumnDefinition Width="Auto" MinWidth="80" />
                             <!--  Rechte Spalte: Werte (Nimmt den Rest)  -->
                             <ColumnDefinition Width="*" />
-
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
-
-                            <RowDefinition Height="Auto" />
                             <!--  IP  -->
                             <RowDefinition Height="Auto" />
                             <!--  Host  -->
                             <RowDefinition Height="Auto" />
-
                             <!--  Standort  -->
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <!--  Zeile 0: IP  -->
@@ -149,27 +136,27 @@
                             Grid.Column="1"
                             Orientation="Horizontal"
                             Spacing="4">
-                            
+
                             <TextBlock
                                 Foreground="{ThemeResource FontColor_1}"
                                 Text="{x:Bind ViewModelGeneralOverview.CountryName, Mode=OneWay}"
                                 TextWrapping="Wrap" />
-                            
+
                             <TextBlock
                                 Foreground="{ThemeResource FontColor_1}"
                                 Opacity="0.8"
                                 Text="{x:Bind ViewModelGeneralOverview.CountryCode, Mode=OneWay}" />
-                            
+
                         </StackPanel>
 
                     </Grid>
-                    
+
                 </ScrollViewer>
-                
+
             </Expander>
 
         </Grid>
-        
+
     </Border>
-    
+
 </UserControl>

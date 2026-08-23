@@ -10,7 +10,6 @@
     mc:Ignorable="d">
 
     <Border
-        x:Name="Border_Restart_and_Runtime_Options"
         Padding="16"
         Background="{ThemeResource DashletBackgroundColor_1}"
         BorderThickness="1"
@@ -21,32 +20,33 @@
 
             <!--  HEADER  -->
             <StackPanel Orientation="Horizontal" Spacing="8">
+
                 <Image
-                    x:Name="image_restart_and_runtime_options"
                     Width="24"
                     Height="24"
                     VerticalAlignment="Center"
                     Source="{ThemeResource ClockRotateIcon}" />
 
                 <TextBlock
-                    x:Name="tbl_Restart_and_Runtime_Option"
                     x:Uid="Restart_And_Runtime_Options"
                     VerticalAlignment="Center"
                     FontSize="17"
                     FontWeight="SemiBold"
                     Foreground="{ThemeResource FontColor_1}" />
+
             </StackPanel>
 
             <!--  BEREICH 1: WARTEZEIT  -->
             <StackPanel Spacing="8">
+
                 <TextBlock
-                    x:Name="Tbl_waiting_time_until_the_browser_starts"
                     x:Uid="Waiting_time_until_the_browser_restarts"
                     FontSize="15"
                     Foreground="{ThemeResource FontColor_1}" />
 
-                <!--  Ein sauberes Grid ordnet Slider, TextBox und Einheit ("s") perfekt nebeneinander an  -->
+                <!--  Ein sauberes Grid ordnet Slider, TextBox und Einheit ("s") nebeneinander an  -->
                 <Grid ColumnSpacing="16">
+
                     <Grid.ColumnDefinitions>
                         <!--  Der Slider nimmt sich den kompletten restlichen Platz (*)  -->
                         <ColumnDefinition Width="*" />
@@ -57,11 +57,10 @@
                     </Grid.ColumnDefinitions>
 
                     <Slider
-                        x:Name="SliderBrowserWaitingTimeToStart"
                         Grid.Column="0"
                         Padding="2,0,0,0"
                         VerticalAlignment="Center"
-                        Foreground="#FF00D4BC"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                         Maximum="{x:Bind ViewModelRestarterProperties.RuntimePauseSecondsMax, Mode=OneTime}"
                         Minimum="{x:Bind ViewModelRestarterProperties.RuntimePauseSecondsMin, Mode=OneTime}"
                         Value="{x:Bind ViewModelRestarterProperties.RuntimePauseSeconds, Mode=TwoWay}" />
@@ -83,18 +82,21 @@
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
                         Text="s" />
+
                 </Grid>
+
             </StackPanel>
 
             <!--  BEREICH 2: BROWSERLAUFZEIT  -->
             <StackPanel Spacing="8">
+
                 <TextBlock
-                    x:Name="Tbl_set_your_browser_runtime"
                     x:Uid="Determine_your_browser_runtime_here"
                     FontSize="15"
                     Foreground="{ThemeResource FontColor_1}" />
 
                 <Grid ColumnSpacing="16">
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="120" />
@@ -102,10 +104,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Slider
-                        x:Name="SliderBrowserRuntime"
                         Grid.Column="0"
                         VerticalAlignment="Center"
-                        Foreground="#FF00D4BC"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                         Maximum="{x:Bind ViewModelRestarterProperties.BrowserRuntimeHoursMax, Mode=OneTime}"
                         Minimum="{x:Bind ViewModelRestarterProperties.BrowserRuntimeHoursMin, Mode=OneTime}"
                         Value="{x:Bind ViewModelRestarterProperties.RuntimeHours, Mode=TwoWay}" />
@@ -127,9 +128,13 @@
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
                         Text="h" />
+
                 </Grid>
+
             </StackPanel>
 
         </StackPanel>
+
     </Border>
+
 </UserControl>

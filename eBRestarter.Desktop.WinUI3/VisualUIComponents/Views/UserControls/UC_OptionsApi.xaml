@@ -9,9 +9,11 @@
     d:DataContext="{d:DesignInstance Type=VM:ViewModelOptionsApi}"
     mc:Ignorable="d">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto">
+
         <Grid
-            x:Name="Grid_API_Access"
             Margin="20,10,20,20"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top">
@@ -28,56 +30,59 @@
                 CornerRadius="6">
 
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
+
+                    <StackPanel
+                        Margin="0,0,0,12"
+                        Orientation="Horizontal">
+
                         <Image
                             Width="40"
                             Height="40"
-                            Margin="0,0,0,0"
-                            Source="\Resources\Visuals\Icons\Intersection\api.png" />
+                            Source="ms-appx:///Resources/Visuals/Icons/Intersection/api.png" />
 
                         <TextBlock
-                            x:Name="lbl_options_ebesucher_api_options"
                             x:Uid="eVisitor_API_Options"
                             Margin="10,8,0,0"
                             FontSize="16"
                             Foreground="{ThemeResource FontColor_1}" />
+
                     </StackPanel>
 
                     <Border
-                        x:Name="sp_Options_API_1"
                         Margin="0,0,0,10"
                         Padding="10"
                         Background="{ThemeResource DashletBackgroundColor_5}"
                         CornerRadius="6">
 
                         <StackPanel Orientation="Vertical">
+
                             <Button
-                                x:Name="BtnConnectWithAPIInterface"
                                 x:Uid="Connect_to_API_interface"
                                 Width="330"
                                 Height="40"
                                 Margin="0,0,0,8"
-                                Background="#FF1598C9"
-                                BorderBrush="{x:Null}"
-                                Command="{x:Bind ViewModel.ShowActivateApiDialogCommand}"
                                 FontSize="16"
-                                Foreground="White" />
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.ShowActivateApiDialogCommand}" />
 
                             <Button
-                                x:Name="BtnRemoveAPIFile"
                                 x:Uid="Deactivate_API_interface"
                                 Width="330"
                                 Height="40"
-                                Margin="0,0,0,0"
-                                Background="#FF1598C9"
-                                BorderBrush="{x:Null}"
-                                Command="{x:Bind ViewModel.RemoveApiCredentialsCommand}"
                                 FontSize="16"
-                                Foreground="White" />
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.RemoveApiCredentialsCommand}" />
+
                         </StackPanel>
+
                     </Border>
+
                 </StackPanel>
+
             </Border>
+
         </Grid>
+
     </ScrollViewer>
+
 </UserControl>

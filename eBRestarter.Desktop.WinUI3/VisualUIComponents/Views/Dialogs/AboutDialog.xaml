@@ -75,22 +75,22 @@
                                 Height="32"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
-                                Source="{x:Bind IconImageSource}" />
+                                Source="{x:Bind IconImageSource, Mode=OneTime}" />
 
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
 
                                 <TextBlock
                                     FontWeight="SemiBold"
-                                    Text="{x:Bind IconCreator}"
-                                    TextWrapping="Wrap" />
+                                    TextWrapping="Wrap"
+                                    Text="{x:Bind IconCreator, Mode=OneTime}" />
 
                                 <HyperlinkButton
                                     Margin="0"
                                     Padding="0"
                                     HorizontalAlignment="Left"
-                                    Content="{x:Bind IconHyperLink}"
                                     FontSize="12"
-                                    NavigateUri="{x:Bind IconHyperLinkContent}" />
+                                    Content="{x:Bind IconHyperLink, Mode=OneTime}"
+                                    NavigateUri="{x:Bind IconHyperLinkContent, Mode=OneTime}" />
                             </StackPanel>
 
                         </Grid>

@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="AddOnInfoDialog"
-    CloseButtonText="Schließen"
     DefaultButton="Close"
     RequestedTheme="Dark"
     Style="{StaticResource DefaultContentDialogStyle}"
@@ -21,6 +20,7 @@
 
                     <StackPanel Orientation="Horizontal" Spacing="10">
 
+                        <!--  Info-Symbol (InfoSolid)  -->
                         <FontIcon
                             FontSize="20"
                             Foreground="{ThemeResource AccentAAFillColorDefaultBrush}"
@@ -28,14 +28,12 @@
 
                         <TextBlock
                             x:Uid="AddOnInfo_HeaderMain"
-                            Style="{StaticResource SubtitleTextBlockStyle}"
-                            Text="Info zum eBesucher Add-on" />
+                            Style="{StaticResource SubtitleTextBlockStyle}" />
                     </StackPanel>
 
                     <TextBlock
                         x:Uid="AddOnInfo_BodyMain"
                         Opacity="0.8"
-                        Text="Du musst zwingend das eBesucher Add-on installieren..."
                         TextWrapping="Wrap" />
                 </StackPanel>
 
@@ -45,13 +43,11 @@
 
                     <TextBlock
                         x:Uid="AddOnInfo_HeaderSettings"
-                        Style="{StaticResource SubtitleTextBlockStyle}"
-                        Text="Add-on Einstellungen" />
+                        Style="{StaticResource SubtitleTextBlockStyle}" />
 
                     <TextBlock
                         x:Uid="AddOnInfo_BodySettings"
                         Opacity="0.8"
-                        Text="Wenn du magst, setzte ein Häkchen bei der Privatsphäre..."
                         TextWrapping="Wrap" />
 
                     <Image

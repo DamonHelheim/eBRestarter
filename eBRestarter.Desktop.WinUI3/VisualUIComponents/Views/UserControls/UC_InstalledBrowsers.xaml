@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls.UC_InstalledBrowsers"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -20,16 +21,12 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,12">
-
             <Grid.ColumnDefinitions>
-
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-
             </Grid.ColumnDefinitions>
 
             <Image
-                x:Name="image_installed_browsers"
                 Width="24"
                 Height="24"
                 Margin="0,0,12,0"
@@ -37,13 +34,11 @@
                 Source="{ThemeResource GlobeIcon}" />
 
             <TextBlock
-                x:Name="tbl_Installed_Browsers"
                 x:Uid="Installed_browser"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 FontSize="18"
-                Foreground="{ThemeResource FontColor_1}"
-                Text="Installierte Browser" />
+                Foreground="{ThemeResource FontColor_1}" />
 
         </Grid>
 
@@ -55,13 +50,10 @@
             VerticalScrollBarVisibility="Auto">
 
             <ItemsControl ItemsSource="{x:Bind ViewModelInstalledBrowsers.Browsers, Mode=OneWay}">
-
                 <ItemsControl.ItemTemplate>
-
                     <DataTemplate>
                         <userControls:UC_Browser DataContext="{Binding}" />
                     </DataTemplate>
-
                 </ItemsControl.ItemTemplate>
 
                 <ItemsControl.ItemsPanel>
@@ -72,5 +64,7 @@
             </ItemsControl>
 
         </ScrollViewer>
+
     </Grid>
+
 </UserControl>

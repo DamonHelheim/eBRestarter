@@ -7,27 +7,22 @@
     xmlns:converters="using:eBRestarter.Desktop.WinUI3.Converters"
     xmlns:convertersNuget="using:CommunityToolkit.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.UserControls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="{d:DesignInstance Type=VM:ViewModelBrowserItem}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-
-        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <convertersNuget:BoolToVisibilityConverter
-            x:Key="BoolToVisInverted"
+            x:Key="InverseBoolToVisibilityConverter"
             FalseValue="Visible"
             TrueValue="Collapsed" />
         <converters:StringKeyToStyleConverter x:Key="StringKeyToStyleConverter" />
-
     </UserControl.Resources>
 
     <Border
-        x:Name="Border_Browser"
         Width="260"
         Height="85"
-        Margin="0,0,0,0"
         Padding="0"
         Background="{ThemeResource DashletBackgroundColor_4}"
         BorderThickness="1"
@@ -36,31 +31,28 @@
         <Canvas>
 
             <Button
-                x:Name="BtnDownloadBrowser"
                 Canvas.Left="0"
                 Canvas.Top="0"
                 Width="80"
                 Height="83"
                 HorizontalAlignment="Left"
+                Style="{Binding DownloadButtonStyleKey, Converter={StaticResource StringKeyToStyleConverter}}"
                 Command="{Binding ToggleDownloadCommand}"
                 Content="{Binding DownloadButtonContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                Style="{Binding DownloadButtonStyleKey, Converter={StaticResource StringKeyToStyleConverter}}"
-                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}" />
+                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <Button
-                x:Name="BtnChooseBrowser"
                 x:Uid="Select"
                 Canvas.Left="0"
                 Canvas.Top="0"
                 Width="80"
                 Height="83"
-                Command="{Binding ChooseBrowserCommand}"
                 FontSize="11"
                 Style="{StaticResource ButtonChooseBrowser}"
-                Visibility="{Binding IsChooseButtonVisible, Converter={StaticResource BoolToVisConverter}}" />
+                Command="{Binding ChooseBrowserCommand}"
+                Visibility="{Binding IsChooseButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <Image
-                Name="uc_browser_image"
                 Canvas.Left="85"
                 Canvas.Top="5"
                 Width="{Binding ImageSizeWidthBrowser}"
@@ -70,7 +62,6 @@
                 Source="{Binding HeaderImageBrowser}" />
 
             <TextBlock
-                x:Name="tbl_Browser_name"
                 Canvas.Left="122"
                 Canvas.Top="6"
                 HorizontalAlignment="Left"
@@ -80,10 +71,7 @@
                 Text="{Binding HeaderTitleBrowser}"
                 TextWrapping="Wrap" />
 
-
-
             <TextBlock
-                x:Name="tbl_BrowserVersion"
                 Canvas.Left="86"
                 Canvas.Top="57"
                 FontSize="14"
@@ -92,7 +80,6 @@
                 TextWrapping="Wrap" />
 
             <TextBlock
-                x:Name="tbl_BrowserExist"
                 Canvas.Left="230"
                 Canvas.Top="1"
                 FontFamily="Segoe Fluent Icons"
@@ -102,23 +89,21 @@
                 TextWrapping="Wrap" />
 
             <ProgressBar
-                x:Name="progressBarDownload"
                 Canvas.Left="85"
                 Canvas.Top="41"
                 Width="168"
                 Height="14"
-                Background="Black"
-                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisConverter}}"
-                Value="{Binding DownloadProgressValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                Value="{Binding DownloadProgressValue, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
             <TextBlock
-                x:Name="tbl_DownloadSize"
                 Canvas.Left="86"
                 Canvas.Top="57"
                 FontSize="14"
                 Foreground="{ThemeResource FontColor_1}"
                 Text="{Binding DownloadSizeText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                Visibility="{Binding IsDownloadSizeTextVisible, Converter={StaticResource BoolToVisConverter}}" />
+                Visibility="{Binding IsDownloadSizeTextVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
 
         </Canvas>
 

@@ -11,7 +11,6 @@
     mc:Ignorable="d">
 
     <Grid
-        x:Name="Root"
         Background="{ThemeResource MenuBackgroundColor_2}"
         CornerRadius="8,0,0,0">
 
@@ -33,10 +32,11 @@
                 Height="35"
                 Padding="10,0,0,0"
                 VerticalAlignment="Center"
-                Background="{ThemeResource MenuBackgroundColor}"
                 Orientation="Horizontal"
-                Spacing="10">
+                Spacing="10"
+                Background="{ThemeResource MenuBackgroundColor}">
 
+                <!--  Dashboard-Symbol (ViewDashboard)  -->
                 <FontIcon
                     Margin="0,6,0,3"
                     VerticalAlignment="Bottom"
@@ -46,7 +46,6 @@
                     Glyph="&#xE7F4;" />
 
                 <TextBlock
-                    x:Name="tbl_MainWindowTitle"
                     x:Uid="GeneralOverview"
                     Margin="0,6,0,7"
                     VerticalAlignment="Center"
@@ -89,7 +88,7 @@
                         Margin="0,0,0,12"
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -106,7 +105,6 @@
                                 TextAlignment="Center" />
 
                             <TextBlock
-                                x:Name="tblNextTimeOfEarningsRefresh"
                                 HorizontalAlignment="Center"
                                 FontSize="16"
                                 FontWeight="SemiBold"
@@ -124,7 +122,7 @@
                         Margin="0,0,0,12"
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -138,7 +136,7 @@
                         Grid.Row="2"
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -148,11 +146,9 @@
                             ColumnSpacing="12">
 
                             <Grid.ColumnDefinitions>
-
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
-
                             </Grid.ColumnDefinitions>
 
                             <local:UC_EarningsAmount
@@ -195,7 +191,7 @@
                     <Border
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -206,7 +202,7 @@
                     <Border
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -217,7 +213,7 @@
                     <Border
                         Padding="12"
                         Background="{ThemeResource MenuBackgroundColor}"
-                        BorderBrush="#22000000"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="12">
 
@@ -226,9 +222,9 @@
                             Width="276"
                             Height="55"
                             HorizontalAlignment="Center"
+                            FontSize="16"
                             Click="BtnGoToeVisitorAPI_Click"
-                            Command="{x:Bind ViewModelGeneralOverView.GoToAPILoginCommand}"
-                            FontSize="16">
+                            Command="{x:Bind ViewModelGeneralOverView.GoToAPILoginCommand}">
 
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
@@ -237,7 +233,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  Settings  -->
+                                <!--  Einstellungen-Symbol (Setting)  -->
                                 <FontIcon VerticalAlignment="Center" Glyph="&#xE713;" />
 
                                 <TextBlock
@@ -245,12 +241,12 @@
                                     Grid.Column="1"
                                     VerticalAlignment="Center" />
 
-                                <!--  ChevronRight  -->
+                                <!--  Weiter-Symbol (ChevronRight)  -->
                                 <FontIcon
                                     Grid.Column="2"
                                     VerticalAlignment="Center"
-                                    Glyph="&#xE72A;"
-                                    Opacity="0.8" />
+                                    Opacity="0.8"
+                                    Glyph="&#xE72A;" />
                             </Grid>
                         </Button>
                     </Border>
@@ -260,6 +256,5 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-
 
 </UserControl>

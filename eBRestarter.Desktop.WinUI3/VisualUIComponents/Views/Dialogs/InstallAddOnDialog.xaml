@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentDialog
     x:Class="eBRestarter.Desktop.WinUI3.VisualUIComponents.Views.Dialogs.InstallAddOnDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -63,7 +64,7 @@
                                         CornerRadius="4">
                                         <TextBlock
                                             FontWeight="SemiBold"
-                                            Foreground="White"
+                                            Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
                                             Style="{ThemeResource CaptionTextBlockStyle}"
                                             Text="{x:Bind InstallStatusText, Mode=OneWay}" />
                                     </Border>
@@ -88,10 +89,10 @@
                             <Button
                                 Grid.Column="2"
                                 VerticalAlignment="Center"
+                                Style="{ThemeResource AccentButtonStyle}"
                                 Command="{x:Bind OpenStoreCommand}"
                                 Content="{x:Bind ButtonText, Mode=OneWay}"
-                                IsEnabled="{x:Bind IsButtonEnabled, Mode=OneWay}"
-                                Style="{ThemeResource AccentButtonStyle}" />
+                                IsEnabled="{x:Bind IsButtonEnabled, Mode=OneWay}" />
                         </Grid>
                     </Border>
 

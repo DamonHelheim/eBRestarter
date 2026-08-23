@@ -603,6 +603,18 @@
   <data name="AutoLogon_InputPassword.PlaceholderText" xml:space="preserve">
     <value>Windows Kennwort eingeben</value>
   </data>
+  <data name="AutoLogon_AdminWarning.Title" xml:space="preserve">
+    <value>Administratorrechte erforderlich</value>
+  </data>
+  <data name="AutoLogon_AdminWarning.Message" xml:space="preserve">
+    <value>Die kennwortlose Anmeldung (Windows Hello) ist aktiv. Um AutoLogon zu aktivieren, starten Sie die Anwendung bitte als Administrator.</value>
+  </data>
+  <data name="AutoLogon_DisablePasswordless.Content" xml:space="preserve">
+    <value>Kennwortlose Anmeldung (Windows Hello) deaktivieren, um AutoLogon zu erlauben</value>
+  </data>
+  <data name="AutoLogon_RestorePasswordless.Content" xml:space="preserve">
+    <value>Kennwortlose Anmeldung (Windows Hello) wiederherstellen</value>
+  </data>
   <data name="ActivateApi_Checking" xml:space="preserve">
     <value>Prüfe Zugangsdaten...</value>
   </data>

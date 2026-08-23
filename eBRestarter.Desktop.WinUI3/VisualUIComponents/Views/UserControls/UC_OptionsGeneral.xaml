@@ -11,7 +11,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+        <convertersNuget:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -20,9 +20,11 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto">
+
         <Grid
-            x:Name="Grid_Options_General"
             Margin="20,10,20,20"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top">
@@ -32,17 +34,17 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!--  Linke Spalte: Windows & Rechner-Neustart  -->
             <Border
                 Grid.Column="0"
-                Height="auto"
                 Margin="0,0,24,0"
                 Padding="16"
                 Background="{ThemeResource DashletBackgroundColor_2}"
                 CornerRadius="6">
 
                 <StackPanel Orientation="Vertical">
+
                     <TextBlock
-                        x:Name="lbl_Options_OperatingSettings"
                         x:Uid="Windows"
                         Margin="0,0,0,12"
                         FontSize="18"
@@ -50,17 +52,14 @@
                         Foreground="{ThemeResource FontColor_1}" />
 
                     <Button
-                        x:Name="btnOptionsAutomaticWindowsUserLogin"
                         x:Uid="Automatic_User_Login"
                         Width="311"
                         Height="50"
                         Margin="0,0,0,12"
                         HorizontalAlignment="Left"
-                        Background="#FF00CAD4"
-                        BorderBrush="{x:Null}"
-                        Command="{x:Bind ViewModel.ConfigureAutoLogonCommand}"
                         FontSize="16"
-                        Foreground="#DDFFFFFF" />
+                        Style="{ThemeResource AccentButtonStyle}"
+                        Command="{x:Bind ViewModel.ConfigureAutoLogonCommand}" />
 
                     <TextBlock
                         x:Uid="Start_eV_Restarter_with_Windows"
@@ -68,7 +67,6 @@
                         Foreground="{ThemeResource FontColor_1}" />
 
                     <ToggleSwitch
-                        x:Name="TS_OptionsStartWithWindows"
                         x:Uid="TS_OptionsStartWithWindows"
                         Width="250"
                         Height="40"
@@ -76,10 +74,9 @@
                         HorizontalAlignment="Left"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
-                        IsOn="{x:Bind ViewModel.StartWithWindows, Mode=TwoWay, }" />
+                        IsOn="{x:Bind ViewModel.StartWithWindows, Mode=TwoWay}" />
 
                     <TextBlock
-                        x:Name="lbl_Computer_Restartoptionen"
                         x:Uid="Computer_restart_options"
                         Margin="10,0,0,8"
                         FontSize="16"
@@ -87,38 +84,35 @@
                         Foreground="{ThemeResource FontColor_1}" />
 
                     <ComboBox
-                        x:Name="ComboboxComputerRestartOptions"
                         Width="300"
                         Margin="10,0,10,12"
                         DisplayMemberPath="DisplayText"
                         FontSize="16"
                         ItemsSource="{x:Bind ViewModel.ComputerRestartList, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.SelectedComputerRestartOption, Mode=TwoWay, }" />
+                        SelectedItem="{x:Bind ViewModel.SelectedComputerRestartOption, Mode=TwoWay}" />
 
                     <StackPanel
                         Width="300"
                         Margin="10,5,10,10"
                         HorizontalAlignment="Left"
-                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}">
+                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 
                         <TextBlock
                             x:Uid="Set_the_time"
                             Margin="0,5,5,0"
                             HorizontalAlignment="Left"
                             FontSize="14"
-                            Foreground="{ThemeResource FontColor_1}"
-                            Text="Lege die Uhrzeit fest:" />
+                            Foreground="{ThemeResource FontColor_1}" />
 
                         <Slider
-                            x:Name="SliderRestartComputer"
                             HorizontalAlignment="Stretch"
-                            Foreground="#FF167DA4"
+                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                             Maximum="{x:Bind ViewModel.ComputerRestartClockTimeMax, Mode=OneTime}"
                             Minimum="{x:Bind ViewModel.ComputerRestartClockTimeMin, Mode=OneTime}"
                             SnapsTo="StepValues"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
-                            Value="{x:Bind ViewModel.ComputerRestartClockTime, Mode=TwoWay, }" />
+                            Value="{x:Bind ViewModel.ComputerRestartClockTime, Mode=TwoWay}" />
 
                         <Grid Margin="0,-5,0,0">
 
@@ -144,28 +138,26 @@
                     </StackPanel>
 
                     <TextBlock
-                        x:Name="lbl_Options_DateOfRestartComputerInfo"
                         Margin="10,0,0,4"
                         FontSize="16"
                         Foreground="{ThemeResource FontColor_1}"
                         Text="{x:Bind ViewModel.RestartStatusText, Mode=OneWay}" />
 
                     <TextBlock
-                        x:Name="tbl_restart_information"
                         x:Uid="RestartWarning"
                         Width="336"
-                        Height="auto"
                         Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         FontSize="12"
-                        Foreground="#de1043"
+                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
                         TextWrapping="Wrap"
-                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                        Visibility="{x:Bind ViewModel.IsRestartSliderVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                 </StackPanel>
 
             </Border>
 
+            <!--  Rechte Spalte: Update, Speicherort, Themes, Sprache  -->
             <Border
                 Grid.Column="1"
                 Margin="0,0,24,0"
@@ -174,7 +166,10 @@
                 CornerRadius="6">
 
                 <StackPanel Spacing="14">
+
+                    <!--  Updates  -->
                     <StackPanel Spacing="8">
+
                         <TextBlock x:Uid="Update" Style="{StaticResource SectionTitleStyle}" />
 
                         <Grid>
@@ -184,15 +179,12 @@
                             </Grid.ColumnDefinitions>
 
                             <Button
-                                x:Name="BtnCheckForUpdates"
                                 x:Uid="Check_for_updates"
                                 Grid.Column="0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Background="#FF4DC89E"
-                                BorderBrush="{x:Null}"
-                                Command="{x:Bind ViewModel.CheckForUpdatesCommand}"
-                                Foreground="#DDFFFFFF" />
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.CheckForUpdatesCommand}" />
 
                             <ProgressRing
                                 Grid.Column="1"
@@ -200,62 +192,71 @@
                                 Height="24"
                                 Margin="12,0,0,0"
                                 IsActive="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                                Visibility="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Grid>
 
                         <TextBlock
                             Foreground="{ThemeResource FontColor_1}"
                             Text="{x:Bind ViewModel.UpdateMessage, Mode=OneWay}"
                             TextWrapping="Wrap"
-                            Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                     </StackPanel>
 
-                    <Border Height="1" Background="#33000000" />
+                    <Border
+                        Height="1"
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
+                    <!--  Speicherort  -->
                     <StackPanel Spacing="8">
+
                         <TextBlock x:Uid="Configuration_storage_location" Style="{StaticResource SectionTitleStyle}" />
 
                         <Button
-                            x:Name="Btn_go_to_settings_data"
                             x:Uid="Go_to_storage_location"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Background="#FF149DAE"
-                            BorderBrush="{x:Null}"
-                            Command="{x:Bind ViewModel.OpenSettingsDataFolderCommand}"
-                            Foreground="#DDFFFFFF" />
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Command="{x:Bind ViewModel.OpenSettingsDataFolderCommand}" />
+
                     </StackPanel>
 
-                    <Border Height="1" Background="#33000000" />
+                    <Border
+                        Height="1"
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
+                    <!--  Themes  -->
                     <StackPanel Spacing="8">
+
                         <TextBlock x:Uid="Themes" Style="{StaticResource SectionTitleStyle}" />
 
                         <Button
-                            x:Name="BtnSetStandardTheme"
                             x:Uid="Standard"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="#FFD5D5D5"
                             BorderBrush="{x:Null}"
-                            Command="{x:Bind ViewModel.SetLightThemeCommand}"
-                            Foreground="Black" />
+                            Foreground="Black"
+                            Command="{x:Bind ViewModel.SetLightThemeCommand}" />
 
                         <Button
-                            x:Name="BtnSetDarkTheme"
                             x:Uid="Dark"
-                            Margin="0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Background="#FF414D4F"
                             BorderBrush="{x:Null}"
-                            Command="{x:Bind ViewModel.SetDarkThemeCommand}"
-                            Foreground="White" />
+                            Foreground="White"
+                            Command="{x:Bind ViewModel.SetDarkThemeCommand}" />
+
                     </StackPanel>
 
-                    <Border Height="1" Background="#33000000" />
+                    <Border
+                        Height="1"
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
 
+                    <!--  Sprache  -->
                     <StackPanel Spacing="8">
+
                         <TextBlock
                             x:Uid="Language"
                             FontSize="16"
@@ -268,10 +269,16 @@
                             DisplayMemberPath="DisplayText"
                             FontSize="16"
                             ItemsSource="{x:Bind ViewModel.LanguageList, Mode=OneWay}"
-                            SelectedItem="{x:Bind ViewModel.SelectedLanguageOption, Mode=TwoWay, }" />
+                            SelectedItem="{x:Bind ViewModel.SelectedLanguageOption, Mode=TwoWay}" />
+
                     </StackPanel>
+
                 </StackPanel>
+
             </Border>
+
         </Grid>
+
     </ScrollViewer>
+
 </UserControl>
